@@ -1,0 +1,40 @@
+html {
+  background-image: url('../../assets/background.png ');
+  background-size:cover;
+}
+.logo{
+  background-image:url('../../assets/logo.png');
+  background-size:cover;
+}
+.center-horizontally {
+  display: flex;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  width:25%;
+}
+.startupBox {
+  width: 210px; /* width of box */
+  height: 35px; /* height of box */
+  background-color: #F5E1F7;
+  padding: 20px; /* padding inside the box */
+  border-radius: 10px; /*removes the edges */
+  margin-top:15px; /*pushing down from logo */
+}
+.startupBox a {
+  color: inherit; /* Inherit the color from the parent */
+  text-decoration: none; /* Removes the underline */
+}
+.accessText{
+  font-family: 'Inter', serif;
+  font-size:64px;
+  font-weight:bold;
+  line-height:0.6;
+  font-style:italic;
+}
+.orText{
+  font-family: 'Inter', serif;
+  font-size:55px;
+  font-weight:bold;
+  line-height:2;
+}
