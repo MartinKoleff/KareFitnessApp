@@ -1,6 +1,6 @@
 package io.kare.backend.exception;
 
-public class UserAlreadyExistsException extends RuntimeException {
+public final class UserAlreadyExistsException extends UserException {
 	private static final String MESSAGE = "User with email %s already exists!";
 	private final String email;
 	public UserAlreadyExistsException(String email) {
