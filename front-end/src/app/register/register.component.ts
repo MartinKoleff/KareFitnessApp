@@ -4,8 +4,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.css'],
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
 })
 export class RegisterComponent {
-
 }
