@@ -2,12 +2,14 @@ package io.kare.backend.service.impl;
 
 import io.kare.backend.component.user.UserJwtTokenGenerator;
 import io.kare.backend.entity.UserEntity;
-import io.kare.backend.exception.UserAlreadyExistsException;
+import io.kare.backend.exception.*;
 import io.kare.backend.mapper.UserMapper;
-import io.kare.backend.payload.request.RegisterUserRequest;
-import io.kare.backend.payload.response.RegisterUserResponse;
+import io.kare.backend.payload.request.*;
+import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.UserRepository;
 import io.kare.backend.service.UserService;
+import java.util.Optional;
+import java.util.function.Supplier;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +40,18 @@ public class UserServiceImpl implements UserService {
 		UserEntity userEntity = this.userMapper.map(request, password);
 		this.userRepository.save(userEntity);
 		String token = this.userJwtTokenGenerator.generateToken(userEntity);
-		return this.userMapper.map(userEntity, token);
+		return this.userMapper.mapRegisterUserResponse(userEntity, token);
 	}
+
+	@Override
+	public LoginUserResponse login(LoginUserRequest request) {
+		Optional<UserEntity> optionalUserEntity = this.userRepository.findByEmail(request.email());
+		UserEntity userEntity = optionalUserEntity.orElseThrow(() -> new UserNotExistsException(request.email()));
+		if (!this.passwordEncoder.matches(request.password(), userEntity.getPassword())) {
+			throw new UserPasswordIncorrectException(request.email());
+		}
+		String token = this.userJwtTokenGenerator.generateToken(userEntity);
+		return this.userMapper.mapLoginUserResponse(userEntity, token);
+	}
+
 }
