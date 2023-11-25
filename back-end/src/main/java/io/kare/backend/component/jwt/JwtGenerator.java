@@ -1,6 +1,7 @@
 package io.kare.backend.component.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -9,10 +10,12 @@ import org.springframework.boot.autoconfigure.security.oauth2.resource.OAuth2Res
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
 public class JwtGenerator {
+	private static final String SUBJECT_ID_CLAIMS_NAME = "sub";
 	private final String secretKey;
 	private final long expirationTime;
 
@@ -28,25 +31,24 @@ public class JwtGenerator {
 		Date creationDate = new Date();
 		Date expirationDate = new Date(creationDate.getTime() + this.expirationTime);
 
+		Map<String, Object> actualClaims = new HashMap<>(claims);
+		actualClaims.put(SUBJECT_ID_CLAIMS_NAME, subjectId);
+
 		return Jwts.builder()
-			.setSubject(subjectId)
-			.setClaims(claims)
+			.setClaims(actualClaims)
 			.setIssuedAt(creationDate)
 			.setExpiration(expirationDate)
 			.signWith(Keys.hmacShaKeyFor(this.secretKey.getBytes()))
 			.compact();
 	}
 
-//	public Map.Entry<String, Map<String, Object>> verifyToken(String token) {
-//
-//        JwtParser jwtParser = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(this.secretKey.getBytes())).build();
-//		var result = Map.entry(jwtParser.parseClaimsJwt(token).getBody().getSubject(),);
-//		Date expirationDate = claims.getExpiration();
-//		if (expirationDate.before(new Date())) {
-//			throw new JwtException("Expired token");
-//		}
-//
-//		return claims;
-//	}
+	public Claims verifyToken(String token) {
+		Jws<Claims> claimsJws = Jwts.parserBuilder()
+				.setSigningKey(this.secretKey.getBytes())
+				.build()
+				.parseClaimsJws(token);
+
+		return claimsJws.getBody();
+	}
 
 }

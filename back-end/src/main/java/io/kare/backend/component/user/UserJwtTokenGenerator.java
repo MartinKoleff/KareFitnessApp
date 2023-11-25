@@ -20,4 +20,8 @@ public class UserJwtTokenGenerator {
 		claims.put("role", "USER");
 		return this.jwtGenerator.generateToken(userEntity.getId(), claims);
 	}
+
+	public String getUserIdFromToken(String token) {
+		return this.jwtGenerator.verifyToken(token).getSubject();
+	}
 }
