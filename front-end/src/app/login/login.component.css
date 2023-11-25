@@ -5,7 +5,7 @@ html {
 .FormLogin{
   margin-top:65px;
   width: 750px; /* width of box */
-  height: 550px; /* height of box */
+  height: 565px; /* height of box */
   background-color: #6B246B;
   border-radius: 20px;
 }
@@ -53,6 +53,7 @@ button {
   padding: 10px 0;
   box-shadow: 0 0 20px rgba(104, 85, 224, 0.2);
   transition: 0.4s;
+  font-size:24px;
 }
 
 .log {
@@ -66,5 +67,17 @@ button:hover {
   color: black  ;
   box-shadow: 0 0 20px #ECBDF2;
   background-color: #ECBDF2;
+}
+.questionLogin{
+  font-family: 'Inter', serif;
+  font-size:23px;
+  font-weight:bold;
+  line-height:0.3;                        /*pushing text downwards*/
+  font-style:italic;
+  margin-left: 267px;
+}
+.questionLogin a{
+  text-decoration: none;
+  color:White;
 }
 

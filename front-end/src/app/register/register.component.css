@@ -68,7 +68,7 @@ button:hover {
   box-shadow: 0 0 20px #ECBDF2;
   background-color: #ECBDF2;
 }
-.question{
+.questionSignup{
   font-family: 'Inter', serif;
   font-size:23px;
   font-weight:bold;
@@ -76,7 +76,7 @@ button:hover {
   font-style:italic;
   margin-left: 245px;
 }
-.question a{
+.questionSignup a{
   text-decoration: none;
   color:White;
 }
