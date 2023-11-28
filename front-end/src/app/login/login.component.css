@@ -6,23 +6,25 @@ html {
   margin-top:65px;
   width: 750px; /* width of box */
   height: 565px; /* height of box */
-  background-color: #6B246B;
+  background-color: #C283E3;
   border-radius: 20px;
 }
-.center-horizontally-signup{
+.center-horizontally-login{
   margin-left: auto;
   margin-right: auto;
 }
-.signUp{
-  font-family: 'Inter', serif;
+.logIn{
+  color:#6B246B;
+  font-family: 'Verdana', serif;
   font-size:64px;
   font-weight:bold;
   line-height:1;                        /*pushing text downwards*/
   font-style:italic;
   margin-left: 270px;
 }
-.informationText{
-  font-family: 'Inter', serif;
+.informationTextLogIn{
+  color:#6B246B;
+  font-family: 'Verdana', serif;
   font-size:55px;
   font-weight:bold;
   line-height: 0.65;                 /*pushing text downwards*/
@@ -51,7 +53,6 @@ button {
   margin: 0 10px;
   width: 200px;
   padding: 10px 0;
-  box-shadow: 0 0 20px rgba(104, 85, 224, 0.2);
   transition: 0.4s;
   font-size:24px;
 }
@@ -69,12 +70,13 @@ button:hover {
   background-color: #ECBDF2;
 }
 .questionLogin{
-  font-family: 'Inter', serif;
+  color:#6B246B;
+  font-family: 'Verdana', serif;
   font-size:23px;
   font-weight:bold;
   line-height:0.3;                        /*pushing text downwards*/
   font-style:italic;
-  margin-left: 267px;
+  margin-left: 230px;
 }
 .questionLogin a{
   text-decoration: none;

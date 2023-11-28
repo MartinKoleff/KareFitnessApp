@@ -2,11 +2,11 @@ html {
   background-image: url('../../assets/background.png ');
   background-size:cover;
 }
-.Form{
+.regForm{
   margin-bottom:65px;
   width: 750px; /* width of box */
   height: 790px; /* height of box */
-  background-color: #6B246B;
+  background-color: #C283E3;
   border-radius: 20px;
 }
 .center-horizontally-signup{
@@ -14,21 +14,23 @@ html {
   margin-right: auto;
 }
 .signUp{
-  font-family: 'Inter', serif;
+  color:#6B246B;
+  font-family: 'Verdana', serif;
   font-size:64px;
   font-weight:bold;
   line-height:1;                        /*pushing text downwards*/
   font-style:italic;
   margin-left: 270px;
 }
-.informationText{
-  font-family: 'Inter', serif;
-  font-size:55px;
+.regInformationText{
+  color:#6B246B;
+  font-family: 'Verdana', serif;
+  font-size:50px;
   font-weight:bold;
   line-height: 0.65;                 /*pushing text downwards*/
   text-align:center;
 }
-.container {
+.regContainer {
   display: grid;
   grid-template-columns: 1fr 1fr;               /*1fr 1fr means 2 columns  */
   width: 100%;
@@ -36,7 +38,7 @@ html {
 input, select {
   width: 95%;
   padding: 18px 20px;
-  margin-top:59px;
+  margin-top:50px;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 10px;
@@ -56,7 +58,7 @@ button {
   font-size:24px
 }
 
-.log {
+.reg {
   color: hsl(295, 85%, 18%);
   background-color: rgba(255, 255, 255, 1);
   border: 1px solid black;
@@ -69,12 +71,13 @@ button:hover {
   background-color: #ECBDF2;
 }
 .questionSignup{
-  font-family: 'Inter', serif;
+  color:#6B246B;
+  font-family: 'Verdana', serif;
   font-size:23px;
   font-weight:bold;
   line-height:0.3;                        /*pushing text downwards*/
   font-style:italic;
-  margin-left: 245px;
+  margin-left: 205px;
 }
 .questionSignup a{
   text-decoration: none;
