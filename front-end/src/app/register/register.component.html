@@ -20,22 +20,22 @@
       </div>
       <div>
         <div>
-          <input type="text" placeholder="Username">
+          <input type="text" placeholder="Username" [(ngModel)] = "username" (keyup.enter)="signUpCheck()">
         </div>
         <div>
-          <input type="email" placeholder="Email">
+          <input type="email" placeholder="Email" [(ngModel)]="email" (keyup.enter)="signUpCheck()">
         </div>
         <div>
-          <input type="password" placeholder="Password">
+          <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="signUpCheck()">
         </div>
         <div>
-          <input type="password" placeholder="Confirm Password">
+          <input type="password" placeholder="Confirm Password" [(ngModel)]="cpassword" (keyup.enter)="signUpCheck()">
         </div>
       </div>
     </div>
-    <button class="reg">Register</button>
+    <button class="reg" (click)=signUpCheck()>Register</button>
     <div class="questionSignup">
-      <p>Already a member?<a routerLink="/login">Log in!</a></p>
+      <p>Already a member?<a routerLink="/login" >Log in!</a></p>
     </div>
   </div>
 </body>

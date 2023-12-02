@@ -14,14 +14,14 @@
     </div>
     <div>
       <div>
-        <input type="email" placeholder="Email">
+        <input type="email" placeholder="Email" [(ngModel)]="email" (keyup.enter)="loginCheck()">
       </div>
       <div>
-        <input type="password" placeholder="Password">
+        <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="loginCheck()">
       </div>
     </div>
   </div>
-  <button routerLink="/main" class="log center-horizontally">Log in</button>
+  <button class="log center-horizontally" (click)="loginCheck()">Log in</button>
   <div class="questionLogin">
     <p>Not a member?<a routerLink="/register">Sign up!</a></p>
   </div>

@@ -7,7 +7,8 @@ import { StartupComponent } from './startup/startup.component';
 import { MainComponent } from './main/main.component';
 
 const routes: Routes = [
-  {path:'startup', component:StartupComponent},
+  {path:'', component:StartupComponent},
+  {path:'startup', component: StartupComponent},
   {path:'login', component:LoginComponent},
   {path:'register', component:RegisterComponent},
   {path:'home', component: HomeComponent},
