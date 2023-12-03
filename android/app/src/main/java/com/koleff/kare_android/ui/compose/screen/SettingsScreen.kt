@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.SettingsList
 
 @Composable
 fun SettingsScreen(navController: NavHostController) {
@@ -14,5 +15,6 @@ fun SettingsScreen(navController: NavHostController) {
             .padding(innerPadding)
             .fillMaxSize()
 
+        SettingsList(modifier = modifier)
     }
 }
