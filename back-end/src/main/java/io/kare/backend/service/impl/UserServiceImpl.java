@@ -54,4 +54,11 @@ public class UserServiceImpl implements UserService {
 		return this.userMapper.mapLoginUserResponse(userEntity, token);
 	}
 
+
+	@Override
+	public UserEntity getUserById(String id) {
+		return this.userRepository.findById(id).orElse(null);
+
+	}
+
 }
