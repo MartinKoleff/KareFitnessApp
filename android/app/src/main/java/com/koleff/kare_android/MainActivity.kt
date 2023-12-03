@@ -7,14 +7,14 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
-import com.koleff.kare_android.ui.theme.MyApplicationTheme
+import com.koleff.kare_android.ui.theme.KareTheme
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApplicationTheme {
+            KareTheme {
                 val navController = rememberNavController()
                 SetupNavGraph(navController = navController)
             }
