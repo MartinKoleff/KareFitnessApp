@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">Kare Android</string>
     <string name="text_success">Success</string>
     <string name="text_internal_exception">Internal exception</string>
 </resources>
