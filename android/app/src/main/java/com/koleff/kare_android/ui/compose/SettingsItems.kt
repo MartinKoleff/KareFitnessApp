@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -48,6 +49,20 @@ fun SettingsListItem(title: String, icon: Painter, description: String) {
 @Composable
 fun SettingsCategory(title: String) {
 
+}
+
+@Composable
+fun SwitchButton() {
+    var checked by remember { mutableStateOf(true) }
+
+    Switch(
+        checked = checked,
+        onCheckedChange = {
+            checked = it
+
+            //TODO: add biometrics authentication dialog / screen logic...
+        }
+    )
 }
 
 @Composable
