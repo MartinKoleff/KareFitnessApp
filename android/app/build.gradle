@@ -64,6 +64,11 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.2'
     implementation 'androidx.activity:activity-compose:1.8.1'
 
+    //KotlinX
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-rx3:$coroutine_version"
+
     //MultiDex application
     implementation 'androidx.multidex:multidex:2.0.1'
 
@@ -77,6 +82,27 @@ dependencies {
     //Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_hilt_version"
+
+    //Retrofit 2
+    implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
+    implementation "com.squareup.retrofit2:converter-moshi:$retrofit2_version"
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
+    implementation "com.squareup.retrofit2:converter-gson:$gson_version"
+
+    //OkHttp 3
+    implementation "com.squareup.okhttp3:okhttp:$okhttp3_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp3_version"
+
+    //JSON
+    implementation "com.squareup.moshi:moshi:$moshi_version"
+    implementation "com.squareup.moshi:moshi-kotlin:$moshi_version"
+
+    //Gson (Json converter)
+    implementation "com.google.code.gson:gson:$gson_version"
+
+    // Jackson
+    implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$version"
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.13.0'
 
     //Navigation
     implementation 'androidx.navigation:navigation-runtime-ktx:2.7.5'

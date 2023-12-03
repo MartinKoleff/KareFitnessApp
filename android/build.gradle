@@ -2,6 +2,11 @@
 buildscript {
     ext.nav_version = '2.7.3'
     ext.dagger_hilt_version = '2.48'
+    ext.gson_version = '2.9.0'
+    ext.moshi_version = '1.15.0'
+    ext.coroutine_version = '1.5.0'
+    ext.retrofit2_version = '2.9.0'
+    ext.okhttp3_version = '4.9.1'
 
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
