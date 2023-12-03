@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose
+package com.koleff.kare_android.ui.compose.navigation
 
 import android.util.Log
 import androidx.compose.material3.Icon
