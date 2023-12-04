@@ -3,27 +3,23 @@
   <div class="logIn center-horizontally-login">
     <h3> Log in</h3>
   </div>
-  <div class="container">
-    <div>
-      <div class="informationTextLogIn">
-        <h6>Email:</h6>
-      </div>
-      <div class="informationTextLogIn">
-        <h6>Password:</h6>
-      </div>
+  <div class="row center-horizontally-login">
+    <div class="informationTextLogIn">
+      <h1>E-mail:</h1>
     </div>
-    <div>
-      <div>
-        <input type="email" placeholder="Email" [(ngModel)]="email" (keyup.enter)="loginCheck()">
-      </div>
-      <div>
-        <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="loginCheck()">
-      </div>
-    </div>
+    <input type="email" placeholder="Email" [(ngModel)]="email" (keyup.enter)="loginCheck()">
   </div>
-  <button class="log center-horizontally" (click)="loginCheck()">Log in</button>
-  <div class="questionLogin">
-    <p>Not a member?<a routerLink="/register">Sign up!</a></p>
+  <div class="row center-horizontally-login ">
+    <div class="informationTextLogIn">
+      <h1>Password:</h1>
+    </div>
+    <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="loginCheck()">
+  </div>
+  <div class="center-horizontally-login">
+    <button class="log" (click)="loginCheck()">Log in</button>
+  </div>
+  <div class="questionLogin center-horizontally-login">
+     <p>Not a member?<a routerLink="/register">Sign up!</a></p>
   </div>
 </div>
 </body>

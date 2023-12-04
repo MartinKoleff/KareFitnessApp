@@ -3,15 +3,22 @@ html {
   background-size:cover;
 }
 .FormLogin{
-  margin-top:65px;
-  width: 750px; /* width of box */
-  height: 565px; /* height of box */
+  width: 35%;
   background-color: #C283E3;
   border-radius: 20px;
+  padding-bottom: 2%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 .center-horizontally-login{
   margin-left: auto;
   margin-right: auto;
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top:inherit;
 }
 .logIn{
   color:#6B246B;
@@ -20,48 +27,44 @@ html {
   font-weight:bold;
   line-height:1;                        /*pushing text downwards*/
   font-style:italic;
-  margin-left: 270px;
 }
 .informationTextLogIn{
   color:#6B246B;
   font-family: 'Verdana', serif;
-  font-size:55px;
   font-weight:bold;
   line-height: 0.65;                 /*pushing text downwards*/
   text-align:center;
-}
-.container {
-  display: grid;
-  grid-template-columns: 1fr 1fr;               /*1fr 1fr means 2 columns  */
-  width: 100%;
+  width:100%;
+  display:flex;
+  justify-content: space-between;
 }
 input, select {
-  width: 95%;
+  width: 100%;
   padding: 18px 20px;
-  margin-top:59px;
-  display: inline-block;
+  display: flex;
   border: 1px solid #ccc;
   border-radius: 10px;
   box-sizing: border-box;
   background-color:#F5E1F7;
+  margin-top:auto;
+  margin-bottom: auto;
+
 }
 button {
   cursor: pointer;
-  border: 0;
   border-radius: 4px;
   font-weight: 600;
-  margin: 0 10px;
   width: 200px;
   padding: 10px 0;
   transition: 0.4s;
   font-size:24px;
+  text-align:center;
 }
 
 .log {
   color: hsl(295, 85%, 18%);
   background-color: rgba(255, 255, 255, 1);
   border: 1px solid black;
-  margin-left: 275px;
 }
 
 button:hover {
@@ -74,12 +77,14 @@ button:hover {
   font-family: 'Verdana', serif;
   font-size:23px;
   font-weight:bold;
-  line-height:0.3;                        /*pushing text downwards*/
+  line-height:0.9;                        /*pushing text downwards*/
   font-style:italic;
-  margin-left: 230px;
 }
+
 .questionLogin a{
   text-decoration: none;
   color:White;
 }
-
+.row{
+  flex-direction: row;
+}

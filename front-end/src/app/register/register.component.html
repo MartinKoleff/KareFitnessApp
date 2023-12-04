@@ -1,41 +1,37 @@
 <body>
   <div class="regForm center-horizontally-signup">
     <div class="signUp center-horizontally-signup">
-      <h3> Sign up</h3>
+      <h3> Sign up </h3>
     </div>
-    <div class="regContainer">
-      <div>
-        <div class="regInformationText">
-          <h6>Username:</h6>
-        </div>
-        <div class="regInformationText">
-          <h6>Email:</h6>
-        </div>
-        <div class="regInformationText">
-          <h6>Password:</h6>
-        </div>
-        <div class="regInformationText">
-          <h6>Confirm password:</h6>
-        </div>
-      </div>
-      <div>
-        <div>
-          <input type="text" placeholder="Username" [(ngModel)] = "username" (keyup.enter)="signUpCheck()">
-        </div>
-        <div>
-          <input type="email" placeholder="Email" [(ngModel)]="email" (keyup.enter)="signUpCheck()">
-        </div>
-        <div>
-          <input type="password" placeholder="Password" [(ngModel)]="password" (keyup.enter)="signUpCheck()">
-        </div>
-        <div>
-          <input type="password" placeholder="Confirm Password" [(ngModel)]="cpassword" (keyup.enter)="signUpCheck()">
-        </div>
+    <div class="row, center-horizontally-signup">
+      <div class="regInformationText">
+        <h1>Username:</h1>
+        <input type="text" placeholder="Username" [(ngModel)]="username" (keyup.enter)="signUpCheck()">
       </div>
     </div>
-    <button class="reg" (click)=signUpCheck()>Register</button>
-    <div class="questionSignup">
-      <p>Already a member?<a routerLink="/login" >Log in!</a></p>
+    <div class="row, center-horizontally-signup">
+      <div class="regInformationText">
+        <h1>Email:</h1>
+        <input type="email" placeholder="Email" [(ngModel)] = "email" (keyup.enter)="signUpCheck()">
+      </div>
+    </div>
+    <div class="row, center-horizontally-signup">
+      <div class="regInformationText">
+        <h1>Password:</h1>
+        <input type="password" placeholder="Password" [(ngModel)] = "password" (keyup.enter)="signUpCheck()">
+      </div>
+    </div>
+    <div class="row, center-horizontally-signup">
+      <div class="regInformationText">
+        <h1>Confirm Password:</h1>
+        <input type="password" placeholder="Confirm Password" [(ngModel)] = "cpassword" (keyup.enter)="signUpCheck()">
+      </div>
+    </div>
+    <div class="center-horizontally-signup ">
+      <button class="log" (click)="signUpCheck()">Sign up</button>
+    </div>
+    <div class="questionLogin center-horizontally-signup">
+      <p>Already a member?<a routerLink="/login">Log in!</a></p>
     </div>
   </div>
 </body>
