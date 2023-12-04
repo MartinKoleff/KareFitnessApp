@@ -14,12 +14,13 @@ html {
   margin-right: auto;
 }
 .startupBox {
-  width: 290px; /* width of box */
-  height: 35px; /* height of box */
+  width: 15%; /* width of box */
+  height: auto;
   background-color: #ECBDF2;
   padding: 20px; /* padding inside the box */
   border-radius: 10px; /*removes the edges */
   margin-top:15px; /*pushing down from logo */
+  text-align: center;
 }
 .startupBox a {
   color: inherit; /* Inherit the color from the parent */
@@ -28,7 +29,6 @@ html {
 .accessText{
   color: #6B246B;
   font-family: 'Verdana', serif;
-  font-size:56px;
   font-weight:bold;
   line-height:0.6;
   font-style: italic;
@@ -39,4 +39,9 @@ html {
   font-size:56px;
   font-weight:bold;
   line-height:2;
+}
+h1{
+  color: #6B246B;
+  font-family: 'Verdana', serif;
+  font-weight:bold;
 }

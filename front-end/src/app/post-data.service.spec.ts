@@ -1,7 +1,8 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-
+import { LoginComponent } from './login/login.component';
 import { PostDataService } from './post-data.service';
+import { Component } from '@angular/core';
 
 describe('PostDataService', () => {
   let service: PostDataService;
@@ -26,8 +27,8 @@ describe('PostDataService', () => {
 
   it('should retrieve posts from the API via GET', ()=>{
     const testData=[
-      {id:1, title: 'Post 1', content: 'This is the content of Post 1'},
-      {id:2, title: 'Post 2', content: 'This is the content of Post 2'},
+      {email: 'admin', password: 'admin', username: 'admin'},
+      {email: 'admin2',password: 'admin2',username: 'admin2'},
     ];
     service.getPosts().subscribe(posts=>{
       expect(posts).toEqual(testData);
@@ -37,3 +38,5 @@ describe('PostDataService', () => {
     req.flush(testData);
   })
 });
+
+

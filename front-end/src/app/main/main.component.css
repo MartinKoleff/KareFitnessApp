@@ -1,6 +1,10 @@
+*{
+  outline: green 1px solid;
+}
 html {
   background-image: url('../../assets/background.png ');
   background-size:cover;
+  width:100%;
 }
 .logo{
   background-image:url('../../assets/logo.png');
@@ -37,7 +41,7 @@ html {
 
 nav {
   border-bottom: 5px solid #6B246B;
-  margin: 8px -20px;
+  margin: 8px -15px;
   display:flex;
   align-items: center;
 }

@@ -10,6 +10,7 @@ import { StartupComponent } from './startup/startup.component';
 import { MainComponent } from './main/main.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import{HttpClientModule} from '@angular/common/http';
+import { PostDataService } from './post-data.service';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,7 @@ import{HttpClientModule} from '@angular/common/http';
     HttpClientModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [PostDataService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

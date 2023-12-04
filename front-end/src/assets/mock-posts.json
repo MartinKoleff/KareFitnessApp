@@ -1,12 +1,12 @@
 [
   {
-    "id": 1,
-    "title": "Post 1",
-    "content": "This is the content of Post 1"
+    "email": "admin",
+    "password": "admin",
+    "username": "admin"
   },
   {
-    "id": 2,
-    "title": "Post 2",
-    "content": "This is the content of Post 2"
+    "email": "admin2",
+    "password": "admin2",
+    "username": "admin2"
   }
 ]

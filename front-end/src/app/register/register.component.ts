@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostDataService } from '../post-data.service';
-import { FormsModule } from '@angular/forms';
+import { PostUser } from '../user.module';
 
 @Component({
   selector: 'app-register',
@@ -10,40 +10,42 @@ import { FormsModule } from '@angular/forms';
   encapsulation: ViewEncapsulation.None,
 })
 export class RegisterComponent {
-  name: string = 'reader';
-  message: string =
-    'Welcome to Workfall blog. Start editing to see some magic happen';
-  allPosts:any=[];
-
-
-
-
-  username: string = '';
-  password: string = '';
-  email: string = '';
-  cpassword: string = '';
   tempEmail: string = 'admin';
-  constructor(private post: PostDataService, private router: Router) {
+  user: PostUser = {username:'',password:'',email:'',cpassword:''}
+
+  allPosts:any=[];
+  constructor(private post: PostDataService, private router: Router, private PostDataService: PostDataService) {
     this.post.getPosts().subscribe((data) => {
-      //console.log(data)
       this.allPosts = data;
     });
+  }
+  saveUser() {
+    this.PostDataService.saveUser(this.user).subscribe(
+      (response: any) => {
+        console.log('User saved successfully:', response);
+      },
+      (error) => {
+        console.error('Error saving user:', error);
+      }
+    );
   }
 
   signUpCheck() {
     const uppercaseRegex = /[A-Z]/;
     const numberRegex = /\d/;
 
-    if (this.password == null || this.password.trim() === '') {
+    if (this.user.password == null || this.user.password.trim() === '') {
       alert('You have to enter a password!');
-    } else if (this.email == this.tempEmail) {
+    } else if (this.user.email == this.tempEmail) {
       alert('This e-mail is already taken!');
-    } else if (this.password != this.cpassword) {
+    } else if (this.user.password != this.user.cpassword) {
       alert('The password did not match!  ');
-    } else if (!uppercaseRegex.test(this.password) || !numberRegex.test(this.password)) {
+    } else if (!uppercaseRegex.test(this.user.password) || !numberRegex.test(this.user.password)) {
       alert('This password must contain at least one uppercase letter and one number');
-    } else {
-      this.router.navigate(['/main']);
+    }
+    //make case if email exists
+    else {
+      this.saveUser();
     }
   }
 }
