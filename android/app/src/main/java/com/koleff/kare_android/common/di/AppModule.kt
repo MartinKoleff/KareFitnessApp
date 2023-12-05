@@ -77,22 +77,4 @@ object AppModule {
             .build()
             .create(ExerciseApi::class.java)
     }
-
-    @Provides
-    @Singleton
-    fun provideExerciseDataSource(exerciseApi: ExerciseApi): ExerciseDataSource{
-        return ExerciseRemoteDataSource(exerciseApi) //Can swap for local data source...
-    }
-
-    @Provides
-    @Singleton
-    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository{
-        return ExerciseRepositoryImpl(exerciseDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun providesExerciseViewModel(exerciseRepository: ExerciseRepository): ExerciseViewModel{
-        return ExerciseViewModel(exerciseRepository)
-    }
 }
