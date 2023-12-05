@@ -2,6 +2,8 @@ package com.koleff.kare_android.ui.compose.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -20,20 +22,25 @@ import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 fun SetupNavGraph(
     navController: NavHostController
 ) {
+    val isNavigationInProgress = rememberSaveable  {
+        mutableStateOf(false)
+    }
+
     NavHost(
         navController = navController,
         startDestination = MainScreen.Dashboard.route
     ) {
-        composable(MainScreen.Dashboard.route) { DashboardScreen(navController) }
-        composable(MainScreen.MyWorkout.route) { MyWorkoutScreen(navController) }
-        composable(MainScreen.Workouts.route) { WorkoutsScreen(navController) }
+        composable(MainScreen.Dashboard.route) { DashboardScreen(navController, isNavigationInProgress) }
+        composable(MainScreen.MyWorkout.route) { MyWorkoutScreen(navController, isNavigationInProgress) }
+        composable(MainScreen.Workouts.route) { WorkoutsScreen(navController, isNavigationInProgress) }
         composable(MainScreen.MuscleGroup.route) { backStackEntry ->
             val muscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
 
             MuscleGroupScreen(
                 muscleGroupId = muscleGroupId,
-                navController = navController
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(MainScreen.ExerciseDetails.route) { backStackEntry ->
@@ -42,9 +49,10 @@ fun SetupNavGraph(
 
             ExerciseDetailsScreen(
                 exerciseId = exerciseId,
-                navController = navController
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress
             )
         }
-        composable(MainScreen.Settings.route) { SettingsScreen(navController) }
+        composable(MainScreen.Settings.route) { SettingsScreen(navController, isNavigationInProgress) }
     }
 }

@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.MainScreen
@@ -18,7 +19,8 @@ import com.koleff.kare_android.data.MainScreen
 @Composable
 fun Toolbar(
     navController: NavHostController,
-    title: String
+    title: String,
+    isNavigationInProgress: MutableState<Boolean>
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -39,7 +41,8 @@ fun Toolbar(
                 navController = navController,
                 screen = null, //Backstack pop
                 icon = Icons.Filled.ArrowBack,
-                label = "Go back"
+                label = "Go back",
+                isNavigationInProgress
             )
         },
         actions = {
@@ -47,7 +50,8 @@ fun Toolbar(
                 navController = navController,
                 screen = MainScreen.Settings,
                 icon = Icons.Filled.Settings,
-                label = "Settings"
+                label = "Settings",
+                isNavigationInProgress
             )
         },
         scrollBehavior = scrollBehavior
