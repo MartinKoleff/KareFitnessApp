@@ -3,7 +3,12 @@ package com.koleff.kare_android.common.di
 import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.datasource.ExerciseDataSource
+import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.remote.ExerciseApi
+import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
+import com.koleff.kare_android.domain.repository.ExerciseRepository
+import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -71,5 +76,23 @@ object AppModule {
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ExerciseApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDataSource(exerciseApi: ExerciseApi): ExerciseDataSource{
+        return ExerciseRemoteDataSource(exerciseApi) //Can swap for local data source...
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository{
+        return ExerciseRepositoryImpl(exerciseDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun providesExerciseViewModel(exerciseRepository: ExerciseRepository): ExerciseViewModel{
+        return ExerciseViewModel(exerciseRepository)
     }
 }
