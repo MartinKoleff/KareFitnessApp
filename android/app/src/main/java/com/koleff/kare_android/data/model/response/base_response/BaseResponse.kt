@@ -6,5 +6,5 @@ open class BaseResponse(
     @Json(name = "success")
     val isSuccessful: Boolean = true,
     @field:Json(name = "error")
-    val error: KareError?
+    val error: KareError? = null
 )
