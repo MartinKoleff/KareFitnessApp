@@ -16,6 +16,11 @@ fun WorkoutsScreen(navController: NavHostController, isNavigationInProgress: Mut
             .padding(innerPadding)
             .fillMaxWidth()
 
-        WorkoutSegmentButton(modifier = modifier, navController = navController, selectedOptionIndex = 1)
+        WorkoutSegmentButton(
+            modifier = modifier,
+            navController = navController,
+            selectedOptionIndex = 1,
+            isBlocked = isNavigationInProgress
+        )
     }
 }

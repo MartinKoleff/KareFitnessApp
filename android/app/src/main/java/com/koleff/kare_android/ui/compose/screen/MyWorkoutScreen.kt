@@ -10,12 +10,20 @@ import com.koleff.kare_android.ui.compose.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
 
 @Composable
-fun MyWorkoutScreen(navController: NavHostController, isNavigationInProgress: MutableState<Boolean>) {
+fun MyWorkoutScreen(
+    navController: NavHostController,
+    isNavigationInProgress: MutableState<Boolean>
+) {
     MainScreenScaffold("My workout", navController, isNavigationInProgress) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxWidth()
 
-        WorkoutSegmentButton(modifier = modifier, navController = navController, selectedOptionIndex = 0)
+        WorkoutSegmentButton(
+            modifier = modifier,
+            navController = navController,
+            selectedOptionIndex = 0,
+            isBlocked = isNavigationInProgress
+        )
     }
 }
