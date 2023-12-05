@@ -35,21 +35,7 @@ fun BottomNavigationBar(navController: NavHostController) {
                 navController = navController,
                 screen = MainScreen.MyWorkout,
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
-                label = "My Workout"
-            )
-
-            //Spacing between items
-            Spacer(
-                modifier = Modifier
-                    .weight(1f)
-                    .width(0.dp)
-            )
-
-            NavigationItem(
-                navController = navController,
-                screen = MainScreen.Workouts,
-                icon = painterResource(id = R.drawable.ic_vector_list),
-                label = "Workouts"
+                label = "Workout screen"
             )
         }
     )
