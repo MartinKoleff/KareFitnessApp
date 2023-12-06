@@ -20,3 +20,4 @@ enum class MuscleGroup(val muscleGroupId: Int) {
             values().find { it.muscleGroupId == id } ?: NONE
     }
 }
+
