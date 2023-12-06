@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from '../app/login/login.component';
 import { PostDataService } from './post-data.service';
 import { Component } from '@angular/core';
 

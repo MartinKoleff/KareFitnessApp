@@ -4,14 +4,14 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import{HttpClientModule} from '@angular/common/http';
-import { PostDataService } from './post-data.service';
+import { PostDataService } from '../services/post-data.service';
 import { LoginModule } from './login/login.module';
 import { RegisterModule } from './register/register.module';
 import { MainModule } from './main/main.module';
 import { StartupModule } from './startup/startup.module';
 import { HomeModule } from './home/home.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from './auth-interceptor.service';
+import { AuthInterceptor } from '../services/auth-interceptor.service';
 
 @NgModule({
   declarations: [

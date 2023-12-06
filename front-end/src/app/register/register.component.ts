@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
-import { PostDataService } from '../post-data.service';
-import { PostUser } from '../user.module';
+import { PostDataService } from '../../services/post-data.service';
+import { PostUser } from '../models/user.model';
 
 @Component({
   selector: 'app-register',

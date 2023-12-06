@@ -1,75 +1,23 @@
-*{
+/* *{
   outline: green 1px solid;
-}
-body{
-  width:100%;
-  height:100%;
-}
-html {
-  background-image: url('../../assets/background.png');
-  background-size:cover;
-  display:flex;
-  align-items: center;
-  justify-content: center;
-  width:100%;
-  height:100%;
-}
+} */
 .logo{
   background-image:url('../../assets/logo.png');
   background-size:cover;
-  width:10%;
+  width:5%;
 }
-.center-horizontally {
-  display: flex;
-  justify-content: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-.startupBox {
-  border:0;
-  width: 560px;
-  height: 35px;
-  background-color: #ECBDF2;
-  padding: 20px; /* padding inside the box */
-  border-radius: 10px; /*removes the edges */
-  margin-top:20px;
-}
-.startupBox a {
-  color: inherit; /* Inherit the color from the parent */
-  text-decoration: none; /* Removes the underline */
-}
-.accessText{
-  color: #6B246B;
-  font-family: 'Verdana', serif;
-  font-size:56px;
-  font-weight:bold;
-  line-height:0.6;
-  font-style: italic;
-}
-
 nav {
   border-bottom: 5px solid #6B246B;
   margin: 8px -15px;
   display:flex;
   align-items: center;
 }
-.end{
-  justify-content: end;
-}
-.start{
-  justify-content: start;
-}
-.half{
-  display:flex;
-  align-items:center;
-  width:50%;
-}
 .button{
   border:0;
   width: 190px;
   height: 35px;
   background-color: #ECBDF2;
-  padding: 20px; /* padding inside the box */
+  padding: 20px;
   border-radius: 15px;
   margin-right:15px;
 }
@@ -79,8 +27,73 @@ nav {
   font-size:30px;
   font-weight:bold;
   line-height: 0;
-  margin-top:0px; /*it works only that way call it magic */
+  margin-top:0px;
 }
-.containerHome{
-  margin-top:330px;
+.background{
+  background-image: url('../../assets/background.png');
+
+}
+.container{
+  flex-direction: column;
+  background-size:cover;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+  width:100%;
+  height:100%;
+  min-height: 100vh;
+}
+.logForm{
+  width: 100%;
+  background-color: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items:center;
+  padding:1.5rem;
+}
+button {
+  cursor: pointer;
+  border-radius: 4px;
+  font-weight: 600;
+  width: 200px;
+  transition: 0.4s;
+  font-size:24px;
+  text-align:center;
+}
+
+button:hover {
+  color: black  ;
+  box-shadow: 0 0 20px #ECBDF2;
+  background-color: #ECBDF2;
+}
+.nav-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.spacer {
+  flex-grow: 1;
+}
+.startupBox {
+  border:0;
+  width: 45%;
+  height: 10%;
+  background-color: #ECBDF2;
+  padding: 20px;
+  border-radius: 15px;
+  margin:25px;
+  text-align:center;
+}
+.startupBox a {
+  color: inherit;
+  text-decoration: none;
+}
+.accessText{
+  color: #6B246B;
+  font-family: 'Verdana', serif;
+  font-size:56px;
+  font-weight:bold;
+  line-height:0.6;
+  font-style: italic;
 }
