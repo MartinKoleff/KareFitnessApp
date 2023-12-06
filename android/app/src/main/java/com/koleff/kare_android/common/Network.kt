@@ -1,6 +1,6 @@
 package com.koleff.kare_android.common
 
-import com.koleff.kare_android.data.model.response.base_response.ServerResponseData
+import com.koleff.kare_android.data.model.wrapper.ServerResponseData
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
