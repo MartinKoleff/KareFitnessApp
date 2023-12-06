@@ -6,6 +6,7 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.remote.ExerciseApi
+import com.koleff.kare_android.data.remote.WorkoutApi
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
@@ -76,5 +77,18 @@ object AppModule {
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ExerciseApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutApi(okHttpClient: OkHttpClient, moshi: Moshi): WorkoutApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_FULL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+//            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(WorkoutApi::class.java)
     }
 }
