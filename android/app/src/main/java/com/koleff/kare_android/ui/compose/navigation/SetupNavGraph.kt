@@ -27,7 +27,7 @@ fun SetupNavGraph(
         composable(MainScreen.Dashboard.route) { DashboardScreen(navController) }
         composable(MainScreen.MyWorkout.route) { MyWorkoutScreen(navController) }
         composable(MainScreen.Workouts.route) { WorkoutsScreen(navController) }
-        composable(MainScreen.MuscleGroup.route) { backStackEntry ->
+        composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
             val muscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
 
