@@ -1,7 +1,8 @@
 package com.koleff.kare_android.data.model.dto
 
-import com.koleff.kare_android.data.model.response.GetExercisesResponse
-
 data class ExerciseData(val exerciseDto: ExerciseDto){
-
-} //TODO: wire with ExerciseDto
+    val name = exerciseDto.name
+    val muscleGroup = exerciseDto.muscleGroup
+    val machineType = exerciseDto.machineType
+    val snapshot = exerciseDto.snapshot
+}

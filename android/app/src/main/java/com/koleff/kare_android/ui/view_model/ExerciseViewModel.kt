@@ -26,9 +26,9 @@ class ExerciseViewModel @Inject constructor(
     val state: StateFlow<ExerciseState>
         get() = _state
 
-    public fun getExercises() {
+    public fun getExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseRepository.getExercises().collect { apiResult ->
+            exerciseRepository.getExercises(muscleGroupId).collect { apiResult ->
                 when (apiResult) {
                     is ResultWrapper.ApiError -> {
                         _state.value = ExerciseState(
@@ -46,7 +46,7 @@ class ExerciseViewModel @Inject constructor(
 
                         _state.value = ExerciseState(
                             isSuccessful = true,
-                            exerciseList = apiResult.data.exercisesList
+                            exerciseList = apiResult.data.exercises
                                 .map(ExerciseDto::toExerciseData)
                         )
                     }
