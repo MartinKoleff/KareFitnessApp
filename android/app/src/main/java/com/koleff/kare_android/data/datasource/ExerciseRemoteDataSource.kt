@@ -7,13 +7,11 @@ import com.koleff.kare_android.data.model.request.GetExercisesRequest
 import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.remote.ExerciseApi
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-@AndroidEntryPoint
 class ExerciseRemoteDataSource @Inject constructor(
     private val exerciseApi: ExerciseApi,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
