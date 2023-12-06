@@ -1,16 +1,39 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import{HttpClientModule} from '@angular/common/http';
+import { PostDataService } from '../services/post-data.service';
+import { LoginModule } from './login/login.module';
+import { RegisterModule } from './register/register.module';
+import { MainModule } from './main/main.module';
+import { StartupModule } from './startup/startup.module';
+import { HomeModule } from './home/home.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from '../services/auth-interceptor.service';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    LoginModule,
+    RegisterModule,
+    MainModule,
+    StartupModule,
+    HomeModule
+
   ],
-  providers: [],
-  bootstrap: [AppComponent]
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    PostDataService
+  ],
+  bootstrap: [AppComponent],
 })
 export class AppModule { }
