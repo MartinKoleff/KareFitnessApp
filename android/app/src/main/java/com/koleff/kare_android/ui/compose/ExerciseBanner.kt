@@ -169,19 +169,54 @@ fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> U
             modifier = Modifier
                 .fillMaxHeight()
                 .width(screenWidth / 2),
-            contentAlignment = Alignment.CenterStart
         ) {
-            Text( //TODO: and cooler font
-                modifier = Modifier.padding(16.dp),
-                text = exercise.name,
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.Center,
+            ) {
+
+                //Exercise title
+                Text( //TODO: and cooler font
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = exercise.name,
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                //Exercise sub-title (description)
+                Text( //TODO: and cooler font
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = "Description",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
+                    ),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         }
     }
 }
