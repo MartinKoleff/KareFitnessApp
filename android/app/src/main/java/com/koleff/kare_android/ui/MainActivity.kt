@@ -9,8 +9,10 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
 import com.koleff.kare_android.ui.theme.KareTheme
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @Inject
