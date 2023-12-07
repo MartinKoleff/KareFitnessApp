@@ -24,7 +24,7 @@ h1, label, input, button{
   font-size:1.2rem;
 }
 .background{
-  background-image: url('../../assets/background.png');
+  background-image: url('../../assets/Images/background.png');
   background-size:cover;
   display:flex;
   align-items: center;

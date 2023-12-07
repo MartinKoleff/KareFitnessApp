@@ -12,10 +12,27 @@ import { StartupModule } from './startup/startup.module';
 import { HomeModule } from './home/home.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from '../services/auth-interceptor.service';
+import { CreateworkoutModule } from './createworkout/createworkout.module';
+import { BicepsComponent } from './exercise-components/biceps/biceps.component';
+import { BackComponent } from './exercise-components/back/back.component';
+import { TricepsComponent } from './exercise-components/triceps/triceps.component';
+import { LegsComponent } from './exercise-components/legs/legs.component';
+import { ShouldersComponent } from './exercise-components/shoulders/shoulders.component';
+import { ChestComponent } from './exercise-components/chest/chest.component';
+import { CardioComponent } from './exercise-components/cardio/cardio.component';
+import { AbsComponent } from './exercise-components/abs/abs.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    BicepsComponent,
+    BackComponent,
+    TricepsComponent,
+    LegsComponent,
+    ShouldersComponent,
+    ChestComponent,
+    CardioComponent,
+    AbsComponent,
   ],
   imports: [
     BrowserModule,
@@ -27,7 +44,8 @@ import { AuthInterceptor } from '../services/auth-interceptor.service';
     RegisterModule,
     MainModule,
     StartupModule,
-    HomeModule
+    HomeModule,
+    CreateworkoutModule
 
   ],
   providers: [

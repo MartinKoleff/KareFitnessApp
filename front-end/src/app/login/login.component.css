@@ -89,7 +89,7 @@ button:hover {
   font-style:italic;
 }
 .background{
-  background-image: url('../../assets/background.png');
+  background-image: url('../../assets/Images/background.png');
   background-size:cover;
   display:flex;
   align-items: center;
