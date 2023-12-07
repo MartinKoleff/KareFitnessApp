@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -228,6 +230,27 @@ fun ExerciseBannerV2(
     }
 }
 
+@Composable
+fun ExerciseList(modifier: Modifier, exerciseList: List<ExerciseData>) {
+    LazyColumn(modifier = modifier) {
+        items(exerciseList) { exercise ->
+            ExerciseBannerV2(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                exercise = exercise,
+            ) {
+                openExerciseDetailsScreen(exercise)
+            }
+        }
+    }
+}
+
+fun openExerciseDetailsScreen(exercise: ExerciseData) {
+    //TODO: Navigate to exercise details screen...
+    Log.d("Exercise Details", "Selected exercise with id ${exercise.name}")
+}
+
 
 @Preview
 @Composable
@@ -267,4 +290,26 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
                 .height(200.dp), exercise, {}
         )
     }
+}
+
+@Preview
+@Composable
+fun ExerciseListPreview() {
+    val n = 10
+    val exercisesList: MutableList<ExerciseData> = mutableListOf()
+
+    repeat(n) { index ->
+        val currentExercise = ExerciseData(
+            ExerciseDto(
+                -1,
+                "BARBELL BENCH PRESS $index",
+                MuscleGroup.CHEST,
+                MachineType.BARBELL,
+                ""
+            )
+        )
+        exercisesList.add(currentExercise)
+    }
+
+    ExerciseList(modifier = Modifier.fillMaxSize(), exercisesList)
 }
