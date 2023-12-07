@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -107,7 +109,8 @@ fun ExerciseBannerV1(
 fun ExerciseBannerV2(
     modifier: Modifier,
     exercise: ExerciseData,
-    onClick: () -> Unit
+    exerciseImage: Int = R.drawable.ic_chest,
+    onClick: (ExerciseData) -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
@@ -122,7 +125,7 @@ fun ExerciseBannerV2(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
-        onClick = onClick
+        onClick = { onClick.invoke(exercise) }
     ) {
         Box(modifier = modifier.fillMaxSize()) {
 
@@ -132,7 +135,7 @@ fun ExerciseBannerV2(
                     .fillMaxHeight()
                     .width(screenWidth / 2)
                     .align(Alignment.TopEnd),
-                painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
+                painter = painterResource(id = exerciseImage), //TODO: change to url
                 contentDescription = exercise.name,
                 contentScale = ContentScale.Crop
             )
@@ -166,7 +169,6 @@ fun ExerciseBannerV2(
                         )
                     }
             )
-
 
             //Exercise Title TextBox
             Box(
@@ -229,7 +231,7 @@ fun ExerciseBannerV2(
 
 @Preview
 @Composable
-fun SimpleComposablePreview() {
+fun ExerciseBannerV1AndV2ComparingPreview() {
     val exercise = ExerciseData(
         ExerciseDto(
             -1,
@@ -246,9 +248,17 @@ fun SimpleComposablePreview() {
             .padding(16.dp)
     ) {
         ExerciseBannerV2(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp), exercise, {}
+                .height(200.dp),
+            exercise = exercise,
+            onClick = {}
+        )
+
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
         )
 
         ExerciseBannerV1(
