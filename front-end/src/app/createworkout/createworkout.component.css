@@ -81,7 +81,8 @@ button:hover {
   padding: 20px;
   border-radius: 15px;
   margin:25px;
-  text-align:center;
+  display:flex;
+  align-items: center;
 }
 .startupBox a {
   color: inherit;
@@ -153,4 +154,19 @@ img{
   font-weight:bold;
   line-height:1;
   font-style: italic;
+}
+input{
+  border:0;
+  width: 100%;
+  height:3rem;
+  background-color: white;
+  border-radius: 15px;
+  margin:5px;
+  text-align:center;
+
+  color: #6B246B;
+  font-family: 'Verdana', serif;
+  font-size:30px;
+  font-weight:bold;
+  line-height:1;
 }

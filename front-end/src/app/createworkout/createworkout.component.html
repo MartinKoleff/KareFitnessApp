@@ -11,9 +11,9 @@
   </nav>
   <div class="container">
     <div class="logForm">
-        <div class="startupBox">
-            <p class="accessText">Select a muscle group</p>
-        </div>
+      <div class="startupBox">
+        <input placeholder="Name your workout" [(ngModel)]="workout.name" name="workout.name" (input)="updateSubmitButtonState()">
+      </div>
         <div class="group-container">
           <div class="panel" (click)="toggleBicepsExercise()">
               <img src="../../assets/Images/biceps.jpg">
@@ -49,7 +49,11 @@
             </div>
           </div>
           <div *ngIf="showBicepsExercise">
-            <app-biceps [bicepsExercises]="biceps.exercises" (exerciseSelected)="onExerciseSelected($event)"></app-biceps>
+            <app-biceps
+              [bicepsExercises]="biceps.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"
+            ></app-biceps>
           </div>
           <div *ngIf="showTricepsExercise">
             <app-triceps></app-triceps>
@@ -85,6 +89,5 @@
             class="submit-box">
               <button class="submit-text" (click)="submitWorkout()">Submit</button>
         </div>
-      </div>
   </div>
 </div>

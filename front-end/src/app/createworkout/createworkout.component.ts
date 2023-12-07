@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Exercises, MuscleGroup, biceps } from '../models/exercise.model';
+import { Exercises, MuscleGroup, Workout, biceps, } from '../models/exercise.model';
 
 @Component({
   selector: 'app-createworkout',
@@ -41,17 +41,39 @@ export class CreateworkoutComponent {
     this.showAbsExercise = !this.showAbsExercise;
   }
 
+  isNameProvided: boolean = false;
   selectedExercise: Exercises | null = null;
   bicepsExercises: Exercises[] = [];
+  selectedExercises: Exercises[] = [];
   biceps: MuscleGroup = biceps;
+  workout: Workout = {name: ''};
+
   onExerciseSelected(exercise: Exercises) {
     this.selectedExercise = exercise;
+    if (this.selectedExercises.includes(exercise)) {
+      this.selectedExercises = this.selectedExercises.filter(selected => selected !== exercise);
+      alert('Exercise removed from selection');
+    }
+    else{
+      this.selectedExercises.push(exercise);
+    }
   }
-
   submitWorkout() {
-    // Access this.selectedExercise to get the selected exercise
-    console.log('Selected Exercise:', this.selectedExercise);
-    // Add logic to handle the selected exercise as needed
+    if (this.selectedExercises.length === 0) {
+      alert('Please select an exercise');
+    } else if (!this.isNameProvided) {
+      alert('Please choose a name for your workout');
+    } else if( this.selectedExercise?.reps==undefined){
+      alert('enter reps please')
+    }
+    else {
+      console.log(this.selectedExercises);
+    }
   }
-
+  ngOnInit() {
+    this.updateSubmitButtonState();
+  }
+  updateSubmitButtonState() {
+    this.isNameProvided = this.workout.name != null && this.workout.name.trim() !== '';
+  }
 }

@@ -5,11 +5,10 @@
       <option *ngFor="let exercise of bicepsExercises" [ngValue]="exercise">{{ exercise.name }}</option>
     </select>
   </div>
+  <input type="number" placeholder="reps" [(ngModel)]="workoutReps" name="reps" (keyup.Enter)="addExercise()">
 
-  <div *ngIf="selectedExercise">
+  <div *ngFor="let exercise of selectedExercises">
     <!-- Display details of the selected exercise -->
-    <h3>{{ selectedExercise.name }}</h3>
-    <p>{{ selectedExercise.description }}</p>
-    <p>Type: {{ selectedExercise.type }}</p>
+    <h3>{{ exercise.name + " for " + exercise.reps + " reps" }}</h3>
   </div>
 </div>

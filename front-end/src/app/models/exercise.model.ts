@@ -1,7 +1,12 @@
-export interface Exercises{
+export interface Workout{
   name:string;
+}
+export interface Exercises{
+  name:string | null;
   description:string;
   type:string;
+  sets?:string;
+  reps?:string;
 }
 export interface MuscleGroup{
   name:string;
