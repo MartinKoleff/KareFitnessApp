@@ -1,6 +1,12 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -10,6 +16,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -41,23 +48,42 @@ fun MuscleGroupScreen(
     val exerciseListState by exerciseListViewModel.state.collectAsState()
 
     MainScreenScaffold(muscleGroup.name, navController, isNavigationInProgress) { innerPadding ->
-        val modifier = Modifier
-            .padding(innerPadding)
+        val buttonModifier = Modifier
             .fillMaxWidth()
+            .padding(
+                PaddingValues(
+                    top = innerPadding.calculateTopPadding(),
+                    start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                    end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    bottom = 0.dp
+                )
+            )
 
-        //Filter buttons
-        MachineFilterSegmentButton(modifier = modifier, selectedOptionIndex = -1)
+        val contentModifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = 8.dp,
+                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                bottom = 8.dp + innerPadding.calculateBottomPadding()
+            )
 
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(16.dp)
-        )
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            //Filter buttons
+            MachineFilterSegmentButton(modifier = buttonModifier, selectedOptionIndex = -1)
 
-        if(exerciseListState.isLoading){
-            LoadingWheel(modifier = Modifier.size(40.dp))
-        }else{
-            ExerciseList(modifier = modifier, exerciseList = exerciseListState.exerciseList)
+            if (exerciseListState.isLoading) {
+                LoadingWheel(
+                    modifier = contentModifier
+                )
+            } else {
+                ExerciseList(
+                    modifier = contentModifier,
+                    exerciseList = exerciseListState.exerciseList
+                )
+            }
         }
     }
 }
