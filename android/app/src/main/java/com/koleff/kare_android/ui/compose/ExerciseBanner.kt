@@ -1,7 +1,5 @@
 package com.koleff.kare_android.ui.compose
 
-import android.graphics.Paint
-import android.text.Layout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,13 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
@@ -25,20 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,7 +41,11 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Composable
-fun ExerciseBanner(modifier: Modifier, exercise: ExerciseData, onClick: () -> Unit) {
+fun ExerciseBannerV1(
+    modifier: Modifier,
+    exercise: ExerciseData,
+    onClick: () -> Unit
+) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
@@ -110,21 +104,27 @@ fun ExerciseBanner(modifier: Modifier, exercise: ExerciseData, onClick: () -> Un
 }
 
 @Composable
-fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> Unit) {
+fun ExerciseBannerV2(
+    modifier: Modifier,
+    exercise: ExerciseData,
+    onClick: () -> Unit
+) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
     Card(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
         onClick = onClick
     ) {
-        Box(modifier.fillMaxSize()) {
+        Box(modifier = modifier.fillMaxSize()) {
 
             //Exercise Image
             Image(
@@ -239,9 +239,22 @@ fun SimpleComposablePreview() {
             ""
         )
     )
-    ExerciseBanner2(
+
+    Column(
         Modifier
-            .fillMaxWidth()
-            .height(200.dp), exercise, {}
-    )
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        ExerciseBannerV2(
+            Modifier
+                .fillMaxWidth()
+                .height(200.dp), exercise, {}
+        )
+
+        ExerciseBannerV1(
+            Modifier
+                .fillMaxWidth()
+                .height(200.dp), exercise, {}
+        )
+    }
 }
