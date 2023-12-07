@@ -15,12 +15,14 @@ import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
+import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    exerciseViewModelFactory: ExerciseViewModel.Factory
 ) {
     val isNavigationInProgress = rememberSaveable  {
         mutableStateOf(false)
@@ -40,7 +42,8 @@ fun SetupNavGraph(
             MuscleGroupScreen(
                 muscleGroupId = muscleGroupId,
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress
+                isNavigationInProgress = isNavigationInProgress,
+                exerciseViewModelFactory = exerciseViewModelFactory
             )
         }
         composable(MainScreen.ExerciseDetails.route) { backStackEntry ->
