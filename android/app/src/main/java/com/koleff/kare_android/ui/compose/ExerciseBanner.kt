@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScopeInstance.align
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -118,110 +117,115 @@ fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> U
     val screenWidth = configuration.screenWidthDp.dp
 
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
         onClick = onClick
     ) {
-        //Exercise Image
-        Image(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(screenWidth / 2)
-                .align(Alignment.End),
-            painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
-            contentDescription = exercise.name,
-            contentScale = ContentScale.Crop
-        )
+        Box(modifier.fillMaxSize()) {
 
-        //Parallax effect overflowing into exercise snapshot
-        Image(
-            painterResource(R.drawable.ic_exercise_banner_effect),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .align(Alignment.Start)
-                .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
-                .drawWithContent {
+            //Exercise Image
+            Image(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(screenWidth / 2)
+                    .align(Alignment.TopEnd),
+                painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
+                contentDescription = exercise.name,
+                contentScale = ContentScale.Crop
+            )
 
-                    //Fill 5/8 of the screen with effect gradient
-                    val colors = listOf(
-                        Color.Black,
-                        Color.Black,
-                        Color.Black,
-                        Color.Black,
-                        Color.Black,
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Transparent
-                    )
-                    drawContent()
-                    drawRect(
-                        brush = Brush.horizontalGradient(colors),
-                        blendMode = BlendMode.DstIn
-                    )
-                }
-        )
-
-        //Exercise Title TextBox
-        Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(screenWidth / 2),
-        ) {
-            Column(
+            //Parallax effect overflowing into exercise snapshot
+            Image(
+                painter = painterResource(R.drawable.ic_exercise_banner_effect),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(end = 8.dp),
-                verticalArrangement = Arrangement.Center,
+                    .align(Alignment.TopStart)
+                    .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
+                    .drawWithContent {
+
+                        //Fill 5/8 of the screen with effect gradient
+                        val colors = listOf(
+                            Color.Black,
+                            Color.Black,
+                            Color.Black,
+                            Color.Black,
+                            Color.Black,
+                            Color.Transparent,
+                            Color.Transparent,
+                            Color.Transparent
+                        )
+                        drawContent()
+                        drawRect(
+                            brush = Brush.horizontalGradient(colors),
+                            blendMode = BlendMode.DstIn
+                        )
+                    }
+            )
+
+
+            //Exercise Title TextBox
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(screenWidth / 2),
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(end = 8.dp),
+                    verticalArrangement = Arrangement.Center,
+                ) {
 
-                //Exercise title
-                Text( //TODO: and cooler font
-                    modifier = Modifier.padding(
-                        PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 16.dp,
-                            bottom = 0.dp
-                        )
-                    ),
-                    text = exercise.name,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    //Exercise title
+                    Text( //TODO: and cooler font
+                        modifier = Modifier.padding(
+                            PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 16.dp,
+                                bottom = 0.dp
+                            )
+                        ),
+                        text = exercise.name,
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
 
-                //Exercise sub-title (description)
-                Text( //TODO: and cooler font
-                    modifier = Modifier.padding(
-                        PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 8.dp,
-                            bottom = 0.dp
-                        )
-                    ),
-                    text = "Description",
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                    //Exercise sub-title (description)
+                    Text( //TODO: and cooler font
+                        modifier = Modifier.padding(
+                            PaddingValues(
+                                start = 16.dp,
+                                end = 16.dp,
+                                top = 8.dp,
+                                bottom = 0.dp
+                            )
+                        ),
+                        text = "Description",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 12.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
             }
         }
     }
 }
+
 
 @Preview
 @Composable
