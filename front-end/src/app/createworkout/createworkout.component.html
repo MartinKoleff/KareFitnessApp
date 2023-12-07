@@ -15,57 +15,75 @@
             <p class="accessText">Select a muscle group</p>
         </div>
         <div class="group-container">
-            <div class="panel">
-              <a routerLink="/login">
+          <div class="panel" (click)="toggleBicepsExercise()">
               <img src="../../assets/Images/biceps.jpg">
               <p class="category-text">biceps</p>
-              </a>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleTricepsExercise()">
               <img src="../../assets/Images/triceps.jpg">
               <p class="category-text">triceps</p>
-              </a>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleLegsExercise()">
               <img src="../../assets/Images/legs.jpg">
               <p class="category-text">legs</p>
-              </a>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleBackExercise()">
               <img src="../../assets/Images/back.jpg">
               <p class="category-text">back</p>
-              </a>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleShouldersExercise()">
               <img src="../../assets/Images/shoulder.jpg">
-              <p class="category-text">shoulder</p>
-              </a>
+              <p class="category-text">shoulders</p>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleChestExercise()">
               <img src="../../assets/Images/chest.jpg">
               <p class="category-text">chest</p>
-              </a>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleCardioExercise()">
               <img src="../../assets/Images/cardio.jpg">
               <p class="category-text">cardio</p>
-              </a>
             </div>
-            <div class="panel">
-              <a routerLink="/login">
+            <div class="panel" (click)="toggleAbsExercise()">
               <img src="../../assets/Images/abs.jpg">
               <p class="category-text">abs</p>
-              </a>
             </div>
           </div>
-          <div class="submit-box">
-            <p class="submit-text">Submit</p>
+          <div *ngIf="showBicepsExercise">
+            <app-biceps></app-biceps>
+          </div>
+          <div *ngIf="showTricepsExercise">
+            <app-triceps></app-triceps>
+          </div>
+          <div *ngIf="showLegsExercise">
+            <app-legs></app-legs>
+          </div>
+          <div *ngIf="showBackExercise">
+            <app-back></app-back>
+          </div>
+          <div *ngIf="showShouldersExercise">
+            <app-shoulders></app-shoulders>
+          </div>
+          <div *ngIf="showChestExercise">
+            <app-chest></app-chest>
+          </div>
+          <div *ngIf="showCardioExercise">
+            <app-cardio></app-cardio>
+          </div>
+          <div *ngIf="showAbsExercise">
+            <app-abs></app-abs>
+          </div>
+          <div *ngIf="
+            showAbsExercise ||
+            showBackExercise ||
+            showBicepsExercise ||
+            showCardioExercise ||
+            showChestExercise ||
+            showLegsExercise ||
+            showShouldersExercise ||
+            showShouldersExercise ||
+            showTricepsExercise"
+            class="submit-box">
+              <p class="submit-text">Submit</p>
         </div>
       </div>
   </div>
