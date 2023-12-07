@@ -104,14 +104,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    //    @ViewModelScoped
     fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
         return ExerciseRepositoryImpl(exerciseDataSource)
-    }
-
-    @Provides
-    fun providesExerciseViewModel(exerciseRepository: ExerciseRepository): ExerciseViewModel {
-        return ExerciseViewModel(exerciseRepository)
     }
 
     @Provides
@@ -122,13 +116,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    //    @ViewModelScoped
     fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
         return WorkoutRepositoryImpl(workoutDataSource)
     }
-
-//    @Provides
-//    fun providesWorkoutViewModel(workoutRepository: WorkoutRepository): WorkoutViewModel {
-//        return WorkoutViewModel(workoutRepository)
-//    }
 }
