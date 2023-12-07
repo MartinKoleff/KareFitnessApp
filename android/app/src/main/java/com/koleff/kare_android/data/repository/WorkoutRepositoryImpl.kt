@@ -1,0 +1,40 @@
+package com.koleff.kare_android.data.repository
+
+import com.koleff.kare_android.data.datasource.WorkoutDataSource
+import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
+import com.koleff.kare_android.data.model.wrapper.GetAllWorkoutsWrapper
+import com.koleff.kare_android.data.model.wrapper.GetWorkoutDetailsWrapper
+import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
+import com.koleff.kare_android.data.model.wrapper.ServerResponseData
+import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.repository.WorkoutRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class WorkoutRepositoryImpl @Inject constructor(
+    private val workoutDataSource: WorkoutDataSource
+) : WorkoutRepository {
+    override suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.selectWorkout(workoutId)
+    }
+
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> {
+        return workoutDataSource.getSelectedWorkout()
+    }
+
+    override suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>> {
+        return workoutDataSource.getAllWorkouts()
+    }
+
+    override suspend fun getWorkoutDetails(workoutId: String): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
+        return workoutDataSource.getWorkoutDetails(workoutId)
+    }
+
+    override suspend fun deleteWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.deleteWorkout(workoutId)
+    }
+
+    override suspend fun saveWorkout(workout: SaveWorkoutDto): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.saveWorkout(workout)
+    }
+}

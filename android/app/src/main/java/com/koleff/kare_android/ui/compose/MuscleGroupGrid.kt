@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 
 @Composable
 fun ImageCard(
@@ -97,7 +98,7 @@ fun ImageCard(
 fun MuscleGroupGrid(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    muscleGroupList: List<MuscleGroup>
+    muscleGroupList: List<MuscleGroupUI>
 ) {
     LazyVerticalStaggeredGrid(
         modifier = modifier,
@@ -132,5 +133,5 @@ fun MuscleGroupGrid(
 }
 
 fun openMuscleGroupScreen(currentMuscleGroupId: Int, navController: NavHostController) {
-    navController.navigate(MainScreen.MuscleGroup.createRoute(currentMuscleGroupId))
+    navController.navigate(MainScreen.MuscleGroupExercisesList.createRoute(currentMuscleGroupId))
 }

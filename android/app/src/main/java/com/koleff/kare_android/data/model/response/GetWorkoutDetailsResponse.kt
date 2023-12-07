@@ -1,12 +1,11 @@
 package com.koleff.kare_android.data.model.response
 
-import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.squareup.moshi.Json
 
-data class GetExercisesResponse(
-//    @Json(name = "pagination")
-//    val paginationData: PaginationDataDto,
+data class GetWorkoutDetailsResponse(
     @Json(name = "data")
-    val exercises: List<ExerciseDto>
+    val workoutDetails: WorkoutDetailsDto
 ) : BaseResponse()
