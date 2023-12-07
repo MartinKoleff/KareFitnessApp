@@ -5,12 +5,17 @@ import android.text.Layout
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -137,10 +142,10 @@ fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> U
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.TopStart)
-                .graphicsLayer { alpha = 0.99f } //TODO: add opacity / 0.66f alpha works
+                .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
                 .drawWithContent {
 
-                    //Fill 3/5 of the screen with effect gradient
+                    //Fill 5/8 of the screen with effect gradient
                     val colors = listOf(
                         Color.Black,
                         Color.Black,
@@ -156,35 +161,6 @@ fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> U
                         brush = Brush.horizontalGradient(colors),
                         blendMode = BlendMode.DstIn
                     )
-                    //Text inside canvas drawing
-                    //   drawIntoCanvas { canvas ->
-                    //                        val textPaint = android.text
-                    //                            .TextPaint()
-                    //                            .apply {
-                    //                                color = android.graphics.Color.RED
-                    //                                textSize = 20.sp.toPx()
-                    //                                textAlign = Paint.Align.CENTER
-                    //                            }
-                    //
-                    //
-                    //                        val textLayout = android.text.StaticLayout(
-                    //                            exercise.name,
-                    //                            textPaint,
-                    //                            canvas.nativeCanvas.width,
-                    //                            Layout.Alignment.ALIGN_CENTER,
-                    //                            1f,
-                    //                            0f,
-                    //                            false
-                    //                        )
-                    //
-                    //                        // Adjust the position as needed
-                    //                        canvas.nativeCanvas.drawText(
-                    //                            exercise.name,
-                    //                            center.x,
-                    //                            center.y + 200.dp.toPx(),
-                    //                            textPaint
-                    //                        )
-                    //                    }
                 }
         )
 
