@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScopeInstance.align
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +18,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -113,22 +117,20 @@ fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> U
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    Box(
-        modifier = modifier
-            .clickable { onClick.invoke() }
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black)
-                )
-            ),
+    Card(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(15.dp),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 5.dp
+        ),
+        onClick = onClick
     ) {
-
         //Exercise Image
         Image(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(screenWidth / 2)
-                .align(Alignment.TopEnd),
+                .align(Alignment.End),
             painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
             contentDescription = exercise.name,
             contentScale = ContentScale.Crop
@@ -141,7 +143,7 @@ fun ExerciseBanner2(modifier: Modifier, exercise: ExerciseData, onClick: () -> U
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
-                .align(Alignment.TopStart)
+                .align(Alignment.Start)
                 .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
                 .drawWithContent {
 
