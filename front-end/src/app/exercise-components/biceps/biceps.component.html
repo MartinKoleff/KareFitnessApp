@@ -1,1 +1,15 @@
-<p>biceps works!</p>
+<div *ngIf="bicepsExercises.length > 0">
+  <div>
+    <label for="bicepsExercise">Select Biceps Exercise:</label>
+    <select id="bicepsExercise" [(ngModel)]="selectedExercise" (change)="selectExercise(selectedExercise)">
+      <option *ngFor="let exercise of bicepsExercises" [ngValue]="exercise">{{ exercise.name }}</option>
+    </select>
+  </div>
+
+  <div *ngIf="selectedExercise">
+    <!-- Display details of the selected exercise -->
+    <h3>{{ selectedExercise.name }}</h3>
+    <p>{{ selectedExercise.description }}</p>
+    <p>Type: {{ selectedExercise.type }}</p>
+  </div>
+</div>

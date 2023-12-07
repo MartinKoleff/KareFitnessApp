@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Exercises, MuscleGroup, biceps } from '../models/exercise.model';
 
 @Component({
   selector: 'app-createworkout',
@@ -39,7 +40,18 @@ export class CreateworkoutComponent {
   toggleAbsExercise() {
     this.showAbsExercise = !this.showAbsExercise;
   }
-  submitWorkout(){
 
+  selectedExercise: Exercises | null = null;
+  bicepsExercises: Exercises[] = [];
+  biceps: MuscleGroup = biceps;
+  onExerciseSelected(exercise: Exercises) {
+    this.selectedExercise = exercise;
   }
+
+  submitWorkout() {
+    // Access this.selectedExercise to get the selected exercise
+    console.log('Selected Exercise:', this.selectedExercise);
+    // Add logic to handle the selected exercise as needed
+  }
+
 }
