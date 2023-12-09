@@ -17,13 +17,13 @@ import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -114,8 +114,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutDataSource(workoutApi: WorkoutApi): WorkoutDataSource {
-        return WorkoutRemoteDataSource(workoutApi) //Can swap for local data source...
+    fun provideWorkoutDataSource(workoutApi: WorkoutApi, dispatcher: CoroutineDispatcher): WorkoutDataSource {
+        return WorkoutRemoteDataSource(workoutApi, dispatcher) //Can swap for local data source...
     }
 
     @Provides
