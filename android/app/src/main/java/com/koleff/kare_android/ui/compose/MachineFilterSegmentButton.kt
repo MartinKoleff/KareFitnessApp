@@ -24,7 +24,7 @@ fun MachineFilterSegmentButton(
     exerciseListViewModel: ExerciseViewModel
 ) {
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
-    val options = listOf("Dumbbell", "Barbell", "Machine")
+    val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
 
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
@@ -33,7 +33,7 @@ fun MachineFilterSegmentButton(
                 onClick = {
                     selectedIndex = if (selectedIndex == index) {
                         -1 //Deselect filters -> no filter
-                    }else {
+                    } else {
                         index
                     }
 
@@ -51,6 +51,9 @@ fun MachineFilterSegmentButton(
                             exerciseListViewModel.onEvent(OnFilterEvent.MachineFilter)
                         }
 
+                        3 -> {
+                            exerciseListViewModel.onEvent(OnFilterEvent.CalisthenicsFilter)
+                        }
                         -1 -> { //Disabled filter -> show all
                             exerciseListViewModel.onEvent(OnFilterEvent.NoFilter)
                         }

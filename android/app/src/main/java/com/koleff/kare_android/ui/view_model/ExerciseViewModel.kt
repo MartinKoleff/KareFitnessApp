@@ -64,6 +64,14 @@ class ExerciseViewModel @AssistedInject constructor(
                 )
             }
 
+            OnFilterEvent.CalisthenicsFilter -> {
+                _state.value = state.value.copy(
+                    exerciseList = originalExerciseList.filter {
+                        it.machineType == MachineType.CALISTHENICS
+                    }
+                )
+            }
+
             OnFilterEvent.NoFilter -> {
                 _state.value = state.value.copy(
                     exerciseList = originalExerciseList
