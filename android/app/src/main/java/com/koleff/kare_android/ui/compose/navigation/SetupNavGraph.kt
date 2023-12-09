@@ -17,6 +17,7 @@ import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
+import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 
 @ExperimentalComposeUiApi
@@ -24,7 +25,8 @@ import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
-    exerciseViewModelFactory: ExerciseViewModel.Factory
+    exerciseViewModelFactory: ExerciseViewModel.Factory,
+    exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory
 ) {
     val isNavigationInProgress = rememberSaveable  {
         mutableStateOf(false)
@@ -37,10 +39,6 @@ fun SetupNavGraph(
         startDestination = MainScreen.Dashboard.route
     ) {
         composable(MainScreen.Dashboard.route) { backStackEntry ->
-//            val dashboardViewModel: DashboardViewModel = backStackEntry.sharedViewModel(
-//                navController = navController
-//            )
-
             DashboardScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
@@ -52,10 +50,6 @@ fun SetupNavGraph(
         composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
             val muscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
-
-//            val dashboardViewModel: DashboardViewModel = backStackEntry.sharedViewModel(
-//                navController = navController
-//            )
 
             MuscleGroupScreen(
                 muscleGroupId = muscleGroupId,
@@ -72,7 +66,8 @@ fun SetupNavGraph(
             ExerciseDetailsScreen(
                 exerciseId = exerciseId,
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress
+                isNavigationInProgress = isNavigationInProgress,
+                exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory
             )
         }
         composable(MainScreen.Settings.route) { SettingsScreen(navController, isNavigationInProgress) }
