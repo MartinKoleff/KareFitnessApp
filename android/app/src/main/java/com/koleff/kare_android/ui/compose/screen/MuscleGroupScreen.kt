@@ -67,7 +67,12 @@ fun MuscleGroupScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             //Filter buttons
-            MachineFilterSegmentButton(modifier = buttonModifier, selectedOptionIndex = -1, isDisabled = exerciseListState.isLoading)
+            MachineFilterSegmentButton(
+                modifier = buttonModifier,
+                selectedOptionIndex = -1,
+                isDisabled = exerciseListState.isLoading,
+                exerciseListViewModel = exerciseListViewModel
+            )
 
             if (exerciseListState.isLoading) {
                 LoadingWheel(

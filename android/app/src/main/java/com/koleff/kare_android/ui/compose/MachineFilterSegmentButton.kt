@@ -11,6 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.koleff.kare_android.data.model.event.OnFilterEvent
+import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -18,7 +20,8 @@ import androidx.compose.ui.Modifier
 fun MachineFilterSegmentButton(
     modifier: Modifier = Modifier,
     selectedOptionIndex: Int = -1,
-    isDisabled: Boolean
+    isDisabled: Boolean,
+    exerciseListViewModel: ExerciseViewModel
 ) {
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine")
@@ -38,15 +41,19 @@ fun MachineFilterSegmentButton(
                     //Filter
                     when (selectedIndex) {
                         0 -> {
-
+                            exerciseListViewModel.onEvent(OnFilterEvent.DumbbellFilter)
                         }
 
                         1 -> {
-
+                            exerciseListViewModel.onEvent(OnFilterEvent.BarbellFilter)
                         }
 
                         2 -> {
+                            exerciseListViewModel.onEvent(OnFilterEvent.MachineFilter)
+                        }
 
+                        -1 -> { //Disabled filter -> show all
+                            exerciseListViewModel.onEvent(OnFilterEvent.NoFilter)
                         }
                     }
                 },
