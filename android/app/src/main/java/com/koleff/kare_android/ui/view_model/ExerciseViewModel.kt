@@ -4,15 +4,17 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.data.model.event.OnFilterEvent
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.ui.state.ExerciseState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,11 +31,47 @@ class ExerciseViewModel @AssistedInject constructor(
     val state: StateFlow<ExerciseState>
         get() = _state
 
+    private var originalExerciseList: List<ExerciseData> = mutableListOf()
+
     init {
         getExercises(muscleGroupId)
     }
 
-     private fun getExercises(muscleGroupId: Int) {
+    fun onEvent(event: OnFilterEvent) {
+        when (event) {
+            OnFilterEvent.DumbbellFilter -> {
+                _state.value = state.value.copy(
+                    exerciseList = originalExerciseList.filter {
+                        it.machineType == MachineType.DUMBBELL
+                    }
+                )
+            }
+
+            OnFilterEvent.BarbellFilter -> {
+                _state.value = state.value.copy(
+                    exerciseList = originalExerciseList.filter {
+                        it.machineType == MachineType.BARBELL
+                    }
+                )
+            }
+
+            OnFilterEvent.MachineFilter -> {
+                _state.value = state.value.copy(
+                    exerciseList = originalExerciseList.filter {
+                        it.machineType == MachineType.MACHINE
+                    }
+                )
+            }
+
+            OnFilterEvent.NoFilter -> {
+                _state.value = state.value.copy(
+                    exerciseList = originalExerciseList
+                )
+            }
+        }
+    }
+
+    private fun getExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
             exerciseRepository.getExercises(muscleGroupId).collect { apiResult ->
                 when (apiResult) {
@@ -56,11 +94,14 @@ class ExerciseViewModel @AssistedInject constructor(
                             exerciseList = apiResult.data.exercises
                                 .map(ExerciseDto::toExerciseData)
                         )
+
+                        originalExerciseList = _state.value.exerciseList
                     }
                 }
             }
         }
     }
+
     @AssistedFactory
     interface Factory {
         fun create(muscleGroupId: Int, dispatcher: CoroutineDispatcher): ExerciseViewModel
