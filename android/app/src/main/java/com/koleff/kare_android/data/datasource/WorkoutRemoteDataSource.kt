@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Network
+import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
 import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 class WorkoutRemoteDataSource @Inject constructor(
     private val workoutApi: WorkoutApi,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : WorkoutDataSource {
     override suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
         val body = BaseWorkoutRequest(workoutId)

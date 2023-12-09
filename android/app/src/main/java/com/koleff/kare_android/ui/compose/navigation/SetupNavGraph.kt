@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -15,6 +16,7 @@ import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
+import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 
 @ExperimentalComposeUiApi
@@ -28,22 +30,39 @@ fun SetupNavGraph(
         mutableStateOf(false)
     }
 
+    val dashboardViewModel: DashboardViewModel = hiltViewModel()
+
     NavHost(
         navController = navController,
         startDestination = MainScreen.Dashboard.route
     ) {
-        composable(MainScreen.Dashboard.route) { DashboardScreen(navController, isNavigationInProgress) }
+        composable(MainScreen.Dashboard.route) { backStackEntry ->
+//            val dashboardViewModel: DashboardViewModel = backStackEntry.sharedViewModel(
+//                navController = navController
+//            )
+
+            DashboardScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress,
+                dashboardViewModel = dashboardViewModel
+            )
+        }
         composable(MainScreen.MyWorkout.route) { MyWorkoutScreen(navController, isNavigationInProgress) }
         composable(MainScreen.Workouts.route) { WorkoutsScreen(navController, isNavigationInProgress) }
         composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
             val muscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
 
+//            val dashboardViewModel: DashboardViewModel = backStackEntry.sharedViewModel(
+//                navController = navController
+//            )
+
             MuscleGroupScreen(
                 muscleGroupId = muscleGroupId,
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseViewModelFactory = exerciseViewModelFactory
+                exerciseViewModelFactory = exerciseViewModelFactory,
+                dashboardViewModel = dashboardViewModel
             )
         }
         composable(MainScreen.ExerciseDetails.route) { backStackEntry ->

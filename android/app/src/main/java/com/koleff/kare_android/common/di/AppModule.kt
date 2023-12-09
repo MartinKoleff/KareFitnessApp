@@ -1,25 +1,34 @@
 package com.koleff.kare_android.common.di
 
+import android.app.Application
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.preferences.DefaultPreferences
+import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.data.datasource.DashboardDataSource
+import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.ExerciseApi
 import com.koleff.kare_android.data.remote.WorkoutApi
+import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
+import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -110,13 +119,39 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutDataSource(workoutApi: WorkoutApi): WorkoutDataSource {
-        return WorkoutRemoteDataSource(workoutApi) //Can swap for local data source...
+    fun provideWorkoutDataSource(workoutApi: WorkoutApi, dispatcher: CoroutineDispatcher): WorkoutDataSource {
+        return WorkoutRemoteDataSource(workoutApi, dispatcher) //Can swap for local data source...
     }
 
     @Provides
     @Singleton
     fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
         return WorkoutRepositoryImpl(workoutDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDashboardDataSource(): DashboardDataSource {
+        return DashboardMockupDataSource()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDashboardRepository(dashboardDataSource: DashboardDataSource): DashboardRepository {
+        return DashboardRepositoryImpl(dashboardDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        app: Application
+    ): SharedPreferences {
+        return app.getSharedPreferences("shared_pref", MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
+        return DefaultPreferences(sharedPreferences)
     }
 }

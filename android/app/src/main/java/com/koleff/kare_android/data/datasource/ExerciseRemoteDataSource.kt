@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Network
+import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.data.model.request.GetExerciseDetailsRequest
 import com.koleff.kare_android.data.model.request.GetExercisesRequest
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 class ExerciseRemoteDataSource @Inject constructor(
     private val exerciseApi: ExerciseApi,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ExerciseDataSource {
 
     override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<GetExercisesWrapper>> {
