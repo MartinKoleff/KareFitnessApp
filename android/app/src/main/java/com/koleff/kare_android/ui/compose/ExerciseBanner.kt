@@ -114,13 +114,22 @@ fun ExerciseBannerV1(
 fun ExerciseBannerV2(
     modifier: Modifier,
     exercise: ExerciseData,
-    exerciseImage: Int = R.drawable.ic_chest,
     onClick: (ExerciseData) -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+
+    val exerciseImage: Int = when (exercise.muscleGroup) {
+        MuscleGroup.CHEST -> R.drawable.ic_chest
+        MuscleGroup.BACK -> R.drawable.ic_back
+        MuscleGroup.TRICEPS -> R.drawable.ic_triceps
+        MuscleGroup.BICEPS -> R.drawable.ic_biceps
+        MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
+        MuscleGroup.LEGS -> R.drawable.ic_legs
+        else -> -1 //TODO: handle invalid muscle group...
+    }
 
     Card(
         modifier = modifier
