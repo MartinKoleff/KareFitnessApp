@@ -7,6 +7,7 @@ buildscript {
     ext.coroutine_version = '1.5.0'
     ext.retrofit2_version = '2.9.0'
     ext.okhttp3_version = '4.9.1'
+    ext.room_version = '2.6.0'
 
     dependencies {
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$nav_version")
