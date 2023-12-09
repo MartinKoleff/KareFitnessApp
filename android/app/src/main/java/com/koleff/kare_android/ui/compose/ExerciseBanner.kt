@@ -41,7 +41,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.koleff.kare_android.R
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -248,6 +251,7 @@ fun ExerciseBannerV2(
 fun ExerciseList(
     innerPadding: PaddingValues = PaddingValues(0.dp),
     exerciseList: List<ExerciseDto>,
+    navController: NavHostController
 ) {
     LazyColumn(
         modifier = Modifier
@@ -266,15 +270,14 @@ fun ExerciseList(
                     .height(200.dp),
                 exercise = exercise,
             ) {
-                openExerciseDetailsScreen(exercise)
+                openExerciseDetailsScreen(exercise, navController = navController)
             }
         }
     }
 }
 
-fun openExerciseDetailsScreen(exercise: ExerciseData) {
-    //TODO: Navigate to exercise details screen...
-    Log.d("Exercise Details", "Selected exercise with id ${exercise.name}")
+fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
+    navController.navigate(MainScreen.ExerciseDetails.createRoute(exerciseId = exercise.exerciseId))
 }
 
 
@@ -328,9 +331,10 @@ fun ExerciseListPreview() {
             "BARBELL BENCH PRESS $index",
             MuscleGroup.CHEST,
             MachineType.BARBELL,
+            ""
         )
         exercisesList.add(currentExercise)
     }
 
-    ExerciseList(exerciseList = exercisesList)
+//    ExerciseList(exerciseList = exercisesList, navController = )
 }

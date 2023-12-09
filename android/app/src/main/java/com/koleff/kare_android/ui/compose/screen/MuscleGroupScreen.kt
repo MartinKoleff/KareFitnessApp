@@ -74,7 +74,8 @@ fun MuscleGroupScreen(
             } else {
                 ExerciseList(
                     innerPadding = innerPadding,
-                    exerciseList = exerciseListState.exerciseList
+                    exerciseList = exerciseListState.exerciseList,
+                    navController = navController
                 )
             }
         }
