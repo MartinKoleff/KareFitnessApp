@@ -30,9 +30,10 @@ fun MuscleGroupScreen(
     muscleGroupId: Int = -1, //Invalid group selected...
     isNavigationInProgress: MutableState<Boolean>,
     exerciseViewModelFactory: ExerciseViewModel.Factory,
-    dashboardViewModel: DashboardViewModel = hiltViewModel()
+    dashboardViewModel: DashboardViewModel
 ) {
-    val muscleGroup = dashboardViewModel.state.value.muscleGroupList[muscleGroupId] //TODO: add invalid muscle group id handling...
+    val muscleGroupState by dashboardViewModel.state.collectAsState()
+    val muscleGroup = muscleGroupState.muscleGroupList[muscleGroupId]
 
     val exerciseListViewModel = viewModel<ExerciseViewModel>(
         factory = ExerciseViewModel.provideExerciseViewModelFactory(
