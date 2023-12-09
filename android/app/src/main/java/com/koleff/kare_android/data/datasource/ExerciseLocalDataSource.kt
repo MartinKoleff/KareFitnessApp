@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -23,7 +24,7 @@ class ExerciseLocalDataSource @Inject constructor(
     override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<GetExercisesWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(5000)
+            delay(Constants.fakeDelay)
 
             var data: List<ExerciseDto> = emptyList()
 
@@ -48,7 +49,7 @@ class ExerciseLocalDataSource @Inject constructor(
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(5000)
+            delay(Constants.fakeDelay)
 
             val data = exerciseDao.getExerciseById(exerciseId)
 

@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
@@ -18,7 +19,8 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
     override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<GetExercisesWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(5000)
+            delay(Constants.fakeDelay)
+
             val mockupExercisesList = generateExerciseList()
 
             val mockupResult = GetExercisesWrapper(
@@ -52,7 +54,8 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(5000)
+            delay(Constants.fakeDelay)
+
             val mockupExercise = generateExercise()
 
             val mockupResult = GetExerciseDetailsWrapper(

@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.data.model.response.GetDashboardResponse
 import com.koleff.kare_android.data.model.wrapper.GetDashboardWrapper
@@ -13,7 +14,7 @@ class DashboardMockupDataSource : DashboardDataSource {
     override suspend fun getDashboard(): Flow<ResultWrapper<GetDashboardWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(5000)
+            delay(Constants.fakeDelay)
             val dashboardList = generateDashboardList()
 
             val mockupResult = GetDashboardWrapper(

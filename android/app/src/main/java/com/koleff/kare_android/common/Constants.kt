@@ -14,6 +14,7 @@ object Constants {
 
     const val useLocalDataSource = true
     const val useMockupDataSource = true
+    const val fakeDelay: Long = 2000L
 
     const val DATABASE_NAME = "my_database"
     const val TABLE_NAME = "ExerciseDto"
