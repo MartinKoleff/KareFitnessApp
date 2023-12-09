@@ -1,16 +1,12 @@
 package com.koleff.kare_android.ui.compose.screen
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -18,7 +14,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.common.DataManager
@@ -72,7 +67,7 @@ fun MuscleGroupScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             //Filter buttons
-            MachineFilterSegmentButton(modifier = buttonModifier, selectedOptionIndex = -1)
+            MachineFilterSegmentButton(modifier = buttonModifier, selectedOptionIndex = -1, isDisabled = exerciseListState.isLoading)
 
             if (exerciseListState.isLoading) {
                 LoadingWheel(
