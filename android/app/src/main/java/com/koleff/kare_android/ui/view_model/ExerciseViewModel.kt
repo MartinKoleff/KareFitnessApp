@@ -11,7 +11,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.event.OnFilterEvent
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
-import com.koleff.kare_android.ui.state.ExerciseState
+import com.koleff.kare_android.data.model.state.ExerciseState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
