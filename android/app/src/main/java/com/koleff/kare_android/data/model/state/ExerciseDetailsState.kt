@@ -1,6 +1,5 @@
 package com.koleff.kare_android.data.model.state
 
-import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 

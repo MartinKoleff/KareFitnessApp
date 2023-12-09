@@ -17,8 +17,4 @@ data class ExerciseDto(
     val machineType: MachineType,
     @field:Json(name = "snapshot") //TODO: image...
     val snapshot: String,
-){
-    fun toExerciseData(): ExerciseData{
-        return ExerciseData(this)
-    }
-}
+)

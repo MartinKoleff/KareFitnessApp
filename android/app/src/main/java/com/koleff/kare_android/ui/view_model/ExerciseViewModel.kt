@@ -33,7 +33,7 @@ class ExerciseViewModel @AssistedInject constructor(
     val state: StateFlow<ExerciseState>
         get() = _state
 
-    private var originalExerciseList: List<ExerciseData> = mutableListOf()
+    private var originalExerciseList: List<ExerciseDto> = mutableListOf()
 
     init {
         getExercises(muscleGroupId + 1)
@@ -102,7 +102,6 @@ class ExerciseViewModel @AssistedInject constructor(
                         _state.value = ExerciseState(
                             isSuccessful = true,
                             exerciseList = apiResult.data.exercises
-                                .map(ExerciseDto::toExerciseData)
                         )
 
                         originalExerciseList = _state.value.exerciseList

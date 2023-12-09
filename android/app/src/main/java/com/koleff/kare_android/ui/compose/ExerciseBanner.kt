@@ -42,7 +42,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -50,7 +49,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 @Composable
 fun ExerciseBannerV1(
     modifier: Modifier,
-    exercise: ExerciseData,
+    exercise: ExerciseDto,
     onClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -113,9 +112,9 @@ fun ExerciseBannerV1(
 @Composable
 fun ExerciseBannerV2(
     modifier: Modifier,
-    exercise: ExerciseData,
+    exercise: ExerciseDto,
     hasDescription: Boolean = false,
-    onClick: (ExerciseData) -> Unit
+    onClick: (ExerciseDto) -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
@@ -248,7 +247,7 @@ fun ExerciseBannerV2(
 @Composable
 fun ExerciseList(
     innerPadding: PaddingValues = PaddingValues(0.dp),
-    exerciseList: List<ExerciseData>
+    exerciseList: List<ExerciseDto>,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -282,14 +281,12 @@ fun openExerciseDetailsScreen(exercise: ExerciseData) {
 @Preview
 @Composable
 fun ExerciseBannerV1AndV2ComparingPreview() {
-    val exercise = ExerciseData(
-        ExerciseDto(
-            -1,
-            "BARBELL BENCH PRESS",
-            MuscleGroup.CHEST,
-            MachineType.BARBELL,
-            ""
-        )
+    val exercise = ExerciseDto(
+        -1,
+        "BARBELL BENCH PRESS",
+        MuscleGroup.CHEST,
+        MachineType.BARBELL,
+        ""
     )
 
     Column(
@@ -323,17 +320,14 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
 @Composable
 fun ExerciseListPreview() {
     val n = 10
-    val exercisesList: MutableList<ExerciseData> = mutableListOf()
+    val exercisesList: MutableList<ExerciseDto> = mutableListOf()
 
     repeat(n) { index ->
-        val currentExercise = ExerciseData(
-            ExerciseDto(
-                -1,
-                "BARBELL BENCH PRESS $index",
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
-                ""
-            )
+        val currentExercise = ExerciseDto(
+            -1,
+            "BARBELL BENCH PRESS $index",
+            MuscleGroup.CHEST,
+            MachineType.BARBELL,
         )
         exercisesList.add(currentExercise)
     }
