@@ -47,8 +47,10 @@ class DashboardViewModel @Inject constructor(
                         )
                     }
 
-                    is ResultWrapper.Loading -> {
-                        _state.value = DashboardState(isLoading = true)
+                    is ResultWrapper.Loading -> { //Don't delete cache...
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
                     }
 
                     is ResultWrapper.Success -> {

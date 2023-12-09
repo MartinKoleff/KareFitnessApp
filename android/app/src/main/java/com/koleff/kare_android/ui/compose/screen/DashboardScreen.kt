@@ -28,7 +28,7 @@ fun DashboardScreen(
     MainScreenScaffold("Dashboard", navController, isNavigationInProgress) { innerPadding ->
         val muscleGroupState by dashboardViewModel.state.collectAsState()
 
-        if (muscleGroupState.isLoading) {
+        if (muscleGroupState.isLoading && muscleGroupState.muscleGroupList.isEmpty()) { //Don't show loader if retrieved from cache...
             LoadingWheel(innerPadding = innerPadding)
         } else {
             val modifier = Modifier
