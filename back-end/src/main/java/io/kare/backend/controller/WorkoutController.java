@@ -10,9 +10,7 @@ import io.kare.backend.payload.response.GetWorkoutsResponse;
 import io.kare.backend.service.WorkoutService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/workout")
@@ -23,14 +21,17 @@ public class WorkoutController {
         this.workoutService = workoutService;
     }
 
+    @PostMapping("/add")
     public ResponseEntity<AddWorkoutResponse> addWorkout(@RequestBody AddWorkoutRequest request, @User UserEntity user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.workoutService.addWorkout(request, user));
     }
 
+    @GetMapping("/all")
     public ResponseEntity<GetWorkoutsResponse> getWorkouts(@User UserEntity user) {
         return ResponseEntity.status(HttpStatus.OK).body(this.workoutService.getWorkouts(user));
     }
 
+    @PostMapping("/get")
     public ResponseEntity<GetWorkoutResponse> getWorkout(@RequestBody GetWorkoutRequest request, @User UserEntity user) {
         return ResponseEntity.status(HttpStatus.OK).body(this.workoutService.getWorkout(request, user));
     }

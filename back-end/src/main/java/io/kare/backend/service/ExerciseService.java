@@ -15,6 +15,6 @@ public interface ExerciseService {
 
     List<ExerciseEntity> findAllByUser(UserEntity user);
 
-    List<ExerciseEntity> findByIds(List<String> id);
+    List<ExerciseEntity> findByIds(List<String> id, UserEntity user);
 
 }

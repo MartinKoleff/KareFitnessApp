@@ -40,4 +40,9 @@ public class ExerciseServiceImpl implements ExerciseService {
     public List<ExerciseEntity> findAllByUser(UserEntity user) {
         return this.exerciseRepository.findAllByUser(user);
     }
+
+    @Override
+    public List<ExerciseEntity> findByIds(List<String> ids, UserEntity user) {
+        return this.exerciseRepository.findAllByIdsAndUser(ids, user);
+    }
 }

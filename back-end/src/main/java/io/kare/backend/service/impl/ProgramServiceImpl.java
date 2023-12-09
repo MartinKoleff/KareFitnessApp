@@ -29,21 +29,23 @@ public class ProgramServiceImpl implements ProgramService {
         this.workoutService = workoutService;
     }
 
-
     @Override
     public AddProgramResponse addProgram(AddProgramRequest request, UserEntity user) {
         List<WorkoutEntity> workouts = this.workoutService.getWorkouts(request.workoutIds(), user);
-        ProgramEntity programEntity = this.programMapper.map(request, user, workouts);
+        ProgramEntity programEntity = this.programMapper.mapToEntity(request, user, workouts);
         return this.programMapper.map(this.programRepository.save(programEntity));
     }
 
+    //TODO: make that work
     @Override
     public GetProgramsResponse getPrograms(UserEntity user) {
-        return this.programMapper.map(this.programRepository.findAllByUser(user));
+//        return this.programMapper.map(this.programRepository.findAllByUser(user));
+        return null;
     }
 
     @Override
     public GetProgramResponse getProgram(GetProgramRequest request, UserEntity user) {
-        return this.programMapper.map(this.programRepository.findById(request.id()).orElseThrow(() -> new RuntimeException("Program not found")));
+//        return this.programMapper.map(this.programRepository.findById(request.id()).orElseThrow(() -> new RuntimeException("Program not found")));
+        return null;
     }
 }
