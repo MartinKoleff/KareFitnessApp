@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 class ExerciseViewModel @AssistedInject constructor(
     private val exerciseRepository: ExerciseRepository,
     @Assisted private val muscleGroupId: Int,
-    @Assisted private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+    @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
@@ -104,17 +105,16 @@ class ExerciseViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(muscleGroupId: Int, dispatcher: CoroutineDispatcher): ExerciseViewModel
+        fun create(muscleGroupId: Int): ExerciseViewModel
     }
 
     companion object {
         fun provideExerciseViewModelFactory(
             factory: Factory,
             muscleGroupId: Int,
-            dispatcher: CoroutineDispatcher = Dispatchers.Main
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(muscleGroupId, dispatcher) as T
+                return factory.create(muscleGroupId) as T
             }
         }
     }
