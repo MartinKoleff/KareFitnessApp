@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.navigation
 
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
@@ -11,6 +12,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.MainScreen
@@ -31,9 +34,10 @@ fun Toolbar(
         ),
         title = {
             Text(
-                title,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                text = title,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center
             )
         },
         navigationIcon = {
