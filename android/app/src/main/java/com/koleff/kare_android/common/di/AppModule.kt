@@ -1,8 +1,13 @@
 package com.koleff.kare_android.common.di
 
+import android.app.Application
+import android.content.Context.MODE_PRIVATE
+import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.preferences.DefaultPreferences
+import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
@@ -134,5 +139,19 @@ object AppModule {
     @Singleton
     fun provideDashboardRepository(dashboardDataSource: DashboardDataSource): DashboardRepository {
         return DashboardRepositoryImpl(dashboardDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSharedPreferences(
+        app: Application
+    ): SharedPreferences {
+        return app.getSharedPreferences("shared_pref", MODE_PRIVATE)
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
+        return DefaultPreferences(sharedPreferences)
     }
 }
