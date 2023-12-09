@@ -114,6 +114,7 @@ fun ExerciseBannerV1(
 fun ExerciseBannerV2(
     modifier: Modifier,
     exercise: ExerciseData,
+    hasDescription: Boolean = false,
     onClick: (ExerciseData) -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -198,7 +199,7 @@ fun ExerciseBannerV2(
                 ) {
 
                     //Exercise title
-                    Text( //TODO: and cooler font
+                    Text( //TODO: and cooler font...
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -218,24 +219,26 @@ fun ExerciseBannerV2(
                     )
 
                     //Exercise sub-title (description)
-                    Text( //TODO: and cooler font
-                        modifier = Modifier.padding(
-                            PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 8.dp,
-                                bottom = 0.dp
-                            )
-                        ),
-                        text = "Description",
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    if (hasDescription) {
+                        Text( //TODO: and cooler font...
+                            modifier = Modifier.padding(
+                                PaddingValues(
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    top = 8.dp,
+                                    bottom = 0.dp
+                                )
+                            ),
+                            text = "Description", //TODO: wire with ExerciseDTO...
+                            style = TextStyle(
+                                color = Color.White,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.SemiBold
+                            ),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
                 }
             }
         }
