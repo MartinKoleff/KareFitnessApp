@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,6 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
@@ -122,7 +125,7 @@ fun ExerciseBannerV2(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(8.dp),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
@@ -231,8 +234,20 @@ fun ExerciseBannerV2(
 }
 
 @Composable
-fun ExerciseList(modifier: Modifier, exerciseList: List<ExerciseData>) {
-    LazyColumn(modifier = modifier) {
+fun ExerciseList(
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    exerciseList: List<ExerciseData>
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = 8.dp,
+                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                bottom = 8.dp + innerPadding.calculateBottomPadding()
+            )
+    ) {
         items(exerciseList) { exercise ->
             ExerciseBannerV2(
                 modifier = Modifier
@@ -311,5 +326,5 @@ fun ExerciseListPreview() {
         exercisesList.add(currentExercise)
     }
 
-    ExerciseList(modifier = Modifier.fillMaxSize(), exercisesList)
+    ExerciseList(exerciseList = exercisesList)
 }

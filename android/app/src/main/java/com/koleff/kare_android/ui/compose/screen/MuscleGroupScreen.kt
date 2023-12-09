@@ -56,15 +56,6 @@ fun MuscleGroupScreen(
                 )
             )
 
-        val contentModifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 8.dp,
-                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                bottom = 8.dp + innerPadding.calculateBottomPadding()
-            )
-
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -78,11 +69,11 @@ fun MuscleGroupScreen(
 
             if (exerciseListState.isLoading) {
                 LoadingWheel(
-                    modifier = contentModifier
+                    innerPadding = innerPadding
                 )
             } else {
                 ExerciseList(
-                    modifier = contentModifier,
+                    innerPadding = innerPadding,
                     exerciseList = exerciseListState.exerciseList
                 )
             }

@@ -28,9 +28,12 @@ fun DashboardScreen(
     MainScreenScaffold("Dashboard", navController, isNavigationInProgress) { innerPadding ->
         val muscleGroupState by dashboardViewModel.state.collectAsState()
 
-        val modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
+        if (muscleGroupState.isLoading) {
+            LoadingWheel(innerPadding = innerPadding)
+        } else {
+            val modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
 
             MuscleGroupGrid(
                 modifier = modifier,
