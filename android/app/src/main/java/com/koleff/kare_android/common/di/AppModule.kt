@@ -6,11 +6,13 @@ import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.Constants.useMockupDataSource
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
+import com.koleff.kare_android.data.datasource.ExerciseMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
@@ -108,7 +110,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideExerciseDataSource(exerciseApi: ExerciseApi): ExerciseDataSource {
-        return ExerciseRemoteDataSource(exerciseApi) //Can swap for local data source...
+        return if(useMockupDataSource) ExerciseMockupDataSource() else ExerciseRemoteDataSource(exerciseApi)
     }
 
     @Provides

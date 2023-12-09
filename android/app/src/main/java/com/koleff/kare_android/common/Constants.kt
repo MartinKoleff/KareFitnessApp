@@ -12,5 +12,5 @@ object Constants {
     const val BASE_LOCAL_URL_FULL = "$SCHEME_LOCAL://$BASE_LOCAL_URL"
     const val BASE_LOCAL_URL_FULL_PORT = "$SCHEME_LOCAL://$BASE_LOCAL_URL:$PORT/"
 
-    const val useFakeApi = false
+    const val useMockupDataSource = true
 }
