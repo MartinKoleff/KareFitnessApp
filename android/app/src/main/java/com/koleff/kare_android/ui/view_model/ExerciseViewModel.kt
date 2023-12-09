@@ -36,7 +36,7 @@ class ExerciseViewModel @AssistedInject constructor(
     private var originalExerciseList: List<ExerciseData> = mutableListOf()
 
     init {
-        getExercises(muscleGroupId)
+        getExercises(muscleGroupId + 1)
     }
 
     fun onEvent(event: OnFilterEvent) {
