@@ -50,8 +50,8 @@ fun MuscleGroupScreen(
             .padding(
                 PaddingValues(
                     top = innerPadding.calculateTopPadding(),
-                    start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                    end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    start = 4.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                    end = 4.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
                     bottom = 0.dp
                 )
             )
