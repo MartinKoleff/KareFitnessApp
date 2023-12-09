@@ -3,14 +3,18 @@ package com.koleff.kare_android.common.di
 import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.datasource.DashboardDataSource
+import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.ExerciseApi
 import com.koleff.kare_android.data.remote.WorkoutApi
+import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
+import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
@@ -118,5 +122,17 @@ object AppModule {
     @Singleton
     fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
         return WorkoutRepositoryImpl(workoutDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDashboardDataSource(): DashboardDataSource {
+        return DashboardMockupDataSource()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDashboardRepository(dashboardDataSource: DashboardDataSource): DashboardRepository {
+        return DashboardRepositoryImpl(dashboardDataSource)
     }
 }
