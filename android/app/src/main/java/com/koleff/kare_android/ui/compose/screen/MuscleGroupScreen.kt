@@ -14,13 +14,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import com.koleff.kare_android.common.DataManager
 import com.koleff.kare_android.ui.compose.ExerciseList
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.MachineFilterSegmentButton
 import com.koleff.kare_android.ui.compose.MainScreenScaffold
+import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 
 @Composable
@@ -28,10 +29,10 @@ fun MuscleGroupScreen(
     navController: NavHostController,
     muscleGroupId: Int = -1, //Invalid group selected...
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseViewModelFactory: ExerciseViewModel.Factory
+    exerciseViewModelFactory: ExerciseViewModel.Factory,
+    dashboardViewModel: DashboardViewModel = hiltViewModel()
 ) {
-    val muscleGroup =
-        DataManager.muscleGroupList[muscleGroupId] //TODO: add invalid muscle group id handling...
+    val muscleGroup = dashboardViewModel.state.value.muscleGroupList[muscleGroupId] //TODO: add invalid muscle group id handling...
 
     val exerciseListViewModel = viewModel<ExerciseViewModel>(
         factory = ExerciseViewModel.provideExerciseViewModelFactory(
