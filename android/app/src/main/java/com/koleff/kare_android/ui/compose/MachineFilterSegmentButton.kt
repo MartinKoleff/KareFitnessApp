@@ -31,12 +31,11 @@ fun MachineFilterSegmentButton(
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
-                    //Deselect filters -> no filter
-                    if (selectedIndex == index) { //TODO: load all exercises...
-                        selectedIndex = -1
-                        return@SegmentedButton
+                    selectedIndex = if (selectedIndex == index) {
+                        -1 //Deselect filters -> no filter
+                    }else {
+                        index
                     }
-                    selectedIndex = index
 
                     //Filter
                     when (selectedIndex) {
