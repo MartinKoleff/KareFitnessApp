@@ -12,5 +12,10 @@ object Constants {
     const val BASE_LOCAL_URL_FULL = "$SCHEME_LOCAL://$BASE_LOCAL_URL"
     const val BASE_LOCAL_URL_FULL_PORT = "$SCHEME_LOCAL://$BASE_LOCAL_URL:$PORT/"
 
+    const val useLocalDataSource = true
     const val useMockupDataSource = true
+    const val fakeDelay: Long = 2000L
+
+    const val DATABASE_NAME = "my_database"
+    const val TABLE_NAME = "ExerciseDto"
 }

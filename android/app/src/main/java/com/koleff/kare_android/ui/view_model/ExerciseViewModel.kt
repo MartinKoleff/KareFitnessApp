@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 class ExerciseViewModel @AssistedInject constructor(
     private val exerciseRepository: ExerciseRepository,
     @Assisted private val muscleGroupId: Int,
-    @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private val _state: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
@@ -35,7 +36,7 @@ class ExerciseViewModel @AssistedInject constructor(
     private var originalExerciseList: List<ExerciseData> = mutableListOf()
 
     init {
-        getExercises(muscleGroupId)
+        getExercises(muscleGroupId + 1)
     }
 
     fun onEvent(event: OnFilterEvent) {

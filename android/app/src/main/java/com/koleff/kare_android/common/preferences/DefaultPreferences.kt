@@ -49,4 +49,17 @@ class DefaultPreferences(
             }
         }
     }
+
+    override fun hasInitializedRoomDB(): Boolean {
+        val hasInitialized: Boolean =
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_ROOM_DB, false)
+
+        return hasInitialized
+    }
+
+    override fun initializeRoomDB() {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_INITIALIZED_ROOM_DB, true)
+            .apply()
+    }
 }

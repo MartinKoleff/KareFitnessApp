@@ -1,17 +1,21 @@
 package com.koleff.kare_android.common.di
 
 import android.app.Application
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
+import androidx.room.Room
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.Constants.useMockupDataSource
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
+import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
@@ -21,6 +25,9 @@ import com.koleff.kare_android.data.remote.WorkoutApi
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
+import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.database.ExerciseDatabase
+import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -29,6 +36,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import okhttp3.Interceptor
@@ -109,8 +117,32 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideExerciseDataSource(exerciseApi: ExerciseApi): ExerciseDataSource {
-        return if(useMockupDataSource) ExerciseMockupDataSource() else ExerciseRemoteDataSource(exerciseApi)
+    fun provideExerciseDatabase(@ApplicationContext appContext: Context): ExerciseDatabase {
+        return ExerciseDatabase.buildDatabase(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDao(exerciseDatabase: ExerciseDatabase): ExerciseDao {
+        return exerciseDatabase.dao
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDBManager(preferences: Preferences): ExerciseDBManager {
+        return ExerciseDBManager(preferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDataSource(
+        exerciseApi: ExerciseApi,
+        exerciseDao: ExerciseDao,
+        exerciseDBManager: ExerciseDBManager
+    ): ExerciseDataSource {
+        return if (useLocalDataSource) ExerciseLocalDataSource(exerciseDao, exerciseDBManager)
+        else if (useMockupDataSource) ExerciseMockupDataSource()
+        else ExerciseRemoteDataSource(exerciseApi)
     }
 
     @Provides
@@ -121,7 +153,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutDataSource(workoutApi: WorkoutApi, dispatcher: CoroutineDispatcher): WorkoutDataSource {
+    fun provideWorkoutDataSource(
+        workoutApi: WorkoutApi,
+        dispatcher: CoroutineDispatcher
+    ): WorkoutDataSource {
         return WorkoutRemoteDataSource(workoutApi, dispatcher) //Can swap for local data source...
     }
 
