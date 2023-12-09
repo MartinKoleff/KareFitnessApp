@@ -28,7 +28,8 @@ class DashboardViewModel @Inject constructor(
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<DashboardState> = MutableStateFlow(DashboardState())
+    private val _state: MutableStateFlow<DashboardState> =
+        MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))
     val state: StateFlow<DashboardState>
         get() = _state
 
