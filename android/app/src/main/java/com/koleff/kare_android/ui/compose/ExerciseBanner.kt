@@ -277,7 +277,7 @@ fun ExerciseList(
 }
 
 fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
-    navController.navigate(MainScreen.ExerciseDetails.createRoute(exerciseId = exercise.exerciseId))
+    navController.navigate(MainScreen.ExerciseDetails.createRoute(exerciseId = exercise.exerciseId, muscleGroupId = exercise.muscleGroup.muscleGroupId))
 }
 
 
