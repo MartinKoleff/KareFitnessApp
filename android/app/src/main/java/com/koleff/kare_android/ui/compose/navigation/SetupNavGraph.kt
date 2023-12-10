@@ -14,6 +14,7 @@ import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
+import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
@@ -75,5 +76,6 @@ fun SetupNavGraph(
             )
         }
         composable(MainScreen.Settings.route) { SettingsScreen(navController, isNavigationInProgress) }
+        composable(MainScreen.SearchWorkoutsScreen.route) { SearchWorkoutsScreen(navController, isNavigationInProgress) }
     }
 }
