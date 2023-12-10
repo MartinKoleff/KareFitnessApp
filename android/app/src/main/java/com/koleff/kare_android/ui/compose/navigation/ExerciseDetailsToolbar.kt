@@ -110,7 +110,8 @@ fun ExerciseDetailsToolbar(
                 screen = null, //Backstack pop
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                isBlocked = isNavigationInProgress
+                isBlocked = isNavigationInProgress,
+                tint = Color.White
             )
 
             NavigationItem(
@@ -127,7 +128,8 @@ fun ExerciseDetailsToolbar(
                 screen = MainScreen.Settings,
                 icon = Icons.Filled.Settings,
                 label = "Settings",
-                isBlocked = isNavigationInProgress
+                isBlocked = isNavigationInProgress,
+                tint = Color.White
             )
         }
     }

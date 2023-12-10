@@ -27,7 +27,8 @@ fun NavigationItem(
     screen: MainScreen?, //When screen is null -> navigate to latest backstack entry after popping the details screen
     icon: Any, //Can be Painter or ImageVector
     label: String,
-    isBlocked: MutableState<Boolean>
+    isBlocked: MutableState<Boolean>,
+    tint: Color = Color.Black
 ) {
     LaunchedEffect(key1 = isBlocked.value) {
         Log.d(
@@ -79,8 +80,8 @@ fun NavigationItem(
         }
     ) {
         when (icon) {
-            is ImageVector -> Icon(imageVector = icon, contentDescription = label)
-            is Painter -> Icon(icon, contentDescription = label)
+            is ImageVector -> Icon(imageVector = icon, contentDescription = label, tint = tint)
+            is Painter -> Icon(icon, contentDescription = label, tint = tint)
             else -> return@IconButton
         }
     }
