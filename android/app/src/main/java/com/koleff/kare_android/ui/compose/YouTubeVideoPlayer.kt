@@ -1,5 +1,7 @@
 package com.koleff.kare_android.ui.compose
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -7,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
@@ -23,6 +26,10 @@ fun YoutubeVideoPlayer(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
+            .border(
+                border = BorderStroke(5.dp, color = Color.White),
+                shape = RoundedCornerShape(16.dp)
+            )
             .clip(RoundedCornerShape(16.dp)),
         factory = { context ->
             YouTubePlayerView(context = context).apply {
