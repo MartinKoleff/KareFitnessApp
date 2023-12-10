@@ -1,7 +1,10 @@
 package com.koleff.kare_android.ui.compose
 
 import ExerciseDetailsToolbar
+import RoundedToolbarShape
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +16,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -41,6 +45,10 @@ fun DetailsScreenScaffold(
                     .height(screenHeight / 2.5f)
                     .background(
                         color = MaterialTheme.colorScheme.primaryContainer
+                    )
+                    .border(
+                        border = BorderStroke(2.dp, color = Color.White),
+                        shape = RoundedToolbarShape() //TODO: new shape without top part...
                     ),
                 isNavigationInProgress = isNavigationInProgress,
                 navController = navController,
