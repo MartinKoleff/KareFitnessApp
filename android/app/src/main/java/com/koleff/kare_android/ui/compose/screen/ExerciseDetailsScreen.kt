@@ -3,11 +3,10 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -89,8 +87,6 @@ fun ExerciseDetailsScreen(
         ExerciseDetailsContent(
             modifier = modifier,
             exerciseDetailsState = exerciseDetailsState.value,
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress
         )
     }
 }
@@ -99,19 +95,18 @@ fun ExerciseDetailsScreen(
 fun ExerciseDetailsContent(
     modifier: Modifier,
     exerciseDetailsState: ExerciseDetailsState,
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
 ) {
-    Box(modifier = modifier) {
-
-        //All content without add to workout button
-        Column(
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (exerciseDetailsState.isLoading) {
+    LazyColumn(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (exerciseDetailsState.isLoading) {
+            item {
                 LoadingWheel()
-            } else {
+            }
+        } else {
+            item { //TODO: fix in place...
                 Text(
                     modifier = Modifier.padding(
                         PaddingValues(
@@ -131,16 +126,19 @@ fun ExerciseDetailsContent(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
+            }
 
+            item {
                 YoutubeVideoPlayer(
                     youtubeVideoId = exerciseDetailsState.exercise.videoUrl,
                     lifecycleOwner = LocalLifecycleOwner.current
                 )
+            }
 
+            item { //TODO: align left...
                 Text(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .align(Alignment.Start),
+                        .padding(8.dp),
                     text = exerciseDetailsState.exercise.description,
                     style = TextStyle(
                         color = Color.White,
@@ -152,22 +150,6 @@ fun ExerciseDetailsContent(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-        }
-
-        //Add to workout
-        Box(
-            modifier = Modifier
-                .padding(16.dp)
-                .align(Alignment.BottomEnd)
-        ) {
-            FloatingNavigationItem(
-                navController = navController,
-                screen = MainScreen.SearchWorkoutsScreen,
-                icon = painterResource(id = R.drawable.ic_vector_add),
-                label = "Add to workout",
-                isBlocked = isNavigationInProgress,
-                tint = Color.White
-            )
         }
     }
 }
@@ -212,9 +194,7 @@ fun ExerciseDetailsScreenPreview() {
 
         ExerciseDetailsContent(
             modifier = modifier,
-            exerciseDetailsState = exerciseDetailsState,
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress
+            exerciseDetailsState = exerciseDetailsState
         )
     }
 }
