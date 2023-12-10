@@ -1,25 +1,30 @@
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -30,7 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.navigation.Toolbar
+import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.ui.compose.navigation.NavigationItem
 
 
 @Composable
@@ -42,19 +48,16 @@ fun ExerciseDetailsToolbar(
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
-    val configuration = LocalConfiguration.current
 
+    val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
-    Column(
+
+    Box(
         modifier = modifier
     ) {
-        Toolbar(
-            navController = navController,
-            hasTitle = false,
-            isNavigationInProgress = isNavigationInProgress
-        )
 
+        //Exercise Muscle Group Image
         Image(
             painter = painterResource(id = exerciseImageId),
             contentDescription = "Image",
@@ -62,25 +65,71 @@ fun ExerciseDetailsToolbar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(screenHeight / 2.5f)
-                .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
-                .drawWithContent {
-
-                    val colors = listOf(
-                        primaryColor,
-                        primaryColor,
-                        primaryContainerColor,
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Transparent
-                    )
-                    drawContent()
-                    drawRect(
-                        brush = Brush.verticalGradient(colors),
-                        blendMode = BlendMode.Overlay
-                    )
-                }
+//                .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
+//                .drawWithContent {
+//
+//                    val colors = listOf(
+//                        primaryContainerColor,
+//                        primaryContainerColor,
+//                        primaryColor,
+//                        primaryColor,
+//                        Color.Transparent,
+//                        Color.Transparent
+//                    )
+//                    drawContent()
+//                    drawRect(
+//                        brush = Brush.verticalGradient(colors),
+//                        blendMode = BlendMode.Overlay
+//                    )
+//                }
                 .clip(RoundedToolbarShape())
         )
+
+        //Navigation
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .drawBehind {
+
+                },
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            NavigationItem(
+                modifier = Modifier.drawBehind {
+                    drawCircle(
+                        brush = Brush.horizontalGradient(
+                            listOf(primaryContainerColor, Color.Transparent)
+                        ),
+                        radius = this.size.maxDimension,
+                        center = Offset(0f, 0f)
+                    )
+                },
+                navController = navController,
+                screen = null, //Backstack pop
+                icon = Icons.Filled.ArrowBack,
+                label = "Go back",
+                isBlocked = isNavigationInProgress
+            )
+
+            NavigationItem(
+                modifier = Modifier.drawBehind {
+                    drawCircle(
+                        brush = Brush.horizontalGradient(
+                            listOf(primaryContainerColor, Color.Transparent)
+                        ),
+                        radius = this.size.maxDimension,
+                        center = Offset(this.size.maxDimension, 0f)
+                    )
+                },
+                navController = navController,
+                screen = MainScreen.Settings,
+                icon = Icons.Filled.Settings,
+                label = "Settings",
+                isBlocked = isNavigationInProgress
+            )
+        }
     }
 }
 
@@ -91,7 +140,6 @@ class RoundedToolbarShape : Shape {
         density: Density
     ): Outline {
         return Outline.Generic(
-            // Draw your custom path here
             path = drawRoundedToolbarSquare(size)
         )
     }
