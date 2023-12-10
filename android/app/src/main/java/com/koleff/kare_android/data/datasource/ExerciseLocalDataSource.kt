@@ -26,16 +26,15 @@ class ExerciseLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            var data: List<ExerciseDto> = emptyList()
-
             //Check if Room DB has data
-            if (exerciseDBManager.hasInitializedRoomDB) {
-                data = exerciseDao.getExercisesOrderedById(
-                    MuscleGroup.fromId(muscleGroupId)
-                )
-            } else {
+            if (!exerciseDBManager.hasInitializedRoomDB) {
                 exerciseDBManager.initializeRoomDB(exerciseDao)
+
             }
+
+            val data = exerciseDao.getExercisesOrderedById(
+                MuscleGroup.fromId(muscleGroupId)
+            )
 
             val result = GetExercisesWrapper(
                 GetExercisesResponse(data)
