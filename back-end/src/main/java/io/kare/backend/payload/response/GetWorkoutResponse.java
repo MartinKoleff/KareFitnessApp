@@ -1,8 +1,8 @@
 package io.kare.backend.payload.response;
 
-import io.kare.backend.payload.data.ExercisePayload;
+import io.kare.backend.payload.data.*;
 
 import java.util.List;
 
-public record GetWorkoutResponse(String id, String name, String description, List<ExercisePayload> exercises) {
+public record GetWorkoutResponse(String id, String name, String description, List<WorkoutExerciseData> exercises) {
 }

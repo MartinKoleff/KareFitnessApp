@@ -1,8 +1,7 @@
 package io.kare.backend.service.impl;
 
-import io.kare.backend.entity.ProgramEntity;
-import io.kare.backend.entity.UserEntity;
-import io.kare.backend.entity.WorkoutEntity;
+import io.kare.backend.entity.*;
+import io.kare.backend.exception.ProgramNotFoundException;
 import io.kare.backend.mapper.ProgramMapper;
 import io.kare.backend.payload.request.AddProgramRequest;
 import io.kare.backend.payload.request.GetProgramRequest;
@@ -19,33 +18,51 @@ import java.util.List;
 @Service
 public class ProgramServiceImpl implements ProgramService {
 
-    private final ProgramRepository programRepository;
-    private final ProgramMapper programMapper;
-    private final WorkoutService workoutService;
+	private final ProgramRepository programRepository;
+	private final ProgramMapper programMapper;
+	private final WorkoutService workoutService;
 
-    public ProgramServiceImpl(ProgramRepository programRepository, ProgramMapper programMapper, WorkoutService workoutService) {
-        this.programRepository = programRepository;
-        this.programMapper = programMapper;
-        this.workoutService = workoutService;
-    }
+	public ProgramServiceImpl(
+		ProgramRepository programRepository,
+		ProgramMapper programMapper,
+		WorkoutService workoutService
+	) {
+		this.programRepository = programRepository;
+		this.programMapper = programMapper;
+		this.workoutService = workoutService;
+	}
 
-    @Override
-    public AddProgramResponse addProgram(AddProgramRequest request, UserEntity user) {
-        List<WorkoutEntity> workouts = this.workoutService.getWorkouts(request.workoutIds(), user);
-        ProgramEntity programEntity = this.programMapper.mapToEntity(request, user, workouts);
-        return this.programMapper.map(this.programRepository.save(programEntity));
-    }
+	@Override
+	public AddProgramResponse addProgram(AddProgramRequest request, UserEntity user) {
+		List<WorkoutEntity> workouts = this.workoutService.getWorkouts(request.workoutIds(), user);
+		ProgramEntity programEntity = this.programMapper.mapToEntity(request, user, workouts);
+		return this.programMapper.mapToAdd(this.programRepository.save(programEntity));
+	}
 
-    //TODO: make that work
-    @Override
-    public GetProgramsResponse getPrograms(UserEntity user) {
-//        return this.programMapper.map(this.programRepository.findAllByUser(user));
-        return null;
-    }
+	@Override
+	public GetProgramsResponse getPrograms(UserEntity user) {
+		List<ProgramEntity> entities = this.programRepository.findAllByUser(user);
+		List<ExerciseOptionEntity> exerciseOptions = this.workoutService.getExerciseOptionEntitiesByWorkoutIds(
+			entities.stream()
+				.map(entity -> entity.getWorkouts()
+					.stream()
+					.map(WorkoutEntity::getId)
+					.toList())
+				.flatMap(List::stream)
+				.toList(), user);
+		return new GetProgramsResponse(this.programMapper.mapToGet(entities, exerciseOptions));
+	}
 
-    @Override
-    public GetProgramResponse getProgram(GetProgramRequest request, UserEntity user) {
-//        return this.programMapper.map(this.programRepository.findById(request.id()).orElseThrow(() -> new RuntimeException("Program not found")));
-        return null;
-    }
+	@Override
+	public GetProgramResponse getProgram(GetProgramRequest request, UserEntity user) {
+		ProgramEntity entity = this.programRepository.findById(request.id())
+			.orElseThrow(ProgramNotFoundException::new);
+		List<ExerciseOptionEntity> exerciseOptions = this.workoutService.getExerciseOptionEntitiesByWorkoutIds(
+			entity.getWorkouts()
+				.stream()
+				.map(WorkoutEntity::getId)
+				.toList(), user);
+		return this.programMapper.mapToGet(this.programRepository.findById(request.id())
+			.orElseThrow(ProgramNotFoundException::new), exerciseOptions);
+	}
 }

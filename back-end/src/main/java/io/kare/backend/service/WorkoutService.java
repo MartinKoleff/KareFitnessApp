@@ -1,7 +1,6 @@
 package io.kare.backend.service;
 
-import io.kare.backend.entity.UserEntity;
-import io.kare.backend.entity.WorkoutEntity;
+import io.kare.backend.entity.*;
 import io.kare.backend.payload.request.AddWorkoutRequest;
 import io.kare.backend.payload.request.GetWorkoutRequest;
 import io.kare.backend.payload.response.AddWorkoutResponse;
@@ -18,4 +17,9 @@ public interface WorkoutService {
     List<WorkoutEntity> getWorkouts(List<String> ids, UserEntity user);
 
     GetWorkoutResponse getWorkout(GetWorkoutRequest request, UserEntity user);
+
+    List<ExerciseOptionEntity> getExerciseOptionEntitiesByWorkoutIds(
+        List<String> ids,
+        UserEntity user
+    );
 }

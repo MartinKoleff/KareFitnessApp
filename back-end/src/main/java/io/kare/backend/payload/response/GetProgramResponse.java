@@ -1,4 +1,4 @@
 package io.kare.backend.payload.response;
 
-public record GetProgramResponse(GetWorkoutsResponse workouts, String name, String description, String id) {
+public record GetProgramResponse(String id, String name, String description, GetWorkoutsResponse workouts) {
 }

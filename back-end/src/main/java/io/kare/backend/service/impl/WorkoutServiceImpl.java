@@ -1,8 +1,6 @@
 package io.kare.backend.service.impl;
 
-import io.kare.backend.entity.ExerciseEntity;
-import io.kare.backend.entity.UserEntity;
-import io.kare.backend.entity.WorkoutEntity;
+import io.kare.backend.entity.*;
 import io.kare.backend.exception.WorkoutNotFoundException;
 import io.kare.backend.mapper.WorkoutMapper;
 import io.kare.backend.payload.data.WorkoutExercisePayload;
@@ -66,5 +64,10 @@ public class WorkoutServiceImpl implements WorkoutService {
 		WorkoutEntity workoutEntity = this.workoutRepository.findById(request.id())
 			.orElseThrow(() -> new WorkoutNotFoundException(request.id()));
 		return this.workoutMapper.map(workoutEntity);
+	}
+
+	@Override
+	public List<ExerciseOptionEntity> getExerciseOptionEntitiesByWorkoutIds(List<String> ids, UserEntity user) {
+		return this.exerciseOptionService.findAllByWorkoutIds(ids, user);
 	}
 }

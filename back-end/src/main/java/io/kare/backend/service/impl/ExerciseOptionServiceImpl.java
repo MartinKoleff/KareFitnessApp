@@ -28,4 +28,9 @@ public class ExerciseOptionServiceImpl implements ExerciseOptionService {
 			workout
 		));
 	}
+
+	@Override
+	public List<ExerciseOptionEntity> findAllByWorkoutIds(List<String> ids, UserEntity user) {
+		return this.exerciseOptionRepository.findAllByWorkoutIdsAndUser(ids, user);
+	}
 }

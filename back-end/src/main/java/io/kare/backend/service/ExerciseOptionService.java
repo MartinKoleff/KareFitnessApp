@@ -7,4 +7,6 @@ import java.util.List;
 public interface ExerciseOptionService {
 
 	void save(List<WorkoutExercisePayload> workoutExercisePayloads, List<ExerciseEntity> exercises, WorkoutEntity workout);
+
+	List<ExerciseOptionEntity> findAllByWorkoutIds(List<String> ids, UserEntity user);
 }

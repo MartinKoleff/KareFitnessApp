@@ -1,11 +1,11 @@
 package io.kare.backend.repository;
 
-import feign.Param;
 import io.kare.backend.entity.UserEntity;
 import io.kare.backend.entity.WorkoutEntity;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
+import org.springframework.data.repository.query.Param;
 
 public interface WorkoutRepository extends JpaRepository<WorkoutEntity, String> {
 

@@ -1,10 +1,10 @@
 package io.kare.backend.repository;
 
-import feign.Param;
 import io.kare.backend.entity.*;
 import org.springframework.data.jpa.repository.*;
 
 import java.util.List;
+import org.springframework.data.repository.query.Param;
 
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, String> {
     List<ExerciseEntity> findAllByUser(UserEntity user);
