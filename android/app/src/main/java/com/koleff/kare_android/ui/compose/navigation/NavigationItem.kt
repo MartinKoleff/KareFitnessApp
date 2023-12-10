@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.navigation
 
 import android.util.Log
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -83,6 +84,73 @@ fun NavigationItem(
             is ImageVector -> Icon(imageVector = icon, contentDescription = label, tint = tint)
             is Painter -> Icon(icon, contentDescription = label, tint = tint)
             else -> return@IconButton
+        }
+    }
+}
+
+@Composable
+fun FloatingNavigationItem(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    screen: MainScreen?, //When screen is null -> navigate to latest backstack entry after popping the details screen
+    icon: Any, //Can be Painter or ImageVector
+    label: String,
+    isBlocked: MutableState<Boolean>,
+    tint: Color = Color.Black
+) {
+    LaunchedEffect(key1 = isBlocked.value) {
+        Log.d(
+            "Navigation LaunchedEffect",
+            "Is navigation in progress: ${isBlocked.value}"
+        )
+
+        if (isBlocked.value) {
+            blockNavigationButtons(isBlocked)
+        }
+    }
+
+    FloatingActionButton(
+        modifier = modifier,
+        onClick = {
+            screen?.let {
+                Log.d(
+                    "Navigation",
+                    "Is navigation in progress: ${isBlocked.value}"
+                )
+
+                if (navController.currentBackStackEntry!!.destination.route == screen.route || isBlocked.value) return@FloatingActionButton
+
+                navController.navigate(screen.route).also {
+                    Log.d(
+                        "Navigation",
+                        "Updated isBlocked to true"
+                    )
+
+                    isBlocked.value = true
+                }
+                return@FloatingActionButton
+            } ?: run {
+                Log.d(
+                    "Navigation",
+                    "Backstack before pop: ${navController.currentBackStackEntry}, Size: ${navController.currentBackStack.value.size}"
+                )
+
+                //Starting navigation and current navigation
+                if (navController.currentBackStack.value.size == 2) return@FloatingActionButton
+
+                navController.popBackStack()
+
+                Log.d(
+                    "Navigation",
+                    "Backstack after pop: ${navController.currentBackStackEntry}, Size: ${navController.currentBackStack.value.size}"
+                )
+            }
+        }
+    ) {
+        when (icon) {
+            is ImageVector -> Icon(imageVector = icon, contentDescription = label, tint = tint)
+            is Painter -> Icon(icon, contentDescription = label, tint = tint)
+            else -> return@FloatingActionButton
         }
     }
 }
