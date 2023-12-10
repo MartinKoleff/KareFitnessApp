@@ -11,4 +11,6 @@ data class WorkoutDto(
     val muscleGroup: MuscleGroup,
     @field:Json(name = "snapshot")
     val snapshot: String, //TODO: image...
+    @field:Json(name = "total_exercises")
+    val totalExercises: Int, //TODO: image...
 )
