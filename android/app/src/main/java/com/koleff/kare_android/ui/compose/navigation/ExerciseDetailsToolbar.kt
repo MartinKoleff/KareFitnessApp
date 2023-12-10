@@ -56,7 +56,6 @@ fun ExerciseDetailsToolbar(
     Box(
         modifier = modifier
     ) {
-
         //Exercise Muscle Group Image
         Image(
             painter = painterResource(id = exerciseImageId),
@@ -65,7 +64,7 @@ fun ExerciseDetailsToolbar(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(screenHeight / 2.5f)
-//                .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
+//                .graphicsLayer { alpha = 0.80f } //Configure gradient over image...
 //                .drawWithContent {
 //
 //                    val colors = listOf(
@@ -97,11 +96,11 @@ fun ExerciseDetailsToolbar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             NavigationItem(
-                modifier = Modifier.drawBehind {
-                    drawRect(
-                        color = primaryContainerColor
-                    )
-                },
+//                modifier = Modifier.drawBehind {
+//                    drawRect(
+//                        color = primaryContainerColor
+//                    )
+//                },
                 navController = navController,
                 screen = null, //Backstack pop
                 icon = Icons.Filled.ArrowBack,
@@ -111,11 +110,11 @@ fun ExerciseDetailsToolbar(
             )
 
             NavigationItem(
-                modifier = Modifier.drawBehind {
-                    drawRect(
-                        color = primaryContainerColor
-                    )
-                },
+//                modifier = Modifier.drawBehind {
+//                    drawRect(
+//                        color = primaryContainerColor
+//                    )
+//                },
                 navController = navController,
                 screen = MainScreen.Settings,
                 icon = Icons.Filled.Settings,
