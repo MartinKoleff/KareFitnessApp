@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingWheel(innerPadding: PaddingValues) {
+fun LoadingWheel(innerPadding: PaddingValues = PaddingValues(0.dp)) {
     Box(
         modifier = Modifier
             .fillMaxSize()

@@ -86,7 +86,6 @@ fun ExerciseDetailsScreen(
 
         ExerciseDetailsContent(
             modifier = modifier,
-            innerPadding = innerPadding,
             exerciseDetailsState = exerciseDetailsState.value,
             navController = navController,
             isNavigationInProgress = isNavigationInProgress
@@ -97,7 +96,6 @@ fun ExerciseDetailsScreen(
 @Composable
 fun ExerciseDetailsContent(
     modifier: Modifier,
-    innerPadding: PaddingValues,
     exerciseDetailsState: ExerciseDetailsState,
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
@@ -110,9 +108,7 @@ fun ExerciseDetailsContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (exerciseDetailsState.isLoading) {
-                LoadingWheel(
-                    innerPadding = innerPadding
-                )
+                LoadingWheel()
             } else {
                 Text(
                     modifier = Modifier.padding(
