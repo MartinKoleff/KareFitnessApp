@@ -62,25 +62,7 @@ fun ExerciseDetailsToolbar(
             painter = painterResource(id = exerciseImageId),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
-            modifier = modifier
-//                .graphicsLayer { alpha = 0.80f } //Configure gradient over image...
-//                .drawWithContent {
-//
-//                    val colors = listOf(
-//                        primaryContainerColor,
-//                        primaryContainerColor,
-//                        primaryColor,
-//                        primaryColor,
-//                        Color.Transparent,
-//                        Color.Transparent
-//                    )
-//                    drawContent()
-//                    drawRect(
-//                        brush = Brush.verticalGradient(colors),
-//                        blendMode = BlendMode.Overlay
-//                    )
-//                }
-                .clip(RoundedToolbarShape())
+            modifier = modifier.clip(RoundedToolbarShape())
         )
 
         //Navigation
