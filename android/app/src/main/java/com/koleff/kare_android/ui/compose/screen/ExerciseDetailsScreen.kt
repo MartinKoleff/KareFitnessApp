@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +25,7 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,9 +61,7 @@ fun ExerciseDetailsScreen(
         )
     )
 
-    val exerciseDetailsState by remember(exerciseDetailsViewModel) {
-        mutableStateOf(exerciseDetailsViewModel.state)
-    }
+    val exerciseDetailsState = exerciseDetailsViewModel.state.collectAsState()
 
     Log.d("ExerciseDetailsScreen", exerciseDetailsState.value.exercise.muscleGroup.toString())
     val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.value.exercise.muscleGroup)
@@ -103,7 +104,7 @@ fun ExerciseDetailsContent(
     exerciseDetailsState: ExerciseDetailsState,
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    ) {
+) {
     Box(modifier = modifier) {
 
         //All content without add to workout button
@@ -128,9 +129,10 @@ fun ExerciseDetailsContent(
                     text = exerciseDetailsState.exercise.name,
                     style = TextStyle(
                         color = Color.White,
-                        fontSize = 32.sp,
+                        fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
+                    textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -148,8 +150,9 @@ fun ExerciseDetailsContent(
                     style = TextStyle(
                         color = Color.White,
                         fontSize = 16.sp,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.Normal
                     ),
+                    textAlign = TextAlign.Start,
                     maxLines = 5,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -157,14 +160,18 @@ fun ExerciseDetailsContent(
         }
 
         //Add to workout
-        Box(modifier = Modifier.padding(16.dp).align(Alignment.BottomEnd)) {
+        Box(
+            modifier = Modifier
+                .padding(16.dp)
+                .align(Alignment.BottomEnd)
+        ) {
             FloatingNavigationItem(
                 navController = navController,
                 screen = MainScreen.SelectWorkout,
-                icon = painterResource(id = R.drawable.ic_vector_add_green),
+                icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
                 isBlocked = isNavigationInProgress,
-                tint = Color.Green
+                tint = Color.White
             )
         }
     }
