@@ -1,26 +1,17 @@
 package com.koleff.kare_android.ui.compose.screen
 
-import RoundedToolbarShape
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,26 +20,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
 import com.koleff.kare_android.ui.compose.DetailsScreenScaffold
 import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.YoutubeVideoPlayer
+import com.koleff.kare_android.ui.compose.navigation.FloatingNavigationItem
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel_Factory
 
 @Composable
 fun ExerciseDetailsScreen(
@@ -99,7 +89,9 @@ fun ExerciseDetailsScreen(
         ExerciseDetailsContent(
             modifier = modifier,
             innerPadding = innerPadding,
-            exerciseDetailsState = exerciseDetailsState.value
+            exerciseDetailsState = exerciseDetailsState.value,
+            navController = navController,
+            isNavigationInProgress = isNavigationInProgress
         )
     }
 }
@@ -108,54 +100,71 @@ fun ExerciseDetailsScreen(
 fun ExerciseDetailsContent(
     modifier: Modifier,
     innerPadding: PaddingValues,
-    exerciseDetailsState: ExerciseDetailsState
-) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+    exerciseDetailsState: ExerciseDetailsState,
+    navController: NavHostController,
+    isNavigationInProgress: MutableState<Boolean>,
     ) {
-        if (exerciseDetailsState.isLoading) {
-            LoadingWheel(
-                innerPadding = innerPadding
-            )
-        } else {
-            Text(
-                modifier = Modifier.padding(
-                    PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 8.dp
-                    )
-                ),
-                text = exerciseDetailsState.exercise.name,
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+    Box(modifier = modifier) {
 
-            YoutubeVideoPlayer(
-                youtubeVideoId = exerciseDetailsState.exercise.videoUrl,
-                lifecycleOwner = LocalLifecycleOwner.current
-            )
+        //All content without add to workout button
+        Column(
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (exerciseDetailsState.isLoading) {
+                LoadingWheel(
+                    innerPadding = innerPadding
+                )
+            } else {
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 8.dp
+                        )
+                    ),
+                    text = exerciseDetailsState.exercise.name,
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 32.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-            Text(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.Start),
-                text = exerciseDetailsState.exercise.description,
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium
-                ),
-                maxLines = 5,
-                overflow = TextOverflow.Ellipsis
+                YoutubeVideoPlayer(
+                    youtubeVideoId = exerciseDetailsState.exercise.videoUrl,
+                    lifecycleOwner = LocalLifecycleOwner.current
+                )
+
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .align(Alignment.Start),
+                    text = exerciseDetailsState.exercise.description,
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
+
+        //Add to workout
+        Box(modifier = Modifier.padding(16.dp).align(Alignment.BottomEnd)) {
+            FloatingNavigationItem(
+                navController = navController,
+                screen = MainScreen.SelectWorkout,
+                icon = painterResource(id = R.drawable.ic_vector_add_green),
+                label = "Add to workout",
+                isBlocked = isNavigationInProgress,
+                tint = Color.Green
             )
         }
     }
