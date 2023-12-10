@@ -183,24 +183,29 @@ class RoundedToolbarShape : Shape {
 @Composable
 fun PreviewRoundedSquare() {
     val navController = rememberNavController()
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
 
     ExerciseDetailsToolbar(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
+            .height(screenHeight / 2.5f)
             .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary
-                    )
-                )
+//                brush = Brush.verticalGradient(
+//                    colors = listOf(
+//                        MaterialTheme.colorScheme.primaryContainer,
+//                        MaterialTheme.colorScheme.primaryContainer,
+//                        MaterialTheme.colorScheme.primaryContainer,
+//                        MaterialTheme.colorScheme.primary,
+//                        MaterialTheme.colorScheme.primary
+//                    )
+//                )
+                color = MaterialTheme.colorScheme.primaryContainer
             ),
         isNavigationInProgress = mutableStateOf(false),
         navController = navController,
-        exerciseImageId = R.drawable.ic_chest
+        exerciseImageId = R.drawable.ic_legs
     )
 }
 
