@@ -25,7 +25,7 @@ fun BottomNavigationBar(navController: NavHostController, isNavigationInProgress
                 screen = MainScreen.Dashboard,
                 icon = Icons.Filled.Star,
                 label = "Dashboard",
-                isNavigationInProgress
+                isBlocked = isNavigationInProgress
             )
 
             //Spacing between items
@@ -40,7 +40,7 @@ fun BottomNavigationBar(navController: NavHostController, isNavigationInProgress
                 screen = MainScreen.MyWorkout,
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
                 label = "Workout screen",
-                isNavigationInProgress
+                isBlocked = isNavigationInProgress
             )
         }
     )

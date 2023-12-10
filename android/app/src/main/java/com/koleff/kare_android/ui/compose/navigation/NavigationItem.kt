@@ -8,6 +8,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun NavigationItem(
+    modifier: Modifier = Modifier,
     navController: NavHostController,
     screen: MainScreen?, //When screen is null -> navigate to latest backstack entry after popping the details screen
     icon: Any, //Can be Painter or ImageVector
@@ -38,6 +41,7 @@ fun NavigationItem(
     }
 
     IconButton(
+        modifier = modifier,
         onClick = {
             screen?.let {
                 Log.d(

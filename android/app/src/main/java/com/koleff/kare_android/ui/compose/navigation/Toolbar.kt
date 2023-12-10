@@ -49,7 +49,7 @@ fun Toolbar(
                 screen = null, //Backstack pop
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                isNavigationInProgress
+                isBlocked = isNavigationInProgress
             )
         },
         actions = {
@@ -58,7 +58,7 @@ fun Toolbar(
                 screen = MainScreen.Settings,
                 icon = Icons.Filled.Settings,
                 label = "Settings",
-                isNavigationInProgress
+                isBlocked = isNavigationInProgress
             )
         },
         scrollBehavior = scrollBehavior
