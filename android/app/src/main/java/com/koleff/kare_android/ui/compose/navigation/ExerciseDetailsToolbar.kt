@@ -98,12 +98,25 @@ fun ExerciseDetailsToolbar(
         ) {
             NavigationItem(
                 modifier = Modifier.drawBehind {
-                    drawCircle(
+//                    drawCircle(
+//                        brush = Brush.horizontalGradient(
+//                            listOf(
+//                                Color.Transparent,
+//                                primaryContainerColor,
+//                                primaryContainerColor
+//                            )
+//                        ),
+//                        radius = this.size.maxDimension,
+//                        center = Offset(0f, 0f)
+//                    )
+                    drawRect(
                         brush = Brush.horizontalGradient(
-                            listOf(primaryContainerColor, Color.Transparent)
+                            listOf(
+                                Color.Transparent,
+                                primaryContainerColor,
+                                primaryContainerColor
+                            )
                         ),
-                        radius = this.size.maxDimension,
-                        center = Offset(0f, 0f)
                     )
                 },
                 navController = navController,
@@ -116,12 +129,25 @@ fun ExerciseDetailsToolbar(
 
             NavigationItem(
                 modifier = Modifier.drawBehind {
-                    drawCircle(
+//                    drawCircle(
+//                        brush = Brush.horizontalGradient(
+//                            listOf(
+//                                primaryContainerColor,
+//                                primaryContainerColor,
+//                                Color.Transparent
+//                            )
+//                        ),
+//                        radius = this.size.maxDimension,
+//                        center = Offset(this.size.maxDimension, 0f)
+//                    )
+                    drawRect(
                         brush = Brush.horizontalGradient(
-                            listOf(primaryContainerColor, Color.Transparent)
+                            listOf(
+                                primaryContainerColor,
+                                primaryContainerColor,
+                                Color.Transparent
+                            )
                         ),
-                        radius = this.size.maxDimension,
-                        center = Offset(this.size.maxDimension, 0f)
                     )
                 },
                 navController = navController,
