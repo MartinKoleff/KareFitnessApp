@@ -32,6 +32,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
+import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
 import com.koleff.kare_android.ui.compose.scaffolds.DetailsScreenScaffold
@@ -160,7 +162,7 @@ fun ExerciseDetailsContent(
         ) {
             FloatingNavigationItem(
                 navController = navController,
-                screen = MainScreen.SelectWorkout,
+                screen = MainScreen.SearchWorkoutsScreen,
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
                 isBlocked = isNavigationInProgress,
@@ -174,33 +176,45 @@ fun ExerciseDetailsContent(
 @Composable
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
+    val isNavigationInProgress = mutableStateOf(false)
+    val exerciseDetailsState = ExerciseDetailsState(
+        exercise = ExerciseDetailsDto(
+            name = "Bulgarian split squad",
+            description = "Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+            muscleGroup = MuscleGroup.LEGS,
+            machineType = MachineType.DUMBBELL,
+            videoUrl = "dQw4w9WgXcQ" //https://www.youtube.com/watch?v=
+        ),
+        isSuccessful = true
+    )
+    val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
 
     DetailsScreenScaffold(
-        screenTitle = "TEST",
+        screenTitle = exerciseDetailsState.exercise.name,
         navController = navController,
-        isNavigationInProgress = mutableStateOf(false),
-        exerciseImageId = R.drawable.ic_legs
+        isNavigationInProgress = isNavigationInProgress,
+        exerciseImageId = exerciseImageId
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary
+                    )
+                )
+            )
 
-        Column(
+        ExerciseDetailsContent(
             modifier = modifier,
-            verticalArrangement = Arrangement.Top
-        ) {
-            YoutubeVideoPlayer(
-                youtubeVideoId = "dQw4w9WgXcQ",
-                lifecycleOwner = LocalLifecycleOwner.current
-            )
-
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-            )
-
-            Text("Description")
-        }
+            exerciseDetailsState = exerciseDetailsState,
+            navController = navController,
+            isNavigationInProgress = isNavigationInProgress
+        )
     }
 }
