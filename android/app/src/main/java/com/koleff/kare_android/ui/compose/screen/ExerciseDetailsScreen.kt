@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.R
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.DetailsScreenScaffold
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.MainScreenScaffold
@@ -49,8 +51,24 @@ fun ExerciseDetailsScreen(
     val exerciseName = exerciseDetailsState.exercise?.name ?: "Loading..."
     val exerciseDescription = exerciseDetailsState.exercise?.description ?: "Description"
     val exerciseVideoUrl = exerciseDetailsState.exercise?.videoUrl ?: "" //TODO: split after v=
+    val exerciseMuscleGroup = exerciseDetailsState.exercise?.muscleGroup ?: MuscleGroup.NONE
 
-    DetailsScreenScaffold(exerciseName, navController, isNavigationInProgress) { innerPadding ->
+    val exerciseImageId = when (exerciseMuscleGroup) {
+        MuscleGroup.CHEST -> R.drawable.ic_chest
+        MuscleGroup.BACK -> R.drawable.ic_back
+        MuscleGroup.TRICEPS -> R.drawable.ic_triceps
+        MuscleGroup.BICEPS -> R.drawable.ic_biceps
+        MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
+        MuscleGroup.LEGS -> R.drawable.ic_legs
+        else -> -1
+    }
+
+    DetailsScreenScaffold(
+        screenTitle = exerciseName,
+        navController = navController,
+        isNavigationInProgress = isNavigationInProgress,
+        exerciseImageId = exerciseImageId
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
@@ -80,7 +98,12 @@ fun ExerciseDetailsScreen(
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
 
-    DetailsScreenScaffold("TEST", navController, mutableStateOf(false)) { innerPadding ->
+    DetailsScreenScaffold(
+        screenTitle = "TEST",
+        navController = navController,
+        isNavigationInProgress = mutableStateOf(false),
+        exerciseImageId = R.drawable.ic_legs
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
@@ -94,9 +117,11 @@ fun ExerciseDetailsScreenPreview() {
                 lifecycleOwner = LocalLifecycleOwner.current
             )
 
-            Spacer(modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+            )
 
             Text("Description")
         }
