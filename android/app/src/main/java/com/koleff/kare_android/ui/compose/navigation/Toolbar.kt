@@ -22,7 +22,8 @@ import com.koleff.kare_android.data.MainScreen
 @Composable
 fun Toolbar(
     navController: NavHostController,
-    title: String,
+    title: String = "",
+    hasTitle: Boolean = true,
     isNavigationInProgress: MutableState<Boolean>
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
@@ -33,12 +34,14 @@ fun Toolbar(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
-            Text(
-                text = title,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center
-            )
+            if(hasTitle){
+                Text(
+                    text = title,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Center
+                )
+            }
         },
         navigationIcon = {
             NavigationItem(
