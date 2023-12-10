@@ -3,10 +3,14 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -135,20 +139,46 @@ fun ExerciseDetailsContent(
                 )
             }
 
-            item { //TODO: align left...
-                Text(
-                    modifier = Modifier
-                        .padding(8.dp),
-                    text = exerciseDetailsState.exercise.description,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Normal
-                    ),
-                    textAlign = TextAlign.Start,
-                    maxLines = 5,
-                    overflow = TextOverflow.Ellipsis
-                )
+            item {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp),
+                        text = "Description:",
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        textAlign = TextAlign.Start,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Text(
+                        modifier = Modifier
+                            .padding(8.dp),
+                        text = exerciseDetailsState.exercise.description,
+                        style = TextStyle(
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Normal
+                        ),
+                        textAlign = TextAlign.Start,
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+            }
+
+            //Rows with cool emojies...
+            item {
+
             }
         }
     }
