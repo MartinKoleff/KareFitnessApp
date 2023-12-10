@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose
+package com.koleff.kare_android.ui.compose.scaffolds
 
 import ExerciseDetailsToolbar
 import RoundedToolbarShape
