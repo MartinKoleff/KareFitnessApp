@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,6 +16,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -26,6 +28,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.ui.compose.DetailsScreenScaffold
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.MainScreenScaffold
@@ -37,23 +40,28 @@ import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel_Factory
 fun ExerciseDetailsScreen(
     navController: NavHostController,
     exerciseId: Int = -1, //Invalid exercise selected...
+    initialMuscleGroupId: Int = -1, //Invalid muscle group selected...
     isNavigationInProgress: MutableState<Boolean>,
     exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory
 ) {
+    val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
+
     val exerciseDetailsViewModel = viewModel<ExerciseDetailsViewModel>(
         factory = ExerciseDetailsViewModel.provideExerciseDetailsViewModelFactory(
             factory = exerciseDetailsViewModelFactory,
-            exerciseId = exerciseId
+            exerciseId = exerciseId,
+            initialMuscleGroup = initialMuscleGroup
         )
     )
 
-    val exerciseDetailsState by exerciseDetailsViewModel.state.collectAsState()
-    val exerciseName = exerciseDetailsState.exercise?.name ?: "Loading..."
-    val exerciseDescription = exerciseDetailsState.exercise?.description ?: "Description"
-    val exerciseVideoUrl = exerciseDetailsState.exercise?.videoUrl ?: "" //TODO: split after v=
-    val exerciseMuscleGroup = exerciseDetailsState.exercise?.muscleGroup ?: MuscleGroup.NONE
-
+    val exerciseDetailsState by remember(exerciseDetailsViewModel) {
+        mutableStateOf(exerciseDetailsViewModel.state)
     }
+    val exerciseName = exerciseDetailsState.value.exercise.name
+    val exerciseDescription = exerciseDetailsState.value.exercise.description
+    val exerciseVideoUrl = exerciseDetailsState.value.exercise.videoUrl //TODO: split after v=
+    val exerciseMuscleGroup = exerciseDetailsState.value.exercise.muscleGroup
+
     Log.d("ExerciseDetailsScreen", exerciseMuscleGroup.toString())
     val exerciseImageId = MuscleGroup.getImage(exerciseMuscleGroup)
 
@@ -71,7 +79,7 @@ fun ExerciseDetailsScreen(
             modifier = modifier,
             verticalArrangement = Arrangement.Top
         ) {
-            if (exerciseDetailsState.isLoading) {
+            if (exerciseDetailsState.value.isLoading) {
                 LoadingWheel(
                     innerPadding = innerPadding
                 )
