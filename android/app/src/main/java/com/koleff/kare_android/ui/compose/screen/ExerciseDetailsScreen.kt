@@ -53,15 +53,9 @@ fun ExerciseDetailsScreen(
     val exerciseVideoUrl = exerciseDetailsState.exercise?.videoUrl ?: "" //TODO: split after v=
     val exerciseMuscleGroup = exerciseDetailsState.exercise?.muscleGroup ?: MuscleGroup.NONE
 
-    val exerciseImageId = when (exerciseMuscleGroup) {
-        MuscleGroup.CHEST -> R.drawable.ic_chest
-        MuscleGroup.BACK -> R.drawable.ic_back
-        MuscleGroup.TRICEPS -> R.drawable.ic_triceps
-        MuscleGroup.BICEPS -> R.drawable.ic_biceps
-        MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
-        MuscleGroup.LEGS -> R.drawable.ic_legs
-        else -> -1
     }
+    Log.d("ExerciseDetailsScreen", exerciseMuscleGroup.toString())
+    val exerciseImageId = MuscleGroup.getImage(exerciseMuscleGroup)
 
     DetailsScreenScaffold(
         screenTitle = exerciseName,

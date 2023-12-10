@@ -1,5 +1,7 @@
 package com.koleff.kare_android.data.model.dto
 
+import com.koleff.kare_android.R
+
 enum class MuscleGroup(val muscleGroupId: Int) {
     CHEST(1),
     BACK(2),
@@ -18,6 +20,18 @@ enum class MuscleGroup(val muscleGroupId: Int) {
     companion object {
         fun fromId(id: Int): MuscleGroup =
             values().find { it.muscleGroupId == id } ?: NONE
+
+        fun getImage(muscleGroup: MuscleGroup): Int{
+            return when (muscleGroup) {
+                MuscleGroup.CHEST -> R.drawable.ic_chest
+                MuscleGroup.BACK -> R.drawable.ic_back
+                MuscleGroup.TRICEPS -> R.drawable.ic_triceps
+                MuscleGroup.BICEPS -> R.drawable.ic_biceps
+                MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
+                MuscleGroup.LEGS -> R.drawable.ic_legs
+                else -> -1
+            }
+        }
     }
 }
 
