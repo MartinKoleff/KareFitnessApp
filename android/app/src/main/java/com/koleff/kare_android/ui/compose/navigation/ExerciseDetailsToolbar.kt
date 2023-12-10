@@ -56,14 +56,13 @@ fun ExerciseDetailsToolbar(
     Box(
         modifier = modifier
     ) {
+
         //Exercise Muscle Group Image
         Image(
             painter = painterResource(id = exerciseImageId),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(screenHeight / 2.5f)
+            modifier = modifier
 //                .graphicsLayer { alpha = 0.80f } //Configure gradient over image...
 //                .drawWithContent {
 //
