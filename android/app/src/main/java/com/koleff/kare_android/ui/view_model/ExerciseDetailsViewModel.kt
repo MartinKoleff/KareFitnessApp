@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
@@ -20,14 +22,22 @@ import kotlinx.coroutines.launch
 class ExerciseDetailsViewModel @AssistedInject constructor(
     private val exerciseRepository: ExerciseRepository,
     @Assisted private val exerciseId: Int,
+    @Assisted private val initialMuscleGroup: MuscleGroup,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<ExerciseDetailsState> = MutableStateFlow(ExerciseDetailsState())
+    private val _state: MutableStateFlow<ExerciseDetailsState> =
+        MutableStateFlow(ExerciseDetailsState())
     val state: StateFlow<ExerciseDetailsState>
         get() = _state
 
     init {
+        Log.d("ExerciseDetailsViewModel", initialMuscleGroup.toString())
+        _state.value = state.value.copy(
+            exercise = ExerciseDetailsDto(
+                muscleGroup = initialMuscleGroup
+            )
+        )
         getExerciseDetails(exerciseId)
     }
 
@@ -43,7 +53,9 @@ class ExerciseDetailsViewModel @AssistedInject constructor(
                     }
 
                     is ResultWrapper.Loading -> {
-                        _state.value = ExerciseDetailsState(isLoading = true)
+                        _state.value = state.value.copy( //Resets initial muscle group state if not using copy...
+                            isLoading = true
+                        )
                     }
 
                     is ResultWrapper.Success -> {
@@ -61,16 +73,17 @@ class ExerciseDetailsViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(exerciseId: Int): ExerciseDetailsViewModel
+        fun create(exerciseId: Int, initialMuscleGroup: MuscleGroup): ExerciseDetailsViewModel
     }
 
     companion object {
         fun provideExerciseDetailsViewModelFactory(
             factory: Factory,
             exerciseId: Int,
+            initialMuscleGroup: MuscleGroup,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(exerciseId) as T
+                return factory.create(exerciseId, initialMuscleGroup) as T
             }
         }
     }
