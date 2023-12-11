@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Exercises, MuscleGroup, Workout, biceps, } from '../models/exercise.model';
+import { Exercises, MuscleGroup, Workout, biceps, back, triceps, legs, shoulders, chest, cardio, abs } from '../models/exercise.model';
 
 @Component({
   selector: 'app-createworkout',
@@ -14,7 +14,7 @@ export class CreateworkoutComponent {
   showShouldersExercise: boolean = false;
   showChestExercise: boolean = false;
   showCardioExercise: boolean = false;
-  showAbsExercise: boolean = false;
+  showAbsExercise: boolean = true;
 
   toggleBicepsExercise() {
     this.showBicepsExercise = !this.showBicepsExercise;
@@ -23,7 +23,7 @@ export class CreateworkoutComponent {
     this.showTricepsExercise = !this.showTricepsExercise;
   }
   toggleLegsExercise() {
-    this.showTricepsExercise = !this.showTricepsExercise;
+    this.showLegsExercise = !this.showLegsExercise;
   }
   toggleBackExercise() {
     this.showBackExercise = !this.showBackExercise;
@@ -41,11 +41,26 @@ export class CreateworkoutComponent {
     this.showAbsExercise = !this.showAbsExercise;
   }
 
+  bicepsExercises: Exercises[] = [];
+  biceps: MuscleGroup = biceps;
+  backExercises: Exercises[] = [];
+  back : MuscleGroup = back;
+  tricepsExercises: Exercises[] = [];
+  triceps: MuscleGroup = triceps;
+  legsExercises: Exercises[] = [];
+  legs: MuscleGroup = legs;
+  shouldersExercises: Exercises[] = [];
+  shoulders: MuscleGroup = shoulders;
+  chestExercises: Exercises[] = [];
+  chest: MuscleGroup = chest;
+  cardioExercises: Exercises[] = [];
+  cardio: MuscleGroup = cardio;
+  absExercises: Exercises[] = [];
+  abs: MuscleGroup = abs;
+
   isNameProvided: boolean = false;
   selectedExercise: Exercises | null = null;
-  bicepsExercises: Exercises[] = [];
   selectedExercises: Exercises[] = [];
-  biceps: MuscleGroup = biceps;
   workout: Workout = {name: ''};
 
   onExerciseSelected(exercise: Exercises) {
@@ -54,16 +69,18 @@ export class CreateworkoutComponent {
       this.selectedExercises = this.selectedExercises.filter(selected => selected !== exercise);
       alert('Exercise removed from selection');
     }
+    else if(this.selectedExercises.map(exercise => exercise.reps)==undefined){
+      'enter reps please';
+    }
     else{
+      console.log(this.selectedExercises.map(exercise => exercise.reps));
       this.selectedExercises.push(exercise);
     }
   }
   submitWorkout() {
-    if (this.selectedExercises.length === 0) {
-      alert('Please select an exercise');
-    } else if (!this.isNameProvided) {
+     if (!this.isNameProvided) {
       alert('Please choose a name for your workout');
-    } else if( this.selectedExercise?.reps==undefined){
+    } else if( this.selectedExercises.map(exercise => exercise.reps)==undefined){
       alert('enter reps please')
     }
     else {

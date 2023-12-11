@@ -52,29 +52,49 @@
             <app-biceps
               [bicepsExercises]="biceps.exercises"
               [selectedExercises]="selectedExercises"
-              (exerciseSelected)="onExerciseSelected($event)"
-            ></app-biceps>
+              (exerciseSelected)="onExerciseSelected($event)"></app-biceps>
           </div>
           <div *ngIf="showTricepsExercise">
-            <app-triceps></app-triceps>
+            <app-triceps
+              [tricepsExercises]="triceps.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-triceps>
           </div>
           <div *ngIf="showLegsExercise">
-            <app-legs></app-legs>
+            <app-legs
+              [legsExercises]="legs.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-legs>
           </div>
           <div *ngIf="showBackExercise">
-            <app-back></app-back>
+            <app-back
+              [backExercises]="back.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-back>
           </div>
           <div *ngIf="showShouldersExercise">
-            <app-shoulders></app-shoulders>
+            <app-shoulders
+              [shouldersExercises]="shoulders.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-shoulders>
           </div>
           <div *ngIf="showChestExercise">
-            <app-chest></app-chest>
+            <app-chest
+              [chestExercises]="chest.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-chest>
           </div>
           <div *ngIf="showCardioExercise">
-            <app-cardio></app-cardio>
+            <app-cardio
+              [cardioExercises]="cardio.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-cardio>
           </div>
           <div *ngIf="showAbsExercise">
-            <app-abs></app-abs>
+            <app-abs
+              [absExercises]="abs.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-abs>
           </div>
           <div *ngIf="
             showAbsExercise ||
@@ -83,7 +103,6 @@
             showCardioExercise ||
             showChestExercise ||
             showLegsExercise ||
-            showShouldersExercise ||
             showShouldersExercise ||
             showTricepsExercise"
             class="submit-box">
