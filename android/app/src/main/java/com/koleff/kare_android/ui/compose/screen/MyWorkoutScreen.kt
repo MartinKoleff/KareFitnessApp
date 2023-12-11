@@ -9,21 +9,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.banners.ListItemBannerV2
 import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
-import com.koleff.kare_android.ui.compose.banners.WorkoutBannerList
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -76,11 +73,11 @@ fun MyWorkoutScreen(
                     ) {
                         openWorkoutDetailsScreen(selectedWorkout, navController)
                     }
-                    return@let
+                    return@MainScreenScaffold
                 }
 
-                NoWorkoutSelectedBanner{
-
+                NoWorkoutSelectedBanner(){
+                    //Navigate to SearchWorkoutsScreen...
                 }
             }
         }
