@@ -5,9 +5,8 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 
 @Dao
 interface WorkoutDao {
@@ -17,6 +16,12 @@ interface WorkoutDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(workouts: List<Workout>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllWorkoutDetailsWorkoutCrossRef(crossRefs: List<WorkoutDetailsWorkoutCrossRef>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertWorkoutDetailsWorkoutCrossRef(crossRef: WorkoutDetailsWorkoutCrossRef)
 
     @Query("DELETE FROM workout_table WHERE workoutId = :workoutId")
     suspend fun deleteWorkout(workoutId: Int)
@@ -30,12 +35,6 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout_table ORDER BY workoutId")
     fun getWorkoutsOrderedById(): List<Workout>
 
-    @Query("SELECT * FROM workout_details_table w WHERE workoutDetailsId = :workoutId")
-    fun getWorkoutById(workoutId: Int): WorkoutDetailsWithExercises
-
     @Query("SELECT * FROM workout_table WHERE isSelected = 1") //true = 1, false = 0
     fun getWorkoutByIsSelected(): Workout
-
-    @Query("SELECT * FROM workout_details_table w WHERE workoutDetailsId = :workoutId") //true = 1, false = 0
-    fun getWorkoutExercises(workoutId: Int): List<Exercise>
 }
