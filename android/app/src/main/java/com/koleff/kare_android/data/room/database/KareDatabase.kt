@@ -5,30 +5,27 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
-import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
-import com.koleff.kare_android.data.room.dto.Exercise
-import com.koleff.kare_android.data.room.dto.SaveWorkout
-import com.koleff.kare_android.data.room.dto.Workout
-
+import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.WorkoutDetails
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 
 @Database(
     entities = [
-        ExerciseDto::class,
         Exercise::class,
-        WorkoutDto::class,
         Workout::class,
-        SaveWorkoutDto::class,
-        SaveWorkout::class,
-        WorkoutDetailsDto::class
-    //TODO: exerciseDetailsDto
+        WorkoutDetails::class,
+        ExerciseDetails::class,
+        WorkoutDetailsExerciseCrossRef::class
     ],
     version = 1,
-    exportSchema = true
+    exportSchema = false,
+//    autoMigrations = [
+//        AutoMigration(from = 1, to = 3)
+//    ]
 )
 abstract class KareDatabase : RoomDatabase() {
     abstract val exerciseDao: ExerciseDao
@@ -38,6 +35,7 @@ abstract class KareDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: KareDatabase? = null
 
+//        val MIGRATION_1_3: Migration = MigrationFrom1To3()
         fun getInstance(context: Context): KareDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also {
@@ -50,7 +48,9 @@ abstract class KareDatabase : RoomDatabase() {
                 context.applicationContext,
                 KareDatabase::class.java,
                 Constants.DATABASE_NAME
-            ).build()
-
+            )
+//                .addMigrations(MIGRATION_1_3)
+//                .fallbackToDestructiveMigration()
+                .build()
     }
 }
