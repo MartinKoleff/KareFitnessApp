@@ -12,6 +12,7 @@ import { StartupModule } from './startup/startup.module';
 import { HomeModule } from './home/home.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from '../services/auth-interceptor.service';
+import { CreateworkoutModule } from './createworkout/createworkout.module';
 
 @NgModule({
   declarations: [
@@ -27,8 +28,8 @@ import { AuthInterceptor } from '../services/auth-interceptor.service';
     RegisterModule,
     MainModule,
     StartupModule,
-    HomeModule
-
+    HomeModule,
+    CreateworkoutModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

@@ -1,0 +1,18 @@
+<div class="container" *ngIf="shouldersExercises.length > 0">
+  <div>
+    <label for="shouldersExercise">Select Shoulder Exercise:</label>
+    <select id="shouldersExercise" [(ngModel)]="selectedExercise" (change)="selectExercise(selectedExercise)">
+      <option *ngFor="let exercise of shouldersExercises" [ngValue]="exercise">{{ exercise.name }}</option>
+    </select>
+  </div>
+  <div>
+    <input type="number" placeholder="reps" [(ngModel)]="workoutReps" name="reps" (keyup.Enter)="addExercise()">
+  </div>
+
+  <input type="number" placeholder="sets" [(ngModel)]="workoutSets" name="sets" (keyup.Enter)="addExercise()">
+
+  <div *ngFor="let exercise of selectedExercises">
+    <!-- Display details of the selected exercise -->
+    <p>{{ exercise.name + " for " + exercise.reps + " reps and " + exercise.sets + " sets"  }}</p>
+  </div>
+</div>
