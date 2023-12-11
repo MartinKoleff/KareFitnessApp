@@ -71,7 +71,7 @@ fun NoWorkoutSelectedBanner(
                     .fillMaxSize()
                     .align(Alignment.TopStart)
                     .graphicsLayer { alpha = 0.80f },
-                colorFilter = ColorFilter.tint(Color.Blue, BlendMode.Darken)
+                colorFilter = ColorFilter.tint(primaryColor, BlendMode.Multiply)
             )
 
             Image(
