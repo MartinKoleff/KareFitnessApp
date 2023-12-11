@@ -16,10 +16,13 @@ import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
+import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -27,13 +30,15 @@ import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 fun SetupNavGraph(
     navController: NavHostController,
     exerciseViewModelFactory: ExerciseViewModel.Factory,
-    exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory
+    exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory,
+    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
 ) {
-    val isNavigationInProgress = rememberSaveable  {
+    val isNavigationInProgress = rememberSaveable {
         mutableStateOf(false)
     }
 
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
+    val workoutViewModel: WorkoutViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -46,8 +51,20 @@ fun SetupNavGraph(
                 dashboardViewModel = dashboardViewModel
             )
         }
-        composable(MainScreen.MyWorkout.route) { MyWorkoutScreen(navController, isNavigationInProgress) }
-        composable(MainScreen.Workouts.route) { WorkoutsScreen(navController, isNavigationInProgress) }
+        composable(MainScreen.MyWorkout.route) {
+            MyWorkoutScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress,
+                workoutListViewModel = workoutViewModel
+            )
+        }
+        composable(MainScreen.Workouts.route) {
+            WorkoutsScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress,
+                workoutListViewModel = workoutViewModel
+            )
+        }
         composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
             val muscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
@@ -60,11 +77,22 @@ fun SetupNavGraph(
                 dashboardViewModel = dashboardViewModel
             )
         }
+        composable(MainScreen.WorkoutDetails.route) { backStackEntry ->
+            val workoutId =
+                backStackEntry.arguments?.getString("workout_id") ?: ""
+
+            WorkoutDetailsScreen(
+                workoutId = workoutId,
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress,
+                workoutDetailsViewModelFactory = workoutDetailsViewModelFactory
+            )
+        }
         composable(MainScreen.ExerciseDetails.route) { backStackEntry ->
             val exerciseId =
                 backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
 
-            val initialMuscleGroupId  =
+            val initialMuscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
 
             ExerciseDetailsScreen(
@@ -75,7 +103,17 @@ fun SetupNavGraph(
                 initialMuscleGroupId = initialMuscleGroupId
             )
         }
-        composable(MainScreen.Settings.route) { SettingsScreen(navController, isNavigationInProgress) }
-        composable(MainScreen.SearchWorkoutsScreen.route) { SearchWorkoutsScreen(navController, isNavigationInProgress) }
+        composable(MainScreen.Settings.route) {
+            SettingsScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress
+            )
+        }
+        composable(MainScreen.SearchWorkoutsScreen.route) {
+            SearchWorkoutsScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress
+            )
+        }
     }
 }

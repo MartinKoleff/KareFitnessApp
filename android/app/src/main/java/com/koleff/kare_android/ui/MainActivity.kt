@@ -36,7 +36,8 @@ class MainActivity : ComponentActivity() {
                 SetupNavGraph(
                     navController = navController,
                     exerciseViewModelFactory = exerciseViewModelFactory,
-                    exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory
+                    exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory,
+                    workoutDetailsViewModelFactory = workoutDetailsViewModelFactory
                 )
             }
         }
