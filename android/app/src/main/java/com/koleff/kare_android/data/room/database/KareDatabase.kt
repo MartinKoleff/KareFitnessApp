@@ -6,13 +6,16 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
+import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 
 @Database(
     entities = [
@@ -20,13 +23,16 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExercise
         Workout::class,
         WorkoutDetails::class,
         ExerciseDetails::class,
-        WorkoutDetailsExerciseCrossRef::class
+        WorkoutDetailsExerciseCrossRef::class,
+        WorkoutDetailsWorkoutCrossRef::class,
+        ExerciseDetailsExerciseCrossRef::class
     ],
     version = 1,
     exportSchema = false,
 )
 abstract class KareDatabase : RoomDatabase() {
     abstract val exerciseDao: ExerciseDao
+    abstract val exerciseDetailsDao: ExerciseDetailsDao
     abstract val workoutDao: WorkoutDao
     abstract val workoutDetailsDao: WorkoutDetailsDao
 
