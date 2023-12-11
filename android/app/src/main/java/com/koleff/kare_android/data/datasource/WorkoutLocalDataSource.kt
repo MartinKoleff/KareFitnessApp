@@ -13,6 +13,7 @@ import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.model.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.WorkoutDao
+import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
@@ -23,6 +24,7 @@ import javax.inject.Inject
 
 class WorkoutLocalDataSource @Inject constructor(
     private val workoutDao: WorkoutDao,
+    private val workoutDetailsDao: WorkoutDetailsDao,
     private val workoutDBManager: WorkoutDBManager
 ) : WorkoutDataSource {
     override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
@@ -58,7 +60,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
         //Check if Room DB has data
         if (!workoutDBManager.hasInitializedWorkoutTableRoomDB) {
-            workoutDBManager.initializeWorkoutTableRoomDB(workoutDao)
+            workoutDBManager.initializeWorkoutTableRoomDB(workoutDao, workoutDetailsDao)
         }
 
         val data = workoutDao.getWorkoutsOrderedById()
@@ -75,7 +77,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val data = workoutDao.getWorkoutById(workoutId)
+            val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
             val result = GetWorkoutDetailsWrapper(
                 GetWorkoutDetailsResponse(data.workoutDetails.toWorkoutDetailsDto())
@@ -85,7 +87,7 @@ class WorkoutLocalDataSource @Inject constructor(
         }
 
     private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
-        val data = workoutDao.getWorkoutExercises(workoutId)
+        val data = workoutDetailsDao.getWorkoutDetailsById(workoutId).exercises
 
         return data.map(Exercise::toExerciseDto)
     }
