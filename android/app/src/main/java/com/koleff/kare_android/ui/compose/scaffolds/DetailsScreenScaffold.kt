@@ -21,7 +21,7 @@ import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.navigation.ExerciseDetailsBottomNavigationBar
 
 @Composable
-fun DetailsScreenScaffold(
+fun ExerciseDetailsScreenScaffold(
     screenTitle: String,
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,

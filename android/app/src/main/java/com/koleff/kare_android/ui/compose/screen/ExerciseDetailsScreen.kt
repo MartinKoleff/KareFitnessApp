@@ -38,7 +38,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
-import com.koleff.kare_android.ui.compose.scaffolds.DetailsScreenScaffold
+import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.YoutubeVideoPlayer
 import com.koleff.kare_android.ui.compose.navigation.FloatingNavigationItem
@@ -67,7 +67,7 @@ fun ExerciseDetailsScreen(
     Log.d("ExerciseDetailsScreen", exerciseDetailsState.value.exercise.muscleGroup.toString())
     val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.value.exercise.muscleGroup)
 
-    DetailsScreenScaffold(
+    ExerciseDetailsScreenScaffold(
         screenTitle = exerciseDetailsState.value.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
@@ -201,7 +201,7 @@ fun ExerciseDetailsScreenPreview() {
     )
     val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
 
-    DetailsScreenScaffold(
+    ExerciseDetailsScreenScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
