@@ -14,7 +14,7 @@ export class CreateworkoutComponent {
   showShouldersExercise: boolean = false;
   showChestExercise: boolean = false;
   showCardioExercise: boolean = false;
-  showAbsExercise: boolean = true;
+  showAbsExercise: boolean = false;
 
   toggleBicepsExercise() {
     this.showBicepsExercise = !this.showBicepsExercise;
