@@ -17,5 +17,6 @@ object Constants {
     const val fakeDelay: Long = 2000L
 
     const val DATABASE_NAME = "my_database"
-    const val TABLE_NAME = "ExerciseDto"
+    const val EXERCISE_TABLE_NAME = "ExerciseDto"
+    const val WORKOUT_TABLE_NAME = "WorkoutDto"
 }
