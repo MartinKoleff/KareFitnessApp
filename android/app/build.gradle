@@ -22,6 +22,13 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        //Room DB schema location
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
@@ -108,6 +115,13 @@ dependencies {
     implementation 'androidx.navigation:navigation-runtime-ktx:2.7.5'
     implementation "androidx.navigation:navigation-compose:2.7.5"
     implementation 'androidx.hilt:hilt-navigation-compose:1.1.0'
+
+    //Room
+    implementation("androidx.room:room-ktx:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+
+    //YouTube player
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28'
 
     //JUnit and testing
     testImplementation 'junit:junit:4.13.2'

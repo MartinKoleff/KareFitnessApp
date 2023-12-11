@@ -12,15 +12,15 @@ import com.koleff.kare_android.data.model.wrapper.ServerResponseData
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutDataSource {
-    suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>
 
-    suspend fun getWorkoutDetails(workoutId: String): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
+    suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 
-    suspend fun deleteWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun saveWorkout(workout: SaveWorkoutDto): Flow<ResultWrapper<ServerResponseData>>
 }
