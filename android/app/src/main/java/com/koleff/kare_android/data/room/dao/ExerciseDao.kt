@@ -8,6 +8,7 @@ import androidx.room.Query
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 
 @Dao
 interface ExerciseDao {
@@ -18,6 +19,12 @@ interface ExerciseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(exercises: List<Exercise>)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllExerciseDetailsExerciseCrossRefs(crossRefs: List<ExerciseDetailsExerciseCrossRef>)
+
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
 
@@ -27,7 +34,4 @@ interface ExerciseDao {
 
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId ASC")
     fun getExercisesOrderedById(): List<Exercise>
-
-    @Query("SELECT * FROM exercise_details_table WHERE exerciseDetailsId = :exerciseId")
-    fun getExerciseById(exerciseId: Int): ExerciseDetails //TODO: wire to have same id...
 }
