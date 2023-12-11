@@ -1,10 +1,10 @@
 package com.koleff.kare_android.data.room.manager
 
 import com.koleff.kare_android.common.preferences.Preferences
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.entity.Exercise
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class ExerciseDBManager @Inject constructor(
         preferences.initializeExerciseTableRoomDB()
     }
 
-    private fun loadExercises(muscleGroup: MuscleGroup): List<ExerciseDto> {
+    private fun loadExercises(muscleGroup: MuscleGroup): List<Exercise> {
         return when (muscleGroup) {
             MuscleGroup.CHEST -> getChestExercises()
             MuscleGroup.BACK -> getBackExercises()
@@ -36,72 +36,72 @@ class ExerciseDBManager @Inject constructor(
         }
     }
 
-    private fun getLegsExercises(): List<ExerciseDto> { //TODO: video for all...
+    private fun getLegsExercises(): List<Exercise> { //TODO: video for all...
         return listOf(
-            ExerciseDto(
+            Exercise(
                 51,
                 "Squat",
                 MuscleGroup.LEGS,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 52,
                 "Bulgarian split squad",
                 MuscleGroup.LEGS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 53,
                 "Smith machine squad",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 54,
                 "Leg extension",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 55,
                 "Kettlebell walking lunges",
                 MuscleGroup.LEGS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 56,
                 "Leg press",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 57,
                 "Prone leg curl",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 58,
                 "Seated calf raises",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 59,
                 "Standing calf raises",
                 MuscleGroup.LEGS,
                 MachineType.CALISTHENICS,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 60,
                 "Barbell standing calf raises",
                 MuscleGroup.LEGS,
@@ -111,72 +111,72 @@ class ExerciseDBManager @Inject constructor(
         )
     }
 
-    private fun getShoulderExercises(): List<ExerciseDto> {
+    private fun getShoulderExercises(): List<Exercise> {
         return listOf(
-            ExerciseDto(
+            Exercise(
                 41,
                 "Barbell upright row",
                 MuscleGroup.SHOULDERS,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 42,
                 "Dumbbell front raises",
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 43,
                 "Dumbbell lateral raises",
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 44,
                 "Seated dumbbell shoulder press",
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 45,
                 "Barbell shoulder press",
                 MuscleGroup.SHOULDERS,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 46,
                 "Face pull",
                 MuscleGroup.SHOULDERS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 47,
                 "Front plate raise",
                 MuscleGroup.SHOULDERS,
                 MachineType.CALISTHENICS,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 48,
                 "One arm lateral raises at the low pulley cable",
                 MuscleGroup.SHOULDERS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 49,
                 "Reverse pec deck",
                 MuscleGroup.SHOULDERS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 50,
                 "Dumbbell behind the back press", //TODO: video...
                 MuscleGroup.SHOULDERS,
@@ -186,65 +186,65 @@ class ExerciseDBManager @Inject constructor(
         )
     }
 
-    private fun getBicepsExercises(): List<ExerciseDto> {
+    private fun getBicepsExercises(): List<Exercise> {
        return listOf(
-           ExerciseDto(
+           Exercise(
                32,
                "Standing dumbbell biceps curl",
                MuscleGroup.BICEPS,
                MachineType.DUMBBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                33,
                "Sitting dumbbell biceps curl",
                MuscleGroup.BICEPS,
                MachineType.DUMBBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                34,
                "Barbell biceps curl",
                MuscleGroup.BICEPS,
                MachineType.BARBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                35,
                "Dumbbell concentrated curl",
                MuscleGroup.BICEPS,
                MachineType.DUMBBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                36,
                "Dumbbell hammer curl",
                MuscleGroup.BICEPS,
                MachineType.DUMBBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                37,
                "Dumbbell hammer curl",
                MuscleGroup.BICEPS,
                MachineType.DUMBBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                38,
                "One arm dumbbell preacher curl",
                MuscleGroup.BICEPS,
                MachineType.DUMBBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                39,
                "Barbell preacher curl",
                MuscleGroup.BICEPS,
                MachineType.BARBELL,
                ""
            ),
-           ExerciseDto(
+           Exercise(
                40,
                "Reverse grip biceps curl at the low pulley cable",
                MuscleGroup.BICEPS,
@@ -254,72 +254,72 @@ class ExerciseDBManager @Inject constructor(
        )
     }
 
-    private fun getTricepsExercises(): List<ExerciseDto> {
+    private fun getTricepsExercises(): List<Exercise> {
         return listOf(
-            ExerciseDto(
+            Exercise(
                 22,
                 "Triceps cable pushdown",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 23,
                 "Dumbbell triceps kickback",
                 MuscleGroup.TRICEPS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 24,
                 "Skull crushers",
                 MuscleGroup.TRICEPS,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 25,
                 "Dips",
                 MuscleGroup.TRICEPS,
                 MachineType.CALISTHENICS,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 26,
                 "Machine triceps dips",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 27,
                 "Dumbbell triceps extension",
                 MuscleGroup.TRICEPS,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 28,
                 "Cable rope triceps pushdown",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 29,
                 "Bench dip", //TODO: video...
                 MuscleGroup.TRICEPS,
                 MachineType.CALISTHENICS,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 30,
                 "Barbell standing french press", //TODO: video...
                 MuscleGroup.TRICEPS,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 31,
                 "Triceps cable rope extension",
                 MuscleGroup.TRICEPS,
@@ -329,79 +329,79 @@ class ExerciseDBManager @Inject constructor(
         )
     }
 
-    private fun getBackExercises(): List<ExerciseDto> {
+    private fun getBackExercises(): List<Exercise> {
         return listOf(
-            ExerciseDto(
+            Exercise(
                 11,
                 "Seated cable rows",
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 12,
                 "Lat pulldown (Wide grip)",
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 13,
                 "Pull ups",
                 MuscleGroup.BACK,
                 MachineType.CALISTHENICS,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 14,
                 "Bent over barbell row",
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 15,
                 "Deadlift", //TODO: video...
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 16,
                 "Bent over dumbbell row",
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 17,
                 "Standing lat pulldown",
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 18,
                 "T-bar row", //Mechkata
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 19,
                 "Dumbbell Shrugs",
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 20,
                 "Behind the neck lat pulldown", //TODO: video...
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 21,
                 "Romanian deadlift", //TODO: video...
                 MuscleGroup.BACK,
@@ -411,72 +411,72 @@ class ExerciseDBManager @Inject constructor(
         )
     }
 
-    private fun getChestExercises(): List<ExerciseDto>  {
+    private fun getChestExercises(): List<Exercise>  {
         return listOf(
-            ExerciseDto(
+            Exercise(
                 1,
                 "Flat barbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 2,
                 "Incline barbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 3,
                 "Incline barbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 4,
                 "Incline dumbbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 5,
                 "Flat dumbbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.DUMBBELL,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 6,
                 "Pec deck fly",
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 7,
                 "Cable chest fly",
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 8,
                 "Hammer strength",
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 9,
                 "Dips",
                 MuscleGroup.CHEST,
                 MachineType.CALISTHENICS,
                 ""
             ),
-            ExerciseDto(
+            Exercise(
                 10,
                 "Push ups", //TODO: video...
                 MuscleGroup.CHEST,

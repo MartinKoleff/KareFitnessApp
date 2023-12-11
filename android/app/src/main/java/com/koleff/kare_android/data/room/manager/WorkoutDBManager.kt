@@ -18,7 +18,7 @@ class WorkoutDBManager @Inject constructor(
 
     suspend fun initializeWorkoutTableRoomDB(workoutDao: WorkoutDao) = withContext(Dispatchers.IO) {
         val workouts = getAllWorkouts()
-        workoutDao.insertAll(workouts)
+        workoutDao.insertAll(workouts.map(WorkoutDto::toWorkout))
 
         preferences.initializeWorkoutTableRoomDB()
     }
