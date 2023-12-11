@@ -2,7 +2,6 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
@@ -10,6 +9,7 @@ import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
 import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -36,7 +36,7 @@ class ExerciseLocalDataSource @Inject constructor(
             )
 
             val result = GetExercisesWrapper(
-                GetExercisesResponse(data)
+                GetExercisesResponse(data.map(Exercise::toExerciseDto))
             )
 
             emit(ResultWrapper.Success(result))

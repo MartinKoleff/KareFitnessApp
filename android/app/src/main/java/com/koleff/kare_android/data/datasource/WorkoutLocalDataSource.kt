@@ -1,9 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
-import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -14,6 +12,7 @@ import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.model.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.WorkoutDao
+import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +44,7 @@ class WorkoutLocalDataSource @Inject constructor(
         val data = workoutDao.getWorkoutByIsSelected()
 
         val result = GetWorkoutWrapper(
-            GetWorkoutResponse(data)
+            GetWorkoutResponse(data.toWorkoutDto())
         )
 
         emit(ResultWrapper.Success(result))
@@ -63,7 +62,7 @@ class WorkoutLocalDataSource @Inject constructor(
         val data = workoutDao.getWorkoutsOrderedById()
 
         val result = GetAllWorkoutsWrapper(
-            GetAllWorkoutsResponse(data)
+            GetAllWorkoutsResponse(data.map(Workout::toWorkoutDto))
         )
 
         emit(ResultWrapper.Success(result))
@@ -77,15 +76,17 @@ class WorkoutLocalDataSource @Inject constructor(
             val data = workoutDao.getWorkoutById(workoutId)
 
             val result = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(data)
+                GetWorkoutDetailsResponse(data.workoutDetails.toWorkoutDetailsDto())
             )
 
             emit(ResultWrapper.Success(result))
         }
 
-    private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
-        return workoutDao.getWorkoutExercises(workoutId)
-    }
+//    private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
+//        val data = workoutDao.getWorkoutExercises(workoutId)
+//
+//        return data.exercises.map(Exercise::toExerciseDto)
+//    }
 
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
@@ -106,7 +107,17 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            workoutDao.insertWorkout(workout)
+            //TODO: parse SaveWorkoutDto to Workout... ExerciseDto to Exercise
+//            val workoutEntity = Workout(
+//                name = workout.name,
+//                muscleGroup = workout.muscleGroup,
+//                snapshot = workout.snapshot,
+//                totalExercises = workout.exercises.size,
+//                isSelected = workout.isSelected,
+//                exercises = workout.exercises.map(Exercise::toExercise),
+//            )
+//
+//            workoutDao.insertWorkout(workout)
 
             val result = ServerResponseData(
                 BaseResponse()
