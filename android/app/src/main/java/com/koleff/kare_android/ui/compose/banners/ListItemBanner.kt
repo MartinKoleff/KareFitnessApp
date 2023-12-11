@@ -165,7 +165,7 @@ fun ListItemBannerV2(
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
+                    .graphicsLayer { alpha = 0.80f } 
                     .drawWithContent {
 
                         //Fill 5/8 of the screen with effect gradient
@@ -300,7 +300,7 @@ fun WorkoutBannerList(
                     .fillMaxWidth()
                     .height(200.dp),
                 title = workout.name,
-                muscleGroup = workout.muscleGroup,
+                muscleGroup = workout.muscleGroup, //TODO: Add totalExercises...
                 hasDescription = true
             ) {
                 openWorkoutDetailsScreen(workout, navController)

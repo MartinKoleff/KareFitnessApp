@@ -1,11 +1,11 @@
 package com.koleff.kare_android.ui.compose.banners
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -41,9 +41,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.MainScreen
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
@@ -63,7 +60,7 @@ fun WorkoutBanner(
         MuscleGroup.CHEST -> R.drawable.ic_chest
         MuscleGroup.BACK -> R.drawable.ic_back
         MuscleGroup.TRICEPS -> R.drawable.ic_triceps
-        MuscleGroup.BICEPS -> R.drawable.ic_biceps
+        MuscleGroup.BICEPS, MuscleGroup.ARMS -> R.drawable.ic_biceps
         MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
         MuscleGroup.LEGS -> R.drawable.ic_legs
         else -> -1 //TODO: handle invalid muscle group...
@@ -92,6 +89,15 @@ fun WorkoutBanner(
                 contentScale = ContentScale.Crop
             )
 
+            //Fixes white rectangle on left half side
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(screenWidth / 2)
+                    .align(Alignment.TopStart)
+                    .background(Color.Black)
+            )
+
             //Hexagon effect overflowing into workout snapshot
             Image(
                 painter = painterResource(R.drawable.ic_workout_banner_effect),
@@ -100,7 +106,7 @@ fun WorkoutBanner(
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 0.80f } //TODO: add opacity / 0.66f alpha works
+                    .graphicsLayer { alpha = 0.80f }
                     .drawWithContent {
 
                         //Fill 5/8 of the screen with effect gradient

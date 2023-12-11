@@ -19,6 +19,7 @@ import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerList
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.MachineFilterSegmentButton
+import com.koleff.kare_android.ui.compose.banners.ExerciseList
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
@@ -71,7 +72,7 @@ fun MuscleGroupScreen(
                     innerPadding = innerPadding
                 )
             } else {
-                ExerciseBannerList(
+                ExerciseList(
                     innerPadding = innerPadding,
                     exerciseList = exerciseListState.exerciseList,
                     navController = navController

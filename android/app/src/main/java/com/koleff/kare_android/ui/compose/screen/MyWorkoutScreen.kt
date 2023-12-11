@@ -21,6 +21,7 @@ import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.banners.ListItemBannerV2
 import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
+import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -63,15 +64,14 @@ fun MyWorkoutScreen(
                 }
 
                 selectedWorkout?.let {
-                    ListItemBannerV2(
+                    WorkoutBanner(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp),
-                        title = selectedWorkout.name,
-                        muscleGroup = selectedWorkout.muscleGroup,
+                        workout = selectedWorkout,
                         hasDescription = true
-                    ) {
-                        openWorkoutDetailsScreen(selectedWorkout, navController)
+                    ){
+                        openWorkoutDetailsScreen(workout = it, navController = navController)
                     }
                     return@MainScreenScaffold
                 }

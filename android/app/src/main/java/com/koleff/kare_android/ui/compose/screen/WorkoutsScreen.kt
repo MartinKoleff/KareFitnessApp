@@ -22,6 +22,7 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.WorkoutBannerList
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
+import com.koleff.kare_android.ui.compose.banners.WorkoutList
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -60,7 +61,7 @@ fun WorkoutsScreen(
             if (workoutState.isLoading && workoutState.workoutList.isEmpty()) { //Don't show loader if retrieved from cache...
                 LoadingWheel(innerPadding = innerPadding)
             } else {
-                WorkoutBannerList(
+                WorkoutList(
                     innerPadding = innerPadding,
                     navController = navController,
                     workoutList = workoutState.workoutList
