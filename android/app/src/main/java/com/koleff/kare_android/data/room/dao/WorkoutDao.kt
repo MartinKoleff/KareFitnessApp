@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
@@ -29,12 +30,15 @@ interface WorkoutDao {
     @Update
     suspend fun updateWorkout(workout: Workout)
 
+    @Transaction
     @Query("UPDATE workout_table SET isSelected = 1 WHERE workoutId = :workoutId")
     suspend fun selectWorkoutById(workoutId: Int)
 
+    @Transaction
     @Query("SELECT * FROM workout_table ORDER BY workoutId")
     fun getWorkoutsOrderedById(): List<Workout>
 
+    @Transaction
     @Query("SELECT * FROM workout_table WHERE isSelected = 1") //true = 1, false = 0
     fun getWorkoutByIsSelected(): Workout
 }
