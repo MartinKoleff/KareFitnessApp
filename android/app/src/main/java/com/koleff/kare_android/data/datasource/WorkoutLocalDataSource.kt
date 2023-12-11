@@ -75,41 +75,16 @@ class WorkoutLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
 
             val data = workoutDao.getWorkoutById(workoutId)
-            val description =
-                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
-            val exercises = getWorkoutExercises(workoutId)
 
             val result = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(
-                    WorkoutDetailsDto(
-                        workoutId = workoutId,
-                        name = data.name,
-                        description = description,
-                        muscleGroup = data.muscleGroup,
-                        exercises = exercises,
-                        isSelected = data.isSelected
-                    )
-                )
+                GetWorkoutDetailsResponse(data)
             )
 
             emit(ResultWrapper.Success(result))
         }
 
-        when(workoutId){
-            "Workout1" -> {
-
-            }
-            "Workout2" -> {
-
-            }
-            "Workout3" -> {
-
-            }
-            else -> {
-                return emptyList()
-            }
-        }
     private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
+        return workoutDao.getWorkoutExercises(workoutId)
     }
 
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
