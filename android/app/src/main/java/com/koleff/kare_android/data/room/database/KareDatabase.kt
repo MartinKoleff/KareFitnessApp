@@ -14,18 +14,19 @@ import com.koleff.kare_android.data.room.dto.Workout
 
 
 @Database(
-    entities = [WorkoutDto::class, Workout::class],
+    entities = [ExerciseDto::class, Exercise::class, WorkoutDto::class, Workout::class],
     version = 1,
     exportSchema = true
 )
-abstract class WorkoutDatabase : RoomDatabase() {
-    abstract val dao: WorkoutDao
+abstract class KareDatabase : RoomDatabase() {
+    abstract val exerciseDao: ExerciseDao
+    abstract val workoutDao: WorkoutDao
 
     companion object {
         @Volatile
-        private var INSTANCE: WorkoutDatabase? = null
+        private var INSTANCE: KareDatabase? = null
 
-        fun getInstance(context: Context): WorkoutDatabase =
+        fun getInstance(context: Context): KareDatabase =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: buildDatabase(context).also {
                     INSTANCE = it
@@ -35,8 +36,9 @@ abstract class WorkoutDatabase : RoomDatabase() {
         fun buildDatabase(context: Context) =
             Room.databaseBuilder(
                 context.applicationContext,
-                WorkoutDatabase::class.java,
+                KareDatabase::class.java,
                 Constants.DATABASE_NAME
             ).build()
+
     }
 }

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
-import androidx.room.Room
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
@@ -28,8 +27,7 @@ import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
-import com.koleff.kare_android.data.room.database.ExerciseDatabase
-import com.koleff.kare_android.data.room.database.WorkoutDatabase
+import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
@@ -43,12 +41,10 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
@@ -122,14 +118,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideExerciseDatabase(@ApplicationContext appContext: Context): ExerciseDatabase {
-        return ExerciseDatabase.buildDatabase(appContext)
+    fun provideKareDatabase(@ApplicationContext appContext: Context): KareDatabase {
+        return KareDatabase.buildDatabase(appContext)
     }
 
     @Provides
     @Singleton
-    fun provideExerciseDao(exerciseDatabase: ExerciseDatabase): ExerciseDao {
-        return exerciseDatabase.dao
+    fun provideExerciseDao(kareDatabase: KareDatabase): ExerciseDao {
+        return kareDatabase.exerciseDao
     }
 
     @Provides
@@ -140,14 +136,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutDatabase(@ApplicationContext appContext: Context): WorkoutDatabase {
-        return WorkoutDatabase.buildDatabase(appContext)
-    }
-
-    @Provides
-    @Singleton
-    fun provideWorkoutDao(workoutDao: WorkoutDatabase): WorkoutDao {
-        return workoutDao.dao
+    fun provideWorkoutDao(kareDatabase: KareDatabase): WorkoutDao {
+        return kareDatabase.workoutDao
     }
 
     @Provides
