@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
 
@@ -35,6 +36,6 @@ interface WorkoutDao {
     @Query("SELECT * FROM workout_table WHERE isSelected = 1") //true = 1, false = 0
     fun getWorkoutByIsSelected(): Workout
 
-//    @Query("SELECT * FROM workout_table w WHERE workoutId = :workoutId") //true = 1, false = 0
-//    fun getWorkoutExercises(workoutId: Int): WorkoutWithExercises
+    @Query("SELECT * FROM workout_details_table w WHERE workoutDetailsId = :workoutId") //true = 1, false = 0
+    fun getWorkoutExercises(workoutId: Int): List<Exercise>
 }

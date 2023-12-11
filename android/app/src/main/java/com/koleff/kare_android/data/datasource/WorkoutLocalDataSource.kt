@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
@@ -12,6 +13,7 @@ import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.model.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.WorkoutDao
+import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import kotlinx.coroutines.delay
@@ -82,11 +84,11 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-//    private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
-//        val data = workoutDao.getWorkoutExercises(workoutId)
-//
-//        return data.exercises.map(Exercise::toExerciseDto)
-//    }
+    private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
+        val data = workoutDao.getWorkoutExercises(workoutId)
+
+        return data.map(Exercise::toExerciseDto)
+    }
 
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
