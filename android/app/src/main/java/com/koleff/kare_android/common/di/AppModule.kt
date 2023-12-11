@@ -26,7 +26,9 @@ import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
+import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
@@ -130,6 +132,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideExerciseDetailsDao(kareDatabase: KareDatabase): ExerciseDetailsDao {
+        return kareDatabase.exerciseDetailsDao
+    }
+
+    @Provides
+    @Singleton
     fun provideExerciseDBManager(preferences: Preferences): ExerciseDBManager {
         return ExerciseDBManager(preferences)
     }
@@ -157,12 +165,16 @@ object AppModule {
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
-        exerciseDBManager: ExerciseDBManager,
-        dispatcher: CoroutineDispatcher
+        exerciseDetailsDao: ExerciseDetailsDao,
+        exerciseDBManager: ExerciseDBManager
     ): ExerciseDataSource {
-        return if (useLocalDataSource) ExerciseLocalDataSource(exerciseDao, exerciseDBManager)
+        return if (useLocalDataSource) ExerciseLocalDataSource(
+            exerciseDao = exerciseDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseDBManager = exerciseDBManager
+        )
         else if (useMockupDataSource) ExerciseMockupDataSource()
-        else ExerciseRemoteDataSource(exerciseApi, dispatcher)
+        else ExerciseRemoteDataSource(exerciseApi)
     }
 
     @Provides
