@@ -9,15 +9,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.koleff.kare_android.ui.compose.ExerciseList
 import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.MachineFilterSegmentButton
-import com.koleff.kare_android.ui.compose.MuscleGroupGrid
-import com.koleff.kare_android.ui.compose.WorkoutList
-import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.banners.WorkoutBannerList
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
+import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
 @Composable
@@ -48,7 +44,7 @@ fun WorkoutsScreen(
             if (workoutState.isLoading && workoutState.workoutList.isEmpty()) { //Don't show loader if retrieved from cache...
                 LoadingWheel(innerPadding = innerPadding)
             } else {
-                WorkoutList(
+                WorkoutBannerList(
                     innerPadding = innerPadding,
                     navController = navController,
                     workoutList = workoutState.workoutList
