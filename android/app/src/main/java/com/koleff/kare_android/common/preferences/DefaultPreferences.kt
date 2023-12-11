@@ -5,6 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.view_model.MuscleGroupUIList
 import java.lang.IllegalStateException
 import java.lang.NullPointerException
@@ -23,6 +24,32 @@ class DefaultPreferences(
         sharedPref.edit()
             .putString(Preferences.DASHBOARD_MUSCLE_GROUP_LIST, json)
             .apply()
+    }
+
+    override fun saveSelectedWorkout(selectedWorkout: WorkoutDto) {
+        val json = gson.toJson(selectedWorkout)
+
+        sharedPref.edit()
+            .putString(Preferences.SELECTED_WORKOUT, json)
+            .apply()
+
+    }
+
+    override fun loadSelectedWorkout(): WorkoutDto? {
+        val selectedWorkoutJson: String =
+            sharedPref.getString(Preferences.SELECTED_WORKOUT, "") ?: ""
+
+        return try {
+            gson.fromJson(selectedWorkoutJson, WorkoutDto::class.java)
+        } catch (ex: Exception) {
+            when (ex) {
+                is IllegalAccessException, is NullPointerException -> {
+                    null
+                }
+
+                else -> throw ex
+            }
+        }
     }
 
     override fun loadDashboardMuscleGroupList(): List<MuscleGroupUI> {
@@ -45,21 +72,35 @@ class DefaultPreferences(
                 is IllegalAccessException, is NullPointerException -> {
                     return emptyList()
                 }
+
                 else -> throw ex
             }
         }
     }
 
-    override fun hasInitializedRoomDB(): Boolean {
+    override fun hasInitializedExerciseTableRoomDB(): Boolean {
         val hasInitialized: Boolean =
-            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_ROOM_DB, false)
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE_ROOM_DB, false)
 
         return hasInitialized
     }
 
-    override fun initializeRoomDB() {
+    override fun initializeExerciseTableRoomDB() {
         sharedPref.edit()
-            .putBoolean(Preferences.HAS_INITIALIZED_ROOM_DB, true)
+            .putBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE_ROOM_DB, true)
+            .apply()
+    }
+
+    override fun hasInitializedWorkoutTableRoomDB(): Boolean {
+        val hasInitialized: Boolean =
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, false)
+
+        return hasInitialized
+    }
+
+    override fun initializeWorkoutTableRoomDB() {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, true)
             .apply()
     }
 }

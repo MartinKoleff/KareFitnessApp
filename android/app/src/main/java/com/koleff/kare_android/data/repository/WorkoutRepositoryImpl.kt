@@ -14,7 +14,7 @@ import javax.inject.Inject
 class WorkoutRepositoryImpl @Inject constructor(
     private val workoutDataSource: WorkoutDataSource
 ) : WorkoutRepository {
-    override suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         return workoutDataSource.selectWorkout(workoutId)
     }
 
@@ -26,11 +26,11 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.getAllWorkouts()
     }
 
-    override suspend fun getWorkoutDetails(workoutId: String): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
+    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
         return workoutDataSource.getWorkoutDetails(workoutId)
     }
 
-    override suspend fun deleteWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         return workoutDataSource.deleteWorkout(workoutId)
     }
 

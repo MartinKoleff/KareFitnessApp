@@ -11,11 +11,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingWheel(innerPadding: PaddingValues) {
+fun LoadingWheel(innerPadding: PaddingValues = PaddingValues(0.dp)) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -27,8 +28,10 @@ fun LoadingWheel(innerPadding: PaddingValues) {
             ),
         contentAlignment = Alignment.Center
     ) {
-        CircularProgressIndicator(modifier = Modifier
-            .size(50.dp)
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(50.dp),
+            color = Color.Green
         )
     }
 }

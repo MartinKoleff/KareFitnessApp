@@ -4,9 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.Constants.fakeSmallDelay
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.di.MainDispatcher
-import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -19,6 +19,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -33,50 +34,62 @@ class ExerciseViewModel @AssistedInject constructor(
     val state: StateFlow<ExerciseState>
         get() = _state
 
-    private var originalExerciseList: List<ExerciseData> = mutableListOf()
+    private var originalExerciseList: List<ExerciseDto> = mutableListOf()
 
     init {
         getExercises(muscleGroupId + 1)
     }
 
     fun onEvent(event: OnFilterEvent) {
-        when (event) {
-            OnFilterEvent.DumbbellFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.DUMBBELL
-                    }
-                )
-            }
+        viewModelScope.launch(dispatcher) {
+            _state.value = state.value.copy(
+                isLoading = true
+            )
+            delay(fakeSmallDelay)
 
-            OnFilterEvent.BarbellFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.BARBELL
-                    }
-                )
-            }
+            when (event) {
+                OnFilterEvent.DumbbellFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.DUMBBELL
+                        },
+                        isLoading = false
+                    )
+                }
 
-            OnFilterEvent.MachineFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.MACHINE
-                    }
-                )
-            }
+                OnFilterEvent.BarbellFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.BARBELL
+                        },
+                        isLoading = false
+                    )
+                }
 
-            OnFilterEvent.CalisthenicsFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.CALISTHENICS
-                    }
-                )
-            }
+                OnFilterEvent.MachineFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.MACHINE
+                        },
+                        isLoading = false
+                    )
+                }
 
-            OnFilterEvent.NoFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList
-                )
+                OnFilterEvent.CalisthenicsFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.CALISTHENICS
+                        },
+                        isLoading = false
+                    )
+                }
+
+                OnFilterEvent.NoFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
@@ -102,7 +115,6 @@ class ExerciseViewModel @AssistedInject constructor(
                         _state.value = ExerciseState(
                             isSuccessful = true,
                             exerciseList = apiResult.data.exercises
-                                .map(ExerciseDto::toExerciseData)
                         )
 
                         originalExerciseList = _state.value.exerciseList

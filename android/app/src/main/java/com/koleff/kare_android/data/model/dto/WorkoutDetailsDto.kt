@@ -4,13 +4,15 @@ import com.squareup.moshi.Json
 
 data class WorkoutDetailsDto(
     @field:Json(name = "id")
-    val workoutId: String,
+    val workoutId: Int = -1,
     @field:Json(name = "name")
-    val name: String,
+    val name: String = "",
     @field:Json(name = "description")
-    val description: String,
+    val description: String = "",
     @field:Json(name = "muscle_group")
-    val muscleGroup: MuscleGroup,
+    val muscleGroup: MuscleGroup = MuscleGroup.NONE,
     @field:Json(name = "exercises")
-    val exercises: List<ExerciseDto>
+    val exercises: List<ExerciseDto> = emptyList(),
+    @field:Json(name = "is_selected")
+    val isSelected: Boolean = false
 )
