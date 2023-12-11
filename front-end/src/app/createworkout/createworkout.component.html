@@ -1,0 +1,112 @@
+<div class="background">
+  <nav class="nav-container">
+    <img routerLink="/startup" alt="amogus" class="logo " src="../../assets/Images/logo.png">
+    <div class="spacer"></div>
+    <button class="button">
+      <p class="buttonText">Account</p>
+    </button>
+    <button class="button">
+      <p class="buttonText">Log out</p>
+    </button>
+  </nav>
+  <div class="container">
+    <div class="logForm">
+      <div class="startupBox">
+        <input placeholder="Name your workout" [(ngModel)]="workout.name" name="workout.name" (input)="updateSubmitButtonState()">
+      </div>
+        <div class="group-container">
+          <div class="panel" (click)="toggleBicepsExercise()">
+              <img src="../../assets/Images/biceps.jpg">
+              <p class="category-text">biceps</p>
+            </div>
+            <div class="panel" (click)="toggleTricepsExercise()">
+              <img src="../../assets/Images/triceps.jpg">
+              <p class="category-text">triceps</p>
+            </div>
+            <div class="panel" (click)="toggleLegsExercise()">
+              <img src="../../assets/Images/legs.jpg">
+              <p class="category-text">legs</p>
+            </div>
+            <div class="panel" (click)="toggleBackExercise()">
+              <img src="../../assets/Images/back.jpg">
+              <p class="category-text">back</p>
+            </div>
+            <div class="panel" (click)="toggleShouldersExercise()">
+              <img src="../../assets/Images/shoulder.jpg">
+              <p class="category-text">shoulders</p>
+            </div>
+            <div class="panel" (click)="toggleChestExercise()">
+              <img src="../../assets/Images/chest.jpg">
+              <p class="category-text">chest</p>
+            </div>
+            <div class="panel" (click)="toggleCardioExercise()">
+              <img src="../../assets/Images/cardio.jpg">
+              <p class="category-text">cardio</p>
+            </div>
+            <div class="panel" (click)="toggleAbsExercise()">
+              <img src="../../assets/Images/abs.jpg">
+              <p class="category-text">abs</p>
+            </div>
+          </div>
+          <div *ngIf="showBicepsExercise">
+            <app-biceps
+              [bicepsExercises]="biceps.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-biceps>
+          </div>
+          <div *ngIf="showTricepsExercise">
+            <app-triceps
+              [tricepsExercises]="triceps.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-triceps>
+          </div>
+          <div *ngIf="showLegsExercise">
+            <app-legs
+              [legsExercises]="legs.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-legs>
+          </div>
+          <div *ngIf="showBackExercise">
+            <app-back
+              [backExercises]="back.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-back>
+          </div>
+          <div *ngIf="showShouldersExercise">
+            <app-shoulders
+              [shouldersExercises]="shoulders.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-shoulders>
+          </div>
+          <div *ngIf="showChestExercise">
+            <app-chest
+              [chestExercises]="chest.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-chest>
+          </div>
+          <div *ngIf="showCardioExercise">
+            <app-cardio
+              [cardioExercises]="cardio.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-cardio>
+          </div>
+          <div *ngIf="showAbsExercise">
+            <app-abs
+              [absExercises]="abs.exercises"
+              [selectedExercises]="selectedExercises"
+              (exerciseSelected)="onExerciseSelected($event)"></app-abs>
+          </div>
+          <div *ngIf="
+            showAbsExercise ||
+            showBackExercise ||
+            showBicepsExercise ||
+            showCardioExercise ||
+            showChestExercise ||
+            showLegsExercise ||
+            showShouldersExercise ||
+            showTricepsExercise"
+            class="submit-box">
+              <button class="submit-text" (click)="submitWorkout()">Submit</button>
+        </div>
+  </div>
+</div>
