@@ -51,7 +51,12 @@ fun WorkoutSegmentButton(
                 onClick = {
                     if (isBlocked.value) return@SegmentedButton
 
-                    selectedIndex = index
+                    //If the same option is selected
+                    selectedIndex = if (selectedIndex == index) {
+                        return@SegmentedButton
+                    } else {
+                        index
+                    }
 
                     //Navigation
                     when (selectedIndex) {
