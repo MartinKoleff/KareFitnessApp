@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.Constants.fakeSmallDelay
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -18,6 +19,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -39,43 +41,55 @@ class ExerciseViewModel @AssistedInject constructor(
     }
 
     fun onEvent(event: OnFilterEvent) {
-        when (event) {
-            OnFilterEvent.DumbbellFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.DUMBBELL
-                    }
-                )
-            }
+        viewModelScope.launch(dispatcher) {
+            _state.value = state.value.copy(
+                isLoading = true
+            )
+            delay(fakeSmallDelay)
 
-            OnFilterEvent.BarbellFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.BARBELL
-                    }
-                )
-            }
+            when (event) {
+                OnFilterEvent.DumbbellFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.DUMBBELL
+                        },
+                        isLoading = false
+                    )
+                }
 
-            OnFilterEvent.MachineFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.MACHINE
-                    }
-                )
-            }
+                OnFilterEvent.BarbellFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.BARBELL
+                        },
+                        isLoading = false
+                    )
+                }
 
-            OnFilterEvent.CalisthenicsFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
-                        it.machineType == MachineType.CALISTHENICS
-                    }
-                )
-            }
+                OnFilterEvent.MachineFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.MACHINE
+                        },
+                        isLoading = false
+                    )
+                }
 
-            OnFilterEvent.NoFilter -> {
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList
-                )
+                OnFilterEvent.CalisthenicsFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList.filter {
+                            it.machineType == MachineType.CALISTHENICS
+                        },
+                        isLoading = false
+                    )
+                }
+
+                OnFilterEvent.NoFilter -> {
+                    _state.value = state.value.copy(
+                        exerciseList = originalExerciseList,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
