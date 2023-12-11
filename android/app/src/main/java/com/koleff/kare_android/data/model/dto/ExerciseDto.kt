@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
-@Entity //TODO: separate to Exercise...
+@Entity
 data class ExerciseDto(
     @field:Json(name = "id")
     @PrimaryKey(autoGenerate = true)

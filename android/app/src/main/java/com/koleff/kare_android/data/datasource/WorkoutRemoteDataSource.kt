@@ -18,7 +18,7 @@ import javax.inject.Inject
 
 class WorkoutRemoteDataSource @Inject constructor(
     private val workoutApi: WorkoutApi,
-    @IoDispatcher private val dispatcher: CoroutineDispatcher
+    @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WorkoutDataSource {
     override suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
         val body = BaseWorkoutRequest(workoutId)
