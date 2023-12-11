@@ -23,7 +23,7 @@ import kotlinx.coroutines.launch
 
 class WorkoutDetailsViewModel @AssistedInject constructor(
     private val workoutRepository: WorkoutRepository,
-    @Assisted private val workoutId: String,
+    @Assisted private val workoutId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -36,7 +36,7 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         getWorkoutDetails(workoutId)
     }
 
-    private fun getWorkoutDetails(workoutId: String) {
+    private fun getWorkoutDetails(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
             workoutRepository.getWorkoutDetails(workoutId).collect { apiResult ->
                 when (apiResult) {
@@ -68,13 +68,13 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(workoutId: String): WorkoutDetailsViewModel
+        fun create(workoutId: Int): WorkoutDetailsViewModel
     }
 
     companion object {
         fun provideWorkoutDetailsViewModelFactory(
             factory: Factory,
-            workoutId: String
+            workoutId: Int
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return factory.create(workoutId) as T

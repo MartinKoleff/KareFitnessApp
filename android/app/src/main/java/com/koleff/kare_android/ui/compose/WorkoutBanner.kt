@@ -224,7 +224,7 @@ fun WorkoutListPreview() {
     val navController = rememberNavController()
     repeat(n) { index ->
         val currentWorkout = WorkoutDto(
-            workoutId = "Workout$index",
+            workoutId = index,
             name = "Chest workout $index",
             muscleGroup = MuscleGroup.CHEST,
             snapshot = "",

@@ -26,7 +26,7 @@ class WorkoutDBManager @Inject constructor(
     private fun getAllWorkouts(): List<WorkoutDto> {
         return listOf(
             WorkoutDto(
-                workoutId = "Workout1",
+                workoutId = 1,
                 name = "Arnold chest workout",
                 muscleGroup = MuscleGroup.CHEST,
                 snapshot = "",
@@ -34,7 +34,7 @@ class WorkoutDBManager @Inject constructor(
                 isSelected = false
             ),
             WorkoutDto(
-                workoutId = "Workout2",
+                workoutId = 2,
                 name = "Chavdo destroy back workout",
                 muscleGroup = MuscleGroup.BACK,
                 snapshot = "",
@@ -42,7 +42,7 @@ class WorkoutDBManager @Inject constructor(
                 isSelected = false
             ),
             WorkoutDto(
-                workoutId = "Workout3",
+                workoutId = 3,
                 name = "Blow your arms workout",
                 muscleGroup = MuscleGroup.ARMS,
                 snapshot = "",
