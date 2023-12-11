@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
-import com.koleff.kare_android.data.room.dto.Exercise
+import com.koleff.kare_android.data.room.entity.Exercise
 import com.squareup.moshi.Json
 
 data class ExerciseDto(
