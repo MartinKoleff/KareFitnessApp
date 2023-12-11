@@ -5,30 +5,35 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.ExerciseDto
+import androidx.room.Transaction
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 
 @Dao
 interface ExerciseDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertExercise(exercise: ExerciseDto)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExercise(exercise: Exercise)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertAll(exercises: List<ExerciseDto>)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(exercises: List<Exercise>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllExerciseDetailsExerciseCrossRefs(crossRefs: List<ExerciseDetailsExerciseCrossRef>)
 
     @Delete
-    suspend fun deleteExercise(exercise: ExerciseDto)
+    suspend fun deleteExercise(exercise: Exercise)
 
-    @Query("SELECT * FROM ExerciseDto WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")
-    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<ExerciseDto>
+    @Transaction
+    @Query("SELECT * FROM exercise_table WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")
+    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise>
 
-
-    @Query("SELECT * FROM ExerciseDto ORDER BY exerciseId ASC")
-    fun getExercisesOrderedById(): List<ExerciseDto>
-
-    @Query("SELECT * FROM ExerciseDto WHERE exerciseId = :exerciseId")
-    fun getExerciseById(exerciseId: Int): ExerciseDto //TODO: wire with ExerciseDetailsDto
-
+    @Transaction
+    @Query("SELECT * FROM exercise_table ORDER BY exerciseId ASC")
+    fun getExercisesOrderedById(): List<Exercise>
 }

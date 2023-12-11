@@ -79,7 +79,7 @@ fun SetupNavGraph(
         }
         composable(MainScreen.WorkoutDetails.route) { backStackEntry ->
             val workoutId =
-                backStackEntry.arguments?.getString("workout_id") ?: ""
+                backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
 
             WorkoutDetailsScreen(
                 workoutId = workoutId,

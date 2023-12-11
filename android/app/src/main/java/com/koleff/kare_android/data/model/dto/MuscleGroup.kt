@@ -14,7 +14,8 @@ enum class MuscleGroup(val muscleGroupId: Int) {
     FULL_BODY(9),
     PUSH_PULL_LEGS(10),
     UPPER_LOWER_BODY(11),
-    OTHER(12),
+    ARMS(12),
+    OTHER(13),
     NONE(-1);
 
     companion object {

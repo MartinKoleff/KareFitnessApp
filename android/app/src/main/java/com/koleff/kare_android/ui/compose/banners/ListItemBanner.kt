@@ -1,11 +1,12 @@
-package com.koleff.kare_android.ui.compose
+package com.koleff.kare_android.ui.compose.banners
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -34,36 +35,97 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
 @Composable
-fun WorkoutBanner(
+fun ListItemBannerV1(
     modifier: Modifier,
-    workout: WorkoutDto,
-    hasDescription: Boolean = true,
-    onClick: (WorkoutDto) -> Unit
+    exercise: ExerciseDto,
+    onClick: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val workoutImage: Int = when (workout.muscleGroup) {
+    Box(
+        modifier = modifier
+            .clickable { onClick.invoke() }
+            .background(
+                brush = Brush.verticalGradient(
+                    listOf(Color.Transparent, Color.Black)
+                )
+            ),
+    ) {
+        //Parallax effect
+        Image(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(screenWidth / 2)
+                .align(Alignment.TopStart),
+            painter = painterResource(id = R.drawable.ic_exercise_banner_effect), //TODO: change to url
+            contentDescription = "Background",
+            contentScale = ContentScale.Crop
+        )
+
+        //Title
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(screenWidth / 2),
+            contentAlignment = Alignment.CenterStart
+        ) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = exercise.name,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 16.sp,
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+
+        //Image
+        Image(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(screenWidth / 2)
+                .align(Alignment.TopEnd),
+            painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
+            contentDescription = exercise.name,
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+fun ListItemBannerV2(
+    modifier: Modifier,
+    title: String,
+    muscleGroup: MuscleGroup,
+    hasDescription: Boolean = false,
+    onClick: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val itemImage: Int = when (muscleGroup) {
         MuscleGroup.CHEST -> R.drawable.ic_chest
         MuscleGroup.BACK -> R.drawable.ic_back
         MuscleGroup.TRICEPS -> R.drawable.ic_triceps
-        MuscleGroup.BICEPS -> R.drawable.ic_biceps
+        MuscleGroup.BICEPS, MuscleGroup.ARMS -> R.drawable.ic_biceps
         MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
         MuscleGroup.LEGS -> R.drawable.ic_legs
         else -> -1 //TODO: handle invalid muscle group...
@@ -77,24 +139,27 @@ fun WorkoutBanner(
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
-        onClick = { onClick.invoke(workout) }
+        onClick = { onClick.invoke() }
     ) {
         Box(modifier = modifier.fillMaxSize()) {
 
-            //Workout Image
+            //Image
             Image(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2)
                     .align(Alignment.TopEnd),
-                painter = painterResource(id = workoutImage), //TODO: change to url
-                contentDescription = workout.name,
+                painter = painterResource(id = itemImage), //TODO: change to url
+                contentDescription = title,
                 contentScale = ContentScale.Crop
             )
 
-            //Hexagon effect overflowing into workout snapshot
+            //Parallax effect overflowing into snapshot
             Image(
-                painter = painterResource(R.drawable.ic_workout_banner_effect),
+                painter = painterResource(
+                    if (hasDescription) R.drawable.ic_workout_banner_effect
+                    else R.drawable.ic_exercise_banner_effect
+                ),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -122,7 +187,7 @@ fun WorkoutBanner(
                     }
             )
 
-            //Workout Title TextBox
+            //Text
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -135,7 +200,7 @@ fun WorkoutBanner(
                     verticalArrangement = Arrangement.Center,
                 ) {
 
-                    //Workout title
+                    //Title
                     Text( //TODO: and cooler font...
                         modifier = Modifier.padding(
                             PaddingValues(
@@ -145,7 +210,7 @@ fun WorkoutBanner(
                                 bottom = 0.dp
                             )
                         ),
-                        text = workout.name,
+                        text = title,
                         style = TextStyle(
                             color = Color.White,
                             fontSize = 16.sp,
@@ -155,7 +220,7 @@ fun WorkoutBanner(
                         overflow = TextOverflow.Ellipsis
                     )
 
-                    //Workout sub-title (total exercises)
+                    //Sub-title (description)
                     if (hasDescription) {
                         Text( //TODO: and cooler font...
                             modifier = Modifier.padding(
@@ -166,7 +231,7 @@ fun WorkoutBanner(
                                     bottom = 0.dp
                                 )
                             ),
-                            text = "Exercises: ${workout.totalExercises}", //TODO: wire with ExerciseDTO...
+                            text = "Description",
                             style = TextStyle(
                                 color = Color.White,
                                 fontSize = 12.sp,
@@ -183,7 +248,38 @@ fun WorkoutBanner(
 }
 
 @Composable
-fun WorkoutList(
+fun ExerciseBannerList(
+    innerPadding: PaddingValues = PaddingValues(0.dp),
+    exerciseList: List<ExerciseDto>,
+    navController: NavHostController
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(
+                top = 8.dp,
+                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                bottom = 8.dp + innerPadding.calculateBottomPadding()
+            )
+    ) {
+        items(exerciseList) { exercise ->
+            ListItemBannerV2(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(200.dp),
+                title = exercise.name,
+                muscleGroup = exercise.muscleGroup,
+                hasDescription = false
+            ) {
+                openExerciseDetailsScreen(exercise, navController)
+            }
+        }
+    }
+}
+
+@Composable
+fun WorkoutBannerList(
     innerPadding: PaddingValues = PaddingValues(0.dp),
     workoutList: List<WorkoutDto>,
     navController: NavHostController
@@ -199,44 +295,29 @@ fun WorkoutList(
             )
     ) {
         items(workoutList) { workout ->
-            WorkoutBanner(
+            ListItemBannerV2(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(200.dp),
-                workout = workout,
+                title = workout.name,
+                muscleGroup = workout.muscleGroup,
+                hasDescription = true
             ) {
-                openWorkoutDetailsScreen(workout, navController = navController)
+                openWorkoutDetailsScreen(workout, navController)
             }
         }
     }
 }
 
-fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostController) {
-    navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId))
+fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
+    navController.navigate(
+        MainScreen.ExerciseDetails.createRoute(
+            exerciseId = exercise.exerciseId,
+            muscleGroupId = exercise.muscleGroup.muscleGroupId
+        )
+    )
 }
 
-
-@Preview
-@Composable
-fun WorkoutListPreview() {
-    val n = 10
-    val workoutList: MutableList<WorkoutDto> = mutableListOf()
-    val navController = rememberNavController()
-    repeat(n) { index ->
-        val currentWorkout = WorkoutDto(
-            workoutId = "Workout$index",
-            name = "Chest workout $index",
-            muscleGroup = MuscleGroup.CHEST,
-            snapshot = "",
-            totalExercises = 5,
-            isSelected = false
-        )
-        workoutList.add(currentWorkout)
-    }
-
-    WorkoutList(
-        workoutList = workoutList,
-        navController = navController,
-        innerPadding = PaddingValues(0.dp)
-    )
+fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostController) {
+    navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId))
 }

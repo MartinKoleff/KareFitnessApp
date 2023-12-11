@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 
 data class WorkoutDetailsDto(
     @field:Json(name = "id")
-    val workoutId: String = "",
+    val workoutId: Int = -1,
     @field:Json(name = "name")
     val name: String = "",
     @field:Json(name = "description")

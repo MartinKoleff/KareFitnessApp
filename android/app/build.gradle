@@ -22,6 +22,13 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        //Room DB schema location
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
     }
 
     buildTypes {
