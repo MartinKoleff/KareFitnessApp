@@ -19,6 +19,7 @@ import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
+import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.ExerciseApi
 import com.koleff.kare_android.data.remote.WorkoutApi
@@ -26,8 +27,11 @@ import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.database.ExerciseDatabase
+import com.koleff.kare_android.data.room.database.WorkoutDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -39,6 +43,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -135,14 +140,33 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideWorkoutDatabase(@ApplicationContext appContext: Context): WorkoutDatabase {
+        return WorkoutDatabase.buildDatabase(appContext)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutDao(workoutDao: WorkoutDatabase): WorkoutDao {
+        return workoutDao.dao
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutDBManager(preferences: Preferences): WorkoutDBManager {
+        return WorkoutDBManager(preferences)
+    }
+
+    @Provides
+    @Singleton
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
-        exerciseDBManager: ExerciseDBManager
+        exerciseDBManager: ExerciseDBManager,
+        dispatcher: CoroutineDispatcher
     ): ExerciseDataSource {
         return if (useLocalDataSource) ExerciseLocalDataSource(exerciseDao, exerciseDBManager)
         else if (useMockupDataSource) ExerciseMockupDataSource()
-        else ExerciseRemoteDataSource(exerciseApi)
+        else ExerciseRemoteDataSource(exerciseApi, dispatcher)
     }
 
     @Provides
@@ -155,9 +179,13 @@ object AppModule {
     @Singleton
     fun provideWorkoutDataSource(
         workoutApi: WorkoutApi,
+        workoutDao: WorkoutDao,
+        workoutDBManager: WorkoutDBManager,
         dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
-        return WorkoutRemoteDataSource(workoutApi, dispatcher) //Can swap for local data source...
+        return if (useLocalDataSource) WorkoutLocalDataSource(workoutDao, workoutDBManager)
+//        else if (useMockupDataSource) WorkoutMockupDataSource()
+        else WorkoutRemoteDataSource(workoutApi, dispatcher)
     }
 
     @Provides
