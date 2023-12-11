@@ -12,5 +12,7 @@ data class WorkoutDto(
     @field:Json(name = "snapshot")
     val snapshot: String, //TODO: image...
     @field:Json(name = "total_exercises")
-    val totalExercises: Int, //TODO: image...
+    val totalExercises: Int,
+    @field:Json(name = "is_selected")
+    val isSelected: Boolean,
 )

@@ -228,7 +228,8 @@ fun WorkoutListPreview() {
             name = "Chest workout $index",
             muscleGroup = MuscleGroup.CHEST,
             snapshot = "",
-            totalExercises = 5
+            totalExercises = 5,
+            isSelected = false
         )
         workoutList.add(currentWorkout)
     }

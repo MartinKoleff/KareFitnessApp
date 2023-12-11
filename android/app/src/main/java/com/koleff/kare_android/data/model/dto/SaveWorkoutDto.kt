@@ -10,5 +10,7 @@ data class SaveWorkoutDto(
     @field:Json(name = "muscle_group")
     val muscleGroup: MuscleGroup,
     @field:Json(name = "exercises")
-    val exercises: List<ExerciseDto>
+    val exercises: List<ExerciseDto>,
+    @field:Json(name = "is_selected")
+    val isSelected: Boolean,
 )
