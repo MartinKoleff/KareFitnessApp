@@ -8,7 +8,7 @@ import com.squareup.moshi.Json
 @Entity
 data class Workout(
     @PrimaryKey(autoGenerate = true)
-    val workoutId: String,
+    val workoutId: Int,
     val name: String,
     val muscleGroup: MuscleGroup,
     val snapshot: String,

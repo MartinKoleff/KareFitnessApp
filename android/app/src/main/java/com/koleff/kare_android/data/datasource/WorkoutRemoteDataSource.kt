@@ -20,7 +20,7 @@ class WorkoutRemoteDataSource @Inject constructor(
     private val workoutApi: WorkoutApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : WorkoutDataSource {
-    override suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         val body = BaseWorkoutRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.selectWorkout(body)) })
@@ -34,13 +34,13 @@ class WorkoutRemoteDataSource @Inject constructor(
         return Network.executeApiCall(dispatcher, { GetAllWorkoutsWrapper(workoutApi.getAllWorkouts()) })
     }
 
-    override suspend fun getWorkoutDetails(workoutId: String): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
+    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
         val body = BaseWorkoutRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { GetWorkoutDetailsWrapper(workoutApi.getWorkoutDetails(body)) })
     }
 
-    override suspend fun deleteWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         val body = BaseWorkoutRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.deleteWorkout(body)) })

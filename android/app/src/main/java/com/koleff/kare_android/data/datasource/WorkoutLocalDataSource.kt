@@ -1,13 +1,9 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.Network
-import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
-import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
-import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -28,7 +24,7 @@ class WorkoutLocalDataSource @Inject constructor(
     private val workoutDao: WorkoutDao,
     private val workoutDBManager: WorkoutDBManager
 ) : WorkoutDataSource {
-    override suspend fun selectWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -73,7 +69,7 @@ class WorkoutLocalDataSource @Inject constructor(
         emit(ResultWrapper.Success(result))
     }
 
-    override suspend fun getWorkoutDetails(workoutId: String): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -99,7 +95,6 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    private fun getWorkoutExercises(workoutId: String): List<ExerciseDto> {
         when(workoutId){
             "Workout1" -> {
 
@@ -114,9 +109,10 @@ class WorkoutLocalDataSource @Inject constructor(
                 return emptyList()
             }
         }
+    private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
     }
 
-    override suspend fun deleteWorkout(workoutId: String): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)

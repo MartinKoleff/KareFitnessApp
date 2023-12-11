@@ -4,5 +4,5 @@ import com.squareup.moshi.Json
 
 data class BaseWorkoutRequest(
     @field:Json(name = "workout_id")
-    val workoutId: String,
+    val workoutId: Int,
 )

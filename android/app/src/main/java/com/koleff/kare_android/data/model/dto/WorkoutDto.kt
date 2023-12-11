@@ -8,7 +8,7 @@ import com.squareup.moshi.Json
 data class WorkoutDto(
     @field:Json(name = "id")
     @PrimaryKey(autoGenerate = true)
-    val workoutId: String,
+    val workoutId: Int,
     @field:Json(name = "name")
     val name: String,
     @field:Json(name = "muscle_group")
