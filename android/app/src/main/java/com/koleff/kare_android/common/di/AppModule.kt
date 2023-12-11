@@ -142,6 +142,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideWorkoutDetailsDao(kareDatabase: KareDatabase): WorkoutDetailsDao {
+        return kareDatabase.workoutDetailsDao
+    }
+
+    @Provides
+    @Singleton
     fun provideWorkoutDBManager(preferences: Preferences): WorkoutDBManager {
         return WorkoutDBManager(preferences)
     }
@@ -170,12 +176,16 @@ object AppModule {
     fun provideWorkoutDataSource(
         workoutApi: WorkoutApi,
         workoutDao: WorkoutDao,
-        workoutDBManager: WorkoutDBManager,
-        dispatcher: CoroutineDispatcher
+        workoutDetailsDao: WorkoutDetailsDao,
+        workoutDBManager: WorkoutDBManager
     ): WorkoutDataSource {
-        return if (useLocalDataSource) WorkoutLocalDataSource(workoutDao, workoutDBManager)
+        return if (useLocalDataSource) WorkoutLocalDataSource(
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
+            workoutDBManager = workoutDBManager
+        )
 //        else if (useMockupDataSource) WorkoutMockupDataSource()
-        else WorkoutRemoteDataSource(workoutApi, dispatcher)
+        else WorkoutRemoteDataSource(workoutApi)
     }
 
     @Provides
