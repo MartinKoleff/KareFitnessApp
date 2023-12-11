@@ -11,6 +11,7 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.event.OnFilterEvent
+import com.koleff.kare_android.data.model.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
@@ -42,6 +43,24 @@ class WorkoutViewModel @Inject constructor(
 
     init {
         getWorkouts()
+    }
+
+    fun onEvent(event: OnWorkoutScreenSwitchEvent) {
+        when (event) {
+            OnWorkoutScreenSwitchEvent.AllWorkouts -> {
+                _state.value = state.value.copy(
+                    workoutList = originalWorkoutList
+                )
+            }
+
+            OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
+                _state.value = state.value.copy(
+                    workoutList = originalWorkoutList.filter {
+                        it.isSelected
+                    }
+                )
+            }
+        }
     }
 
     private fun getWorkouts() {
