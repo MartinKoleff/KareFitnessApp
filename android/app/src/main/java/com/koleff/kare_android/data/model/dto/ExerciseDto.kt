@@ -1,13 +1,10 @@
 package com.koleff.kare_android.data.model.dto
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import com.koleff.kare_android.data.room.dto.Exercise
 import com.squareup.moshi.Json
 
-@Entity
 data class ExerciseDto(
     @field:Json(name = "id")
-    @PrimaryKey(autoGenerate = true)
     val exerciseId: Int,
     @field:Json(name = "name")
     val name: String,
@@ -17,4 +14,14 @@ data class ExerciseDto(
     val machineType: MachineType,
     @field:Json(name = "snapshot") //TODO: image...
     val snapshot: String,
-)
+){
+    fun toExercise(): Exercise {
+        return Exercise(
+            exerciseId = exerciseId,
+            name = name,
+            muscleGroup = muscleGroup,
+            machineType = machineType,
+            snapshot = snapshot
+        )
+    }
+}
