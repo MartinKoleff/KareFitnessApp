@@ -1,8 +1,7 @@
 package io.kare.backend.service;
 
 import io.kare.backend.entity.*;
-import io.kare.backend.payload.request.AddWorkoutRequest;
-import io.kare.backend.payload.request.GetWorkoutRequest;
+import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.AddWorkoutResponse;
 import io.kare.backend.payload.response.GetWorkoutResponse;
 import io.kare.backend.payload.response.GetWorkoutsResponse;
@@ -22,4 +21,8 @@ public interface WorkoutService {
         List<String> ids,
         UserEntity user
     );
+
+    void selectWorkout(SelectWorkoutRequest request, UserEntity user);
+
+    GetWorkoutResponse getSelectedWorkout(UserEntity user);
 }
