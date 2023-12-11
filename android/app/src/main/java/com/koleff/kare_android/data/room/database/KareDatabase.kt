@@ -6,15 +6,27 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dto.Exercise
+import com.koleff.kare_android.data.room.dto.SaveWorkout
 import com.koleff.kare_android.data.room.dto.Workout
 
 
 @Database(
-    entities = [ExerciseDto::class, Exercise::class, WorkoutDto::class, Workout::class],
+    entities = [
+        ExerciseDto::class,
+        Exercise::class,
+        WorkoutDto::class,
+        Workout::class,
+        SaveWorkoutDto::class,
+        SaveWorkout::class,
+        WorkoutDetailsDto::class
+    //TODO: exerciseDetailsDto
+    ],
     version = 1,
     exportSchema = true
 )
