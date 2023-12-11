@@ -12,14 +12,14 @@ import javax.inject.Inject
 class ExerciseDBManager @Inject constructor(
     private val preferences: Preferences
 ) {
-    val hasInitializedRoomDB = preferences.hasInitializedRoomDB()
+    val hasInitializedExerciseTableRoomDB = preferences.hasInitializedExerciseTableRoomDB()
 
-    suspend fun initializeRoomDB(exerciseDao: ExerciseDao) = withContext(Dispatchers.IO){
+    suspend fun initializeExerciseTableRoomDB(exerciseDao: ExerciseDao) = withContext(Dispatchers.IO){
         for (muscleGroup in MuscleGroup.values()) {
             val exercisesList = loadExercises(muscleGroup)
             exerciseDao.insertAll(exercisesList)
         }
-        preferences.initializeRoomDB()
+        preferences.initializeExerciseTableRoomDB()
     }
 
     private fun loadExercises(muscleGroup: MuscleGroup): List<ExerciseDto> {
@@ -30,7 +30,7 @@ class ExerciseDBManager @Inject constructor(
             MuscleGroup.BICEPS -> getBicepsExercises()
             MuscleGroup.SHOULDERS -> getShoulderExercises()
             MuscleGroup.LEGS -> getLegsExercises()
-            MuscleGroup.ABS, MuscleGroup.CARDIO, MuscleGroup.FULL_BODY, MuscleGroup.PUSH_PULL_LEGS, MuscleGroup.UPPER_LOWER_BODY, MuscleGroup.OTHER, MuscleGroup.NONE -> {
+            MuscleGroup.ARMS, MuscleGroup.ABS, MuscleGroup.CARDIO, MuscleGroup.FULL_BODY, MuscleGroup.PUSH_PULL_LEGS, MuscleGroup.UPPER_LOWER_BODY, MuscleGroup.OTHER, MuscleGroup.NONE -> {
                 emptyList()
             }
         }
