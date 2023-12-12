@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
 import com.koleff.kare_android.data.model.state.WorkoutDetailsState
@@ -27,13 +28,31 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<WorkoutDetailsState> = MutableStateFlow(WorkoutDetailsState())
+    private val _state: MutableStateFlow<WorkoutDetailsState> =
+        MutableStateFlow(WorkoutDetailsState())
 
     val state: StateFlow<WorkoutDetailsState>
         get() = _state
 
     init {
         getWorkoutDetails(workoutId)
+    }
+
+    fun onEvent(onWorkoutDetailsEvent: OnWorkoutDetailsEvent) {
+        when (onWorkoutDetailsEvent) {
+            is OnWorkoutDetailsEvent.OnExerciseDelete -> {
+                val workout = state.value.workout
+                workout.exercises.remove(
+                    onWorkoutDetailsEvent.exercise
+                )
+            }
+            is OnWorkoutDetailsEvent.OnExerciseSubmit -> {
+                val workout = state.value.workout
+                workout.exercises.add(
+                    onWorkoutDetailsEvent.exercise
+                )
+            }
+        }
     }
 
     private fun getWorkoutDetails(workoutId: Int) {
