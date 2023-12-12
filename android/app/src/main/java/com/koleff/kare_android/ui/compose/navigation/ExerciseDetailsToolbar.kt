@@ -162,7 +162,7 @@ class RoundedToolbarShape : Shape {
 
 @Preview
 @Composable
-fun PreviewRoundedSquare() {
+fun PreviewExerciseDetailsToolbar() {
     val navController = rememberNavController()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
