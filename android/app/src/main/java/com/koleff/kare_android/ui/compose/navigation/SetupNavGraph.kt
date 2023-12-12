@@ -6,11 +6,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseType
+import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
+import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
@@ -80,15 +88,49 @@ fun SetupNavGraph(
                 dashboardViewModel = dashboardViewModel
             )
         }
-        composable(MainScreen.WorkoutDetails.route) { backStackEntry ->
+        composable(route = MainScreen.WorkoutDetails.route, arguments =
+        listOf(
+            navArgument("submitted_exercise"){
+                type = ExerciseType()
+            }
+        )) { backStackEntry ->
             val workoutId =
                 backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
+
+            val submittedExercise = backStackEntry.arguments?.getParcelable<ExerciseDto>("submitted_exercise")
+
+//            val submittedExerciseId =
+//                backStackEntry.arguments?.getString("submitted_exercise_id")?.toInt() ?: -1
+//
+//            val submittedExerciseSets =
+//                backStackEntry.arguments?.getString("submitted_exercise_sets")?.toInt() ?: -1
+//
+//            val submittedExerciseReps =
+//                backStackEntry.arguments?.getString("submitted_exercise_reps") ?: ""
+//
+//            val submittedExerciseWeight =
+//                backStackEntry.arguments?.getString("submitted_exercise_weight") ?: ""
+
+            //TODO: in future -> split string by , and create a list with all elements
+            //(example: index 0 = 12 -> set 1 has 12 reps)
+
+            val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
+                factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
+                    factory = workoutDetailsViewModelFactory,
+                    workoutId = workoutId
+                )
+            )
+
+            //If exercise is submitted from ExerciseDetailsConfigurator
+            submittedExercise?.let{
+                workoutDetailsViewModel.onEvent(OnWorkoutDetailsEvent.OnExerciseSubmit(submittedExercise))
+            }
 
             WorkoutDetailsScreen(
                 workoutId = workoutId,
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                workoutDetailsViewModelFactory = workoutDetailsViewModelFactory
+                workoutDetailsViewModel = workoutDetailsViewModel
             )
         }
         composable(MainScreen.ExerciseDetails.route) { backStackEntry ->
@@ -98,12 +140,43 @@ fun SetupNavGraph(
             val initialMuscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
 
+            val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
+
+            val exerciseDetailsViewModel = viewModel<ExerciseDetailsViewModel>(
+                factory = ExerciseDetailsViewModel.provideExerciseDetailsViewModelFactory(
+                    factory = exerciseDetailsViewModelFactory,
+                    exerciseId = exerciseId,
+                    initialMuscleGroup = initialMuscleGroup
+                )
+            )
+
             ExerciseDetailsScreen(
-                exerciseId = exerciseId,
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory,
-                initialMuscleGroupId = initialMuscleGroupId
+                exerciseDetailsViewModel = exerciseDetailsViewModel
+            )
+        }
+        composable(MainScreen.ExerciseDetailsConfigurator.route) { backStackEntry ->
+            val exerciseId =
+                backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
+
+            val initialMuscleGroupId =
+                backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
+
+            val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
+
+            val exerciseDetailsViewModel = viewModel<ExerciseDetailsViewModel>(
+                factory = ExerciseDetailsViewModel.provideExerciseDetailsViewModelFactory(
+                    factory = exerciseDetailsViewModelFactory,
+                    exerciseId = exerciseId,
+                    initialMuscleGroup = initialMuscleGroup
+                )
+            )
+
+            ExerciseDetailsConfiguratorScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress,
+                exerciseDetailsViewModel = exerciseDetailsViewModel
             )
         }
         composable(MainScreen.Settings.route) {

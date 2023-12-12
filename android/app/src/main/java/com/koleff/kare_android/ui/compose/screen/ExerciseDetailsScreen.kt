@@ -3,7 +3,6 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -29,39 +28,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.koleff.kare_android.R
-import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
-import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.YoutubeVideoPlayer
-import com.koleff.kare_android.ui.compose.navigation.FloatingNavigationItem
+import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 
 @Composable
 fun ExerciseDetailsScreen(
     navController: NavHostController,
-    exerciseId: Int = -1, //Invalid exercise selected...
-    initialMuscleGroupId: Int = -1, //Invalid muscle group selected...
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory
+    exerciseDetailsViewModel: ExerciseDetailsViewModel
 ) {
-    val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
-
-    val exerciseDetailsViewModel = viewModel<ExerciseDetailsViewModel>(
-        factory = ExerciseDetailsViewModel.provideExerciseDetailsViewModelFactory(
-            factory = exerciseDetailsViewModelFactory,
-            exerciseId = exerciseId,
-            initialMuscleGroup = initialMuscleGroup
-        )
-    )
-
     val exerciseDetailsState = exerciseDetailsViewModel.state.collectAsState()
 
     Log.d("ExerciseDetailsScreen", exerciseDetailsState.value.exercise.muscleGroup.toString())

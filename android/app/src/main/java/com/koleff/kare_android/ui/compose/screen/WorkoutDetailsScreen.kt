@@ -35,6 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.state.ExerciseDetailsState
@@ -50,14 +51,9 @@ fun WorkoutDetailsScreen(
     navController: NavHostController,
     workoutId: Int = -1, //Invalid workout selected...
     isNavigationInProgress: MutableState<Boolean>,
-    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
+    workoutDetailsViewModel: WorkoutDetailsViewModel
 ) {
-    val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
-        factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
-            factory = workoutDetailsViewModelFactory,
-            workoutId = workoutId
-        )
-    )
+
 
     val workoutDetailsState = workoutDetailsViewModel.state.collectAsState()
 }
