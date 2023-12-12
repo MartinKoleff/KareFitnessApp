@@ -1,8 +1,11 @@
 package com.koleff.kare_android.data.model.dto
 
+import android.os.Parcelable
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.squareup.moshi.Json
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class ExerciseDto(
     @field:Json(name = "id")
     val exerciseId: Int,
@@ -14,7 +17,13 @@ data class ExerciseDto(
     val machineType: MachineType,
     @field:Json(name = "snapshot") //TODO: image...
     val snapshot: String,
-){
+    @field:Json(name = "sets")
+    val sets: Int = 0,
+    @field:Json(name = "reps")
+    val reps: Int = 0,
+    @field:Json(name = "weight")
+    val weight: Int = 0,
+): Parcelable{
     fun toExercise(): Exercise {
         return Exercise(
             exerciseId = exerciseId,
