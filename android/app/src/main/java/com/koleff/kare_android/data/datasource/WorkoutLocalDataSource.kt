@@ -80,9 +80,11 @@ class WorkoutLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
 
             val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+            val exercises: MutableList<ExerciseDto> = data.exercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
+            val workout = data.workoutDetails.toWorkoutDetailsDto(exercises)
 
             val result = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(data.workoutDetails.toWorkoutDetailsDto())
+                GetWorkoutDetailsResponse(workout)
             )
 
             emit(ResultWrapper.Success(result))
