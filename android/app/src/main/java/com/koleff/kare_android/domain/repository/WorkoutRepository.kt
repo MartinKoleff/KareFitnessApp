@@ -1,6 +1,8 @@
 package com.koleff.kare_android.domain.repository
 
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.wrapper.GetAllWorkoutsWrapper
 import com.koleff.kare_android.data.model.wrapper.GetWorkoutDetailsWrapper
 import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
@@ -19,5 +21,5 @@ interface WorkoutRepository {
 
     suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun saveWorkout(workout: SaveWorkoutDto): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
 }

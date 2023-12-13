@@ -2,6 +2,8 @@ package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.wrapper.GetAllWorkoutsWrapper
 import com.koleff.kare_android.data.model.wrapper.GetWorkoutDetailsWrapper
 import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
@@ -34,7 +36,7 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.deleteWorkout(workoutId)
     }
 
-    override suspend fun saveWorkout(workout: SaveWorkoutDto): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
         return workoutDataSource.saveWorkout(workout)
     }
 }

@@ -3,6 +3,8 @@ package com.koleff.kare_android.data.datasource
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -106,22 +108,12 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveWorkout(workout: SaveWorkoutDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            //TODO: parse SaveWorkoutDto to Workout... ExerciseDto to Exercise
-//            val workoutEntity = Workout(
-//                name = workout.name,
-//                muscleGroup = workout.muscleGroup,
-//                snapshot = workout.snapshot,
-//                totalExercises = workout.exercises.size,
-//                isSelected = workout.isSelected,
-//                exercises = workout.exercises.map(Exercise::toExercise),
-//            )
-//
-//            workoutDao.insertWorkout(workout)
+            workoutDetailsDao.insertWorkoutDetails(workout.toWorkoutDetails())
 
             val result = ServerResponseData(
                 BaseResponse()
