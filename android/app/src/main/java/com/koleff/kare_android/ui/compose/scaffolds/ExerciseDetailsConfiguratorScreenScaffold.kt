@@ -1,8 +1,6 @@
 package com.koleff.kare_android.ui.compose.scaffolds
 
 import ExerciseDetailsConfiguratorToolbar
-import ExerciseDetailsToolbar
-import RoundedToolbarShape
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.koleff.kare_android.ui.compose.navigation.ExerciseDetailsBottomNavigationBar
+import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
 
 @Composable
 fun ExerciseDetailsConfiguratorScreenScaffold(
@@ -45,7 +43,7 @@ fun ExerciseDetailsConfiguratorScreenScaffold(
                     )
                     .border(
                         border = BorderStroke(2.dp, color = Color.White),
-                        shape = RoundedToolbarShape() //TODO: new shape without top part...
+                        shape = RoundedToolbarShape(hasTopOutline = false)
                     ),
                 isNavigationInProgress = isNavigationInProgress,
                 navController = navController,
