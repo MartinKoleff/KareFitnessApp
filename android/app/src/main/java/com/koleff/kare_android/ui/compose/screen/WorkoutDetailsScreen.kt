@@ -102,7 +102,7 @@ fun WorkoutDetailsScreen(
     }
 }
 
-fun openSearchExercisesScreen(navController: NavHostController, workoutId: Int){
+fun openSearchExercisesScreen(navController: NavHostController, workoutId: Int) {
     navController.navigate(MainScreen.SearchExercisesScreen.createRoute(workoutId))
 }
 

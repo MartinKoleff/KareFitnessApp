@@ -193,6 +193,10 @@ fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostControll
     navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId)) //No exercise is submitted
 }
 
+fun openWorkoutDetailsScreen(workoutId: Int, navController: NavHostController) {
+    navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutId)) //Submit exercise...
+}
+
 @Composable
 fun WorkoutList(
     innerPadding: PaddingValues = PaddingValues(0.dp),

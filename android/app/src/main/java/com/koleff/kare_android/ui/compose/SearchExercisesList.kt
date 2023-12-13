@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -49,29 +50,19 @@ fun SearchExercisesList(
                         .fillMaxWidth()
                         .height(200.dp),
                     exercise = currentExercise,
-                ) {
-                    openWorkoutDetailsScreen(workoutId = workoutId, navController = navController)
+                ) { selectedExercise ->
+                    navController.navigate(
+                        MainScreen.ExerciseDetailsConfigurator.createRoute(
+                            exerciseId = selectedExercise.exerciseId,
+                            workoutId = workoutId,
+                            muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
+                        )
+                    )
                 }
             }
-
-            //
-//            //Flatten Exercise List
-//            totalExercisesForMuscleGroup.forEach { exercise ->
-//                ExerciseBannerV2(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(200.dp),
-//                    exercise = exercise,
-//                ) {
-//                    openWorkoutDetailsScreen(workoutId = workoutId, navController = navController)
-//                }
-//            }
-
-//           ExerciseList(exerciseList = totalExercisesForMuscleGroup, navController = navController)
         }
     }
 }
-
 
 
 @Preview

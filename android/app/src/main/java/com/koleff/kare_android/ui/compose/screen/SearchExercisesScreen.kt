@@ -10,10 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchExercisesList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
+import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
 @Composable
 fun SearchExercisesScreen(
