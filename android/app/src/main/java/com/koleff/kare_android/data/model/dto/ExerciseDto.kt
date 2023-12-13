@@ -18,13 +18,10 @@ data class ExerciseDto(
     @field:Json(name = "snapshot") //TODO: image...
     val snapshot: String,
     @field:Json(name = "sets")
-    val sets: Int = 0,
-    @field:Json(name = "reps")
-    val reps: Int = 0,
-    @field:Json(name = "weight")
-    val weight: Int = 0,
+    val sets: List<ExerciseSet> = emptyList(),
 ): Parcelable{
     fun toExercise(): Exercise {
+        //TODO: update with set...
         return Exercise(
             exerciseId = exerciseId,
             name = name,
