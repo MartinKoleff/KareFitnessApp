@@ -181,6 +181,8 @@ fun SetupNavGraph(
             val exerciseId =
                 backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
 
+            workoutViewModel.getWorkouts()
+
             SearchWorkoutsScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,

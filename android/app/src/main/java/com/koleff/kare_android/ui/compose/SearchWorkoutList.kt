@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
@@ -33,7 +34,9 @@ fun SearchWorkoutList(
                     .height(200.dp),
                 workout = currentWorkout,
             ) {
-                navController.popBackStack() //Go back when workout is selected
+                //TODO: Add exercise to workout...
+                //TODO: show dialog for successfully added workout...
+                navController.navigate(MainScreen.Dashboard.route)
             }
         }
     }
