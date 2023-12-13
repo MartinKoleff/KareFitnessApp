@@ -19,14 +19,6 @@ sealed class MainScreen(val route: String) {
                 = "workout_details/$workoutId/$submittedExercise"
     }
 
-//    object WorkoutDetails : MainScreen("workout_details/{workout_id}/{submitted_exercise_id}/{submitted_exercise_sets}/{submitted_exercise_reps}/{submitted_exercise_weight}"){ //When workout is selected -> show details screen
-//        fun createRoute(workoutId: Int,
-//                        submittedExerciseId: Int = -1,
-//                        submittedExerciseSets: Int = -1,
-//                        submittedExerciseReps: String = "",
-//                        submittedExerciseWeight: String = "")
-//        = "workout_details/$workoutId/$submittedExerciseId/$submittedExerciseSets/$submittedExerciseReps/$submittedExerciseWeight"
-//    }
     object Settings : MainScreen("settings") //Settings list
     object SearchWorkoutsScreen : MainScreen("search_workouts") //Select workout where exercise will be added
 }

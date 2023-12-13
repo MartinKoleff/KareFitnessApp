@@ -99,21 +99,6 @@ fun SetupNavGraph(
 
             val submittedExercise = backStackEntry.arguments?.getParcelable<ExerciseDto>("submitted_exercise")
 
-//            val submittedExerciseId =
-//                backStackEntry.arguments?.getString("submitted_exercise_id")?.toInt() ?: -1
-//
-//            val submittedExerciseSets =
-//                backStackEntry.arguments?.getString("submitted_exercise_sets")?.toInt() ?: -1
-//
-//            val submittedExerciseReps =
-//                backStackEntry.arguments?.getString("submitted_exercise_reps") ?: ""
-//
-//            val submittedExerciseWeight =
-//                backStackEntry.arguments?.getString("submitted_exercise_weight") ?: ""
-
-            //TODO: in future -> split string by , and create a list with all elements
-            //(example: index 0 = 12 -> set 1 has 12 reps)
-
             val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
                 factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
                     factory = workoutDetailsViewModelFactory,
