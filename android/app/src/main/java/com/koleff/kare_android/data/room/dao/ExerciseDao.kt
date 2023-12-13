@@ -38,6 +38,10 @@ interface ExerciseDao {
     fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise>
 
     @Transaction
+    @Query("SELECT * FROM exercise_table ORDER BY exerciseId")
+    fun getAllExercises(): List<Exercise>
+
+    @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId ASC")
     fun getExercisesOrderedById(): List<Exercise>
 }

@@ -108,9 +108,7 @@ class ExerciseDBManager @Inject constructor(
             MuscleGroup.BICEPS -> getBicepsExerciseDetails()
             MuscleGroup.SHOULDERS -> getShoulderExerciseDetails()
             MuscleGroup.LEGS -> getLegsExerciseDetails()
-            MuscleGroup.ARMS, MuscleGroup.ABS, MuscleGroup.CARDIO, MuscleGroup.FULL_BODY, MuscleGroup.PUSH_PULL_LEGS, MuscleGroup.UPPER_LOWER_BODY, MuscleGroup.OTHER, MuscleGroup.NONE -> {
-                emptyList()
-            }
+            else -> emptyList()
         }
     }
 
@@ -122,9 +120,7 @@ class ExerciseDBManager @Inject constructor(
             MuscleGroup.BICEPS -> getBicepsExercises()
             MuscleGroup.SHOULDERS -> getShoulderExercises()
             MuscleGroup.LEGS -> getLegsExercises()
-            MuscleGroup.ARMS, MuscleGroup.ABS, MuscleGroup.CARDIO, MuscleGroup.FULL_BODY, MuscleGroup.PUSH_PULL_LEGS, MuscleGroup.UPPER_LOWER_BODY, MuscleGroup.OTHER, MuscleGroup.NONE -> {
-                emptyList()
-            }
+            else -> emptyList()
         }
     }
 
