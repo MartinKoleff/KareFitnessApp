@@ -39,6 +39,7 @@ import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.compose.navigation.NavigationItem
+import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
 
@@ -47,7 +48,8 @@ fun ExerciseDetailsConfiguratorToolbar(
     modifier: Modifier,
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseImageId: Int
+    exerciseImageId: Int,
+    onSubmitExercise: () -> Unit
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
@@ -72,10 +74,7 @@ fun ExerciseDetailsConfiguratorToolbar(
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(50.dp)
-                .drawBehind {
-
-                },
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -96,7 +95,9 @@ fun ExerciseDetailsConfiguratorToolbar(
                 label = "Submit exercise",
                 isBlocked = isNavigationInProgress,
                 tint = Color.Green
-            )
+            ){
+                onSubmitExercise()
+            }
         }
     }
 }
@@ -113,22 +114,13 @@ fun PreviewExerciseConfiguratorToolbar() {
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
-            .background(
-//                brush = Brush.verticalGradient(
-//                    colors = listOf(
-//                        MaterialTheme.colorScheme.primaryContainer,
-//                        MaterialTheme.colorScheme.primaryContainer,
-//                        MaterialTheme.colorScheme.primaryContainer,
-//                        MaterialTheme.colorScheme.primary,
-//                        MaterialTheme.colorScheme.primary
-//                    )
-//                )
-                color = MaterialTheme.colorScheme.primaryContainer
-            ),
+            .background(color = MaterialTheme.colorScheme.primaryContainer),
         isNavigationInProgress = mutableStateOf(false),
         navController = navController,
         exerciseImageId = R.drawable.ic_legs
-    )
+    ){
+
+    }
 }
 
 
