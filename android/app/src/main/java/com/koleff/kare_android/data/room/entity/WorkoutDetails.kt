@@ -21,7 +21,7 @@ data class WorkoutDetails(
             name = name,
             description = description,
             muscleGroup = muscleGroup,
-            exercises = emptyList(), // You'll fetch and populate this in the DAO
+            exercises = mutableListOf(), // You'll fetch and populate this in the DAO
             isSelected = isSelected
         )
     }
