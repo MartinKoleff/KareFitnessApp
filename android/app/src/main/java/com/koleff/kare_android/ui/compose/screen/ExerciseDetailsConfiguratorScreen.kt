@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.data.model.state.ExerciseState
 import com.koleff.kare_android.ui.compose.LoadingWheel
+import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsConfiguratorScreenScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
@@ -41,20 +43,23 @@ fun ExerciseDetailsConfiguratorScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     exerciseViewModel: ExerciseViewModel,
-    workoutDetailsViewModel: WorkoutDetailsViewModel
+    workoutDetailsViewModel: WorkoutDetailsViewModel,
+    initialMuscleGroupId: Int
 ) {
-    val exerciseState = exerciseViewModel.state.collectAsState()
+    val exerciseState by exerciseViewModel.state.collectAsState()
+    val workoutState by workoutDetailsViewModel.state.collectAsState()
 
-    Log.d("ExerciseDetailsConfiguratorScreen", exerciseState.value.exercise.muscleGroup.toString())
-    val exerciseImageId = MuscleGroup.getImage(exerciseState.value.exercise.muscleGroup)
-    val exercise = exerciseState.value.exercise
-
+    Log.d("ExerciseDetailsConfiguratorScreen", exerciseState.exercise.muscleGroup.toString())
+    val exercise = exerciseState.exercise
+    val workoutId = workoutState.workout.workoutId
+    val exerciseImageId = MuscleGroup.getImage(MuscleGroup.fromId(initialMuscleGroupId))
     val onSubmitExercise: () -> Unit = {
         workoutDetailsViewModel.onEvent(OnWorkoutDetailsEvent.OnExerciseSubmit(exercise))
+        openWorkoutDetailsScreen(workoutId = workoutId, navController = navController)
     }
 
     ExerciseDetailsConfiguratorScreenScaffold(
-        screenTitle = exerciseState.value.exercise.name,
+        screenTitle = exerciseState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
@@ -77,7 +82,7 @@ fun ExerciseDetailsConfiguratorScreen(
 
         ExerciseDetailsConfiguratorContent(
             modifier = modifier,
-            exerciseState = exerciseState.value,
+            exerciseState = exerciseState,
         )
     }
 }

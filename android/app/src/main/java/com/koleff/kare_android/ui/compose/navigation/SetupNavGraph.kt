@@ -159,11 +159,16 @@ fun SetupNavGraph(
                 )
             )
 
+            //If wired with ExerciseDetails...
+            val initialMuscleGroupId =
+                backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
+
             ExerciseDetailsConfiguratorScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
                 exerciseViewModel = exerciseViewModel,
-                workoutDetailsViewModel = workoutDetailsViewModel
+                workoutDetailsViewModel = workoutDetailsViewModel,
+                initialMuscleGroupId = initialMuscleGroupId
             )
         }
         composable(MainScreen.Settings.route) {
