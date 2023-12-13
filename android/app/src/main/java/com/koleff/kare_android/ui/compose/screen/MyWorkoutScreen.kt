@@ -19,7 +19,6 @@ import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
-import com.koleff.kare_android.ui.compose.banners.ListItemBannerV2
 import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
 import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
