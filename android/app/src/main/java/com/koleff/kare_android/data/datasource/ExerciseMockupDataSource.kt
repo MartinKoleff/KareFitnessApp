@@ -6,8 +6,10 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
+import com.koleff.kare_android.data.model.wrapper.GetExerciseWrapper
 import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import kotlinx.coroutines.delay
@@ -31,6 +33,32 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
 
             emit(ResultWrapper.Success(mockupResult))
         }
+
+    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<GetExerciseWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val mockupExercise = generateExercise()
+
+            val mockupResult = GetExerciseWrapper(
+                GetExerciseResponse(
+                    mockupExercise
+                )
+            )
+
+            emit(ResultWrapper.Success(mockupResult))
+        }
+
+    private fun generateExercise(): ExerciseDto {
+        return ExerciseDto(
+            1,
+            "BARBELL BENCH PRESS 1",
+            MuscleGroup.CHEST,
+            MachineType.BARBELL,
+            ""
+        )
+    }
 
     private fun generateExerciseList(): List<ExerciseDto> {
         val n = 10
@@ -56,7 +84,7 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupExercise = generateExercise()
+            val mockupExercise = generateExerciseDetails()
 
             val mockupResult = GetExerciseDetailsWrapper(
                 GetExerciseDetailsResponse(
@@ -67,7 +95,7 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
             emit(ResultWrapper.Success(mockupResult))
         }
 
-    private fun generateExercise(): ExerciseDetailsDto {
+    private fun generateExerciseDetails(): ExerciseDetailsDto {
         return ExerciseDetailsDto(
             name = "BARBELL BENCH PRESS",
             description = "",
