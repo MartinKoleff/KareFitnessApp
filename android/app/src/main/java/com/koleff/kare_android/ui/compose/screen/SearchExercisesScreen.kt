@@ -7,11 +7,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 @Composable
 fun SearchExercisesScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
+    exercisesListViewModel: ExerciseListViewModel,
     workoutId: Int
 ) {
     SearchListScaffold("Select exercise", navController, isNavigationInProgress) { innerPadding ->

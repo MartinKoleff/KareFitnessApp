@@ -82,11 +82,18 @@ fun SetupNavGraph(
             val muscleGroupId =
                 backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
 
+            val exerciseListViewModel = viewModel<ExerciseListViewModel>(
+                factory = ExerciseListViewModel.provideExerciseListViewModelFactory(
+                    factory = exerciseListViewModelFactory,
+                    muscleGroupId = muscleGroupId + 1
+                )
+            )
+
             MuscleGroupScreen(
                 muscleGroupId = muscleGroupId,
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseListViewModelFactory = exerciseListViewModelFactory,
+                exerciseListViewModel = exerciseListViewModel,
                 dashboardViewModel = dashboardViewModel
             )
         }
@@ -175,10 +182,20 @@ fun SetupNavGraph(
             val workoutId =
                 backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
 
+            val muscleGroupId = MuscleGroup.ALL.muscleGroupId
+
+            val exerciseListViewModel = viewModel<ExerciseListViewModel>(
+                factory = ExerciseListViewModel.provideExerciseListViewModelFactory(
+                    factory = exerciseListViewModelFactory,
+                    muscleGroupId = muscleGroupId
+                )
+            )
+
             SearchExercisesScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                workoutId = workoutId
+                workoutId = workoutId,
+                exercisesListViewModel = exerciseListViewModel
             )
         }
     }
