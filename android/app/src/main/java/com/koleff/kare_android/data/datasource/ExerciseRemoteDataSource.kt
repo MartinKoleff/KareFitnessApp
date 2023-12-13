@@ -4,8 +4,10 @@ import com.koleff.kare_android.common.Network
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.data.model.request.GetExerciseDetailsRequest
+import com.koleff.kare_android.data.model.request.GetExerciseRequest
 import com.koleff.kare_android.data.model.request.GetExercisesRequest
 import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
+import com.koleff.kare_android.data.model.wrapper.GetExerciseWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.remote.ExerciseApi
 import kotlinx.coroutines.CoroutineDispatcher
@@ -22,6 +24,12 @@ class ExerciseRemoteDataSource @Inject constructor(
         val body = GetExercisesRequest(muscleGroupId)
 
         return Network.executeApiCall(dispatcher, { GetExercisesWrapper(exerciseApi.getExercises(body)) })
+    }
+
+    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<GetExerciseWrapper>> {
+        val body = GetExerciseRequest(exerciseId)
+
+        return Network.executeApiCall(dispatcher, { GetExerciseWrapper(exerciseApi.getExercise(body)) })
     }
 
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> {
