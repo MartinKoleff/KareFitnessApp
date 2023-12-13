@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
@@ -186,6 +187,10 @@ fun WorkoutBanner(
             }
         }
     }
+}
+
+fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostController) {
+    navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId)) //No exercise is submitted
 }
 
 @Composable
