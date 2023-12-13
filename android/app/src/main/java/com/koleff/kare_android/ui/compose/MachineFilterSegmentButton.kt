@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.event.OnFilterEvent
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +27,7 @@ fun MachineFilterSegmentButton(
     modifier: Modifier = Modifier,
     selectedOptionIndex: Int = -1,
     isDisabled: Boolean,
-    exerciseListViewModel: ExerciseViewModel
+    exerciseListViewModel: ExerciseListViewModel
 ) {
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
