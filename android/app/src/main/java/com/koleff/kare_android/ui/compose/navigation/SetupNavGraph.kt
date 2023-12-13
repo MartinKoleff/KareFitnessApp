@@ -89,16 +89,9 @@ fun SetupNavGraph(
                 dashboardViewModel = dashboardViewModel
             )
         }
-        composable(route = MainScreen.WorkoutDetailsWithExercise.route, arguments =
-        listOf(
-            navArgument("submitted_exercise"){
-                type = ExerciseType()
-            }
-        )) { backStackEntry ->
+        composable(route = MainScreen.WorkoutDetails.route) { backStackEntry ->
             val workoutId =
                 backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
-
-            val submittedExercise = backStackEntry.arguments?.getParcelable<ExerciseDto?>("submitted_exercise")
 
             val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
                 factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
@@ -106,11 +99,6 @@ fun SetupNavGraph(
                     workoutId = workoutId
                 )
             )
-
-            //If exercise is submitted from ExerciseDetailsConfigurator
-            submittedExercise?.let{
-                workoutDetailsViewModel.onEvent(OnWorkoutDetailsEvent.OnExerciseSubmit(submittedExercise))
-            }
 
             WorkoutDetailsScreen(
                 workoutId = workoutId,

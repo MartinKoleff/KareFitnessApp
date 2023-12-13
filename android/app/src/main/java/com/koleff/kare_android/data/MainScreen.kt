@@ -14,11 +14,6 @@ sealed class MainScreen(val route: String) {
     object ExerciseDetailsConfigurator : MainScreen("exercise_details_configurator/{exercise_id}/{muscle_group_id}"){ //When exercise is selected in workout screen -> show configurator screen (with reps, sets, weight)
         fun createRoute(exerciseId: Int, muscleGroupId: Int) = "exercise_details_configurator/$exerciseId/$muscleGroupId"
     }
-    object WorkoutDetailsWithExercise : MainScreen("workout_details/{workout_id}/{submitted_exercise}"){ //When workout is selected -> show details screen
-        fun createRoute(workoutId: Int, submittedExercise: String)
-                = "workout_details/$workoutId/$submittedExercise"
-    }
-
     object WorkoutDetails : MainScreen("workout_details/{workout_id}"){ //When workout is selected -> show details screen
         fun createRoute(workoutId: Int)
                 = "workout_details/$workoutId"
