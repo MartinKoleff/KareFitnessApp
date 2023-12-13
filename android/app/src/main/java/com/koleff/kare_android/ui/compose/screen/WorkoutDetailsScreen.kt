@@ -42,10 +42,10 @@ fun WorkoutDetailsScreen(
             .fillMaxSize()
             .padding(
                 PaddingValues(
-                    top = innerPadding.calculateTopPadding(),
+                    top = 4.dp + innerPadding.calculateTopPadding(),
                     start = 4.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
                     end = 4.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    bottom = 0.dp
+                    bottom = 4.dp + innerPadding.calculateBottomPadding()
                 )
             )
 
