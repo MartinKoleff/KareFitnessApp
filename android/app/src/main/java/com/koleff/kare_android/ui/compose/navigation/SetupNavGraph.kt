@@ -135,24 +135,28 @@ fun SetupNavGraph(
             val exerciseId =
                 backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
 
-            val initialMuscleGroupId =
-                backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
+            val exerciseViewModel = viewModel<ExerciseViewModel>(
+                factory = ExerciseViewModel.provideExerciseViewModelFactory(
+                    factory = exerciseViewModelFactory,
+                    exerciseId = exerciseId
+                )
+            )
 
-            val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
+            val workoutId =
+                backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
 
-            val exerciseDetailsViewModel = viewModel<ExerciseDetailsViewModel>(
-                factory = ExerciseDetailsViewModel.provideExerciseDetailsViewModelFactory(
-                    factory = exerciseDetailsViewModelFactory,
-                    exerciseId = exerciseId,
-                    initialMuscleGroup = initialMuscleGroup
+            val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
+                factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
+                    factory = workoutDetailsViewModelFactory,
+                    workoutId = workoutId
                 )
             )
 
             ExerciseDetailsConfiguratorScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseId = exerciseId,
-                exerciseDetailsViewModel = exerciseDetailsViewModel
+                exerciseViewModel = exerciseViewModel,
+                workoutDetailsViewModel = workoutDetailsViewModel
             )
         }
         composable(MainScreen.Settings.route) {
