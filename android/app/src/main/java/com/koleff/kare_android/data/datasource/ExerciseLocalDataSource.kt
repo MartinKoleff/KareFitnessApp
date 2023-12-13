@@ -4,8 +4,10 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
+import com.koleff.kare_android.data.model.wrapper.GetExerciseWrapper
 import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
@@ -44,6 +46,24 @@ class ExerciseLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
+    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<GetExerciseWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            //Check if Room DB has data
+            if (!exerciseDBManager.hasInitializedExerciseTableRoomDB) {
+                exerciseDBManager.initializeExerciseTableRoomDB(exerciseDao, exerciseDetailsDao)
+            }
+
+            val data = exerciseDao.getExerciseById(exerciseId)
+
+            val result = GetExerciseWrapper(
+                GetExerciseResponse(data.toExerciseDto())
+            )
+
+            emit(ResultWrapper.Success(result))
+    }
 
 
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> =

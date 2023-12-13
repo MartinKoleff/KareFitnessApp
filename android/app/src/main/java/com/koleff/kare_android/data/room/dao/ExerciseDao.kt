@@ -30,6 +30,10 @@ interface ExerciseDao {
     suspend fun deleteExercise(exercise: Exercise)
 
     @Transaction
+    @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId")
+    fun getExerciseById(exerciseId: Int): Exercise
+
+    @Transaction
     @Query("SELECT * FROM exercise_table WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")
     fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise>
 
