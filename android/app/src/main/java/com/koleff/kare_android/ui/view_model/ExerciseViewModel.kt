@@ -6,19 +6,18 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants.fakeSmallDelay
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.event.OnFilterEvent
+import com.koleff.kare_android.data.model.state.ExerciseState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
-import com.koleff.kare_android.data.model.state.ExerciseState
+import com.koleff.kare_android.data.model.state.ExercisesState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,7 +25,7 @@ import kotlinx.coroutines.launch
 
 class ExerciseViewModel @AssistedInject constructor(
     private val exerciseRepository: ExerciseRepository,
-    @Assisted private val muscleGroupId: Int,
+    @Assisted private val exerciseId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -34,69 +33,13 @@ class ExerciseViewModel @AssistedInject constructor(
     val state: StateFlow<ExerciseState>
         get() = _state
 
-    private var originalExerciseList: List<ExerciseDto> = mutableListOf()
-
     init {
-        getExercises(muscleGroupId + 1)
+        getExercise(exerciseId)
     }
 
-    fun onEvent(event: OnFilterEvent) {
+    private fun getExercise(exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            _state.value = state.value.copy(
-                isLoading = true
-            )
-            delay(fakeSmallDelay)
-
-            when (event) {
-                OnFilterEvent.DumbbellFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.DUMBBELL
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.BarbellFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.BARBELL
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.MachineFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.MACHINE
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.CalisthenicsFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.CALISTHENICS
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.NoFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList,
-                        isLoading = false
-                    )
-                }
-            }
-        }
-    }
-
-    private fun getExercises(muscleGroupId: Int) {
-        viewModelScope.launch(dispatcher) {
-            exerciseRepository.getExercises(muscleGroupId).collect { apiResult ->
+            exerciseRepository.getExercise(exerciseId).collect { apiResult ->
                 when (apiResult) {
                     is ResultWrapper.ApiError -> {
                         _state.value = ExerciseState(
@@ -110,14 +53,12 @@ class ExerciseViewModel @AssistedInject constructor(
                     }
 
                     is ResultWrapper.Success -> {
-                        Log.d("ExerciseViewModel", "Flow received.")
+                        Log.d("ExerciseListViewModel", "Flow received.")
 
                         _state.value = ExerciseState(
                             isSuccessful = true,
-                            exerciseList = apiResult.data.exercises
+                            exercise = apiResult.data.exercise
                         )
-
-                        originalExerciseList = _state.value.exerciseList
                     }
                 }
             }
@@ -126,16 +67,16 @@ class ExerciseViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(muscleGroupId: Int): ExerciseViewModel
+        fun create(exerciseId: Int): ExerciseViewModel
     }
 
     companion object {
         fun provideExerciseViewModelFactory(
             factory: Factory,
-            muscleGroupId: Int,
+            exerciseId: Int,
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(muscleGroupId) as T
+                return factory.create(exerciseId) as T
             }
         }
     }

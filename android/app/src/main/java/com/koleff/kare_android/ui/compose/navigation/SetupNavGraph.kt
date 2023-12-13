@@ -30,6 +30,7 @@ import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
+import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -38,7 +39,8 @@ import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 @Composable
 fun SetupNavGraph(
     navController: NavHostController,
-    ExerciseListViewModelFactory: ExerciseListViewModel.Factory,
+    exerciseListViewModelFactory: ExerciseListViewModel.Factory,
+    exerciseViewModelFactory: ExerciseViewModel.Factory,
     exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory,
     workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
 ) {
@@ -48,7 +50,6 @@ fun SetupNavGraph(
 
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
     val workoutViewModel: WorkoutViewModel = hiltViewModel()
-
 
     NavHost(
         navController = navController,
@@ -85,7 +86,7 @@ fun SetupNavGraph(
                 muscleGroupId = muscleGroupId,
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                ExerciseListViewModelFactory = ExerciseListViewModelFactory,
+                exerciseListViewModelFactory = exerciseListViewModelFactory,
                 dashboardViewModel = dashboardViewModel
             )
         }

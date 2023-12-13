@@ -28,7 +28,7 @@ fun MuscleGroupScreen(
     navController: NavHostController,
     muscleGroupId: Int = -1, //Invalid group selected...
     isNavigationInProgress: MutableState<Boolean>,
-    ExerciseListViewModelFactory: ExerciseListViewModel.Factory,
+    exerciseListViewModelFactory: ExerciseListViewModel.Factory,
     dashboardViewModel: DashboardViewModel
 ) {
     val muscleGroupState by dashboardViewModel.state.collectAsState()
@@ -36,7 +36,7 @@ fun MuscleGroupScreen(
 
     val exerciseListViewModel = viewModel<ExerciseListViewModel>(
         factory = ExerciseListViewModel.provideExerciseListViewModelFactory(
-            factory = ExerciseListViewModelFactory,
+            factory = exerciseListViewModelFactory,
             muscleGroupId = muscleGroupId
         )
     )
