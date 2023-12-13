@@ -22,6 +22,7 @@ import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScre
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
+import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
@@ -174,6 +175,16 @@ fun SetupNavGraph(
             SearchWorkoutsScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress
+            )
+        }
+        composable(MainScreen.SearchExercisesScreen.route) { backStackEntry ->
+            val workoutId =
+                backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
+
+            SearchExercisesScreen(
+                navController = navController,
+                isNavigationInProgress = isNavigationInProgress,
+                workoutId = workoutId
             )
         }
     }
