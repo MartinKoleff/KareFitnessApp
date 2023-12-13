@@ -9,20 +9,21 @@ import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
 
 @Composable
-fun SearchWorkoutsScreen(
+fun SearchExercisesScreen(
     navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>
+    isNavigationInProgress: MutableState<Boolean>,
+    workoutId: Int
 ) {
-    SearchListScaffold("Select workout", navController, isNavigationInProgress) { innerPadding ->
+    SearchListScaffold("Select exercise", navController, isNavigationInProgress) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
 
-        SearchWorkoutsContent(modifier = modifier)
+        SearchExercisesContent(modifier = modifier)
     }
 }
 
 @Composable
-fun SearchWorkoutsContent(modifier: Modifier) {
+fun SearchExercisesContent(modifier: Modifier) {
 
 }
