@@ -65,7 +65,7 @@ fun ExerciseDetailsConfiguratorToolbar(
             painter = painterResource(id = exerciseImageId),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
-            modifier = modifier.clip(RoundedToolbarShape())
+            modifier = modifier.clip(RoundedToolbarShape(hasTopOutline = false))
         )
 
         //Navigation

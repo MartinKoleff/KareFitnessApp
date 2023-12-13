@@ -32,8 +32,8 @@ class RoundedToolbarShape(val hasTopOutline: Boolean = true) : Shape {
         )
 
         val path = Path().apply {
-            moveTo(0f, 0f)
-            lineTo(screenWidth, 0f)
+            if(hasTopOutline) moveTo(0f, 0f) else moveTo(screenWidth, 0f)
+            if(hasTopOutline) lineTo(screenWidth, 0f)
             lineTo(screenWidth, screenHeight - cornerRadius)
             arcTo(
                 rect = rect,
@@ -53,7 +53,7 @@ class RoundedToolbarShape(val hasTopOutline: Boolean = true) : Shape {
                 sweepAngleDegrees = 90f,
                 forceMoveTo = false
             )
-            if(!hasTopOutline) close()
+            if(hasTopOutline) close() else lineTo(0f, 0f)
         }
 
         return path
