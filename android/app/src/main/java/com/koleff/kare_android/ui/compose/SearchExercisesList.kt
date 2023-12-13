@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
@@ -72,7 +73,7 @@ fun SearchExercisesListPreview() {
         .fillMaxSize()
         .padding(8.dp)
 
-    val exerciseList = generateExerciseList()
+    val exerciseList = MockupDataGenerator.generateExerciseList()
 
     SearchExercisesList(
         modifier = modifier,
@@ -80,24 +81,4 @@ fun SearchExercisesListPreview() {
         workoutId = 1,
         navController = rememberNavController()
     )
-}
-
-private fun generateExerciseList(): List<ExerciseDto> {
-    val n = 5
-    val exercisesList: MutableList<ExerciseDto> = mutableListOf()
-
-    repeat(n) { index ->
-        val currentExercise =
-            ExerciseDto(
-                index,
-                "BARBELL BENCH PRESS $index",
-                MuscleGroup.fromId(index + 1),
-                MachineType.BARBELL,
-                ""
-            )
-        exercisesList.add(currentExercise)
-        exercisesList.add(currentExercise)
-    }
-
-    return exercisesList
 }

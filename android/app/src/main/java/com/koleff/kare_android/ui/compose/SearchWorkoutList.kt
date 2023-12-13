@@ -12,6 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
@@ -46,7 +47,7 @@ fun SearchWorkoutListPreview() {
         .fillMaxSize()
         .padding(8.dp)
 
-    val workoutList = generateWorkoutList()
+    val workoutList = MockupDataGenerator.generateWorkoutList()
 
     SearchWorkoutList(
         modifier = modifier,
@@ -54,25 +55,4 @@ fun SearchWorkoutListPreview() {
         exerciseId = 1,
         navController = rememberNavController()
     )
-}
-
-private fun generateWorkoutList(): List<WorkoutDto> {
-    val n = 5
-    val workoutList: MutableList<WorkoutDto> = mutableListOf()
-
-    repeat(n) { index ->
-        val currentWorkout =
-            WorkoutDto(
-                workoutId = index,
-                name = "Epic workout $index",
-                muscleGroup = MuscleGroup.fromId(index + 1),
-                snapshot = "",
-                totalExercises = index,
-                isSelected = false
-            )
-        workoutList.add(currentWorkout)
-        workoutList.add(currentWorkout)
-    }
-
-    return workoutList
 }
