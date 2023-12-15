@@ -39,6 +39,7 @@ object MockupDataGenerator {
 
     fun generateExerciseDetails(): ExerciseDetailsDto {
         return ExerciseDetailsDto(
+            id = 1,
             name = "BARBELL BENCH PRESS",
             description = "",
             muscleGroup = MuscleGroup.CHEST,

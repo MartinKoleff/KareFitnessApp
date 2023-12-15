@@ -20,7 +20,8 @@ import com.koleff.kare_android.data.MainScreen
 @Composable
 fun ExerciseDetailsBottomNavigationBar(
     navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>
+    isNavigationInProgress: MutableState<Boolean>,
+    exerciseId: Int
 ) {
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.secondary,
@@ -48,6 +49,7 @@ fun PreviewExerciseDetailsBottomNavigationBar() {
     val navController = rememberNavController()
     ExerciseDetailsBottomNavigationBar(
         navController = navController,
-        isNavigationInProgress = mutableStateOf(false)
+        isNavigationInProgress = mutableStateOf(false),
+        exerciseId = -1
     )
 }

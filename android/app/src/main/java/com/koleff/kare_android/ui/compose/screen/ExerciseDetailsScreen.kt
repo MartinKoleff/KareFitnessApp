@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,16 +46,17 @@ fun ExerciseDetailsScreen(
     isNavigationInProgress: MutableState<Boolean>,
     exerciseDetailsViewModel: ExerciseDetailsViewModel
 ) {
-    val exerciseDetailsState = exerciseDetailsViewModel.state.collectAsState()
+    val exerciseDetailsState by exerciseDetailsViewModel.state.collectAsState()
 
-    Log.d("ExerciseDetailsScreen", exerciseDetailsState.value.exercise.muscleGroup.toString())
-    val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.value.exercise.muscleGroup)
+    Log.d("ExerciseDetailsScreen", exerciseDetailsState.exercise.muscleGroup.toString())
+    val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
 
     ExerciseDetailsScreenScaffold(
-        screenTitle = exerciseDetailsState.value.exercise.name,
+        screenTitle = exerciseDetailsState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
-        exerciseImageId = exerciseImageId
+        exerciseImageId = exerciseImageId,
+        exerciseId = exerciseDetailsState.exercise.id
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -73,7 +75,7 @@ fun ExerciseDetailsScreen(
 
         ExerciseDetailsContent(
             modifier = modifier,
-            exerciseDetailsState = exerciseDetailsState.value,
+            exerciseDetailsState = exerciseDetailsState,
         )
     }
 }
@@ -174,6 +176,7 @@ fun ExerciseDetailsScreenPreview() {
     val isNavigationInProgress = mutableStateOf(false)
     val exerciseDetailsState = ExerciseDetailsState(
         exercise = ExerciseDetailsDto(
+            id = 1,
             name = "Bulgarian split squad",
             description = "Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
             muscleGroup = MuscleGroup.LEGS,
@@ -188,7 +191,8 @@ fun ExerciseDetailsScreenPreview() {
         screenTitle = exerciseDetailsState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
-        exerciseImageId = exerciseImageId
+        exerciseImageId = exerciseImageId,
+        exerciseId = exerciseDetailsState.exercise.id
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

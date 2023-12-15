@@ -85,6 +85,7 @@ class ExerciseLocalDataSource @Inject constructor(
             val result = GetExerciseDetailsWrapper(
                 GetExerciseDetailsResponse(
                     ExerciseDetailsDto(
+                        id = data.exerciseDetailsId,
                         name = data.name,
                         description = description,
                         muscleGroup = data.muscleGroup,

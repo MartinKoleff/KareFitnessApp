@@ -26,6 +26,7 @@ fun ExerciseDetailsScreenScaffold(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     exerciseImageId: Int,
+    exerciseId: Int,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -54,7 +55,8 @@ fun ExerciseDetailsScreenScaffold(
         bottomBar = {
             ExerciseDetailsBottomNavigationBar(
                 isNavigationInProgress = isNavigationInProgress,
-                navController = navController
+                navController = navController,
+                exerciseId = exerciseId
             )
         }
     ) { innerPadding ->
