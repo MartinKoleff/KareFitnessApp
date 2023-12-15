@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.data.model.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.data.model.state.SearchState
 import com.koleff.kare_android.data.model.state.WorkoutState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -31,9 +33,42 @@ class WorkoutViewModel @Inject constructor(
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
+    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
+    val searchState: StateFlow<SearchState>
+        get() = _searchState
+
 //    init {
 //        getWorkouts()
 //    }
+
+    fun onSearchEvent(event: OnSearchEvent) {
+        when (event) {
+            is OnSearchEvent.OnToggleSearch -> {
+                val isSearching = _searchState.value.isSearching
+                _searchState.value = searchState.value.copy(
+                    isSearching = !isSearching
+                )
+
+                if (!isSearching) {
+                    onSearchEvent(OnSearchEvent.OnSearchTextChange(""))
+                }
+            }
+            is OnSearchEvent.OnSearchTextChange -> {
+                _searchState.value = searchState.value.copy(
+                    searchText = event.searchText
+                )
+
+                //Search filter
+                _state.value = state.value.copy(
+                    workoutList = originalWorkoutList.filter {
+
+                        //Custom search filter...
+                        it.name.contains(event.searchText, ignoreCase = true)
+                    }
+                )
+            }
+        }
+    }
 
     fun onEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {

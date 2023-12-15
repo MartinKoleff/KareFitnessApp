@@ -73,6 +73,7 @@ fun SearchExercisesScreen(
                     onToggleSearch = {
                         exercisesListViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
                     })
+
                 SearchExercisesList(
                     modifier = Modifier
                         .fillMaxSize(),
