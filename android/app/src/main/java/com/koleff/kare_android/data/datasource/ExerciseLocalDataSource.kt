@@ -31,11 +31,6 @@ class ExerciseLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            //Check if Room DB has data
-            if (!exerciseDBManager.hasInitializedExerciseTableRoomDB) {
-                exerciseDBManager.initializeExerciseTableRoomDB(exerciseDao, exerciseDetailsDao)
-            }
-
             //Fetch all exercises
             val data = if (MuscleGroup.fromId(muscleGroupId) == MuscleGroup.ALL) {
                 exerciseDao.getAllExercises()
@@ -56,11 +51,6 @@ class ExerciseLocalDataSource @Inject constructor(
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
-
-            //Check if Room DB has data
-            if (!exerciseDBManager.hasInitializedExerciseTableRoomDB) {
-                exerciseDBManager.initializeExerciseTableRoomDB(exerciseDao, exerciseDetailsDao)
-            }
 
             val data = exerciseDao.getExerciseById(exerciseId)
 

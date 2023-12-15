@@ -15,14 +15,15 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class ExerciseDBManager @Inject constructor(
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val exerciseDao: ExerciseDao,
+    private val exerciseDetailsDao: ExerciseDetailsDao
 ) {
-    val hasInitializedExerciseTableRoomDB = preferences.hasInitializedExerciseTableRoomDB()
+    private val hasInitializedExerciseTableRoomDB = preferences.hasInitializedExerciseTableRoomDB()
 
-    suspend fun initializeExerciseTableRoomDB(
-        exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao
-    ) = withContext(Dispatchers.IO) {
+    suspend fun initializeExerciseTableRoomDB() = withContext(Dispatchers.IO) {
+        if (hasInitializedExerciseTableRoomDB) return@withContext
+
         for (muscleGroup in MuscleGroup.values()) {
             val exercisesList = loadExercises(muscleGroup)
             val exerciseDetailsList = loadExerciseDetails(muscleGroup)

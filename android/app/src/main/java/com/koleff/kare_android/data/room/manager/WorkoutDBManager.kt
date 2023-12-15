@@ -16,14 +16,15 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class WorkoutDBManager @Inject constructor(
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val workoutDao: WorkoutDao,
+    private val workoutDetailsDao: WorkoutDetailsDao
 ) {
-    val hasInitializedWorkoutTableRoomDB = preferences.hasInitializedWorkoutTableRoomDB()
+    private val hasInitializedWorkoutTableRoomDB = preferences.hasInitializedWorkoutTableRoomDB()
 
-    suspend fun initializeWorkoutTableRoomDB(
-        workoutDao: WorkoutDao,
-        workoutDetailsDao: WorkoutDetailsDao
-    ) = withContext(Dispatchers.IO) {
+    suspend fun initializeWorkoutTableRoomDB() = withContext(Dispatchers.IO) {
+        if(hasInitializedWorkoutTableRoomDB) return@withContext
+
         val workouts = getAllWorkouts()
         val workoutDetails = getAllWorkoutDetails()
         val exerciseCrossRefs = getAllExerciseCrossRefs()
@@ -195,7 +196,7 @@ class WorkoutDBManager @Inject constructor(
                         MuscleGroup.BICEPS,
                         MachineType.DUMBBELL,
                         ""
-                    ),  Exercise(
+                    ), Exercise(
                         37,
                         "Dumbbell hammer curl",
                         MuscleGroup.BICEPS,

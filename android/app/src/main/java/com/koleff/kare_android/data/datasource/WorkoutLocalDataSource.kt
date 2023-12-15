@@ -27,8 +27,6 @@ import javax.inject.Inject
 
 class WorkoutLocalDataSource @Inject constructor(
     private val workoutDao: WorkoutDao,
-    private val workoutDetailsDao: WorkoutDetailsDao,
-    private val workoutDBManager: WorkoutDBManager
 ) : WorkoutDataSource {
     override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
@@ -73,11 +71,6 @@ class WorkoutLocalDataSource @Inject constructor(
     override suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
-
-        //Check if Room DB has data
-        if (!workoutDBManager.hasInitializedWorkoutTableRoomDB) {
-            workoutDBManager.initializeWorkoutTableRoomDB(workoutDao, workoutDetailsDao)
-        }
 
         val data = workoutDao.getWorkoutsOrderedById()
 
