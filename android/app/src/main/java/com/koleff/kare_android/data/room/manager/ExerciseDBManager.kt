@@ -7,7 +7,9 @@ import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.SetEntity
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -24,14 +26,39 @@ class ExerciseDBManager @Inject constructor(
         for (muscleGroup in MuscleGroup.values()) {
             val exercisesList = loadExercises(muscleGroup)
             val exerciseDetailsList = loadExerciseDetails(muscleGroup)
-            val crossRefs = loadAllCrossRefs()
+            val exerciseDetailsExerciseCrossRef = loadAllCrossRefs()
+
+            val exerciseSets = loadExerciseSets()
+            val exerciseSetsCrossRef = loadExerciseSetsCrossRefs(exercisesList)
 
             exerciseDao.insertAll(exercisesList)
             exerciseDetailsDao.insertAll(exerciseDetailsList)
+            exerciseDao.insertAllExerciseSets(exerciseSets)
 
-            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(crossRefs)
+            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRef)
+            exerciseDao.insertAllExerciseSetCrossRef(exerciseSetsCrossRef)
         }
         preferences.initializeExerciseTableRoomDB()
+    }
+
+    private fun loadExerciseSets(): List<SetEntity> {
+        return listOf(
+            SetEntity(1, 12, 25f),
+            SetEntity(2, 10, 30f),
+            SetEntity(3, 8, 35f)
+        )
+    }
+
+    private fun loadExerciseSetsCrossRefs(allExercises: List<Exercise>): List<ExerciseSetCrossRef> {
+        val exerciseSets: MutableList<ExerciseSetCrossRef> = mutableListOf()
+
+        for (exercise in allExercises) {
+            exerciseSets.add(ExerciseSetCrossRef(exercise.exerciseId, 1))
+            exerciseSets.add(ExerciseSetCrossRef(exercise.exerciseId, 2))
+            exerciseSets.add(ExerciseSetCrossRef(exercise.exerciseId, 3))
+        }
+
+        return exerciseSets
     }
 
     private fun loadAllCrossRefs(): List<ExerciseDetailsExerciseCrossRef> {
