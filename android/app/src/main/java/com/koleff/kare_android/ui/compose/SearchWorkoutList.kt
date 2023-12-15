@@ -21,9 +21,9 @@ import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
 @Composable
 fun SearchWorkoutList(
     modifier: Modifier,
+    navController: NavHostController,
     workoutList: List<WorkoutDto>,
-    exerciseId: Int,
-    navController: NavHostController
+    onExerciseAddToWorkout: (Int) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         items(workoutList.size) { currentWorkoutId ->
@@ -33,10 +33,12 @@ fun SearchWorkoutList(
                     .fillMaxWidth()
                     .height(200.dp),
                 workout = currentWorkout,
-            ) {
-                //TODO: Add exercise to workout...
+            ) { workout ->
+                onExerciseAddToWorkout(workout.workoutId)
+
                 //TODO: show dialog for successfully added workout...
-                navController.navigate(MainScreen.Dashboard.route)
+
+//                navController.navigate(MainScreen.Dashboard.route)
             }
         }
     }
@@ -55,7 +57,8 @@ fun SearchWorkoutListPreview() {
     SearchWorkoutList(
         modifier = modifier,
         workoutList = workoutList,
-        exerciseId = 1,
         navController = rememberNavController()
-    )
+    ) {
+
+    }
 }

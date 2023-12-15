@@ -35,7 +35,10 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         get() = _state
 
     init {
-        getWorkoutDetails(workoutId)
+        //Invalid id handling
+        if (workoutId != -1) {
+            getWorkoutDetails(workoutId)
+        }
     }
 
     fun onEvent(onWorkoutDetailsEvent: OnWorkoutDetailsEvent) {
