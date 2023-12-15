@@ -141,12 +141,7 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
     val navController = rememberNavController()
     val isNavigationInProgress = mutableStateOf(false)
     val exerciseState = ExerciseState(
-        exercise = ExerciseDto(
-            exerciseId = 1,
-            name = "Bulgarian split squad",
-            muscleGroup = MuscleGroup.LEGS,
-            machineType = MachineType.DUMBBELL,
-        ),
+        exercise = MockupDataGenerator.generateExercise(),
         isSuccessful = true
     )
     val exerciseImageId = MuscleGroup.getImage(exerciseState.exercise.muscleGroup)

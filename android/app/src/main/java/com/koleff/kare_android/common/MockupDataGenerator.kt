@@ -2,6 +2,7 @@ package com.koleff.kare_android.common
 
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseSet
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
@@ -13,7 +14,8 @@ object MockupDataGenerator {
             "BARBELL BENCH PRESS 1",
             MuscleGroup.CHEST,
             MachineType.BARBELL,
-            ""
+            "",
+            sets = generateExerciseSetsList()
         )
     }
 
@@ -67,5 +69,19 @@ object MockupDataGenerator {
         }
 
         return workoutList
+    }
+
+    fun generateExerciseSetsList(): List<ExerciseSet> {
+        val exerciseSetList = listOf(
+            ExerciseSet(1, 12, 50f),
+            ExerciseSet(2, 10, 55.5f),
+            ExerciseSet(3, 8, 60f)
+        )
+
+        return exerciseSetList
+    }
+
+    fun generateExerciseSet(): ExerciseSet {
+        return ExerciseSet(1, 12, 50f)
     }
 }
