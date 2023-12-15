@@ -199,20 +199,11 @@ fun openWorkoutDetailsScreen(workoutId: Int, navController: NavHostController) {
 
 @Composable
 fun WorkoutList(
-    innerPadding: PaddingValues = PaddingValues(0.dp),
+    modifier: Modifier,
     workoutList: List<WorkoutDto>,
     navController: NavHostController
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 8.dp,
-                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                bottom = 8.dp + innerPadding.calculateBottomPadding()
-            )
-    ) {
+    LazyColumn(modifier = modifier) {
         items(workoutList) { workout ->
             WorkoutBanner(
                 modifier = Modifier
@@ -244,9 +235,19 @@ fun WorkoutListPreview() {
         workoutList.add(currentWorkout)
     }
 
+    val innerPadding: PaddingValues = PaddingValues(0.dp)     //if inside Scaffold...
+    val modifier = Modifier
+        .fillMaxSize()
+        .padding(
+            top = 8.dp,
+            start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+            end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+            bottom = 8.dp + innerPadding.calculateBottomPadding()
+        )
+
     WorkoutList(
+        modifier = modifier,
         workoutList = workoutList,
-        navController = navController,
-        innerPadding = PaddingValues(0.dp)
+        navController = navController
     )
 }
