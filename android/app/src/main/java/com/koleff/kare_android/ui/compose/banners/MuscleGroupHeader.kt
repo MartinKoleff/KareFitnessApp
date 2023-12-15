@@ -48,8 +48,8 @@ fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
             modifier = Modifier
                 .fillMaxSize()
                 .align(Alignment.TopStart)
-                .graphicsLayer { alpha = 0.66f },
-            colorFilter = ColorFilter.tint(primaryContainerColor, BlendMode.Softlight)
+                .graphicsLayer { alpha = 0.75f },
+            colorFilter = ColorFilter.tint(primaryContainerColor, BlendMode.Darken)
         )
 
         Text(
