@@ -45,7 +45,7 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
     ) {
         Text(
             modifier = Modifier.padding(end = 8.dp),
-            text = "Set Number: $setNumber",
+            text = "Set $setNumber",
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -113,9 +113,24 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
 
 @Composable
 fun ExerciseSetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
+
+    val totalExerciseSets = if (exerciseSetList.size < 3) {
+        3
+    } else {
+        exerciseSetList.size
+    }
+
     LazyColumn(modifier = modifier) {
-        items(exerciseSetList.size) { currentSetId ->
-            val currentSet = exerciseSetList[currentSetId]
+        items(totalExerciseSets) { currentSetId ->
+
+            //Check if set exists in the allowed boudns
+            val currentSet = if (currentSetId >= 0 && currentSetId < exerciseSetList.size) {
+                exerciseSetList[currentSetId]
+            } else {
+
+                //Default set
+                ExerciseSet(currentSetId + 1, 12, 0f)
+            }
             ExerciseSetRow(set = currentSet)
         }
     }
