@@ -27,7 +27,7 @@ sealed class MainScreen(val route: String) {
 
     object Settings : MainScreen("settings") //Settings list
     object SearchWorkoutsScreen :
-        MainScreen("search_workouts") { //Select workout where exercise will be added
+        MainScreen("search_workouts/{exercise_id}") { //Select workout where exercise will be added
         fun createRoute(exerciseId: Int) = "search_workouts/$exerciseId"
     }
 

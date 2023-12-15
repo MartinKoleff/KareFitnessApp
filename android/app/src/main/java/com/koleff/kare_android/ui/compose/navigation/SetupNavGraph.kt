@@ -172,13 +172,23 @@ fun SetupNavGraph(
             val exerciseId =
                 backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
 
+            val exerciseViewModel = viewModel<ExerciseViewModel>(
+                factory = ExerciseViewModel.provideExerciseViewModelFactory(
+                    factory = exerciseViewModelFactory,
+                    exerciseId = exerciseId
+                )
+            )
+
+            val exercise = exerciseViewModel.state.value.exercise
+
             workoutViewModel.getWorkouts()
 
             SearchWorkoutsScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseId = exerciseId,
-                workoutViewModel = workoutViewModel
+                exercise = exercise,
+                workoutViewModel = workoutViewModel,
+                workoutDetailsViewModelFactory = workoutDetailsViewModelFactory
             )
         }
         composable(MainScreen.SearchExercisesScreen.route) { backStackEntry ->

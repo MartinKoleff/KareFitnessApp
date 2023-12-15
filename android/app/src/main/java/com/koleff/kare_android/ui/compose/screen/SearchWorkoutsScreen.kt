@@ -26,8 +26,9 @@ import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 fun SearchWorkoutsScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseId: Int,
-    workoutViewModel: WorkoutViewModel
+    exercise: ExerciseDto,
+    workoutViewModel: WorkoutViewModel,
+    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
