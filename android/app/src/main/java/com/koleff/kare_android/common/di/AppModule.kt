@@ -138,8 +138,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideExerciseDBManager(preferences: Preferences): ExerciseDBManager {
-        return ExerciseDBManager(preferences)
+    fun provideExerciseDBManager(
+        preferences: Preferences,
+        exerciseDao: ExerciseDao,
+        exerciseDetailsDao: ExerciseDetailsDao
+    ): ExerciseDBManager {
+        return ExerciseDBManager(preferences, exerciseDao, exerciseDetailsDao)
     }
 
     @Provides
@@ -156,8 +160,12 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutDBManager(preferences: Preferences): WorkoutDBManager {
-        return WorkoutDBManager(preferences)
+    fun provideWorkoutDBManager(
+        preferences: Preferences,
+        workoutDao: WorkoutDao,
+        workoutDetailsDao: WorkoutDetailsDao
+    ): WorkoutDBManager {
+        return WorkoutDBManager(preferences, workoutDao, workoutDetailsDao)
     }
 
     @Provides
@@ -188,13 +196,13 @@ object AppModule {
     fun provideWorkoutDataSource(
         workoutApi: WorkoutApi,
         workoutDao: WorkoutDao,
-        workoutDetailsDao: WorkoutDetailsDao,
-        workoutDBManager: WorkoutDBManager
+        exerciseDao: ExerciseDao,
+        workoutDetailsDao: WorkoutDetailsDao
     ): WorkoutDataSource {
         return if (useLocalDataSource) WorkoutLocalDataSource(
             workoutDao = workoutDao,
-            workoutDetailsDao = workoutDetailsDao,
-            workoutDBManager = workoutDBManager
+            exerciseDao = exerciseDao,
+            workoutDetailsDao = workoutDetailsDao
         )
 //        else if (useMockupDataSource) WorkoutMockupDataSource()
         else WorkoutRemoteDataSource(workoutApi)
