@@ -39,6 +39,7 @@ class ExerciseListViewModel @AssistedInject constructor(
     }
 
     fun onEvent(event: OnFilterEvent) {
+    fun onFilterEvent(event: OnFilterEvent) {
         viewModelScope.launch(dispatcher) {
             _state.value = state.value.copy(
                 isLoading = true
