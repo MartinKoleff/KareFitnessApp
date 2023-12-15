@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +28,7 @@ import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseSet
 
 @Composable
-fun SetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
+fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
 
     // Initialize text field states
     val setNumber = set.number
@@ -42,21 +44,38 @@ fun SetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
+            modifier = Modifier.padding(end = 8.dp),
             text = "Set Number: $setNumber",
             fontSize = 16.sp,
-            modifier = Modifier.padding(end = 8.dp)
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
         )
 
         BasicTextField(
-            value = repsState.value,
-            onValueChange = { repsState.value = it },
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 4.dp),
+            value = repsState.value,
+            onValueChange = { repsState.value = it },
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            ),
             decorationBox = { innerTextField ->
-                Box(modifier = Modifier.border(1.dp, Color.Gray, RoundedCornerShape(8.dp))) {
+                Box(
+                    modifier = Modifier.border(
+                        1.dp,
+                        Color.Gray,
+                        RoundedCornerShape(8.dp)
+                    )
+                ) {
                     if (repsState.value.text.isEmpty()) {
-                        Text("Reps", color = Color.Gray)
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "Reps",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                     innerTextField()
                 }
@@ -66,15 +85,24 @@ fun SetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
         Spacer(modifier = Modifier.width(8.dp))
 
         BasicTextField(
-            value = weightState.value,
-            onValueChange = { weightState.value = it },
             modifier = Modifier
                 .weight(1f)
                 .padding(horizontal = 4.dp),
+            value = weightState.value,
+            onValueChange = { weightState.value = it },
+            textStyle = TextStyle(
+                color = Color.Black,
+                fontWeight = FontWeight.Bold
+            ),
             decorationBox = { innerTextField ->
                 Box(modifier = Modifier.border(1.dp, Color.Gray, RoundedCornerShape(8.dp))) {
                     if (weightState.value.text.isEmpty()) {
-                        Text("Weight", color = Color.Gray)
+                        Text(
+                            modifier = Modifier.padding(4.dp),
+                            text = "Weight",
+                            color = Color.Black,
+                            fontWeight = FontWeight.Medium
+                        )
                     }
                     innerTextField()
                 }
@@ -84,11 +112,11 @@ fun SetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
 }
 
 @Composable
-fun SetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
+fun ExerciseSetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
     LazyColumn(modifier = modifier) {
-        items(exerciseSetList.size){ currentSetId ->
+        items(exerciseSetList.size) { currentSetId ->
             val currentSet = exerciseSetList[currentSetId]
-            SetRow(set = currentSet)
+            ExerciseSetRow(set = currentSet)
         }
     }
 }
@@ -96,14 +124,14 @@ fun SetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
 
 @Preview
 @Composable
-fun SetRowPreview() {
+fun ExerciseSetRowPreview() {
     val exerciseSet = MockupDataGenerator.generateExerciseSet()
-    SetRow(set = exerciseSet)
+    ExerciseSetRow(set = exerciseSet)
 }
 
 @Preview
 @Composable
-fun SetRowListPreview() {
+fun ExerciseSetRowListPreview() {
     val exerciseSetList = MockupDataGenerator.generateExerciseSetsList()
-    SetRowList(modifier = Modifier.fillMaxSize(), exerciseSetList = exerciseSetList)
+    ExerciseSetRowList(modifier = Modifier.fillMaxSize(), exerciseSetList = exerciseSetList)
 }

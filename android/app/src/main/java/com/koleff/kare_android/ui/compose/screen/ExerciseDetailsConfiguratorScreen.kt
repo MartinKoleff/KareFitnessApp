@@ -34,7 +34,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.data.model.state.ExerciseState
 import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.SetRow
+import com.koleff.kare_android.ui.compose.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsConfiguratorScreenScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
@@ -129,7 +129,7 @@ fun ExerciseDetailsConfiguratorContent(
             //Rows with sets / reps / weight configuration
             items(exerciseState.exercise.sets.size) { currentSetId ->
                 val currentSet = exerciseState.exercise.sets[currentSetId]
-                SetRow(set = currentSet)
+                ExerciseSetRow(set = currentSet)
             }
         }
     }
