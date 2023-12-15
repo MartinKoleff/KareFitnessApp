@@ -5,6 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ExerciseSet(
+    val number: Int,
     val reps: Int,
-    val weight: Double
+    val weight: Float
 ) : Parcelable
