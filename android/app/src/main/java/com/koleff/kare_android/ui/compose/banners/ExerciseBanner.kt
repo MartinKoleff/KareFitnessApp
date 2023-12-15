@@ -145,6 +145,16 @@ fun ExerciseBannerV2(
     ) {
         Box(modifier = modifier.fillMaxSize()) {
 
+            //Fixes left side white overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(screenWidth / 2)
+                    .background(color = Color.Black)
+                    .align(Alignment.TopStart),
+            )
+
+
             //Exercise Image
             Image(
                 modifier = Modifier
@@ -164,7 +174,7 @@ fun ExerciseBannerV2(
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 0.80f } 
+                    .graphicsLayer { alpha = 0.55f }
                     .drawWithContent {
 
                         //Fill 5/8 of the screen with effect gradient
