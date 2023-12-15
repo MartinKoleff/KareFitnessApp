@@ -9,7 +9,10 @@ import androidx.room.Transaction
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.SetEntity
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 
 @Dao
 interface ExerciseDao {
@@ -21,27 +24,39 @@ interface ExerciseDao {
     suspend fun insertAll(exercises: List<Exercise>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseSets(set: SetEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllExerciseSets(sets: List<SetEntity>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllExerciseDetailsExerciseCrossRefs(crossRefs: List<ExerciseDetailsExerciseCrossRef>)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertExerciseSetCrossRef(crossRef: ExerciseSetCrossRef)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
 
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId")
-    fun getExerciseById(exerciseId: Int): Exercise
+    fun getExerciseById(exerciseId: Int): ExerciseWithSet
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")
-    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise>
+    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<ExerciseWithSet>
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId")
-    fun getAllExercises(): List<Exercise>
+    fun getAllExercises(): List<ExerciseWithSet>
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId ASC")
-    fun getExercisesOrderedById(): List<Exercise>
+    fun getExercisesOrderedById(): List<ExerciseWithSet>
 }

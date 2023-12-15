@@ -13,6 +13,7 @@ import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -45,7 +46,7 @@ class ExerciseLocalDataSource @Inject constructor(
             }
 
             val result = GetExercisesWrapper(
-                GetExercisesResponse(data.map(Exercise::toExerciseDto))
+                GetExercisesResponse(data.map(ExerciseWithSet::toExerciseDto))
             )
 
             emit(ResultWrapper.Success(result))
