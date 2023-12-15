@@ -44,7 +44,7 @@ fun BottomNavigationBar(
 
             NavigationItem(
                 navController = navController,
-                screen = MainScreen.MyWorkout,
+                screen = MainScreen.Workouts,
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
                 label = "Workout screen",
                 isBlocked = isNavigationInProgress

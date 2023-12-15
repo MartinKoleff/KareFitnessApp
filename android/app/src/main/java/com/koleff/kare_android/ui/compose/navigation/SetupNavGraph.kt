@@ -16,12 +16,10 @@ import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
-import com.koleff.kare_android.ui.compose.screen.MyWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
@@ -62,16 +60,9 @@ fun SetupNavGraph(
                 dashboardViewModel = dashboardViewModel
             )
         }
-        composable(MainScreen.MyWorkout.route) {
+        composable(MainScreen.Workouts.route) {
             workoutViewModel.getWorkouts()
 
-            MyWorkoutScreen(
-                navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                workoutListViewModel = workoutViewModel
-            )
-        }
-        composable(MainScreen.Workouts.route) {
             WorkoutsScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
