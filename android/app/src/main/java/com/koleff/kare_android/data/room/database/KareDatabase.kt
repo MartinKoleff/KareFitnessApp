@@ -11,9 +11,11 @@ import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.SetEntity
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 
@@ -23,11 +25,13 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         Workout::class,
         WorkoutDetails::class,
         ExerciseDetails::class,
+        SetEntity::class,
         WorkoutDetailsExerciseCrossRef::class,
         WorkoutDetailsWorkoutCrossRef::class,
-        ExerciseDetailsExerciseCrossRef::class
+        ExerciseDetailsExerciseCrossRef::class,
+        ExerciseSetCrossRef::class
     ],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 abstract class KareDatabase : RoomDatabase() {
