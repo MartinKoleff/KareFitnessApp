@@ -15,6 +15,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.data.model.dto.NavigationArguments
 
 
 @Composable
@@ -29,13 +30,14 @@ fun ExerciseDetailsBottomNavigationBar(
         actions = {
             Spacer(Modifier.weight(1f))
 
-            FloatingNavigationItem(
+            NavigationItem(
                 navController = navController,
                 screen = MainScreen.SearchWorkoutsScreen,
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
                 isBlocked = isNavigationInProgress,
-                tint = Color.White
+                tint = Color.White,
+                navigationArguments = NavigationArguments(exerciseId = exerciseId)
             )
 
             Spacer(Modifier.weight(1f))

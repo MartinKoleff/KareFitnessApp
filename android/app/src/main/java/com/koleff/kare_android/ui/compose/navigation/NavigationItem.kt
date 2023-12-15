@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.data.model.dto.NavigationArguments
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -30,6 +31,7 @@ fun NavigationItem(
     label: String,
     isBlocked: MutableState<Boolean>,
     tint: Color? = null, //Color.Black
+    navigationArguments: NavigationArguments = NavigationArguments(),
     onCustomClickAction: () -> Unit = {}
 ) {
     LaunchedEffect(key1 = isBlocked.value) {
@@ -56,7 +58,19 @@ fun NavigationItem(
 
                 onCustomClickAction.invoke()
 
-                navController.navigate(screen.route).also {
+                when (screen) {
+                    MainScreen.SearchExercisesScreen -> {
+                        navController.navigate(MainScreen.SearchExercisesScreen.createRoute(workoutId = navigationArguments.workoutId))
+                    }
+                    MainScreen.SearchWorkoutsScreen -> {
+                        navController.navigate(MainScreen.SearchWorkoutsScreen.createRoute(exerciseId = navigationArguments.exerciseId))
+                    }
+                    else -> {
+
+                        //Default screen -> no custom routing...
+                        navController.navigate(screen.route)
+                    }
+                }.also {
                     Log.d(
                         "Navigation",
                         "Updated isBlocked to true"
@@ -91,6 +105,7 @@ fun NavigationItem(
                 }
                 Icon(imageVector = icon, contentDescription = label)
             }
+
             is Painter -> {
                 tint?.let {
                     Icon(icon, contentDescription = label, tint = tint)
@@ -98,6 +113,7 @@ fun NavigationItem(
                 }
                 Icon(icon, contentDescription = label)
             }
+
             else -> return@IconButton
         }
     }
