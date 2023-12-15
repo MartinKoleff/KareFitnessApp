@@ -2,36 +2,38 @@ package io.kare.backend.service.impl;
 
 import io.kare.backend.entity.*;
 import io.kare.backend.exception.WorkoutNotFoundException;
-import io.kare.backend.mapper.WorkoutMapper;
-import io.kare.backend.payload.data.WorkoutExercisePayload;
+import io.kare.backend.mapper.*;
+import io.kare.backend.payload.data.*;
 import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.AddWorkoutResponse;
 import io.kare.backend.payload.response.GetWorkoutResponse;
 import io.kare.backend.payload.response.GetWorkoutsResponse;
 import io.kare.backend.repository.WorkoutRepository;
 import io.kare.backend.service.*;
+import java.util.*;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class WorkoutServiceImpl implements WorkoutService {
 
 	private final WorkoutRepository workoutRepository;
-	private final ExerciseService exerciseRepository;
+	private final ExerciseService exerciseService;
+	private final ExerciseMapper exerciseMapper;
 	private final ExerciseOptionService exerciseOptionService;
 	private final SelectedWorkoutService selectedWorkoutService;
 	private final WorkoutMapper workoutMapper;
 
 	public WorkoutServiceImpl(
 		WorkoutRepository workoutRepository,
-		ExerciseService exerciseRepository,
+		ExerciseService exerciseService,
+		ExerciseMapper exerciseMapper,
 		ExerciseOptionService exerciseOptionService,
 		SelectedWorkoutService selectedWorkoutService,
 		WorkoutMapper workoutMapper
 	) {
 		this.workoutRepository = workoutRepository;
-		this.exerciseRepository = exerciseRepository;
+		this.exerciseService = exerciseService;
+		this.exerciseMapper = exerciseMapper;
 		this.exerciseOptionService = exerciseOptionService;
 		this.selectedWorkoutService = selectedWorkoutService;
 		this.workoutMapper = workoutMapper;
@@ -39,7 +41,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 
 	@Override
 	public AddWorkoutResponse addWorkout(AddWorkoutRequest request, UserEntity user) {
-		List<ExerciseEntity> exercises = this.exerciseRepository.findByIds(request.exercises()
+		List<ExerciseEntity> exercises = this.exerciseService.findByIds(request.exercises()
 			.stream()
 			.map(
 				WorkoutExercisePayload::exerciseId)
@@ -54,7 +56,11 @@ public class WorkoutServiceImpl implements WorkoutService {
 	@Override
 	public GetWorkoutsResponse getWorkouts(UserEntity user) {
 		List<WorkoutEntity> workoutEntities = this.workoutRepository.findAllByUser(user);
-		return new GetWorkoutsResponse(this.workoutMapper.map(workoutEntities));
+		List<ExerciseOptionEntity> exerciseOptionEntities = this.exerciseOptionService.findAllByWorkoutIds(
+			workoutEntities.stream()
+				.map(WorkoutEntity::getId)
+				.toList(), user);
+		return this.workoutMapper.mapToGetWorkouts(workoutEntities, exerciseOptionEntities);
 	}
 
 	@Override
@@ -66,7 +72,9 @@ public class WorkoutServiceImpl implements WorkoutService {
 	public GetWorkoutResponse getWorkout(GetWorkoutRequest request, UserEntity user) {
 		WorkoutEntity workoutEntity = this.workoutRepository.findById(request.id())
 			.orElseThrow(() -> new WorkoutNotFoundException(request.id()));
-		return this.workoutMapper.map(workoutEntity);
+		List<ExerciseOptionEntity> exerciseOptionEntities = this.exerciseOptionService.findAllByWorkoutIds(
+			List.of(workoutEntity.getId()), user);
+		return this.workoutMapper.mapToGetWorkout(workoutEntity, exerciseOptionEntities);
 	}
 
 	@Override
@@ -89,5 +97,50 @@ public class WorkoutServiceImpl implements WorkoutService {
 		return this.getWorkout(new GetWorkoutRequest(this.selectedWorkoutService.getSelectedWorkout(
 				user)
 			.getId()), user);
+	}
+
+	@Override
+	public AddWorkoutResponse addFullWorkout(AddFullWorkoutRequest request, UserEntity user) {
+		Map<String, WorkoutFullExercisePayload> exerciseNameMap = new HashMap<>();
+		for (WorkoutFullExercisePayload exercise : request.exercises()) {
+			exerciseNameMap.put(exercise.name(), exercise);
+		}
+		List<ExerciseEntity> exercises = this.exerciseMapper.mapFromWorkoutExerciseFullPayload(
+			request.exercises(),
+			user
+		);
+		List<ExerciseEntity> existingExercises = new ArrayList<>();
+		List<ExerciseEntity> newExercises = new ArrayList<>();
+		for (ExerciseEntity exercise : exercises) {
+			Optional<ExerciseEntity> existingExercise = this.exerciseService.findByName(
+				exercise.getName(),
+				user
+			);
+			if (existingExercise.isPresent()) {
+				existingExercises.add(existingExercise.get());
+			} else {
+				newExercises.add(exercise);
+			}
+		}
+		newExercises = this.exerciseService.save(newExercises);
+		exercises = new ArrayList<>();
+		exercises.addAll(existingExercises);
+		exercises.addAll(newExercises);
+		WorkoutEntity workoutEntity = this.workoutMapper.mapToEntity(request, user, exercises);
+		workoutEntity = this.workoutRepository.save(workoutEntity);
+		final WorkoutEntity finalWorkoutEntity = workoutEntity;
+		List<ExerciseOptionEntity> exerciseOptionEntities = exercises.stream()
+			.map(exercise -> {
+				WorkoutFullExercisePayload exercisePayload = exerciseNameMap.get(exercise.getName());
+				return this.exerciseOptionService.mapToEntity(
+					exercisePayload,
+					exercise,
+					finalWorkoutEntity
+				);
+			})
+			.toList();
+		this.exerciseOptionService.save(exerciseOptionEntities);
+		this.selectedWorkoutService.create(workoutEntity, user);
+		return this.workoutMapper.mapToResponse(workoutEntity);
 	}
 }

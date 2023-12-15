@@ -6,7 +6,7 @@ import io.kare.backend.payload.request.AddExerciseRequest;
 import io.kare.backend.payload.response.AddExerciseResponse;
 import io.kare.backend.payload.response.GetExercisesResponse;
 
-import java.util.List;
+import java.util.*;
 
 public interface ExerciseService {
     GetExercisesResponse getExercises(UserEntity user);
@@ -17,4 +17,7 @@ public interface ExerciseService {
 
     List<ExerciseEntity> findByIds(List<String> id, UserEntity user);
 
+	List<ExerciseEntity> save(List<ExerciseEntity> exercises);
+
+	Optional<ExerciseEntity> findByName(String id, UserEntity user);
 }

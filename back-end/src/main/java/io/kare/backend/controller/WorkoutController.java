@@ -25,6 +25,11 @@ public class WorkoutController {
         return ResponseEntity.status(HttpStatus.CREATED).body(this.workoutService.addWorkout(request, user));
     }
 
+    @PostMapping("/add_full")
+    public ResponseEntity<AddWorkoutResponse> addFullWorkout(@RequestBody AddFullWorkoutRequest request, @User UserEntity user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.workoutService.addFullWorkout(request, user));
+    }
+
     @PutMapping("/select")
     public ResponseEntity<?> selectWorkout(@RequestBody SelectWorkoutRequest request, @User UserEntity user) {
         this.workoutService.selectWorkout(request, user);

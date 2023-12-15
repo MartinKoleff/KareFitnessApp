@@ -7,10 +7,9 @@ import io.kare.backend.payload.response.AddExerciseResponse;
 import io.kare.backend.payload.response.GetExercisesResponse;
 import io.kare.backend.repository.ExerciseRepository;
 import io.kare.backend.service.ExerciseService;
+import java.util.*;
 import org.springframework.stereotype.Service;
 import io.kare.backend.mapper.ExerciseMapper;
-
-import java.util.List;
 
 @Service
 public class ExerciseServiceImpl implements ExerciseService {
@@ -44,5 +43,15 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public List<ExerciseEntity> findByIds(List<String> ids, UserEntity user) {
         return this.exerciseRepository.findAllByIdsAndUser(ids, user);
+    }
+
+    @Override
+    public List<ExerciseEntity> save(List<ExerciseEntity> exercises) {
+        return this.exerciseRepository.saveAll(exercises);
+    }
+
+    @Override
+    public Optional<ExerciseEntity> findByName(String name, UserEntity user) {
+        return this.exerciseRepository.findByNameAndUser(name, user);
     }
 }

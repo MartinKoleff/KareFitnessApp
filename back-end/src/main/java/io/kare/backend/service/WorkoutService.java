@@ -25,4 +25,6 @@ public interface WorkoutService {
     void selectWorkout(SelectWorkoutRequest request, UserEntity user);
 
     GetWorkoutResponse getSelectedWorkout(UserEntity user);
+
+	AddWorkoutResponse addFullWorkout(AddFullWorkoutRequest request, UserEntity user);
 }

@@ -1,9 +1,9 @@
 package io.kare.backend.mapper;
 
 import io.kare.backend.entity.*;
-import io.kare.backend.payload.data.WorkoutExercisePayload;
+import io.kare.backend.payload.data.*;
 import java.util.*;
-import org.mapstruct.Mapper;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface ExerciseOptionMapper {
@@ -34,4 +34,9 @@ public interface ExerciseOptionMapper {
 		}
 		return null;
 	}
+
+	@Mapping(target = "workout", source = "workout")
+	@Mapping(target = "exercise", source = "exercise")
+	@Mapping(target = "id", ignore = true)
+	ExerciseOptionEntity toExerciseOptionEntity(WorkoutFullExercisePayload exercisePayload, ExerciseEntity exercise, WorkoutEntity workout);
 }

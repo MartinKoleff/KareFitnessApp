@@ -1,9 +1,9 @@
 package io.kare.backend.repository;
 
 import io.kare.backend.entity.*;
+import java.util.*;
 import org.springframework.data.jpa.repository.*;
 
-import java.util.List;
 import org.springframework.data.repository.query.Param;
 
 public interface ExerciseRepository extends JpaRepository<ExerciseEntity, String> {
@@ -15,4 +15,6 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, String
         @Param("ids") List<String> ids,
         @Param("user") UserEntity user
     );
+
+	Optional<ExerciseEntity> findByNameAndUser(String name, UserEntity user);
 }
