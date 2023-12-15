@@ -33,3 +33,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+/back-end/src/main/resources/application-postgres.properties

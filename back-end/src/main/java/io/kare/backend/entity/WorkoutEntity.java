@@ -12,9 +12,11 @@ public class WorkoutEntity {
     public static final String TABLE_NAME = "workouts";
     public static final String ID_COLUMN = "workout_id";
     public static final String NAME_COLUMN = "name";
+    public static final String DESCRIPTION_COLUMN = "description";
 
     private String id;
     private String name;
+    private String description;
     private UserEntity user;
     private List<ExerciseEntity> exercises;
     private List<ProgramEntity> programs;
@@ -47,6 +49,15 @@ public class WorkoutEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(name = DESCRIPTION_COLUMN, nullable = false)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @ManyToMany

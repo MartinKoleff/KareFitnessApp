@@ -1,6 +1,6 @@
 package io.kare.backend.exception;
 
-public final class UserPasswordIncorrectException extends UserException {
+public final class UserPasswordIncorrectException extends RuntimeException {
 
 	private static final String MESSAGE = "User password does not match! (using email %s)";
 	private final String email;
