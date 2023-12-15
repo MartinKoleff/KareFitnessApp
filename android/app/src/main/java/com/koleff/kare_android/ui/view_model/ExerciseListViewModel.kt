@@ -89,7 +89,9 @@ class ExerciseListViewModel @AssistedInject constructor(
                 //Search filter
                 _state.value = state.value.copy(
                     exerciseList = originalExerciseList.filter {
-                        it.name.contains(event.searchText)
+
+                        //Custom search filter...
+                        it.name.contains(event.searchText, ignoreCase = true)
                     }
                 )
             }
