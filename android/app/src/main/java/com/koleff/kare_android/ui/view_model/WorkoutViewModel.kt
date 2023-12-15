@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.event.OnWorkoutScreenSwitchEvent
@@ -12,6 +13,7 @@ import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -34,24 +36,35 @@ class WorkoutViewModel @Inject constructor(
 //    }
 
     fun onEvent(event: OnWorkoutScreenSwitchEvent) {
-        when (event) {
-            OnWorkoutScreenSwitchEvent.AllWorkouts -> {
-                _state.value = state.value.copy(
-                    workoutList = originalWorkoutList
-                )
-            }
+        viewModelScope.launch(dispatcher) {
+            _state.value = WorkoutState(
+                isLoading = true
+            )
+            delay(Constants.fakeSmallDelay)
 
-            OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
-                _state.value = state.value.copy(
-                    workoutList = originalWorkoutList.filter {
-                        it.isSelected
-                    }
-                )
+            when (event) {
+                OnWorkoutScreenSwitchEvent.AllWorkouts -> {
+                    _state.value = state.value.copy(
+                        workoutList = originalWorkoutList,
+                        isMyWorkoutScreen = false,
+                        isLoading = false
+                    )
+                }
+
+                OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
+                    _state.value = state.value.copy(
+                        workoutList = originalWorkoutList.filter {
+                            it.isSelected
+                        },
+                        isMyWorkoutScreen = true,
+                        isLoading = false
+                    )
+                }
             }
         }
     }
 
-     fun getWorkouts() {
+    fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
             workoutRepository.getAllWorkouts().collect { apiResult ->
                 when (apiResult) {
