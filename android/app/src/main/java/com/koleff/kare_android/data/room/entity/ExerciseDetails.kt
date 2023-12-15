@@ -18,6 +18,7 @@ data class ExerciseDetails(
 ) {
     fun toExerciseDetailsDto(): ExerciseDetailsDto {
         return ExerciseDetailsDto(
+            id = exerciseDetailsId,
             name = name,
             description = description,
             muscleGroup = muscleGroup,

@@ -1,8 +1,10 @@
 package com.koleff.kare_android.data.remote
 
 import com.koleff.kare_android.data.model.request.GetExerciseDetailsRequest
+import com.koleff.kare_android.data.model.request.GetExerciseRequest
 import com.koleff.kare_android.data.model.request.GetExercisesRequest
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -15,6 +17,10 @@ interface ExerciseApi {
         @Body body: GetExercisesRequest
     ): GetExercisesResponse
 
+    @GET("api/v1/exercise/get/{exercise_id}") //TODO: update endpoint...
+    suspend fun getExercise(
+        @Body body: GetExerciseRequest
+    ): GetExerciseResponse
 
     @GET("api/v1/exercise/get/{exercise_id}/details") //TODO: update endpoint...
     suspend fun getExerciseDetails(

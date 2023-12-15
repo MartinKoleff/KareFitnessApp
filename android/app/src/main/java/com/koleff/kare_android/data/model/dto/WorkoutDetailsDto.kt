@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
+import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.squareup.moshi.Json
 
 data class WorkoutDetailsDto(
@@ -12,7 +13,17 @@ data class WorkoutDetailsDto(
     @field:Json(name = "muscle_group")
     val muscleGroup: MuscleGroup = MuscleGroup.NONE,
     @field:Json(name = "exercises")
-    val exercises: List<ExerciseDto> = emptyList(),
+    val exercises: MutableList<ExerciseDto> = mutableListOf(),
     @field:Json(name = "is_selected")
     val isSelected: Boolean = false
-)
+){
+    fun toWorkoutDetails(): WorkoutDetails{
+        return WorkoutDetails(
+            workoutDetailsId = workoutId,
+            name = name,
+            description = description,
+            muscleGroup = muscleGroup,
+            isSelected = isSelected
+        )
+    }
+}

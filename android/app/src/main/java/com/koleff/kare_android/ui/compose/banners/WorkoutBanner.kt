@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
@@ -188,22 +189,21 @@ fun WorkoutBanner(
     }
 }
 
+fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostController) {
+    navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId)) //No exercise is submitted
+}
+
+fun openWorkoutDetailsScreen(workoutId: Int, navController: NavHostController) {
+    navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutId)) //Submit exercise...
+}
+
 @Composable
 fun WorkoutList(
-    innerPadding: PaddingValues = PaddingValues(0.dp),
+    modifier: Modifier,
     workoutList: List<WorkoutDto>,
     navController: NavHostController
 ) {
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 8.dp,
-                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                bottom = 8.dp + innerPadding.calculateBottomPadding()
-            )
-    ) {
+    LazyColumn(modifier = modifier) {
         items(workoutList) { workout ->
             WorkoutBanner(
                 modifier = Modifier
@@ -235,9 +235,19 @@ fun WorkoutListPreview() {
         workoutList.add(currentWorkout)
     }
 
+    val innerPadding: PaddingValues = PaddingValues(0.dp)     //if inside Scaffold...
+    val modifier = Modifier
+        .fillMaxSize()
+        .padding(
+            top = 8.dp,
+            start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+            end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+            bottom = 8.dp + innerPadding.calculateBottomPadding()
+        )
+
     WorkoutList(
+        modifier = modifier,
         workoutList = workoutList,
-        navController = navController,
-        innerPadding = PaddingValues(0.dp)
+        navController = navController
     )
 }

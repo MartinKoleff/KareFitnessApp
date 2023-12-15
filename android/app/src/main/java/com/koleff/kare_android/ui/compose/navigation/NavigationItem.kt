@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.data.model.dto.NavigationArguments
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -29,7 +30,9 @@ fun NavigationItem(
     icon: Any, //Can be Painter or ImageVector
     label: String,
     isBlocked: MutableState<Boolean>,
-    tint: Color = Color.Black
+    tint: Color? = null, //Color.Black
+    navigationArguments: NavigationArguments = NavigationArguments(),
+    onCustomClickAction: () -> Unit = {}
 ) {
     LaunchedEffect(key1 = isBlocked.value) {
         Log.d(
@@ -53,7 +56,21 @@ fun NavigationItem(
 
                 if (navController.currentBackStackEntry!!.destination.route == screen.route || isBlocked.value) return@IconButton
 
-                navController.navigate(screen.route).also {
+                onCustomClickAction.invoke()
+
+                when (screen) {
+                    MainScreen.SearchExercisesScreen -> {
+                        navController.navigate(MainScreen.SearchExercisesScreen.createRoute(workoutId = navigationArguments.workoutId))
+                    }
+                    MainScreen.SearchWorkoutsScreen -> {
+                        navController.navigate(MainScreen.SearchWorkoutsScreen.createRoute(exerciseId = navigationArguments.exerciseId))
+                    }
+                    else -> {
+
+                        //Default screen -> no custom routing...
+                        navController.navigate(screen.route)
+                    }
+                }.also {
                     Log.d(
                         "Navigation",
                         "Updated isBlocked to true"
@@ -81,8 +98,22 @@ fun NavigationItem(
         }
     ) {
         when (icon) {
-            is ImageVector -> Icon(imageVector = icon, contentDescription = label, tint = tint)
-            is Painter -> Icon(icon, contentDescription = label, tint = tint)
+            is ImageVector -> {
+                tint?.let {
+                    Icon(imageVector = icon, contentDescription = label, tint = tint)
+                    return@IconButton
+                }
+                Icon(imageVector = icon, contentDescription = label)
+            }
+
+            is Painter -> {
+                tint?.let {
+                    Icon(icon, contentDescription = label, tint = tint)
+                    return@IconButton
+                }
+                Icon(icon, contentDescription = label)
+            }
+
             else -> return@IconButton
         }
     }
@@ -96,7 +127,8 @@ fun FloatingNavigationItem(
     icon: Any, //Can be Painter or ImageVector
     label: String,
     isBlocked: MutableState<Boolean>,
-    tint: Color = Color.Black
+    tint: Color? = null, //Color.Black
+    onCustomClickAction: () -> Unit = {}
 ) {
     LaunchedEffect(key1 = isBlocked.value) {
         Log.d(
@@ -119,6 +151,8 @@ fun FloatingNavigationItem(
                 )
 
                 if (navController.currentBackStackEntry!!.destination.route == screen.route || isBlocked.value) return@FloatingActionButton
+
+                onCustomClickAction.invoke()
 
                 navController.navigate(screen.route).also {
                     Log.d(
@@ -148,8 +182,20 @@ fun FloatingNavigationItem(
         }
     ) {
         when (icon) {
-            is ImageVector -> Icon(imageVector = icon, contentDescription = label, tint = tint)
-            is Painter -> Icon(icon, contentDescription = label, tint = tint)
+            is ImageVector -> {
+                tint?.let {
+                    Icon(imageVector = icon, contentDescription = label, tint = tint)
+                    return@FloatingActionButton
+                }
+                Icon(imageVector = icon, contentDescription = label)
+            }
+            is Painter -> {
+                tint?.let {
+                    Icon(icon, contentDescription = label, tint = tint)
+                    return@FloatingActionButton
+                }
+                Icon(icon, contentDescription = label)
+            }
             else -> return@FloatingActionButton
         }
     }

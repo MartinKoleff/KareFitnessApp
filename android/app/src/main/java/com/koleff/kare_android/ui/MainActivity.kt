@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
 import com.koleff.kare_android.ui.theme.KareTheme
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
+import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
@@ -17,6 +18,9 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var exerciseListViewModelFactory: ExerciseListViewModel.Factory
 
     @Inject
     lateinit var exerciseViewModelFactory: ExerciseViewModel.Factory
@@ -35,6 +39,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 SetupNavGraph(
                     navController = navController,
+                    exerciseListViewModelFactory = exerciseListViewModelFactory,
                     exerciseViewModelFactory = exerciseViewModelFactory,
                     exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory,
                     workoutDetailsViewModelFactory = workoutDetailsViewModelFactory

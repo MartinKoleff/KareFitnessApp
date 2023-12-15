@@ -37,6 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.ui.compose.navigation.NavigationItem
+import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
 
 
 @Composable
@@ -107,62 +108,9 @@ fun ExerciseDetailsToolbar(
     }
 }
 
-class RoundedToolbarShape : Shape {
-    override fun createOutline(
-        size: Size,
-        layoutDirection: LayoutDirection,
-        density: Density
-    ): Outline {
-        return Outline.Generic(
-            path = drawRoundedToolbarSquare(size)
-        )
-    }
-
-    private fun drawRoundedToolbarSquare(size: Size): Path {
-        val screenWidth = size.width
-        val screenHeight = size.height
-        val cornerRadius = screenWidth / 3
-
-        val rect = Rect(
-            left = screenWidth - 2 * cornerRadius,
-            top = screenHeight - 2 * cornerRadius,
-            right = screenWidth,
-            bottom = screenHeight
-        )
-
-        val path = Path().apply {
-            moveTo(0f, 0f)
-            lineTo(screenWidth, 0f)
-            lineTo(screenWidth, screenHeight - cornerRadius)
-            arcTo(
-                rect = rect,
-                startAngleDegrees = 0f,
-                sweepAngleDegrees = 90f,
-                forceMoveTo = false
-            )
-            lineTo(cornerRadius, screenHeight)
-            arcTo(
-                rect = Rect(
-                    left = 0f,
-                    top = screenHeight - 2 * cornerRadius,
-                    right = cornerRadius * 2,
-                    bottom = screenHeight
-                ),
-                startAngleDegrees = 90f,
-                sweepAngleDegrees = 90f,
-                forceMoveTo = false
-            )
-            close()
-        }
-
-        return path
-    }
-}
-
-
 @Preview
 @Composable
-fun PreviewRoundedSquare() {
+fun PreviewExerciseDetailsToolbar() {
     val navController = rememberNavController()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp

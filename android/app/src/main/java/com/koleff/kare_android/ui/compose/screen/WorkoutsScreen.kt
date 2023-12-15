@@ -6,23 +6,24 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.banners.WorkoutBannerList
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
+import com.koleff.kare_android.ui.compose.banners.AddWorkoutBanner
+import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
+import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.WorkoutList
+import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -44,28 +45,91 @@ fun WorkoutsScreen(
                 )
             )
 
+        val contentModifier = Modifier
+            .fillMaxSize()
+            .padding(
+                PaddingValues(
+                    top = 8.dp,
+                    start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                    end = innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    bottom = innerPadding.calculateBottomPadding()
+                )
+            )
+
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+            val workoutState by workoutListViewModel.state.collectAsState()
+
             //Filter buttons
             WorkoutSegmentButton(
                 modifier = buttonModifier,
                 navController = navController,
-                selectedOptionIndex = 1,
-                isBlocked = isNavigationInProgress,
+                selectedOptionIndex = 0, //MyWorkout screen
+                isDisabled = workoutState.isLoading,
                 workoutListViewModel = workoutListViewModel
             )
-
-            val workoutState by workoutListViewModel.state.collectAsState()
 
             if (workoutState.isLoading && workoutState.workoutList.isEmpty()) { //Don't show loader if retrieved from cache...
                 LoadingWheel(innerPadding = innerPadding)
             } else {
-                WorkoutList(
-                    innerPadding = innerPadding,
-                    navController = navController,
-                    workoutList = workoutState.workoutList
-                )
+
+                //MyWorkout Screen
+                if (workoutState.isMyWorkoutScreen) {
+                    val selectedWorkout = workoutState.workoutList.firstOrNull {
+                        it.isSelected
+                    }
+
+                    selectedWorkout?.let {
+                        WorkoutBanner(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(200.dp),
+                            workout = selectedWorkout,
+                            hasDescription = true
+                        ) {
+                            openWorkoutDetailsScreen(workout = it, navController = navController)
+                        }
+                    } ?: run {
+
+                        //No workout is selected
+                        NoWorkoutSelectedBanner {
+                            //Navigate to SearchWorkoutsScreen...
+                        }
+                    }
+                } else {
+
+                    //All Workouts Screen
+                    LazyColumn(modifier = contentModifier) {
+
+                        //Workout List
+                        items(workoutState.workoutList.size) { workoutId ->
+                            val workout = workoutState.workoutList[workoutId]
+
+                            WorkoutBanner(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(200.dp),
+                                workout = workout,
+                            ) {
+                                openWorkoutDetailsScreen(workout, navController = navController)
+                            }
+                        }
+
+                        //Footer
+                        item {
+                            if (workoutState.workoutList.isEmpty()) {
+                                NoWorkoutSelectedBanner {
+                                    //Navigate to SearchWorkoutsScreen...
+                                }
+                            } else {
+                                AddWorkoutBanner {
+                                    //Navigate to WorkoutDetails...
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     }

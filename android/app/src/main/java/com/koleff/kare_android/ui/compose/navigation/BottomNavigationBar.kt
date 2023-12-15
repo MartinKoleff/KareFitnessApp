@@ -44,7 +44,7 @@ fun BottomNavigationBar(
 
             NavigationItem(
                 navController = navController,
-                screen = MainScreen.MyWorkout,
+                screen = MainScreen.Workouts,
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
                 label = "Workout screen",
                 isBlocked = isNavigationInProgress
@@ -53,36 +53,11 @@ fun BottomNavigationBar(
     )
 }
 
-@Composable
-fun ExerciseDetailsBottomNavigationBar(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>
-) {
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.secondary,
-        tonalElevation = 5.dp,
-        actions = {
-            Spacer(Modifier.weight(1f))
-
-            FloatingNavigationItem(
-                navController = navController,
-                screen = MainScreen.SearchWorkoutsScreen,
-                icon = painterResource(id = R.drawable.ic_vector_add),
-                label = "Add to workout",
-                isBlocked = isNavigationInProgress,
-                tint = Color.White
-            )
-
-            Spacer(Modifier.weight(1f))
-        }
-    )
-}
-
 @Preview
 @Composable
-fun PreviewExerciseDetailsBottomNavigationBar() {
+fun PreviewBottomNavigationBar() {
     val navController = rememberNavController()
-    ExerciseDetailsBottomNavigationBar(
+        BottomNavigationBar(
         navController = navController,
         isNavigationInProgress = mutableStateOf(false)
     )

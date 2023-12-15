@@ -20,6 +20,11 @@ interface WorkoutApi {
     @GET("api/v1/workout/getselectedworkout") //TODO: update endpoint...
     suspend fun getSelectedWorkout(): GetWorkoutResponse
 
+    @GET("api/v1/workout/getworkout") //TODO: update endpoint...
+    suspend fun getWorkout(
+        @Body body: BaseWorkoutRequest
+    ): GetWorkoutResponse
+
     @GET("api/v1/workout/getallworkouts") //TODO: update endpoint...
     suspend fun getAllWorkouts(): GetAllWorkoutsResponse
 

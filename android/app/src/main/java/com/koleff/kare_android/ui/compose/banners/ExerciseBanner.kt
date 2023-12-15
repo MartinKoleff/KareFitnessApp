@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
+import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -144,6 +145,16 @@ fun ExerciseBannerV2(
     ) {
         Box(modifier = modifier.fillMaxSize()) {
 
+            //Fixes left side white overlay
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(screenWidth / 2)
+                    .background(color = Color.Black)
+                    .align(Alignment.TopStart),
+            )
+
+
             //Exercise Image
             Image(
                 modifier = Modifier
@@ -163,7 +174,7 @@ fun ExerciseBannerV2(
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 0.80f } 
+                    .graphicsLayer { alpha = 0.55f }
                     .drawWithContent {
 
                         //Fill 5/8 of the screen with effect gradient
@@ -243,6 +254,15 @@ fun ExerciseBannerV2(
             }
         }
     }
+}
+
+fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
+    navController.navigate(
+        MainScreen.ExerciseDetails.createRoute(
+            exerciseId = exercise.exerciseId,
+            muscleGroupId = exercise.muscleGroup.muscleGroupId
+        )
+    )
 }
 
 @Composable

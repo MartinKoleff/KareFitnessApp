@@ -1,13 +1,12 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
+import com.koleff.kare_android.data.model.wrapper.GetExerciseWrapper
 import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import kotlinx.coroutines.delay
@@ -21,7 +20,7 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupExercisesList = generateExerciseList()
+            val mockupExercisesList = MockupDataGenerator.generateExerciseList()
 
             val mockupResult = GetExercisesWrapper(
                 GetExercisesResponse(
@@ -32,31 +31,28 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
             emit(ResultWrapper.Success(mockupResult))
         }
 
-    private fun generateExerciseList(): List<ExerciseDto> {
-        val n = 10
-        val exercisesList: MutableList<ExerciseDto> = mutableListOf()
+    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<GetExerciseWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
 
-        repeat(n) { index ->
-            val currentExercise =
-                ExerciseDto(
-                    index,
-                    "BARBELL BENCH PRESS $index",
-                    MuscleGroup.CHEST,
-                    MachineType.BARBELL,
-                    ""
+            val mockupExercise = MockupDataGenerator.generateExercise()
+
+            val mockupResult = GetExerciseWrapper(
+                GetExerciseResponse(
+                    mockupExercise
                 )
-            exercisesList.add(currentExercise)
-        }
+            )
 
-        return exercisesList
-    }
+            emit(ResultWrapper.Success(mockupResult))
+        }
 
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupExercise = generateExercise()
+            val mockupExercise = MockupDataGenerator.generateExerciseDetails()
 
             val mockupResult = GetExerciseDetailsWrapper(
                 GetExerciseDetailsResponse(
@@ -66,14 +62,4 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
 
             emit(ResultWrapper.Success(mockupResult))
         }
-
-    private fun generateExercise(): ExerciseDetailsDto {
-        return ExerciseDetailsDto(
-            name = "BARBELL BENCH PRESS",
-            description = "",
-            muscleGroup = MuscleGroup.CHEST,
-            machineType = MachineType.BARBELL,
-            videoUrl = ""
-        )
-    }
 }

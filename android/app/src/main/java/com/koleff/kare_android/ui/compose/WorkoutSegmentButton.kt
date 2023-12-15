@@ -27,30 +27,17 @@ fun WorkoutSegmentButton(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     selectedOptionIndex: Int,
-    isBlocked: MutableState<Boolean>,
+    isDisabled: Boolean,
     workoutListViewModel: WorkoutViewModel
 ) {
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("MyWorkout", "Workouts")
-
-    LaunchedEffect(key1 = isBlocked.value) {
-        Log.d(
-            "Navigation LaunchedEffect",
-            "Is navigation in progress: ${isBlocked.value}"
-        )
-
-        if (isBlocked.value) {
-            blockNavigationButtons(isBlocked)
-        }
-    }
 
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
-                    if (isBlocked.value) return@SegmentedButton
-
                     //If the same option is selected
                     selectedIndex = if (selectedIndex == index) {
                         return@SegmentedButton
@@ -61,35 +48,20 @@ fun WorkoutSegmentButton(
                     //Navigation
                     when (selectedIndex) {
                         0 -> {
-                            navController.navigate(MainScreen.MyWorkout.route).also {
-                                Log.d(
-                                    "Navigation",
-                                    "Updated isBlocked to true"
-                                )
 
-                                isBlocked.value = true
-
-                                //Update view model
-                                workoutListViewModel.onEvent(OnWorkoutScreenSwitchEvent.SelectedWorkout)
-                            }
+                            //MyWorkout screen
+                            workoutListViewModel.onEvent(OnWorkoutScreenSwitchEvent.SelectedWorkout)
                         }
 
                         1 -> {
-                            navController.navigate(MainScreen.Workouts.route).also {
-                                Log.d(
-                                    "Navigation",
-                                    "Updated isBlocked to true"
-                                )
 
-                                isBlocked.value = true
-
-                                //Update view model
-                                workoutListViewModel.onEvent(OnWorkoutScreenSwitchEvent.AllWorkouts)
-                            }
+                            //Workouts Screen
+                            workoutListViewModel.onEvent(OnWorkoutScreenSwitchEvent.AllWorkouts)
                         }
                     }
                 },
-                selected = index == selectedIndex
+                selected = index == selectedIndex,
+                enabled = !isDisabled
             ) {
                 Text(label)
             }
