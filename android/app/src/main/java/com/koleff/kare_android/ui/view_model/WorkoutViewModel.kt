@@ -53,6 +53,7 @@ class WorkoutViewModel @Inject constructor(
                     onSearchEvent(OnSearchEvent.OnSearchTextChange(""))
                 }
             }
+
             is OnSearchEvent.OnSearchTextChange -> {
                 _searchState.value = searchState.value.copy(
                     searchText = event.searchText
@@ -98,6 +99,40 @@ class WorkoutViewModel @Inject constructor(
             }
         }
     }
+
+    fun getWorkout(workoutId: Int): WorkoutDto {
+        return state.value.workoutList.single { workout ->
+            workout.workoutId == workoutId
+        }
+    }
+
+//    fun getWorkout(workoutId: Int) {
+//        viewModelScope.launch(dispatcher) {
+//            workoutRepository.getWorkout(workoutId).collect { apiResult ->
+//                when (apiResult) {
+//                    is ResultWrapper.ApiError -> {
+//                        _state.value = WorkoutState(
+//                            isError = true,
+//                            error = apiResult.error ?: KareError.GENERIC
+//                        )
+//                    }
+//
+//                    is ResultWrapper.Loading -> {
+//                        _state.value = WorkoutState(isLoading = true)
+//                    }
+//
+//                    is ResultWrapper.Success -> {
+//                        Log.d("WorkoutViewModel", "Flow received. Workout fetched.")
+//
+//                        _state.value = WorkoutState(
+//                            isSuccessful = true,
+//                            workoutList = listOf(apiResult.data.workout)
+//                        )
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {

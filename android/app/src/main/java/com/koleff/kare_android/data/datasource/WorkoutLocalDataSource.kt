@@ -56,6 +56,19 @@ class WorkoutLocalDataSource @Inject constructor(
         emit(ResultWrapper.Success(result))
     }
 
+    override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>> = flow {
+        emit(ResultWrapper.Loading())
+        delay(Constants.fakeDelay)
+
+        val data = workoutDao.getWorkoutById(workoutId)
+
+        val result = GetWorkoutWrapper(
+            GetWorkoutResponse(data.toWorkoutDto())
+        )
+
+        emit(ResultWrapper.Success(result))
+    }
+
     override suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
@@ -80,7 +93,8 @@ class WorkoutLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
 
             val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
-            val exercises: MutableList<ExerciseDto> = data.exercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
+            val exercises: MutableList<ExerciseDto> =
+                data.exercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
             val workout = data.workoutDetails.toWorkoutDetailsDto(exercises)
 
             val result = GetWorkoutDetailsWrapper(
