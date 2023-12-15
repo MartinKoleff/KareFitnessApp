@@ -18,6 +18,7 @@ import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -128,6 +129,31 @@ class WorkoutLocalDataSource @Inject constructor(
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
+
+            val workoutId = workout.workoutId
+
+            //Contains different exercises -> setup cross ref
+            val currentEntryInDB: List<ExerciseDto> =
+                workoutDetailsDao.getWorkoutDetailsById(workoutId) //TODO: handle null
+                    .exercises
+                    .map { it.toExerciseDto() }
+
+            if (currentEntryInDB.size <= workout.exercises.size) {
+                val newExercises = workout.exercises.filterNot { currentEntryInDB.contains(it) }
+                val exerciseIds = newExercises.map { it.exerciseId }
+
+                //Wire new exercises ids to workout id
+                val crossRefs: List<WorkoutDetailsExerciseCrossRef> = exerciseIds.map { exerciseId ->
+                    WorkoutDetailsExerciseCrossRef(workoutDetailsId = workoutId, exerciseId = exerciseId)
+                }
+
+                workoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef(crossRefs)
+            }
+
+            //Update total exercises
+            val workoutDto = workoutDao.getWorkoutById(workoutId)
+            workoutDto.totalExercises = workout.exercises.size
+            workoutDao.updateWorkout(workoutDto)
 
             workoutDetailsDao.insertWorkoutDetails(workout.toWorkoutDetails())
 

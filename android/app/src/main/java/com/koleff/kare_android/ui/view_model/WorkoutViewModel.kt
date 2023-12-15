@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.data.model.event.OnWorkoutScreenSwitchEvent
@@ -12,6 +13,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.state.SearchState
 import com.koleff.kare_android.data.model.state.WorkoutState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -158,6 +160,33 @@ class WorkoutViewModel @Inject constructor(
                         ).also {
                             originalWorkoutList = it.workoutList
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    fun updateWorkout(workout: WorkoutDetailsDto) {
+        viewModelScope.launch(dispatcher) {
+            workoutRepository.saveWorkout(workout).collect { apiResult ->
+                when (apiResult) {
+                    is ResultWrapper.ApiError -> {
+                        _state.value = WorkoutState(
+                            isError = true,
+                            error = apiResult.error ?: KareError.GENERIC
+                        )
+                    }
+
+                    is ResultWrapper.Loading -> {
+                        _state.value = WorkoutState(isLoading = true)
+                    }
+
+                    is ResultWrapper.Success -> {
+                        Log.d("WorkoutViewModel", "Flow received. Workout Saved.")
+
+                        _state.value = WorkoutState(
+                            isSuccessful = true,
+                        )
                     }
                 }
             }
