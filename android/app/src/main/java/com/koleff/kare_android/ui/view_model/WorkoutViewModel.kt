@@ -1,22 +1,13 @@
 package com.koleff.kare_android.ui.view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.data.model.event.OnWorkoutScreenSwitchEvent
-import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.state.SearchState
 import com.koleff.kare_android.data.model.state.WorkoutState
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
-import com.koleff.kare_android.data.room.entity.Workout
-import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -27,8 +18,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
-    private val getWorkoutsUseCase: GetWorkoutsUseCase,
-    private val getWorkoutUseCase: GetWorkoutUseCase,
+    private val workoutUseCases: WorkoutUseCases,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -79,7 +69,7 @@ class WorkoutViewModel @Inject constructor(
 
 //    fun getWorkout(workoutId: Int): WorkoutDto {
 //        viewModelScope.launch {
-//            getWorkoutUseCase(workoutId).collect { workoutState ->
+//            workoutUseCases.getWorkoutUseCase(workoutId).collect { workoutState ->
 //                _state.value = workoutState
 //            }
 //        }
@@ -87,7 +77,7 @@ class WorkoutViewModel @Inject constructor(
 
     fun getWorkouts() {
         viewModelScope.launch {
-            getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
 
                 if (workoutState.isSuccessful) {

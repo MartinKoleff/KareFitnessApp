@@ -35,6 +35,11 @@ import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
+import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -224,6 +229,17 @@ object AppModule {
     @Singleton
     fun provideDashboardRepository(dashboardDataSource: DashboardDataSource): DashboardRepository {
         return DashboardRepositoryImpl(dashboardDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutUseCases(workoutRepository: WorkoutRepository): WorkoutUseCases {
+        return WorkoutUseCases(
+            getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
+            getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
+            getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
+            updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository)
+        )
     }
 
     @Provides

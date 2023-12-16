@@ -9,9 +9,7 @@ import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.data.model.state.SearchState
 import com.koleff.kare_android.data.model.state.WorkoutDetailsState
 import com.koleff.kare_android.data.model.state.WorkoutState
-import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
-import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,9 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SearchWorkoutViewModel @Inject constructor(
-    private val getWorkoutsUseCase: GetWorkoutsUseCase,
-    private val getWorkoutDetailsUseCase: GetWorkoutsDetailsUseCase,
-    private val updateWorkoutUseCase: UpdateWorkoutUseCase,
+    private val workoutUseCases: WorkoutUseCases,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -84,7 +80,7 @@ class SearchWorkoutViewModel @Inject constructor(
 
     private fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
                 _workoutsState.value = workoutState
             }
         }
@@ -92,7 +88,7 @@ class SearchWorkoutViewModel @Inject constructor(
 
     private fun getWorkoutDetails(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
-            getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
+            workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
                 _selectedWorkoutState.value = workoutDetailsState
             }
         }
@@ -100,7 +96,7 @@ class SearchWorkoutViewModel @Inject constructor(
 
     fun updateWorkout(workout: WorkoutDetailsDto) {
         viewModelScope.launch(dispatcher) {
-            updateWorkoutUseCase.invoke(workout).collect { updateWorkoutState ->
+            workoutUseCases.updateWorkoutUseCase.invoke(workout).collect { updateWorkoutState ->
                 _updateWorkoutState.value = updateWorkoutState
             }
         }
