@@ -38,43 +38,9 @@ class WorkoutViewModel @Inject constructor(
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
-    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
-    val searchState: StateFlow<SearchState>
-        get() = _searchState
-
 //    init {
 //        getWorkouts()
 //    }
-
-    fun onSearchEvent(event: OnSearchEvent) {
-        when (event) {
-            is OnSearchEvent.OnToggleSearch -> {
-                val isSearching = _searchState.value.isSearching
-                _searchState.value = searchState.value.copy(
-                    isSearching = !isSearching
-                )
-
-                if (!isSearching) {
-                    onSearchEvent(OnSearchEvent.OnSearchTextChange(""))
-                }
-            }
-
-            is OnSearchEvent.OnSearchTextChange -> {
-                _searchState.value = searchState.value.copy(
-                    searchText = event.searchText
-                )
-
-                //Search filter
-                _state.value = state.value.copy(
-                    workoutList = originalWorkoutList.filter {
-
-                        //Custom search filter...
-                        it.name.contains(event.searchText, ignoreCase = true)
-                    }
-                )
-            }
-        }
-    }
 
     fun onEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {
