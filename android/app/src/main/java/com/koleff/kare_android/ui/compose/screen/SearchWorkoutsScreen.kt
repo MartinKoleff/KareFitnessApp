@@ -27,6 +27,7 @@ import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchWorkoutList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -35,27 +36,21 @@ fun SearchWorkoutsScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     exercise: ExerciseDto,
-    workoutViewModel: WorkoutViewModel,
-    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory,
+    searchWorkoutViewModel: SearchWorkoutViewModel,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
     var selectedWorkoutId by remember { mutableStateOf<Int>(-1) }
-    val workoutDetailsViewModel: WorkoutDetailsViewModel = viewModel(
-        key = "WorkoutDetailsViewModel-$selectedWorkoutId",
-        factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
-            factory = workoutDetailsViewModelFactory,
-            workoutId = selectedWorkoutId
-        )
-    )
-    val workoutDetailsState by workoutDetailsViewModel.state.collectAsState()
+
+    val workoutDetailsState by searchWorkoutViewModel.selectedWorkoutState.collectAsState()
 
     //Adds exercise to workout
     LaunchedEffect(workoutDetailsState.workout) {
         if (workoutDetailsState.workout.workoutId != -1) {
             workoutDetailsState.workout.exercises.add(exercise)
-            workoutViewModel.updateWorkout(workoutDetailsState.workout)
+
+            searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
         }
     }
 
@@ -74,7 +69,7 @@ fun SearchWorkoutsScreen(
             }
             .fillMaxSize()
 
-        val workoutState by workoutViewModel.state.collectAsState()
+        val workoutState by searchWorkoutViewModel.workoutsState.collectAsState()
         val allWorkouts = workoutState.workoutList
 
 
@@ -89,10 +84,10 @@ fun SearchWorkoutsScreen(
                         .fillMaxWidth()
                         .padding(8.dp),
                     onSearch = { text ->
-                        workoutViewModel.onSearchEvent(OnSearchEvent.OnSearchTextChange(text))
+                        searchWorkoutViewModel.onSearchEvent(OnSearchEvent.OnSearchTextChange(text))
                     },
                     onToggleSearch = {
-                        workoutViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
+                        searchWorkoutViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
                     })
 
                 SearchWorkoutList(

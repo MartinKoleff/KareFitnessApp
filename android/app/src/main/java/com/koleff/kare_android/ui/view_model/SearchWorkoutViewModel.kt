@@ -78,6 +78,10 @@ class SearchWorkoutViewModel @Inject constructor(
         }
     }
 
+    init{
+        getWorkouts()
+    }
+
     private fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.getWorkoutsUseCase().collect { workoutState ->

@@ -29,6 +29,7 @@ import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
@@ -181,14 +182,13 @@ fun SetupNavGraph(
 
             val exercise = exerciseViewModel.state.value.exercise
 
-            workoutViewModel.getWorkouts()
+            val searchWorkoutViewModel = hiltViewModel<SearchWorkoutViewModel>()
 
             SearchWorkoutsScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
                 exercise = exercise,
-                workoutViewModel = workoutViewModel,
-                workoutDetailsViewModelFactory = workoutDetailsViewModelFactory
+                searchWorkoutViewModel = searchWorkoutViewModel
             )
         }
         composable(MainScreen.SearchExercisesScreen.route) { backStackEntry ->
