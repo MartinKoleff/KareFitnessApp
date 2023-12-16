@@ -1,0 +1,27 @@
+<div class="background">
+  <nav class="nav-container">
+    <img routerLink="/startup" alt="amogus" class="logo " src="../../assets/Images/logo.png">
+    <div class="spacer"></div>
+    <button class="button">
+      <p class="buttonText">Account</p>
+    </button>
+    <button class="button">
+      <p class="buttonText">Log out</p>
+    </button>
+  </nav>
+  <div class="container">
+    <div class="logForm">
+      <div class="startupBox">
+        <p> User List </p>
+      </div>
+      <div class="group-container">
+        <button *ngFor="let user of users" (click)="toggleUserComponent(user)">
+          {{ user.username }}
+        </button>
+        <ng-container *ngFor="let user of selectedUsers">
+          <app-workout [user]="user"></app-workout>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

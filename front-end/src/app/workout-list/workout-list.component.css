@@ -82,13 +82,12 @@ button:hover {
 .startupBox {
   border:0;
   width: 45%;
-  height: 10%;
   background-color: #ECBDF2;
   padding: 20px;
   border-radius: 15px;
   margin:25px;
   display:flex;
-  align-items: center;
+  justify-content: center;
 }
 .startupBox a {
   color: inherit;
@@ -145,13 +144,14 @@ img{
   margin:25px;
   text-align:center;
 }
-.submit-text{
-  color: #6B246B;
+p{
+  color: black;
   font-family: 'Verdana', serif;
   font-size:40px;
   font-weight:bold;
   line-height:1;
   font-style: italic;
+  text-align: center;
 }
 input{
   border:0;

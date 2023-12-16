@@ -12,6 +12,7 @@ import { ShouldersComponent } from '../exercise-components/shoulders/shoulders.c
 import { CardioComponent } from '../exercise-components/cardio/cardio.component';
 import { ChestComponent } from '../exercise-components/chest/chest.component';
 import { AbsComponent } from '../exercise-components/abs/abs.component';
+import { CommonModule } from '@angular/common';
 @NgModule({
   declarations: [
     CreateworkoutComponent,
@@ -30,6 +31,7 @@ import { AbsComponent } from '../exercise-components/abs/abs.component';
     FormsModule,
     HttpClientModule,
     ReactiveFormsModule,
+    CommonModule
   ],
   exports: [
     CreateworkoutComponent,

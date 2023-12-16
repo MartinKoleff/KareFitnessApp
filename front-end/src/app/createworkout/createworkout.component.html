@@ -39,10 +39,10 @@
               <img src="../../assets/Images/chest.jpg">
               <p class="category-text">chest</p>
             </div>
-            <div class="panel" (click)="toggleCardioExercise()">
+            <!-- <div class="panel" (click)="toggleCardioExercise()">
               <img src="../../assets/Images/cardio.jpg">
               <p class="category-text">cardio</p>
-            </div>
+            </div> -->
             <div class="panel" (click)="toggleAbsExercise()">
               <img src="../../assets/Images/abs.jpg">
               <p class="category-text">abs</p>
@@ -84,23 +84,32 @@
               [selectedExercises]="selectedExercises"
               (exerciseSelected)="onExerciseSelected($event)"></app-chest>
           </div>
-          <div *ngIf="showCardioExercise">
+          <!-- <div *ngIf="showCardioExercise">
             <app-cardio
               [cardioExercises]="cardio.exercises"
               [selectedExercises]="selectedExercises"
               (exerciseSelected)="onExerciseSelected($event)"></app-cardio>
-          </div>
+          </div> -->
           <div *ngIf="showAbsExercise">
             <app-abs
               [absExercises]="abs.exercises"
               [selectedExercises]="selectedExercises"
               (exerciseSelected)="onExerciseSelected($event)"></app-abs>
           </div>
-          <div *ngIf="
+          <!-- <div *ngIf="
+            showCardioExercise ||
             showAbsExercise ||
             showBackExercise ||
             showBicepsExercise ||
-            showCardioExercise ||
+            showChestExercise ||
+            showLegsExercise ||
+            showShouldersExercise ||
+            showTricepsExercise"
+            class="submit-box">  REMOVE COMMENT WHEN TIMER ADDED-->
+            <div *ngIf="
+            showAbsExercise ||
+            showBackExercise ||
+            showBicepsExercise ||
             showChestExercise ||
             showLegsExercise ||
             showShouldersExercise ||
