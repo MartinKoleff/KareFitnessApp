@@ -51,4 +51,9 @@ public class WorkoutController {
         return ResponseEntity.status(HttpStatus.OK).body(this.workoutService.getSelectedWorkout(user));
     }
 
+    @PutMapping("/update")
+    public ResponseEntity<?> updateWorkout(@RequestBody UpdateWorkoutRequest request, @User UserEntity user) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.workoutService.updateWorkout(request, user));
+    }
+
 }

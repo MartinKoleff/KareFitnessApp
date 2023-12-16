@@ -5,9 +5,7 @@ import io.kare.backend.exception.WorkoutNotFoundException;
 import io.kare.backend.mapper.*;
 import io.kare.backend.payload.data.*;
 import io.kare.backend.payload.request.*;
-import io.kare.backend.payload.response.AddWorkoutResponse;
-import io.kare.backend.payload.response.GetWorkoutResponse;
-import io.kare.backend.payload.response.GetWorkoutsResponse;
+import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.WorkoutRepository;
 import io.kare.backend.service.*;
 import java.util.*;
@@ -142,5 +140,24 @@ public class WorkoutServiceImpl implements WorkoutService {
 		this.exerciseOptionService.save(exerciseOptionEntities);
 		this.selectedWorkoutService.create(workoutEntity, user);
 		return this.workoutMapper.mapToResponse(workoutEntity);
+	}
+
+	@Override
+	public EmptyResponse updateWorkout(UpdateWorkoutRequest request, UserEntity user) {
+		Optional<WorkoutEntity> optional = this.workoutRepository.findByIdAndUser(request.id(), user);
+		if (optional.isEmpty()) {
+			throw new WorkoutNotFoundException(request.id());
+		}
+		WorkoutEntity workoutEntity = optional.get();
+		workoutEntity.setName(request.name());
+		workoutEntity.setDescription(request.description());
+		workoutEntity.setExercises(this.exerciseService.findByIds(request.exercises()
+			.stream()
+			.map(
+				WorkoutExercisePayload::exerciseId)
+			.toList(), user));
+		this.workoutRepository.save(workoutEntity);
+		this.exerciseOptionService.update(request.exercises(), workoutEntity.getExercises(), workoutEntity);
+		return new EmptyResponse();
 	}
 }

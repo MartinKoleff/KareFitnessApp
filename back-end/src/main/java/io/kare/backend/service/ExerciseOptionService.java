@@ -8,6 +8,12 @@ public interface ExerciseOptionService {
 
 	void save(List<WorkoutExercisePayload> workoutExercisePayloads, List<ExerciseEntity> exercises, WorkoutEntity workout);
 
+	void update(
+		List<WorkoutExercisePayload> exercisePayloads,
+		List<ExerciseEntity> exercises,
+		WorkoutEntity workout
+	);
+
 	List<ExerciseOptionEntity> findAllByWorkoutIds(List<String> ids, UserEntity user);
 
 	ExerciseOptionEntity mapToEntity(WorkoutFullExercisePayload exercisePayload, ExerciseEntity exercise, WorkoutEntity workoutEntity);

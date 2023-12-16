@@ -2,9 +2,7 @@ package io.kare.backend.service;
 
 import io.kare.backend.entity.*;
 import io.kare.backend.payload.request.*;
-import io.kare.backend.payload.response.AddWorkoutResponse;
-import io.kare.backend.payload.response.GetWorkoutResponse;
-import io.kare.backend.payload.response.GetWorkoutsResponse;
+import io.kare.backend.payload.response.*;
 
 import java.util.List;
 
@@ -27,4 +25,6 @@ public interface WorkoutService {
     GetWorkoutResponse getSelectedWorkout(UserEntity user);
 
 	AddWorkoutResponse addFullWorkout(AddFullWorkoutRequest request, UserEntity user);
+
+    EmptyResponse updateWorkout(UpdateWorkoutRequest request, UserEntity user);
 }

@@ -11,4 +11,7 @@ public interface ExerciseOptionRepository extends JpaRepository<ExerciseOptionEn
 	@Query("SELECT e FROM ExerciseOptionEntity e WHERE e.workout.id IN :ids AND e.workout.user = :user")
 	List<ExerciseOptionEntity> findAllByWorkoutIdsAndUser(@Param("ids") List<String> ids, @Param("user") UserEntity user);
 
+	@Query("SELECT eo FROM ExerciseOptionEntity eo WHERE eo.workout.id = :workoutId AND eo.exercise.id IN :exerciseIds")
+	List<ExerciseOptionEntity> findByWorkoutIdAndExerciseIds(String workoutId, List<String> exerciseIds);
+
 }

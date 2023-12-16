@@ -2,8 +2,8 @@ package io.kare.backend.controller;
 
 import io.kare.backend.annotation.User;
 import io.kare.backend.entity.UserEntity;
-import io.kare.backend.payload.request.AddExerciseRequest;
-import io.kare.backend.payload.response.GetExercisesResponse;
+import io.kare.backend.payload.request.*;
+import io.kare.backend.payload.response.*;
 import io.kare.backend.service.ExerciseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,5 +26,10 @@ public class ExerciseController {
     @PostMapping("/add")
     public ResponseEntity<Object> addExercise(@RequestBody AddExerciseRequest request, @User UserEntity user) {
         return ResponseEntity.status(HttpStatus.OK).body(this.exerciseService.addExercise(request, user));
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<EmptyResponse> updateExercise(@RequestBody UpdateExerciseRequest request, @User UserEntity user) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.exerciseService.updateExercise(request, user));
     }
 }

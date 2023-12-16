@@ -2,9 +2,9 @@ package io.kare.backend.repository;
 
 import io.kare.backend.entity.UserEntity;
 import io.kare.backend.entity.WorkoutEntity;
+import java.util.*;
 import org.springframework.data.jpa.repository.*;
 
-import java.util.List;
 import org.springframework.data.repository.query.Param;
 
 public interface WorkoutRepository extends JpaRepository<WorkoutEntity, String> {
@@ -17,4 +17,5 @@ public interface WorkoutRepository extends JpaRepository<WorkoutEntity, String> 
         @Param("user") UserEntity user
     );
 
+	Optional<WorkoutEntity> findByIdAndUser(String id, UserEntity user);
 }

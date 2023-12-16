@@ -21,6 +21,18 @@ public class ExerciseOptionEntity {
     private Integer reps;
     private Integer weight;
 
+    public ExerciseOptionEntity(ExerciseOptionEntity entity) {
+        this.id = entity.getId();
+        this.exercise = entity.getExercise();
+        this.workout = entity.getWorkout();
+        this.sets = entity.getSets();
+        this.reps = entity.getReps();
+        this.weight = entity.getWeight();
+    }
+
+    public ExerciseOptionEntity() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = ID_COLUMN, updatable = false, unique = true, nullable = false)

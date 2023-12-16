@@ -2,9 +2,8 @@ package io.kare.backend.service;
 
 import io.kare.backend.entity.ExerciseEntity;
 import io.kare.backend.entity.UserEntity;
-import io.kare.backend.payload.request.AddExerciseRequest;
-import io.kare.backend.payload.response.AddExerciseResponse;
-import io.kare.backend.payload.response.GetExercisesResponse;
+import io.kare.backend.payload.request.*;
+import io.kare.backend.payload.response.*;
 
 import java.util.*;
 
@@ -20,4 +19,6 @@ public interface ExerciseService {
 	List<ExerciseEntity> save(List<ExerciseEntity> exercises);
 
 	Optional<ExerciseEntity> findByName(String id, UserEntity user);
+
+	EmptyResponse updateExercise(UpdateExerciseRequest request, UserEntity user);
 }
