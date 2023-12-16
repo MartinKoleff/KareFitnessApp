@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,6 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +52,9 @@ fun ExerciseDetailsConfiguratorScreen(
     workoutDetailsViewModel: WorkoutDetailsViewModel,
     initialMuscleGroupId: Int
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     val exerciseState by exerciseViewModel.state.collectAsState()
     val workoutState by workoutDetailsViewModel.state.collectAsState()
 
@@ -70,6 +77,16 @@ fun ExerciseDetailsConfiguratorScreen(
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
+            .pointerInput(Unit) {
+
+                //Hide keyboard on tap outside SearchBar
+                detectTapGestures(
+                    onTap = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
+            }
             .background(
                 brush = Brush.verticalGradient(
                     colors = listOf(
