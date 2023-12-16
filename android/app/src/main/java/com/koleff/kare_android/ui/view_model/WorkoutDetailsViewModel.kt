@@ -14,6 +14,7 @@ import com.koleff.kare_android.data.model.state.WorkoutDetailsState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class WorkoutDetailsViewModel @AssistedInject constructor(
-    private val workoutRepository: WorkoutRepository,
+    private val getWorkoutDetailsUseCase: GetWorkoutsDetailsUseCase,
     @Assisted private val workoutId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -35,6 +36,7 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         get() = _state
 
     init {
+
         //Invalid id handling
         if (workoutId != -1) {
             getWorkoutDetails(workoutId)
@@ -48,42 +50,24 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
                 workout.exercises.remove(
                     onWorkoutDetailsEvent.exercise
                 )
+
+                //TODO: call repo...
             }
             is OnWorkoutDetailsEvent.OnExerciseSubmit -> {
                 val workout = state.value.workout
                 workout.exercises.add(
                     onWorkoutDetailsEvent.exercise
                 )
+
+                //TODO: call repo...
             }
         }
     }
 
     private fun getWorkoutDetails(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
-            workoutRepository.getWorkoutDetails(workoutId).collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = WorkoutDetailsState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
-
-                    is ResultWrapper.Loading -> {
-                        _state.value = state.value.copy(
-                            isLoading = true
-                        )
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("WorkoutDetailsViewModel", "Flow received.")
-
-                        _state.value = WorkoutDetailsState(
-                            isSuccessful = true,
-                            workout = apiResult.data.workoutDetails
-                        )
-                    }
-                }
+            getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
+                _state.value = workoutDetailsState
             }
         }
     }

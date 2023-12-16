@@ -15,6 +15,8 @@ import com.koleff.kare_android.data.model.state.WorkoutState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
@@ -25,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
-    private val workoutRepository: WorkoutRepository,
+    private val getWorkoutsUseCase: GetWorkoutsUseCase,
+    private val getWorkoutUseCase: GetWorkoutUseCase,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -108,86 +111,21 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-//    fun getWorkout(workoutId: Int) {
-//        viewModelScope.launch(dispatcher) {
-//            workoutRepository.getWorkout(workoutId).collect { apiResult ->
-//                when (apiResult) {
-//                    is ResultWrapper.ApiError -> {
-//                        _state.value = WorkoutState(
-//                            isError = true,
-//                            error = apiResult.error ?: KareError.GENERIC
-//                        )
-//                    }
-//
-//                    is ResultWrapper.Loading -> {
-//                        _state.value = WorkoutState(isLoading = true)
-//                    }
-//
-//                    is ResultWrapper.Success -> {
-//                        Log.d("WorkoutViewModel", "Flow received. Workout fetched.")
-//
-//                        _state.value = WorkoutState(
-//                            isSuccessful = true,
-//                            workoutList = listOf(apiResult.data.workout)
-//                        )
-//                    }
-//                }
+//    fun getWorkout(workoutId: Int): WorkoutDto {
+//        viewModelScope.launch {
+//            getWorkoutUseCase(workoutId).collect { workoutState ->
+//                _state.value = workoutState
 //            }
 //        }
 //    }
 
     fun getWorkouts() {
-        viewModelScope.launch(dispatcher) {
-            workoutRepository.getAllWorkouts().collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = WorkoutState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
+        viewModelScope.launch {
+            getWorkoutsUseCase().collect { workoutState ->
+                _state.value = workoutState
 
-                    is ResultWrapper.Loading -> {
-                        _state.value = WorkoutState(isLoading = true)
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("WorkoutViewModel", "Flow received.")
-
-                        _state.value = WorkoutState(
-                            isSuccessful = true,
-                            workoutList = apiResult.data.workouts
-                        ).also {
-                            originalWorkoutList = it.workoutList
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    fun updateWorkout(workout: WorkoutDetailsDto) {
-        viewModelScope.launch(dispatcher) {
-            workoutRepository.saveWorkout(workout).collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = WorkoutState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
-
-                    is ResultWrapper.Loading -> {
-                        _state.value = WorkoutState(isLoading = true)
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("WorkoutViewModel", "Flow received. Workout Saved.")
-
-                        _state.value = WorkoutState(
-                            isSuccessful = true,
-                        )
-                    }
+                if (workoutState.isSuccessful) {
+                    originalWorkoutList = workoutState.workoutList ?: emptyList()
                 }
             }
         }
