@@ -2,9 +2,8 @@ package io.kare.backend.service.impl;
 
 import io.kare.backend.entity.ExerciseEntity;
 import io.kare.backend.entity.UserEntity;
-import io.kare.backend.payload.request.AddExerciseRequest;
-import io.kare.backend.payload.response.AddExerciseResponse;
-import io.kare.backend.payload.response.GetExercisesResponse;
+import io.kare.backend.payload.request.*;
+import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.ExerciseRepository;
 import io.kare.backend.service.ExerciseService;
 import java.util.*;
@@ -53,5 +52,21 @@ public class ExerciseServiceImpl implements ExerciseService {
     @Override
     public Optional<ExerciseEntity> findByName(String name, UserEntity user) {
         return this.exerciseRepository.findByNameAndUser(name, user);
+    }
+
+    @Override
+    public EmptyResponse updateExercise(UpdateExerciseRequest request, UserEntity user) {
+        Optional<ExerciseEntity> optional = this.exerciseRepository.findByIdAndUser(request.id(), user);
+        if (optional.isEmpty()) {
+            throw new RuntimeException("Exercise not found");
+        }
+        ExerciseEntity exerciseEntity = optional.get();
+        exerciseEntity.setName(request.name());
+        exerciseEntity.setDescription(request.description());
+        exerciseEntity.setMuscleGroup(request.muscleGroup());
+        exerciseEntity.setMachineType(request.machineType());
+        exerciseEntity.setUrl(request.url());
+        this.exerciseRepository.save(exerciseEntity);
+        return new EmptyResponse();
     }
 }

@@ -3,11 +3,8 @@ package io.kare.backend.service.impl;
 import io.kare.backend.entity.*;
 import io.kare.backend.exception.ProgramNotFoundException;
 import io.kare.backend.mapper.ProgramMapper;
-import io.kare.backend.payload.request.AddProgramRequest;
-import io.kare.backend.payload.request.GetProgramRequest;
-import io.kare.backend.payload.response.AddProgramResponse;
-import io.kare.backend.payload.response.GetProgramResponse;
-import io.kare.backend.payload.response.GetProgramsResponse;
+import io.kare.backend.payload.request.*;
+import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.ProgramRepository;
 import io.kare.backend.service.ProgramService;
 import io.kare.backend.service.WorkoutService;
@@ -64,5 +61,16 @@ public class ProgramServiceImpl implements ProgramService {
 				.toList(), user);
 		return this.programMapper.mapToGet(this.programRepository.findById(request.id())
 			.orElseThrow(ProgramNotFoundException::new), exerciseOptions);
+	}
+
+	@Override
+	public EmptyResponse updateProgram(UpdateProgramRequest request, UserEntity user) {
+		ProgramEntity entity = this.programRepository.findById(request.id())
+			.orElseThrow(ProgramNotFoundException::new);
+		List<WorkoutEntity> workouts = this.workoutService.getWorkouts(request.workoutIds(), user);
+		entity.setName(request.name());
+		entity.setWorkouts(workouts);
+		this.programRepository.save(entity);
+		return new EmptyResponse();
 	}
 }

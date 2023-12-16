@@ -30,6 +30,26 @@ public class ExerciseOptionServiceImpl implements ExerciseOptionService {
 	}
 
 	@Override
+	public void update(
+		List<WorkoutExercisePayload> exercisePayloads,
+		List<ExerciseEntity> exercises,
+		WorkoutEntity workout
+	) {
+		List<ExerciseOptionEntity> existingEntities = this.exerciseOptionRepository.findByWorkoutIdAndExerciseIds(
+			workout.getId(),
+			exercises.stream()
+				.map(ExerciseEntity::getId)
+				.toList()
+		);
+		this.exerciseOptionRepository.deleteAll(existingEntities);
+		this.exerciseOptionRepository.saveAll(this.exerciseOptionMapper.toExerciseOptionEntities(
+			exercisePayloads,
+			exercises,
+			workout
+		));
+	}
+
+	@Override
 	public List<ExerciseOptionEntity> findAllByWorkoutIds(List<String> ids, UserEntity user) {
 		return this.exerciseOptionRepository.findAllByWorkoutIdsAndUser(ids, user);
 	}

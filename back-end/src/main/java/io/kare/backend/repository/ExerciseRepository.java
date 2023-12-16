@@ -16,5 +16,10 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, String
         @Param("user") UserEntity user
     );
 
+    Optional<ExerciseEntity> findByIdAndUser(
+        String id,
+        UserEntity user
+    );
+
 	Optional<ExerciseEntity> findByNameAndUser(String name, UserEntity user);
 }
