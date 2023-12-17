@@ -1,0 +1,31 @@
+package com.koleff.kare_android.domain.usecases
+
+import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.data.model.state.ExerciseDetailsState
+import com.koleff.kare_android.data.model.state.ExercisesState
+import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.repository.ExerciseRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+
+class GetExerciseDetailsUseCase(private val exerciseRepository: ExerciseRepository) {
+
+    suspend operator fun invoke(exerciseId: Int): Flow<ExerciseDetailsState> =
+        exerciseRepository.getExerciseDetails(exerciseId).map { apiResult ->
+            when (apiResult) {
+                is ResultWrapper.ApiError -> ExerciseDetailsState(
+                    isError = true,
+                    error = apiResult.error ?: KareError.GENERIC
+                )
+
+                is ResultWrapper.Loading -> ExerciseDetailsState(isLoading = true)
+
+                is ResultWrapper.Success -> {
+                    ExerciseDetailsState(
+                        isSuccessful = true,
+                        exercise = apiResult.data.exerciseDetails
+                    )
+                }
+            }
+        }
+}
