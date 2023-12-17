@@ -130,29 +130,11 @@ class ExerciseListViewModel @AssistedInject constructor(
 
     private fun getExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseRepository.getExercises(muscleGroupId).collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = ExercisesState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
+            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect{exerciseState ->
+                _state.value = exerciseState
 
-                    is ResultWrapper.Loading -> {
-                        _state.value = ExercisesState(isLoading = true)
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("ExerciseListViewModel", "Flow received.")
-
-                        _state.value = ExercisesState(
-                            isSuccessful = true,
-                            exerciseList = apiResult.data.exercises
-                        )
-
-                        originalExerciseList = _state.value.exerciseList
-                    }
+                if(_state.value.isSuccessful){
+                    originalExerciseList = _state.value.exerciseList
                 }
             }
         }
