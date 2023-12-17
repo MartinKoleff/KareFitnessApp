@@ -1,7 +1,10 @@
 package com.koleff.kare_android.ui.compose.navigation
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -29,6 +32,7 @@ import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
+import kotlinx.coroutines.flow.first
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -177,14 +181,15 @@ fun SetupNavGraph(
                 )
             )
 
-            val exercise = exerciseViewModel.state.value.exercise
+            val exerciseState by exerciseViewModel.state.collectAsState() //Recomposition will occur...
+            Log.d("ExerciseViewModel", "Exercise selected in SearchWorkoutScreen: ${exerciseState.exercise}")
 
             val searchWorkoutViewModel = hiltViewModel<SearchWorkoutViewModel>()
 
             SearchWorkoutsScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exercise = exercise,
+                exercise = exerciseState.exercise,
                 searchWorkoutViewModel = searchWorkoutViewModel
             )
         }

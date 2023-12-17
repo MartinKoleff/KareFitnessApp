@@ -15,6 +15,8 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -78,7 +80,7 @@ class SearchWorkoutViewModel @Inject constructor(
 
     private fun onSearchEvent(event: OnSearchWorkoutEvent) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.onSearchWorkoutUseCase(event).collect{ workoutState ->
+            workoutUseCases.onSearchWorkoutUseCase(event).collect { workoutState ->
                 _workoutsState.value = workoutState
             }
         }
@@ -105,6 +107,10 @@ class SearchWorkoutViewModel @Inject constructor(
             workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
                 _selectedWorkoutState.value = workoutDetailsState
             }
+//            val workoutDetailsState =
+//                workoutUseCases.getWorkoutDetailsUseCase(workoutId)
+//                    .first { it.isSuccessful }
+//            _selectedWorkoutState.value = workoutDetailsState
         }
     }
 
@@ -113,6 +119,10 @@ class SearchWorkoutViewModel @Inject constructor(
             workoutUseCases.updateWorkoutUseCase.invoke(workout).collect { updateWorkoutState ->
                 _updateWorkoutState.value = updateWorkoutState
             }
+//            val updateWorkoutState =
+//                workoutUseCases.updateWorkoutUseCase.invoke(workout)
+//                    .first { it.isSuccessful }
+//            _updateWorkoutState.value = updateWorkoutState
         }
     }
 }

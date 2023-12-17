@@ -40,27 +40,31 @@ fun SearchWorkoutsScreen(
     var selectedWorkoutId by remember { mutableStateOf(-1) }
 
     val workoutDetailsState by searchWorkoutViewModel.selectedWorkoutState.collectAsState()
+    val updateWorkoutState by searchWorkoutViewModel.updateWorkoutState.collectAsState()
 
-    LaunchedEffect(selectedWorkoutId) {
+    LaunchedEffect(selectedWorkoutId, workoutDetailsState, updateWorkoutState) {
         selectedWorkoutId != -1 || return@LaunchedEffect
 
         searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId)
-    }
 
-    //Adds exercise to workout
-    LaunchedEffect(workoutDetailsState.workout) {
-        workoutDetailsState.workout.workoutId != -1 || return@LaunchedEffect
-        workoutDetailsState.workout.exercises.add(exercise)
+        //Await workout details
+        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
+            workoutDetailsState.workout.exercises.add(exercise)
 
-        searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
+            searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
+        }
 
-        navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
+        //Await update workout
+        if (updateWorkoutState.isSuccessful) {
 
-            //Pop backstack and put first element to be dashboard
-            popUpTo(MainScreen.Dashboard.route) { inclusive = false }
+            navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
 
-            //Clear all other entries in the back stack
-            launchSingleTop = true
+                //Pop backstack and set the first element to be the dashboard
+                popUpTo(MainScreen.Dashboard.route) { inclusive = false }
+
+                //Clear all other entries in the back stack
+                launchSingleTop = true
+            }
         }
     }
 
@@ -84,7 +88,7 @@ fun SearchWorkoutsScreen(
 
 
         //All workouts
-        if (workoutState.isLoading) {
+        if (workoutState.isLoading || workoutDetailsState.isLoading || updateWorkoutState.isLoading) {
             LoadingWheel()
         } else {
             Column(modifier = modifier) {
