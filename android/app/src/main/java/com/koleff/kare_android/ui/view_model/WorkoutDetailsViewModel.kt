@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.ui.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.assisted.Assisted
@@ -32,27 +31,6 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         //Invalid id handling
         if (workoutId != -1) {
             getWorkoutDetails(workoutId)
-        }
-    }
-
-    fun onEvent(onWorkoutDetailsEvent: OnWorkoutDetailsEvent) {
-        when (onWorkoutDetailsEvent) {
-            is OnWorkoutDetailsEvent.OnExerciseDelete -> {
-                val workout = state.value.workout
-                workout.exercises.remove(
-                    onWorkoutDetailsEvent.exercise
-                )
-
-                //TODO: call repo...
-            }
-            is OnWorkoutDetailsEvent.OnExerciseSubmit -> {
-                val workout = state.value.workout
-                workout.exercises.add(
-                    onWorkoutDetailsEvent.exercise
-                )
-
-                //TODO: call repo...
-            }
         }
     }
 

@@ -107,10 +107,6 @@ class SearchWorkoutViewModel @Inject constructor(
             workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
                 _selectedWorkoutState.value = workoutDetailsState
             }
-//            val workoutDetailsState =
-//                workoutUseCases.getWorkoutDetailsUseCase(workoutId)
-//                    .first { it.isSuccessful }
-//            _selectedWorkoutState.value = workoutDetailsState
         }
     }
 
@@ -119,10 +115,6 @@ class SearchWorkoutViewModel @Inject constructor(
             workoutUseCases.updateWorkoutUseCase.invoke(workout).collect { updateWorkoutState ->
                 _updateWorkoutState.value = updateWorkoutState
             }
-//            val updateWorkoutState =
-//                workoutUseCases.updateWorkoutUseCase.invoke(workout)
-//                    .first { it.isSuccessful }
-//            _updateWorkoutState.value = updateWorkoutState
         }
     }
 }
