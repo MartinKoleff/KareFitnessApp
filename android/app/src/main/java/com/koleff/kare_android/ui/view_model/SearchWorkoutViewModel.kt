@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.event.OnSearchEvent
+import com.koleff.kare_android.data.model.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.data.model.state.SearchState
 import com.koleff.kare_android.data.model.state.WorkoutDetailsState
 import com.koleff.kare_android.data.model.state.WorkoutState
@@ -54,7 +54,7 @@ class SearchWorkoutViewModel @Inject constructor(
             searchText = searchText
         )
 
-        val event = OnSearchEvent.OnSearchTextChange(
+        val event = OnSearchWorkoutEvent.OnSearchTextChange(
             searchText = _searchState.value.searchText,
             workouts = originalWorkoutList
         )
@@ -68,7 +68,7 @@ class SearchWorkoutViewModel @Inject constructor(
             isSearching = !isSearching
         )
 
-        val event = OnSearchEvent.OnToggleSearch(
+        val event = OnSearchWorkoutEvent.OnToggleSearch(
             isSearching = searchState.value.isSearching,
             workouts = originalWorkoutList
         )
@@ -76,7 +76,7 @@ class SearchWorkoutViewModel @Inject constructor(
         onSearchEvent(event)
     }
 
-    private fun onSearchEvent(event: OnSearchEvent) {
+    private fun onSearchEvent(event: OnSearchWorkoutEvent) {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.onSearchWorkoutUseCase(event).collect{ workoutState ->
                 _workoutsState.value = workoutState

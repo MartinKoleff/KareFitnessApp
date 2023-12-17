@@ -1,22 +1,22 @@
 package com.koleff.kare_android.domain.usecases
 
-import com.koleff.kare_android.data.model.event.OnSearchEvent
-import com.koleff.kare_android.data.model.state.SearchState
+import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.data.model.state.WorkoutState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class OnSearchWorkoutUseCase() {
 
-    suspend operator fun invoke(event: OnSearchEvent): Flow<WorkoutState> =
+    suspend operator fun invoke(event: OnSearchWorkoutEvent): Flow<WorkoutState> =
         flow {
             when (event) {
-                is OnSearchEvent.OnToggleSearch -> {
+                is OnSearchWorkoutEvent.OnToggleSearch -> {
                     val isSearching = event.isSearching
 
                     if (!isSearching) {
                         invoke(
-                            OnSearchEvent.OnSearchTextChange(
+                            OnSearchWorkoutEvent.OnSearchTextChange(
                                 searchText = "",
                                 workouts = event.workouts
                             )
@@ -24,7 +24,7 @@ class OnSearchWorkoutUseCase() {
                     }
                 }
 
-                is OnSearchEvent.OnSearchTextChange -> {
+                is OnSearchWorkoutEvent.OnSearchTextChange -> {
 
                     //Search filter
                     emit(
