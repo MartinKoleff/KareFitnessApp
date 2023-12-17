@@ -9,7 +9,7 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.event.OnFilterEvent
+import com.koleff.kare_android.data.model.event.OnFilterExercisesEvent
 import com.koleff.kare_android.data.model.state.ExerciseState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository

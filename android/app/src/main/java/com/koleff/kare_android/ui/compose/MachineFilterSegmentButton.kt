@@ -17,7 +17,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.koleff.kare_android.data.model.event.OnFilterEvent
+import com.koleff.kare_android.data.model.dto.MachineType
+import com.koleff.kare_android.data.model.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 
@@ -46,23 +47,23 @@ fun MachineFilterSegmentButton(
                     //Filter
                     when (selectedIndex) {
                         0 -> {
-                            exerciseListViewModel.onFilterEvent(OnFilterEvent.DumbbellFilter)
+                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.DUMBBELL)
                         }
 
                         1 -> {
-                            exerciseListViewModel.onFilterEvent(OnFilterEvent.BarbellFilter)
+                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.BARBELL)
                         }
 
                         2 -> {
-                            exerciseListViewModel.onFilterEvent(OnFilterEvent.MachineFilter)
+                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.MACHINE)
                         }
 
                         3 -> {
-                            exerciseListViewModel.onFilterEvent(OnFilterEvent.CalisthenicsFilter)
+                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.CALISTHENICS)
                         }
 
                         -1 -> { //Disabled filter -> show all
-                            exerciseListViewModel.onFilterEvent(OnFilterEvent.NoFilter)
+                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.NONE)
                         }
                     }
                 },

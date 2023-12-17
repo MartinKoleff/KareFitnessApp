@@ -1,9 +1,11 @@
 package com.koleff.kare_android.data.model.event
 
-sealed class OnFilterEvent{
-    object DumbbellFilter : OnFilterEvent()
-    object BarbellFilter : OnFilterEvent()
-    object MachineFilter : OnFilterEvent()
-    object CalisthenicsFilter : OnFilterEvent()
-    object NoFilter : OnFilterEvent()
+import com.koleff.kare_android.data.model.dto.ExerciseDto
+
+sealed class OnFilterExercisesEvent{
+    class DumbbellFilter(val exercises: List<ExerciseDto>) : OnFilterExercisesEvent()
+    class BarbellFilter(val exercises: List<ExerciseDto>) : OnFilterExercisesEvent()
+    class MachineFilter(val exercises: List<ExerciseDto>) : OnFilterExercisesEvent()
+    class CalisthenicsFilter(val exercises: List<ExerciseDto>) : OnFilterExercisesEvent()
+    class NoFilter(val exercises: List<ExerciseDto>) : OnFilterExercisesEvent()
 }
