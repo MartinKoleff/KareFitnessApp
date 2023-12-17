@@ -122,11 +122,6 @@ class ExerciseListViewModel @AssistedInject constructor(
 
     private fun filterExercises(event: OnFilterExercisesEvent) {
         viewModelScope.launch(dispatcher) {
-            _state.value = state.value.copy(
-                isLoading = true
-            )
-            delay(fakeSmallDelay)
-
             exerciseUseCases.onFilterExercisesUseCase(event).collect{ exerciseState ->
                 _state.value = exerciseState
             }
