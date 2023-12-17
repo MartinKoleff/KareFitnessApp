@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.data.model.event.OnFilterExercisesEvent
+import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 

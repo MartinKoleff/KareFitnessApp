@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.event.OnSearchExerciseEvent
+import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.ui.state.ExercisesState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases

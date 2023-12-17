@@ -1,7 +1,7 @@
 package com.koleff.kare_android.domain.usecases
 
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.event.OnSearchWorkoutEvent
+import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.ui.state.WorkoutState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

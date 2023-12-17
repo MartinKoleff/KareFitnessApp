@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.event.OnSearchWorkoutEvent
+import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.state.WorkoutState

@@ -37,7 +37,7 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
+import com.koleff.kare_android.ui.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.compose.navigation.NavigationItem
 import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel

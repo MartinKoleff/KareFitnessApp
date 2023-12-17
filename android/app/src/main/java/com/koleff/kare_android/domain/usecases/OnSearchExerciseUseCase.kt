@@ -1,8 +1,8 @@
 package com.koleff.kare_android.domain.usecases
 
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.event.OnSearchExerciseEvent
-import com.koleff.kare_android.data.model.event.OnSearchWorkoutEvent
+import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
+import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.ui.state.ExercisesState
 import com.koleff.kare_android.ui.state.WorkoutState

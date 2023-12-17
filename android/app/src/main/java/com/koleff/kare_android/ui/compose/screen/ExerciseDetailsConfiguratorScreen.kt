@@ -35,7 +35,7 @@ import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
+import com.koleff.kare_android.ui.event.OnWorkoutDetailsEvent
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.ExerciseSetRow

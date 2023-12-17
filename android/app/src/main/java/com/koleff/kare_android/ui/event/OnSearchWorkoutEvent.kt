@@ -1,4 +1,4 @@
-package com.koleff.kare_android.data.model.event
+package com.koleff.kare_android.ui.event
 
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
