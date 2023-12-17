@@ -82,6 +82,7 @@ object AppModule {
 
                 val request = original.newBuilder()
                     .method(original.method, original.body)
+//                    .addHeader()
                     .url(newUrl)
                     .build()
 
@@ -209,7 +210,8 @@ object AppModule {
         workoutApi: WorkoutApi,
         workoutDao: WorkoutDao,
         exerciseDao: ExerciseDao,
-        workoutDetailsDao: WorkoutDetailsDao
+        workoutDetailsDao: WorkoutDetailsDao,
+        @IoDispatcher dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
         return if (useLocalDataSource) WorkoutLocalDataSource(
             workoutDao = workoutDao,
@@ -217,7 +219,7 @@ object AppModule {
             workoutDetailsDao = workoutDetailsDao
         )
 //        else if (useMockupDataSource) WorkoutMockupDataSource()
-        else WorkoutRemoteDataSource(workoutApi)
+        else WorkoutRemoteDataSource(workoutApi, dispatcher)
     }
 
     @Provides
