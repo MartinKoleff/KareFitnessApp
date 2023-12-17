@@ -150,6 +150,7 @@ fun ExerciseBannerV2(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2)
+                    .graphicsLayer { alpha = 0.95f }
                     .background(color = Color.Black)
                     .align(Alignment.TopStart),
             )
@@ -293,7 +294,6 @@ fun ExerciseList(
         }
     }
 }
-
 
 
 @Preview

@@ -35,7 +35,7 @@ fun ExerciseDetailsBottomNavigationBar(
                 screen = MainScreen.SearchWorkoutsScreen,
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
-                isBlocked = isNavigationInProgress,
+                isBlocked = isNavigationInProgress, //TODO: Block if data is loading...
                 tint = Color.White,
                 navigationArguments = NavigationArguments(exerciseId = exerciseId)
             )
