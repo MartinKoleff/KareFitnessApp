@@ -23,17 +23,12 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class ExerciseListViewModel @AssistedInject constructor(
-    private val exerciseRepository: ExerciseRepository,
+    private val exerciseUseCases: ExerciseUseCases,
     @Assisted private val muscleGroupId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -69,22 +64,40 @@ class ExerciseListViewModel @AssistedInject constructor(
         getExercises(muscleGroupId)
     }
 
-    fun onSearchEvent(event: OnSearchEvent) {
-        when (event) {
-            is OnSearchEvent.OnToggleSearch -> {
-                val isSearching = _searchState.value.isSearching
-                _searchState.value = searchState.value.copy(
-                    isSearching = !isSearching
-                )
+    fun onTextChange(searchText: String) {
+        _searchState.value = searchState.value.copy(
+            searchText = searchText
+        )
 
-                if (!isSearching) {
-                    onSearchEvent(OnSearchEvent.OnSearchTextChange(""))
-                }
+        val event = OnSearchExerciseEvent.OnSearchTextChange(
+            searchText = _searchState.value.searchText,
+            exercises = originalExerciseList
+        )
+
+        onSearchEvent(event)
+    }
+
+    fun onToggleSearch() {
+        val isSearching = searchState.value.isSearching
+        _searchState.value = searchState.value.copy(
+            isSearching = !isSearching
+        )
+
+        val event = OnSearchExerciseEvent.OnToggleSearch(
+            isSearching = searchState.value.isSearching,
+            exercises = originalExerciseList
+        )
+
+        onSearchEvent(event)
+    }
+
+    private fun onSearchEvent(event: OnSearchExerciseEvent) {
+        viewModelScope.launch(dispatcher) {
+            exerciseUseCases.onSearchExerciseUseCase(event).collect { exerciseState ->
+                _state.value = exerciseState
             }
-            is OnSearchEvent.OnSearchTextChange -> {
-                _searchState.value = searchState.value.copy(
-                    searchText = event.searchText
-                )
+        }
+    }
 
                 //Search filter
                 _state.value = state.value.copy(

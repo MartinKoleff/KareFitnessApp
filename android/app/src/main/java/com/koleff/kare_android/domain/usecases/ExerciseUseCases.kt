@@ -1,0 +1,7 @@
+package com.koleff.kare_android.domain.usecases
+
+
+data class ExerciseUseCases(
+    val onSearchExerciseUseCase: OnSearchExerciseUseCase,
+    val onFilterExercisesUseCase: OnFilterExercisesUseCase
+)
