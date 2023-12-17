@@ -44,7 +44,15 @@ class ExerciseDetailsViewModel @AssistedInject constructor(
     private fun getExerciseDetails(exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
             exerciseUseCases.getExerciseDetailsUseCase(exerciseId).collect { exerciseDetailsState ->
-               _state.value = exerciseDetailsState
+
+                //Don't clear the exercise initial muscle group data...
+                if (exerciseDetailsState.isLoading) {
+                    _state.value = state.value.copy(
+                        isLoading = true
+                    )
+                } else {
+                    _state.value = exerciseDetailsState
+                }
             }
         }
     }
