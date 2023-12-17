@@ -84,10 +84,10 @@ fun SearchWorkoutsScreen(
                         .fillMaxWidth()
                         .padding(8.dp),
                     onSearch = { text ->
-                        searchWorkoutViewModel.onSearchEvent(OnSearchEvent.OnSearchTextChange(text))
+                        searchWorkoutViewModel.onTextChange(text)
                     },
                     onToggleSearch = {
-                        searchWorkoutViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
+                        searchWorkoutViewModel.onToggleSearch()
                     })
 
                 SearchWorkoutList(

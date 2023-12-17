@@ -38,6 +38,7 @@ import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.squareup.moshi.Moshi
@@ -238,7 +239,8 @@ object AppModule {
             getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
             getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
-            updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository)
+            updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+            onSearchWorkoutUseCase = OnSearchWorkoutUseCase()
         )
     }
 

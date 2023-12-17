@@ -5,5 +5,6 @@ data class WorkoutUseCases(
     val getWorkoutsUseCase: GetWorkoutsUseCase,
     val getWorkoutUseCase: GetWorkoutUseCase,
     val getWorkoutDetailsUseCase: GetWorkoutsDetailsUseCase,
-    val updateWorkoutUseCase: UpdateWorkoutUseCase
+    val updateWorkoutUseCase: UpdateWorkoutUseCase,
+    val onSearchWorkoutUseCase: OnSearchWorkoutUseCase
 )

@@ -1,6 +1,8 @@
 package com.koleff.kare_android.data.model.event
 
-sealed class OnSearchEvent(val searchText: String = ""){
-    class OnToggleSearch : OnSearchEvent()
-    class OnSearchTextChange(searchText: String) : OnSearchEvent(searchText)
+import com.koleff.kare_android.data.model.dto.WorkoutDto
+
+sealed class OnSearchEvent(){
+    class OnToggleSearch(val isSearching: Boolean = false, val workouts: List<WorkoutDto>) : OnSearchEvent()
+    class OnSearchTextChange(val searchText: String, val workouts: List<WorkoutDto>) : OnSearchEvent()
 }
