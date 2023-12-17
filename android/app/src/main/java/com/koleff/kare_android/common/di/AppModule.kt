@@ -35,9 +35,15 @@ import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
+import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
+import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
+import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -241,6 +247,18 @@ object AppModule {
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase()
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseUseCases(exerciseRepository: ExerciseRepository): ExerciseUseCases {
+        return ExerciseUseCases(
+           onSearchExerciseUseCase = OnSearchExerciseUseCase(),
+            onFilterExercisesUseCase = OnFilterExercisesUseCase(),
+            getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
+            getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
+            getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
         )
     }
 
