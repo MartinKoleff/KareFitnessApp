@@ -6,9 +6,9 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.event.OnSearchWorkoutEvent
-import com.koleff.kare_android.data.model.state.SearchState
-import com.koleff.kare_android.data.model.state.WorkoutDetailsState
-import com.koleff.kare_android.data.model.state.WorkoutState
+import com.koleff.kare_android.ui.state.SearchState
+import com.koleff.kare_android.ui.state.WorkoutDetailsState
+import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher

@@ -1,11 +1,10 @@
-package com.koleff.kare_android.data.model.state
+package com.koleff.kare_android.ui.state
 
-import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
-data class WorkoutState (
-    val workoutList: List<WorkoutDto> = emptyList(),
-    val isMyWorkoutScreen: Boolean = true,
+data class ExerciseDetailsState (
+    val exercise: ExerciseDetailsDto = ExerciseDetailsDto(),
     val isSuccessful: Boolean = false,
     val isLoading: Boolean = false,
     val isError: Boolean = false,

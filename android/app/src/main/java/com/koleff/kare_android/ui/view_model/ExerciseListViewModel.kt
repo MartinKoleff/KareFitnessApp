@@ -8,8 +8,8 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.event.OnFilterExercisesEvent
 import com.koleff.kare_android.data.model.event.OnSearchExerciseEvent
-import com.koleff.kare_android.data.model.state.ExercisesState
-import com.koleff.kare_android.data.model.state.SearchState
+import com.koleff.kare_android.ui.state.ExercisesState
+import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

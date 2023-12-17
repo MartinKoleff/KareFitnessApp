@@ -1,4 +1,4 @@
-package com.koleff.kare_android.data.model.state
+package com.koleff.kare_android.ui.state
 
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.flow.MutableStateFlow

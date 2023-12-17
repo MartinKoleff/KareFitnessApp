@@ -8,7 +8,7 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.state.ExerciseDetailsState
+import com.koleff.kare_android.ui.state.ExerciseDetailsState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted

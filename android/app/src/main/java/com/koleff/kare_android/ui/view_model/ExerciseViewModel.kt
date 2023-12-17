@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.data.model.state.ExerciseState
+import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

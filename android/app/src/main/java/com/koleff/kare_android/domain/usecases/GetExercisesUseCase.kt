@@ -2,7 +2,7 @@ package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.state.ExercisesState
+import com.koleff.kare_android.ui.state.ExercisesState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
