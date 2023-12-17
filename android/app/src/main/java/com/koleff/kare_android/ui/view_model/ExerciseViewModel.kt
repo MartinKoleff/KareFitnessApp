@@ -14,6 +14,7 @@ import com.koleff.kare_android.data.model.state.ExerciseState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.data.model.state.ExercisesState
+import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -24,7 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ExerciseViewModel @AssistedInject constructor(
-    private val exerciseRepository: ExerciseRepository,
+    private val exerciseUseCases: ExerciseUseCases,
     @Assisted private val exerciseId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -39,28 +40,8 @@ class ExerciseViewModel @AssistedInject constructor(
 
     private fun getExercise(exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseRepository.getExercise(exerciseId).collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = ExerciseState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
-
-                    is ResultWrapper.Loading -> {
-                        _state.value = ExerciseState(isLoading = true)
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("ExerciseListViewModel", "Flow received.")
-
-                        _state.value = ExerciseState(
-                            isSuccessful = true,
-                            exercise = apiResult.data.exercise
-                        )
-                    }
-                }
+            exerciseUseCases.getExerciseUseCase(exerciseId).collect { exerciseState ->
+              _state.value = exerciseState
             }
         }
     }

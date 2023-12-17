@@ -5,5 +5,6 @@ data class ExerciseUseCases(
     val onSearchExerciseUseCase: OnSearchExerciseUseCase,
     val onFilterExercisesUseCase: OnFilterExercisesUseCase,
     val getExercisesUseCase: GetExercisesUseCase,
-    val getExerciseDetailsUseCase: GetExerciseDetailsUseCase
+    val getExerciseDetailsUseCase: GetExerciseDetailsUseCase,
+    val getExerciseUseCase: GetExerciseUseCase
 )
