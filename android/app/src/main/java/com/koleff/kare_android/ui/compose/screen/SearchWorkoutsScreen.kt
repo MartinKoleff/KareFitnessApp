@@ -42,10 +42,14 @@ fun SearchWorkoutsScreen(
     val workoutDetailsState by searchWorkoutViewModel.selectedWorkoutState.collectAsState()
     val updateWorkoutState by searchWorkoutViewModel.updateWorkoutState.collectAsState()
 
+    var isUpdateLoading by remember { mutableStateOf(false) } //Used to show loading between getWorkoutDetails and updateWorkout
+
     LaunchedEffect(selectedWorkoutId, workoutDetailsState, updateWorkoutState) {
         selectedWorkoutId != -1 || return@LaunchedEffect
 
-        searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId)
+        searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId).also {
+            isUpdateLoading = true
+        }
 
         //Await workout details
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
@@ -56,7 +60,6 @@ fun SearchWorkoutsScreen(
 
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
-
             navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
 
                 //Pop backstack and set the first element to be the dashboard
@@ -88,7 +91,7 @@ fun SearchWorkoutsScreen(
 
 
         //All workouts
-        if (workoutState.isLoading || workoutDetailsState.isLoading || updateWorkoutState.isLoading) {
+        if (workoutState.isLoading || isUpdateLoading) {
             LoadingWheel()
         } else {
             Column(modifier = modifier) {
