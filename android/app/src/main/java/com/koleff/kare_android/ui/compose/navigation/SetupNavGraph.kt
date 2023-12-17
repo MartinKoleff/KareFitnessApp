@@ -25,6 +25,7 @@ import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
+import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
@@ -42,7 +43,8 @@ fun SetupNavGraph(
     exerciseListViewModelFactory: ExerciseListViewModel.Factory,
     exerciseViewModelFactory: ExerciseViewModel.Factory,
     exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory,
-    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
+    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory,
+    exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
 ) {
     val isNavigationInProgress = rememberSaveable {
         mutableStateOf(false)
@@ -135,19 +137,13 @@ fun SetupNavGraph(
             val exerciseId =
                 backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
 
-            val exerciseViewModel = viewModel<ExerciseViewModel>(
-                factory = ExerciseViewModel.provideExerciseViewModelFactory(
-                    factory = exerciseViewModelFactory,
-                    exerciseId = exerciseId
-                )
-            )
-
             val workoutId =
                 backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
 
-            val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
-                factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
-                    factory = workoutDetailsViewModelFactory,
+            val exerciseDetailsConfiguratorViewModel = viewModel<ExerciseDetailsConfiguratorViewModel>(
+                factory = ExerciseDetailsConfiguratorViewModel.provideExerciseDetailsConfiguratorViewModelFactory(
+                    factory = exerciseDetailsConfiguratorViewModelFactory,
+                    exerciseId = exerciseId,
                     workoutId = workoutId
                 )
             )
@@ -159,8 +155,7 @@ fun SetupNavGraph(
             ExerciseDetailsConfiguratorScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseViewModel = exerciseViewModel,
-                workoutDetailsViewModel = workoutDetailsViewModel,
+                exerciseDetailsConfiguratorViewModel = exerciseDetailsConfiguratorViewModel,
                 initialMuscleGroupId = initialMuscleGroupId
             )
         }

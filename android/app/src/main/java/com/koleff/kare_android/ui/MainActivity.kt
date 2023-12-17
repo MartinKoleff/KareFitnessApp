@@ -8,6 +8,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
 import com.koleff.kare_android.ui.theme.KareTheme
+import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
@@ -31,6 +32,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
 
+    @Inject
+    lateinit var exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
+
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,7 +46,8 @@ class MainActivity : ComponentActivity() {
                     exerciseListViewModelFactory = exerciseListViewModelFactory,
                     exerciseViewModelFactory = exerciseViewModelFactory,
                     exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory,
-                    workoutDetailsViewModelFactory = workoutDetailsViewModelFactory
+                    workoutDetailsViewModelFactory = workoutDetailsViewModelFactory,
+                    exerciseDetailsConfiguratorViewModelFactory = exerciseDetailsConfiguratorViewModelFactory
                 )
             }
         }
