@@ -1,12 +1,10 @@
 package com.koleff.kare_android.ui.compose.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -21,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchExercisesList
@@ -68,10 +65,10 @@ fun SearchExercisesScreen(
                         .fillMaxWidth()
                         .padding(8.dp),
                     onSearch = { text ->
-                        exercisesListViewModel.onSearchEvent(OnSearchEvent.OnSearchTextChange(text))
+                        exercisesListViewModel.onTextChange(searchText = text)
                     },
                     onToggleSearch = {
-                        exercisesListViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
+                        exercisesListViewModel.onToggleSearch()
                     })
 
                 SearchExercisesList(
