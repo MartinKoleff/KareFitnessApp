@@ -68,7 +68,7 @@ class WorkoutViewModel @Inject constructor(
     }
 
 //    fun getWorkout(workoutId: Int): WorkoutDto {
-//        viewModelScope.launch {
+//        viewModelScope.launch(dispatcher) {
 //            workoutUseCases.getWorkoutUseCase(workoutId).collect { workoutState ->
 //                _state.value = workoutState
 //            }
@@ -76,7 +76,7 @@ class WorkoutViewModel @Inject constructor(
 //    }
 
     fun getWorkouts() {
-        viewModelScope.launch {
+        viewModelScope.launch(dispatcher) {
             workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
 
