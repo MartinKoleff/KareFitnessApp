@@ -23,14 +23,14 @@ import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchExercisesList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
-import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
+import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 
 @Composable
 fun SearchExercisesScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     workoutId: Int,
-    exercisesListViewModel: ExerciseListViewModel
+    searchExercisesViewModel: SearchExercisesViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -50,7 +50,7 @@ fun SearchExercisesScreen(
             }
             .fillMaxSize()
 
-        val exercisesState by exercisesListViewModel.state.collectAsState()
+        val exercisesState by searchExercisesViewModel.state.collectAsState()
         val allExercises = exercisesState.exerciseList
 
         //All exercises
@@ -65,10 +65,10 @@ fun SearchExercisesScreen(
                         .fillMaxWidth()
                         .padding(8.dp),
                     onSearch = { text ->
-                        exercisesListViewModel.onTextChange(searchText = text)
+                        searchExercisesViewModel.onTextChange(searchText = text)
                     },
                     onToggleSearch = {
-                        exercisesListViewModel.onToggleSearch()
+                        searchExercisesViewModel.onToggleSearch()
                     })
 
                 SearchExercisesList(

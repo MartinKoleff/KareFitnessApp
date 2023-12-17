@@ -115,20 +115,4 @@ class SearchWorkoutViewModel @Inject constructor(
             }
         }
     }
-
-//    @AssistedFactory
-//    interface Factory {
-//        fun create(workoutId: Int): SearchWorkoutViewModel
-//    }
-//
-//    companion object {
-//        fun provideSearchWorkoutViewModelFactory(
-//            factory: Factory,
-//            workoutId: Int
-//        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-//            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-//                return factory.create(workoutId) as T
-//            }
-//        }
-//    }
 }

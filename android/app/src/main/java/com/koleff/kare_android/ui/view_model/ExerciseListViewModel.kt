@@ -31,67 +31,12 @@ class ExerciseListViewModel @AssistedInject constructor(
 
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
 
-    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
-    val searchState: StateFlow<SearchState>
-        get() = _searchState
-
-//    val searchState = _searchState
-//        .debounce(Constants.fakeSmallDelay)
-//        .onEach { exercisesState ->  exercisesState.isSearching = true }
-//        .combine(_state) { searchState, exercisesState ->
-//            when {
-//                searchState.searchText.isNotEmpty() -> exercisesState.exerciseList.filter { exercises ->
-//                    exercises.name.contains(searchState.searchText, ignoreCase = true)
-//                }
-//
-//                else -> exercisesState.exerciseList
-//            }
-//        }.stateIn(
-//            scope = viewModelScope,
-//            initialValue = _searchState,
-//            started = SharingStarted.WhileSubscribed(5000L)
-//        )
-
     init {
         getExercises(muscleGroupId)
     }
 
-    fun onTextChange(searchText: String) {
-        _searchState.value = searchState.value.copy(
-            searchText = searchText
-        )
 
-        val event = OnSearchExerciseEvent.OnSearchTextChange(
-            searchText = _searchState.value.searchText,
-            exercises = originalExerciseList
-        )
-
-        onSearchEvent(event)
-    }
-
-    fun onToggleSearch() {
-        val isSearching = searchState.value.isSearching
-        _searchState.value = searchState.value.copy(
-            isSearching = !isSearching
-        )
-
-        val event = OnSearchExerciseEvent.OnToggleSearch(
-            isSearching = searchState.value.isSearching,
-            exercises = originalExerciseList
-        )
-
-        onSearchEvent(event)
-    }
-
-    private fun onSearchEvent(event: OnSearchExerciseEvent) {
-        viewModelScope.launch(dispatcher) {
-            exerciseUseCases.onSearchExerciseUseCase(event).collect { exerciseState ->
-                _state.value = exerciseState
-            }
-        }
-    }
-
-    fun OnFilterExercisesEvent(machineType: MachineType) {
+    fun onFilterExercisesEvent(machineType: MachineType) {
         when (machineType) {
             MachineType.DUMBBELL -> {
                 filterExercises(OnFilterExercisesEvent.DumbbellFilter(exercises = originalExerciseList))

@@ -29,6 +29,7 @@ import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
@@ -195,20 +196,13 @@ fun SetupNavGraph(
             val workoutId =
                 backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
 
-            val muscleGroupId = MuscleGroup.ALL.muscleGroupId
-
-            val exerciseListViewModel = viewModel<ExerciseListViewModel>(
-                factory = ExerciseListViewModel.provideExerciseListViewModelFactory(
-                    factory = exerciseListViewModelFactory,
-                    muscleGroupId = muscleGroupId
-                )
-            )
+            val searchExercisesViewModel = hiltViewModel<SearchExercisesViewModel>()
 
             SearchExercisesScreen(
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
                 workoutId = workoutId,
-                exercisesListViewModel = exerciseListViewModel
+                searchExercisesViewModel = searchExercisesViewModel
             )
         }
     }
