@@ -13,6 +13,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
@@ -39,13 +40,14 @@ import kotlinx.coroutines.flow.first
 @ExperimentalAnimationApi
 @Composable
 fun SetupNavGraph(
-    navController: NavHostController,
     exerciseListViewModelFactory: ExerciseListViewModel.Factory,
     exerciseViewModelFactory: ExerciseViewModel.Factory,
     exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory,
     workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory,
     exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
 ) {
+    val navController = rememberNavController()
+
     val isNavigationInProgress = rememberSaveable {
         mutableStateOf(false)
     }

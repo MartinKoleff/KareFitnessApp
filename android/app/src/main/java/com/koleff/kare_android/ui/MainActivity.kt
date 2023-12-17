@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
 import com.koleff.kare_android.ui.theme.KareTheme
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
@@ -16,7 +15,6 @@ import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -40,9 +38,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             KareTheme {
-                val navController = rememberNavController()
                 SetupNavGraph(
-                    navController = navController,
                     exerciseListViewModelFactory = exerciseListViewModelFactory,
                     exerciseViewModelFactory = exerciseViewModelFactory,
                     exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory,
