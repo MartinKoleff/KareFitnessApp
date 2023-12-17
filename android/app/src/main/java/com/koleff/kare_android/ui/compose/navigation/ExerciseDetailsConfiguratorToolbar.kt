@@ -5,8 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -14,7 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -72,16 +78,14 @@ fun ExerciseDetailsConfiguratorToolbar(
                 tint = Color.White
             )
 
-            //Add onClick to add to view model...
-            NavigationItem(
-                navController = navController,
-                screen = MainScreen.WorkoutDetails,
-                icon = painterResource(id = R.drawable.ic_vector_select),
-                label = "Submit exercise",
-                isBlocked = isNavigationInProgress,
-                tint = Color.Green
-            ){
-                onSubmitExercise()
+            IconButton(
+                onClick = onSubmitExercise,
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.ic_vector_select),
+                    contentDescription = "Submit button",
+                    tint = Color.Green
+                )
             }
         }
     }
@@ -103,7 +107,7 @@ fun PreviewExerciseConfiguratorToolbar() {
         isNavigationInProgress = mutableStateOf(false),
         navController = navController,
         exerciseImageId = R.drawable.ic_legs
-    ){
+    ) {
 
     }
 }

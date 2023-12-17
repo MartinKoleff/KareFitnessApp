@@ -72,7 +72,7 @@ fun ExerciseDetailsConfiguratorScreen(
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
 
-            navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = updateWorkoutState.workout.workoutId)) {
+            navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = selectedWorkoutState.workout.workoutId)) {
 
                 //Pop backstack and set the first element to be the dashboard
                 popUpTo(MainScreen.Dashboard.route) { inclusive = false }
