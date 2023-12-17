@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchWorkoutList
@@ -36,16 +37,30 @@ fun SearchWorkoutsScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    var selectedWorkoutId by remember { mutableStateOf<Int>(-1) }
+    var selectedWorkoutId by remember { mutableStateOf(-1) }
 
     val workoutDetailsState by searchWorkoutViewModel.selectedWorkoutState.collectAsState()
 
+    LaunchedEffect(selectedWorkoutId) {
+        selectedWorkoutId != -1 || return@LaunchedEffect
+
+        searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId)
+    }
+
     //Adds exercise to workout
     LaunchedEffect(workoutDetailsState.workout) {
-        if (workoutDetailsState.workout.workoutId != -1) {
-            workoutDetailsState.workout.exercises.add(exercise)
+        workoutDetailsState.workout.workoutId != -1 || return@LaunchedEffect
+        workoutDetailsState.workout.exercises.add(exercise)
 
-            searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
+        searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
+
+        navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
+
+            //Pop backstack and put first element to be dashboard
+            popUpTo(MainScreen.Dashboard.route) { inclusive = false }
+
+            //Clear all other entries in the back stack
+            launchSingleTop = true
         }
     }
 
