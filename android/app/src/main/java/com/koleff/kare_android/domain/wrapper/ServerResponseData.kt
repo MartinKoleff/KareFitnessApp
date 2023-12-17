@@ -1,4 +1,4 @@
-package com.koleff.kare_android.data.model.wrapper
+package com.koleff.kare_android.domain.wrapper
 
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError

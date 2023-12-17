@@ -9,11 +9,11 @@ import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
-import com.koleff.kare_android.data.model.wrapper.GetAllWorkoutsWrapper
-import com.koleff.kare_android.data.model.wrapper.GetWorkoutDetailsWrapper
-import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
-import com.koleff.kare_android.data.model.wrapper.ServerResponseData
+import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
+import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao

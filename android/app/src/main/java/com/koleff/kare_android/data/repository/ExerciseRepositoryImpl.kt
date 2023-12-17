@@ -1,10 +1,10 @@
 package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
-import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
-import com.koleff.kare_android.data.model.wrapper.GetExerciseWrapper
-import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.GetExerciseDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.GetExerciseWrapper
+import com.koleff.kare_android.domain.wrapper.GetExercisesWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

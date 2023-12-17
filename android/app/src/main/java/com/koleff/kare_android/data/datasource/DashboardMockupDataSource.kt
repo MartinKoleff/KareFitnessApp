@@ -4,8 +4,8 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.data.model.response.GetDashboardResponse
-import com.koleff.kare_android.data.model.wrapper.GetDashboardWrapper
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.GetDashboardWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

@@ -6,11 +6,11 @@ import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
 import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
-import com.koleff.kare_android.data.model.wrapper.GetAllWorkoutsWrapper
-import com.koleff.kare_android.data.model.wrapper.GetWorkoutDetailsWrapper
-import com.koleff.kare_android.data.model.wrapper.GetWorkoutWrapper
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
-import com.koleff.kare_android.data.model.wrapper.ServerResponseData
+import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
+import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.remote.WorkoutApi
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
