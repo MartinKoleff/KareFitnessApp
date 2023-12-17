@@ -153,7 +153,7 @@ class WorkoutLocalDataSource @Inject constructor(
                     .map { it.toExerciseDto() }
 
             if (currentEntryInDB.size <= workout.exercises.size) {
-                val newExercises = workout.exercises.filterNot { currentEntryInDB.contains(it) }
+                val newExercises = workout.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
                 val exerciseIds = newExercises.map { it.exerciseId }
 
                 //Wire new exercises ids to workout id
