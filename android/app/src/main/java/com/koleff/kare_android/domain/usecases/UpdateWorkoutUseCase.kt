@@ -28,7 +28,7 @@ class UpdateWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
                 }
 
                 is ResultWrapper.Success -> {
-                    Log.d("SearchWorkoutUseCase", "Workout updated.")
+                    Log.d("SearchWorkoutUseCase", "Workout with id ${workout.workoutId} updated.")
 
                     WorkoutDetailsState(isSuccessful = true)
                 }

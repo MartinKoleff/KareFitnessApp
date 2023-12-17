@@ -1,25 +1,15 @@
 package com.koleff.kare_android.ui.view_model
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.Constants.fakeSmallDelay
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.event.OnFilterExercisesEvent
 import com.koleff.kare_android.data.model.state.ExerciseState
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
-import com.koleff.kare_android.domain.repository.ExerciseRepository
-import com.koleff.kare_android.data.model.state.ExercisesState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch

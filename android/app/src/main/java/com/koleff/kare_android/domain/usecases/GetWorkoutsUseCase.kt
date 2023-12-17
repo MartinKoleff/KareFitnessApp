@@ -21,6 +21,8 @@ class GetWorkoutsUseCase(private val workoutRepository: WorkoutRepository) {
             is ResultWrapper.Loading -> WorkoutState(isLoading = true)
 
             is ResultWrapper.Success -> {
+                Log.d("GetWorkoutsUseCase", "Workouts fetched.")
+
                 WorkoutState(
                     isSuccessful = true,
                     workoutList = apiResult.data.workouts

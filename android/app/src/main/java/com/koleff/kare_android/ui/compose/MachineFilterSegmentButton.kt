@@ -47,23 +47,23 @@ fun MachineFilterSegmentButton(
                     //Filter
                     when (selectedIndex) {
                         0 -> {
-                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.DUMBBELL)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.DUMBBELL)
                         }
 
                         1 -> {
-                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.BARBELL)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.BARBELL)
                         }
 
                         2 -> {
-                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.MACHINE)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.MACHINE)
                         }
 
                         3 -> {
-                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.CALISTHENICS)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.CALISTHENICS)
                         }
 
                         -1 -> { //Disabled filter -> show all
-                            exerciseListViewModel.OnFilterExercisesEvent(MachineType.NONE)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.NONE)
                         }
                     }
                 },

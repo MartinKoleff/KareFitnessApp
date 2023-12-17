@@ -1,5 +1,6 @@
 package com.koleff.kare_android.domain.usecases
 
+import android.util.Log
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.model.state.ExerciseState
 import com.koleff.kare_android.data.model.wrapper.ResultWrapper
@@ -20,6 +21,8 @@ class GetExerciseUseCase(private val exerciseRepository: ExerciseRepository) {
                 is ResultWrapper.Loading -> ExerciseState(isLoading = true)
 
                 is ResultWrapper.Success -> {
+                    Log.d("GetExercisesUseCase", "Exercise with id ${apiResult.data.exercise.exerciseId} fetched.")
+
                     ExerciseState(
                         isSuccessful = true,
                         exercise = apiResult.data.exercise

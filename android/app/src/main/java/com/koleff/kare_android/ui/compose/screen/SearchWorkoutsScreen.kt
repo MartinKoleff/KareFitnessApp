@@ -18,18 +18,13 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchWorkoutList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 
 @Composable
 fun SearchWorkoutsScreen(

@@ -139,7 +139,7 @@ fun WorkoutBanner(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(end = 8.dp),
-                    verticalArrangement = Arrangement.Center,
+                    verticalArrangement = Arrangement.Center, //TODO: change to Top when adding sets...
                 ) {
 
                     //Workout title
@@ -173,7 +173,7 @@ fun WorkoutBanner(
                                     bottom = 0.dp
                                 )
                             ),
-                            text = "Exercises: ${workout.totalExercises}", //TODO: wire with ExerciseDTO...
+                            text = "Exercises: ${workout.totalExercises}",
                             style = TextStyle(
                                 color = Color.White,
                                 fontSize = 12.sp,
@@ -182,6 +182,8 @@ fun WorkoutBanner(
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+
+                        //TODO: add the first 3 sets and their reps, weight/duration...
                     }
                 }
             }

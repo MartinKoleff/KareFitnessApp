@@ -26,7 +26,7 @@ class GetWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
                 }
 
                 is ResultWrapper.Success -> {
-                    Log.d("GetWorkoutUseCase", "Workout wit id $workoutId fetched.")
+                    Log.d("GetWorkoutUseCase", "Workout with id $workoutId fetched.")
 
                     WorkoutState(
                         isSuccessful = true,
