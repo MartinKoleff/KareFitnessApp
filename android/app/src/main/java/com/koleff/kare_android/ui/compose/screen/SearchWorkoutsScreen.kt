@@ -1,5 +1,7 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -44,11 +47,14 @@ fun SearchWorkoutsScreen(
 
     var isUpdateLoading by remember { mutableStateOf(false) } //Used to show loading between getWorkoutDetails and updateWorkout
 
+    val alpha = remember { Animatable(1f) }  //Used for animated transition
+    val screenTitle = remember { mutableStateOf("Select workout") }
     LaunchedEffect(selectedWorkoutId, workoutDetailsState, updateWorkoutState) {
         selectedWorkoutId != -1 || return@LaunchedEffect
 
         searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId).also {
             isUpdateLoading = true
+            screenTitle.value = "Loading..."
         }
 
         //Await workout details
@@ -60,18 +66,30 @@ fun SearchWorkoutsScreen(
 
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
-            navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
 
-                //Pop backstack and set the first element to be the dashboard
-                popUpTo(MainScreen.Dashboard.route) { inclusive = false }
+            //Animate transition navigation
+            alpha.animateTo(
+                targetValue = 0f,
+                animationSpec = TweenSpec(durationMillis = 500)
+            ) {
+                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
 
-                //Clear all other entries in the back stack
-                launchSingleTop = true
+                    //Pop backstack and set the first element to be the dashboard
+                    popUpTo(MainScreen.Dashboard.route) { inclusive = false }
+
+                    //Clear all other entries in the back stack
+                    launchSingleTop = true
+                }
             }
         }
     }
 
-    SearchListScaffold("Select workout", navController, isNavigationInProgress) { innerPadding ->
+    SearchListScaffold(
+//        modifier = Modifier.alpha(alpha.value), //Animation transition
+        screenTitle = screenTitle.value,
+        navController = navController,
+        isNavigationInProgress = isNavigationInProgress
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .pointerInput(Unit) {

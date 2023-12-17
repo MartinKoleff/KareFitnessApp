@@ -35,7 +35,11 @@ fun SearchExercisesScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    SearchListScaffold("Select exercise", navController, isNavigationInProgress) { innerPadding ->
+    SearchListScaffold(
+        screenTitle = "Select exercise",
+        navController = navController,
+        isNavigationInProgress = isNavigationInProgress
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .pointerInput(Unit) {
@@ -91,9 +95,9 @@ fun SearchExercisesScreenPreview() {
     val focusManager = LocalFocusManager.current
 
     SearchListScaffold(
-        "Select exercise",
-        navController,
-        mutableStateOf(false)
+       screenTitle =  "Select exercise",
+        navController = navController,
+        isNavigationInProgress = mutableStateOf(false)
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

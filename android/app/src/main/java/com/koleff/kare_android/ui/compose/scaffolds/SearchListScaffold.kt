@@ -12,13 +12,14 @@ import com.koleff.kare_android.ui.compose.navigation.Toolbar
 
 @Composable
 fun SearchListScaffold(
+    modifier: Modifier = Modifier,
     screenTitle: String,
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         topBar = {
             Toolbar(navController = navController, title = screenTitle, isNavigationInProgress = isNavigationInProgress)
         }
