@@ -18,7 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerV2

@@ -8,13 +8,9 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
-import com.koleff.kare_android.data.MainScreen
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseType
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen

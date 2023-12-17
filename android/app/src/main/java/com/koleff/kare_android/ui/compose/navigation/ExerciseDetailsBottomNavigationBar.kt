@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.NavigationArguments
 
 

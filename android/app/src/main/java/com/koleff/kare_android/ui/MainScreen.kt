@@ -1,4 +1,4 @@
-package com.koleff.kare_android.data
+package com.koleff.kare_android.ui
 
 sealed class MainScreen(val route: String) {
     object Dashboard : MainScreen("dashboard") //Muscle group screen

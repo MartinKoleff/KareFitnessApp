@@ -13,13 +13,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerV2
 import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
-import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
