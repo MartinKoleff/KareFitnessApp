@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
@@ -11,6 +12,7 @@ import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,25 +32,30 @@ class WorkoutViewModel @Inject constructor(
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
+    private val hasLoadedFromCache = mutableStateOf(false)
+
     init {
-        getWorkouts()
+        viewModelScope.launch(Dispatchers.Main) {
+            preferences.loadSelectedWorkout()?.let { selectedWorkout ->
+                _state.value = WorkoutState(
+                    isSuccessful = true,
+                    workoutList = listOf(selectedWorkout)
+                )
+                hasLoadedFromCache.value = true
+            } ?: run {
+                hasLoadedFromCache.value = false
+            }
+
+            getWorkouts()
+        }
     }
 
     fun onEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {
-            preferences.loadSelectedWorkout()?.let { selectedWorkout ->
-                _state.value = WorkoutState(
-                    isSuccessful = true,
-                    selectedWorkout = selectedWorkout
-                )
-            } ?: run {
-
-                //If no shared preferences are loaded -> show loading. Load in the background
-                _state.value = WorkoutState(
-                    isLoading = true
-                )
-                delay(Constants.fakeSmallDelay)
-            }
+            _state.value = WorkoutState(
+                isLoading = true
+            )
+            delay(Constants.fakeSmallDelay)
 
             when (event) {
                 OnWorkoutScreenSwitchEvent.AllWorkouts -> {
@@ -61,13 +68,17 @@ class WorkoutViewModel @Inject constructor(
 
                 OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
                     _state.value = state.value.copy(
-                        selectedWorkout = originalWorkoutList.first {
-                            it.isSelected
-                        },
+                        workoutList = listOfNotNull(
+                            originalWorkoutList.firstOrNull {
+                                it.isSelected
+                            }
+                        ),
                         isMyWorkoutScreen = true,
                         isLoading = false
                     ).also {
-                        preferences.saveSelectedWorkout(it.workoutList.first())
+                        if (it.workoutList.isNotEmpty()) {
+                            preferences.saveSelectedWorkout(it.workoutList.first())
+                        }
                     }
                 }
             }
@@ -90,7 +101,7 @@ class WorkoutViewModel @Inject constructor(
 
     private fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getWorkoutsUseCase(hasLoadedFromCache.value).collect { workoutState ->
                 _state.value = workoutState
 
                 if (workoutState.isSuccessful) {

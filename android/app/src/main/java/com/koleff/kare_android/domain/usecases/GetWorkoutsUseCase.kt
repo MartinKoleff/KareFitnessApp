@@ -11,23 +11,24 @@ import kotlinx.coroutines.flow.map
 
 class GetWorkoutsUseCase(private val workoutRepository: WorkoutRepository) {
 
-    suspend operator fun invoke(): Flow<WorkoutState> = workoutRepository.getAllWorkouts().map { apiResult ->
-        when (apiResult) {
-            is ResultWrapper.ApiError -> WorkoutState(
-                isError = true,
-                error = apiResult.error ?: KareError.GENERIC
-            )
-
-            is ResultWrapper.Loading -> WorkoutState(isLoading = true)
-
-            is ResultWrapper.Success -> {
-                Log.d("GetWorkoutsUseCase", "Workouts fetched.")
-
-                WorkoutState(
-                    isSuccessful = true,
-                    workoutList = apiResult.data.workouts
+    suspend operator fun invoke(silentFetch: Boolean = false): Flow<WorkoutState> =
+        workoutRepository.getAllWorkouts().map { apiResult ->
+            when (apiResult) {
+                is ResultWrapper.ApiError -> WorkoutState(
+                    isError = true,
+                    error = apiResult.error ?: KareError.GENERIC
                 )
+
+                is ResultWrapper.Loading -> WorkoutState(isLoading = !silentFetch)
+
+                is ResultWrapper.Success -> {
+                    Log.d("GetWorkoutsUseCase", "Workouts fetched.")
+
+                    WorkoutState(
+                        isSuccessful = true,
+                        workoutList = apiResult.data.workouts
+                    )
+                }
             }
         }
-    }
 }
