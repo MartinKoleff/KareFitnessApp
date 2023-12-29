@@ -53,7 +53,6 @@ fun SetupNavGraph(
     }
 
     val dashboardViewModel: DashboardViewModel = hiltViewModel()
-    val workoutViewModel: WorkoutViewModel = hiltViewModel()
 
     NavHost(
         navController = navController,
@@ -67,7 +66,7 @@ fun SetupNavGraph(
             )
         }
         composable(MainScreen.Workouts.route) {
-            workoutViewModel.getWorkouts()
+            val workoutViewModel: WorkoutViewModel = hiltViewModel()
 
             WorkoutsScreen(
                 navController = navController,

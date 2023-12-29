@@ -5,6 +5,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 
 data class WorkoutState (
     val workoutList: List<WorkoutDto> = emptyList(),
+    val selectedWorkout: WorkoutDto? = null,
     val isMyWorkoutScreen: Boolean = true,
     val isSuccessful: Boolean = false,
     val isLoading: Boolean = false,

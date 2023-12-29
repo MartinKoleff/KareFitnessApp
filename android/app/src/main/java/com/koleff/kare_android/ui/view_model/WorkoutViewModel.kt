@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutState
@@ -19,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
+    private val preferences: Preferences,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -28,16 +30,25 @@ class WorkoutViewModel @Inject constructor(
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
-//    init {
-//        getWorkouts()
-//    }
+    init {
+        getWorkouts()
+    }
 
     fun onEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {
-            _state.value = WorkoutState(
-                isLoading = true
-            )
-            delay(Constants.fakeSmallDelay)
+            preferences.loadSelectedWorkout()?.let { selectedWorkout ->
+                _state.value = WorkoutState(
+                    isSuccessful = true,
+                    selectedWorkout = selectedWorkout
+                )
+            } ?: run {
+
+                //If no shared preferences are loaded -> show loading. Load in the background
+                _state.value = WorkoutState(
+                    isLoading = true
+                )
+                delay(Constants.fakeSmallDelay)
+            }
 
             when (event) {
                 OnWorkoutScreenSwitchEvent.AllWorkouts -> {
@@ -50,12 +61,14 @@ class WorkoutViewModel @Inject constructor(
 
                 OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
                     _state.value = state.value.copy(
-                        workoutList = originalWorkoutList.filter {
+                        selectedWorkout = originalWorkoutList.first {
                             it.isSelected
                         },
                         isMyWorkoutScreen = true,
                         isLoading = false
-                    )
+                    ).also {
+                        preferences.saveSelectedWorkout(it.workoutList.first())
+                    }
                 }
             }
         }
@@ -75,7 +88,7 @@ class WorkoutViewModel @Inject constructor(
 //        }
 //    }
 
-    fun getWorkouts() {
+    private fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
