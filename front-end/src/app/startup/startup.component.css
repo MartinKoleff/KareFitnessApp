@@ -12,6 +12,7 @@
   background-image:url('../../assets/Images/logo.png');
   background-size:cover;
   width:25%;
+
 }
 .center-horizontally {
   display: flex;
@@ -27,6 +28,10 @@
   border-radius: 10px;
   margin-top:15px;
   text-align: center;
+  transition:all 0.3s ease-in-out;
+    &:hover{
+        transform:scale(1.1)
+    }
 }
 .startupBox a {
   color: inherit;

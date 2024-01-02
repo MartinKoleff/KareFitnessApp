@@ -24,7 +24,9 @@ toggleUserComponent(user: any) {
     this.selectedUsers.splice(index, 1);
   } else {
     // If the user is not selected, add them to the array
-    this.selectedUsers.push(user);
+    if (user) {
+      this.selectedUsers = [user]; // replace the array with a new array containing only user
+    }
   }
 }
 ngOnInit() {

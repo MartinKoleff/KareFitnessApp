@@ -2,6 +2,10 @@
   background-image:url('../../assets/Images/logo.png');
   background-size:cover;
   width:5%;
+  transition:all 0.3s ease-in-out;
+    &:hover{
+        transform:scale(1.1)
+    }
 }
 nav {
   border-bottom: 5px solid #6B246B;
@@ -60,10 +64,15 @@ button {
   cursor: pointer;
   border-radius: 4px;
   font-weight: 600;
-  width: 200px;
+  width: auto;
   transition: 0.4s;
   font-size:24px;
   text-align:center;
+  background-color: #ECBDF2;
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  padding:40px;
 }
 
 button:hover {
@@ -96,21 +105,6 @@ button:hover {
 img{
   border-radius:15%;
 }
-.row{
-  display:flex;
-  flex-direction: row;
-}
-.category-text{
-  color: white;
-  font-family: 'Verdana', serif;
-  font-size:40px;
-  font-weight:bold;
-  line-height:1;
-  font-style: italic;
-}
-.center-text{
-  text-align:center;
-}
 .group-container{
   background-color:inherit;
   width: 90%;
@@ -121,18 +115,6 @@ img{
   align-items:center;
   padding:1.5rem;
   height:750px;
-}
-.panel{
-  padding:1.5rem;
-  position: relative;
-  width: 23%; /* Adjust as needed */
-  height: auto; /* Adjust as needed */
-  overflow: hidden;
-  text-align:center;
-}
-.panel img {
-  width: 100%;
-  object-fit: cover;
 }
 .submit-box{
   border:0;

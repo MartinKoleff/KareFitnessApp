@@ -12,15 +12,20 @@
   <div class="container">
     <div class="logForm">
       <div class="startupBox">
-        <p> User List </p>
+        <p> Workout List </p>
       </div>
+        <ng-container *ngFor="let user of selectedUsers">
+          <div class="startupBox">
+          <app-workout [user]="user"></app-workout>
+          </div>
+        </ng-container>
       <div class="group-container">
+        <button *ngIf="users==null" routerLink="/create-workout">
+          Create Workout
+        </button>
         <button *ngFor="let user of users" (click)="toggleUserComponent(user)">
           {{ user.username }}
         </button>
-        <ng-container *ngFor="let user of selectedUsers">
-          <app-workout [user]="user"></app-workout>
-        </ng-container>
       </div>
     </div>
   </div>
