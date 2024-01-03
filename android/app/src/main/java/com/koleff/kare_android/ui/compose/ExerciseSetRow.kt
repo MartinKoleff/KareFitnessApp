@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -34,8 +35,11 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
 
     // Initialize text field states
     val setNumber = set.number
-    val repsState = remember { mutableStateOf(TextFieldValue("")) }
-    val weightState = remember { mutableStateOf(TextFieldValue("")) }
+
+    var reps = set.reps
+    var weight = set.weight
+    val repsState = remember { mutableStateOf(reps.toString()) }
+    val weightState = remember { mutableStateOf(weight.toString()) }
 
     Row(
         modifier = Modifier
@@ -66,21 +70,35 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             maxLines = 1,
             decorationBox = { innerTextField ->
-                Box(
+                Row(
                     modifier = Modifier.border(
                         1.dp,
                         Color.Gray,
                         RoundedCornerShape(8.dp)
-                    )
+                    ),
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (repsState.value.text.isEmpty()) {
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "Reps",
-                            color = Color.Black,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                    Text(
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                        text = "Reps",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Medium
+                    )
+
+//                    Text(
+//                        modifier = Modifier.padding(end = 8.dp),
+//                        text = set.reps.toString(),
+//                        color = Color.Black,
+//                        fontWeight = FontWeight.Medium,
+//                        maxLines = 1
+//                    )
+                    
+//                    reps = if (repsState.value.isEmpty()) {
+//                        repsState.value.toInt()
+//                    } else set.reps
+
+                    reps = set.reps
+
                     innerTextField()
                 }
             }
@@ -101,15 +119,36 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             maxLines = 1,
             decorationBox = { innerTextField ->
-                Box(modifier = Modifier.border(1.dp, Color.Gray, RoundedCornerShape(8.dp))) {
-                    if (weightState.value.text.isEmpty()) {
-                        Text(
-                            modifier = Modifier.padding(4.dp),
-                            text = "Weight",
-                            color = Color.Black,
-                            fontWeight = FontWeight.Medium
-                        )
-                    }
+                Row(
+                    modifier = Modifier.border(
+                        1.dp,
+                        Color.Gray,
+                        RoundedCornerShape(8.dp)
+                    ),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 6.dp),
+                        text = "Weight",
+                        color = Color.Black,
+                        fontWeight = FontWeight.Medium,
+                    )
+
+//                    Text(
+//                        modifier = Modifier.padding(end = 8.dp),
+//                        text = set.weight.toString(),
+//                        color = Color.Black,
+//                        fontWeight = FontWeight.Medium,
+//                        maxLines = 1
+//                    )
+
+
+//                    weight = if (weightState.value.isEmpty()) {
+//                        weightState.value.toFloat()
+//                    } else set.weight
+
+                    weight = set.weight
+
                     innerTextField()
                 }
             }
