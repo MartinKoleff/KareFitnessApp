@@ -13,6 +13,9 @@ import { HomeModule } from './home/home.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from '../services/auth-interceptor.service';
 import { CreateworkoutModule } from './createworkout/createworkout.module';
+import { WorkoutListComponent } from './workout-list/workout-list.component';
+import { WorkoutListModule } from './workout-list/workout-list.module';
+import { WorkoutComponent } from './workout/workout.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,7 @@ import { CreateworkoutModule } from './createworkout/createworkout.module';
     StartupModule,
     HomeModule,
     CreateworkoutModule,
+    WorkoutListModule,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },

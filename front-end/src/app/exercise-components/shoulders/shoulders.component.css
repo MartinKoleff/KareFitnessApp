@@ -45,3 +45,10 @@ p{
   font-weight:bold;
   font-style: italic;
 }
+.add-set-button{
+  background-color: #AD4BB8;
+  border-radius: 15px;
+  text-align:center;
+  padding:0.8rem;
+  color:#F5E1F7
+}
