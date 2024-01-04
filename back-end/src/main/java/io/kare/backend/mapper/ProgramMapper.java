@@ -31,15 +31,18 @@ public interface ProgramMapper {
 	) {
 		return new GetWorkoutsResponse(
 			workouts.stream()
-				.map(workout -> new GetWorkoutResponse(
+				.map(workout -> {
+					var exercises = this.mapToGetExercises(
+						workout.getExercises(),
+						this.findExerciseOptionsByWorkoutId(workout.getId(), exerciseOptions)
+					);
+					return new GetWorkoutResponse(
 					workout.getId(),
 					workout.getName(),
 					workout.getDescription(),
-					this.mapToGetExercises(
-						workout.getExercises(),
-						this.findExerciseOptionsByWorkoutId(workout.getId(), exerciseOptions)
-					)
-				))
+					exercises,
+					exercises.size()
+				);})
 				.toList()
 		);
 	}
