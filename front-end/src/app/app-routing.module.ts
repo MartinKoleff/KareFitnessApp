@@ -14,6 +14,7 @@ import { ChestComponent } from './exercise-components/chest/chest.component';
 import { CardioComponent } from './exercise-components/cardio/cardio.component';
 import { AbsComponent } from './exercise-components/abs/abs.component';
 import { ShouldersComponent } from './exercise-components/shoulders/shoulders.component';
+import { WorkoutListComponent } from './workout-list/workout-list.component';
 
 const routes: Routes = [
   {path:'', component:StartupComponent},
@@ -23,6 +24,7 @@ const routes: Routes = [
   {path:'home', component: HomeComponent},
   {path:'main', component: MainComponent},
   {path:'create-workout', component: CreateworkoutComponent},
+  {path:'workout-list', component: WorkoutListComponent},
 
   {path:'biceps', component: BicepsComponent},
   {path:'triceps', component: TricepsComponent},

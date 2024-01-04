@@ -1,18 +1,27 @@
 <div class="container" *ngIf="tricepsExercises.length > 0">
   <div>
-    <label for="tricepsExercise">Select Triceps Exercise:</label>
+    <label for="tricepsExercise">Select Bicep Exercise:</label>
     <select id="tricepsExercise" [(ngModel)]="selectedExercise" (change)="selectExercise(selectedExercise)">
       <option *ngFor="let exercise of tricepsExercises" [ngValue]="exercise">{{ exercise.name }}</option>
     </select>
   </div>
   <div>
-    <input type="number" placeholder="reps" [(ngModel)]="workoutReps" name="reps" (keyup.Enter)="addExercise()">
+    <input type="number" placeholder="reps" [(ngModel)]="workoutReps" name="reps">
   </div>
-
-  <input type="number" placeholder="sets" [(ngModel)]="workoutSets" name="sets" (keyup.Enter)="addExercise()">
-
-  <div *ngFor="let exercise of selectedExercises">
-    <!-- Display details of the selected exercise -->
-    <p>{{ exercise.name + " for " + exercise.reps + " reps and " + exercise.sets + " sets"  }}</p>
+  <div>
+    <input type="number" placeholder="weight" [(ngModel)]="workoutWeight" name="weight">
+  </div>
+  <!-- Display details of the selected exercise -->
+  <div *ngIf="selectedExercise">
+    <h3>Sets</h3>
+    <div *ngFor="let set of selectedExercise.sets; let i = index">
+      <p>{{ 'Set ' + (i + 1) + ': Reps - ' + set.reps + ', Weight - ' + set.weight + 'kg' }}
+        <button (click)="editSet(set, i)">Edit</button>
+        <button (click)="deleteSet(set)">Delete</button>
+      </p>
+    </div>
+  </div>
+  <div>
+    <button class="add-set-button"(click)="addSet()">Add Set</button>
   </div>
 </div>
