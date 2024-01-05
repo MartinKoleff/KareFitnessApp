@@ -35,6 +35,7 @@ import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
@@ -248,7 +249,8 @@ object AppModule {
             getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
-            onSearchWorkoutUseCase = OnSearchWorkoutUseCase()
+            onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
+            deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
         )
     }
 

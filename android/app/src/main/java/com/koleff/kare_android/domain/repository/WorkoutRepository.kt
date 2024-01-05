@@ -16,11 +16,14 @@ interface WorkoutRepository {
     suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>  //Used for loading list view
+
     suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>>  //Used for loading list view
 
     suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 
     suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+
+    suspend fun deleteExercise(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 
     suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
 }
