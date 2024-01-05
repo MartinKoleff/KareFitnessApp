@@ -15,17 +15,25 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+typealias DeleteExerciseState = WorkoutDetailsState
+
 class WorkoutDetailsViewModel @AssistedInject constructor(
     private val workoutUseCases: WorkoutUseCases,
     @Assisted private val workoutId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
-    private val _state: MutableStateFlow<WorkoutDetailsState> =
+    private val _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
 
-    val state: StateFlow<WorkoutDetailsState>
-        get() = _state
+    val getWorkoutDetailsState: StateFlow<WorkoutDetailsState>
+        get() = _getWorkoutDetailsState
+
+    private val _deleteExerciseState: MutableStateFlow<DeleteExerciseState> =
+        MutableStateFlow(DeleteExerciseState())
+
+    val deleteExerciseState: StateFlow<DeleteExerciseState>
+        get() = _deleteExerciseState
 
     init {
         Log.d("WorkoutDetailsViewModel", "WorkoutId: $workoutId")
@@ -39,10 +47,19 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
     private fun getWorkoutDetails(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
-                _state.value = workoutDetailsState
+                _getWorkoutDetailsState.value = workoutDetailsState
             }
         }
     }
+
+    fun deleteExercise(workoutId: Int, exerciseId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId).collect { deleteExerciseState ->
+                _deleteExerciseState.value = deleteExerciseState
+            }
+        }
+    }
+
 
     @AssistedFactory
     interface Factory {
