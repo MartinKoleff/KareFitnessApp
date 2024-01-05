@@ -68,9 +68,11 @@ fun ExerciseDetailsConfiguratorScreen(
     val exerciseImageId = MuscleGroup.getImage(MuscleGroup.fromId(initialMuscleGroupId))
 
     val onSubmitExercise: () -> Unit = {
-        exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
-            OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
-        )
+        if(!exerciseState.isLoading) {
+            exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
+                OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
+            )
+        }
     }
 
     LaunchedEffect(updateWorkoutState) {
