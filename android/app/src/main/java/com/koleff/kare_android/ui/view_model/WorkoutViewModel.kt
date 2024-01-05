@@ -40,8 +40,7 @@ class WorkoutViewModel @Inject constructor(
     val deleteWorkoutState: StateFlow<DeleteWorkoutState>
         get() = _deleteWorkoutState
 
-    var isRefreshing by mutableStateOf(false)
-        private set
+    val isRefreshing by mutableStateOf(state.value.isLoading)
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
@@ -129,13 +128,11 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun getWorkouts() {
-        val isLoading = !hasLoadedFromCache.value || isRefreshing
-
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase(isLoading).collect { workoutState ->
+            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
 
-                isRefreshing = workoutState.isLoading
+//                isRefreshing = workoutState.isLoading
 
                 if (workoutState.isSuccessful) {
                     originalWorkoutList = workoutState.workoutList ?: emptyList()
