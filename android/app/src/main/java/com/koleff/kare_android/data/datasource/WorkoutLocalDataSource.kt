@@ -2,9 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -21,7 +19,6 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -170,9 +167,9 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             //Update total exercises
-            val workoutDto = workoutDao.getWorkoutById(workoutId)
-            workoutDto.totalExercises = workout.exercises.size
-            workoutDao.updateWorkout(workoutDto)
+            val workoutEntry = workoutDao.getWorkoutById(workoutId)
+            workoutEntry.totalExercises = workout.exercises.size
+            workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
             workoutDetailsDao.insertWorkoutDetails(workout.toWorkoutDetails())
 
@@ -197,13 +194,27 @@ class WorkoutLocalDataSource @Inject constructor(
             val exercisesDto: MutableList<ExerciseDto> =
                 filteredExercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto> //TODO: test if sets are updated correctly...
 
-            val workout = selectedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
-            workoutDetailsDao.updateWorkoutDetails(workout.toWorkoutDetails())
-//            workoutDao.updateWorkout(workout)
-
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
+            val updatedWorkoutDto = updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
+
+            //Delete cross ref
+            val crossRef =
+                WorkoutDetailsExerciseCrossRef(
+                workoutDetailsId = workoutId,
+                exerciseId = exerciseId
+            )
+            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(crossRef)
+
+            //Update workout and workout details DAOs
+//            workoutDetailsDao.insertWorkoutDetails(updatedWorkoutDto)
+
+            //Update total exercises
+            val workout = workoutDao.getWorkoutById(workoutId)
+            workout.totalExercises = updatedWorkout.exercises.size
+            workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
+
             val result = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto))
+                GetWorkoutDetailsResponse(updatedWorkoutDto)
             )
 
             emit(ResultWrapper.Success(result))
