@@ -1,6 +1,10 @@
 package com.koleff.kare_android.ui.view_model
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
@@ -29,6 +33,9 @@ class WorkoutViewModel @Inject constructor(
     private val _state: MutableStateFlow<WorkoutState> = MutableStateFlow(WorkoutState())
     val state: StateFlow<WorkoutState>
         get() = _state
+
+    var isRefreshing by mutableStateOf(false)
+        private set
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
@@ -99,10 +106,14 @@ class WorkoutViewModel @Inject constructor(
 //        }
 //    }
 
-    private fun getWorkouts() {
+    fun getWorkouts() {
+        val isLoading = !hasLoadedFromCache.value || isRefreshing
+
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase(hasLoadedFromCache.value).collect { workoutState ->
+            workoutUseCases.getWorkoutsUseCase(isLoading).collect { workoutState ->
                 _state.value = workoutState
+
+                isRefreshing = workoutState.isLoading
 
                 if (workoutState.isSuccessful) {
                     originalWorkoutList = workoutState.workoutList ?: emptyList()
