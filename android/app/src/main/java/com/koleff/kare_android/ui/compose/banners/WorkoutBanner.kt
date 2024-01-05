@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -228,20 +230,12 @@ fun SwipeableWorkoutBanner(
 
     //Used for swipe left
     var offsetX by remember { mutableStateOf(0f) }
-    val swipeLimit = screenWidth * 0.2f
+    val swipeLimit = screenWidth * 0.25f
 
-    val iconSize = 50.dp
     val deleteBoxWidth = screenWidth / 4
     val deleteBoxModifier = Modifier
         .height(200.dp) //Banner height
         .width(deleteBoxWidth)
-
-    // This will animate the offset of the delete icon
-    val deleteBoxOffset by animateDpAsState(
-        targetValue = if (offsetX.dp <= -swipeLimit)
-            screenWidth - deleteBoxWidth
-        else screenWidth - offsetX.dp
-    )
 
     Box {
         WorkoutBanner(
@@ -251,7 +245,6 @@ fun SwipeableWorkoutBanner(
                     detectHorizontalDragGestures { change, dragAmount ->
                         val newOffsetX = (offsetX + dragAmount)
                             .coerceIn(-swipeLimit.toPx(), 0f)
-
                         offsetX = newOffsetX
                         change.consumeAllChanges()
                     }
@@ -262,23 +255,46 @@ fun SwipeableWorkoutBanner(
         )
 
         //Delete option
-        Box(
+        DeleteButton(
             modifier = deleteBoxModifier
-                .offset(x = deleteBoxOffset)
-                .border(
-                    border = BorderStroke(2.dp, color = Color.Red),
-                    shape = RoundedCornerShape(25.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier
-                    .size(iconSize),
-            ) {
-                Icon(Icons.Default.Delete, contentDescription = "Delete")
-            }
-        }
+                .offset {
+                    IntOffset(
+                        (screenWidth.toPx() + offsetX).roundToInt(), 0
+                    )
+                },
+            onDelete = onDelete
+        )
+    }
+}
+
+@Composable
+fun DeleteButton(
+    modifier: Modifier,
+    onDelete: () -> Unit
+) {
+    val iconSize = 20.dp
+    val cornerSize = 24.dp
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                color = Color.Red,
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .clickable(onClick = onDelete)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete",
+            tint = Color.White,
+            modifier = Modifier.size(iconSize)
+        )
     }
 }
 
