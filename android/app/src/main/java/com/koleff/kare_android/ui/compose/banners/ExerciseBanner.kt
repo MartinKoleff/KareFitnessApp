@@ -155,7 +155,7 @@ fun ExerciseBannerV2(
         ),
         onClick = { onClick.invoke(exercise) }
     ) {
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
             //Fixes left side white overlay
             Box(
