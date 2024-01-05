@@ -15,9 +15,9 @@ interface WorkoutRepository {
 
     suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
 
-    suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>  //Used for loading list view
+    suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>  //Used for loading list view and refresh
 
-    suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>>  //Used for loading list view
+    suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>>  //Used for loading single view
 
     suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 
