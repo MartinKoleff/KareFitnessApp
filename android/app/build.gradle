@@ -84,8 +84,11 @@ dependencies {
     implementation 'androidx.compose.ui:ui'
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
-    implementation 'androidx.compose.material3:material3'
-    implementation 'androidx.compose.material3:material3:1.2.0-alpha12'
+    implementation 'androidx.compose.material3:material3:1.2.0-beta01'
+    implementation "androidx.compose.material:material:1.5.4"
+
+    //Pull to refresh
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.33.2-alpha"
 
     //Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
