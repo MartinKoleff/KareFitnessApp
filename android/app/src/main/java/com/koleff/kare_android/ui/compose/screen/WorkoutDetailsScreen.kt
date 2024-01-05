@@ -25,7 +25,6 @@ import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
-import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
 @Composable

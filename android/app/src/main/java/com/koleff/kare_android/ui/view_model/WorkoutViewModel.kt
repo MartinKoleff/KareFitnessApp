@@ -119,7 +119,9 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update workout list
                 if (deleteWorkoutState.isSuccessful) {
-                    state.value.workoutList.removeIf { it.workoutId == workoutId }
+                    val updatedList = state.value.workoutList.filterNot { it.workoutId == workoutId }
+                    _state.value = _state.value.copy(workoutList = updatedList)
+
                     originalWorkoutList = state.value.workoutList
                 }
             }
