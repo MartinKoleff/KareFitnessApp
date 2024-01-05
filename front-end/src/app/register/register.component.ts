@@ -1,5 +1,4 @@
 import { Component, ViewEncapsulation } from '@angular/core';
-import { Router } from '@angular/router';
 import { PostDataService } from '../../services/post-data.service';
 import { PostUser } from '../models/user.model';
 
@@ -16,7 +15,6 @@ export class RegisterComponent {
   allPosts:any=[];
   constructor(
     private post: PostDataService,
-    private router: Router,
     private PostDataService: PostDataService,
     ) {
     this.post.getPosts().subscribe((data) => {
