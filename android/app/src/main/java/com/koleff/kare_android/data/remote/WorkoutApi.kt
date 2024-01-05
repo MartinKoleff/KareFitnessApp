@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.remote
 
 import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
+import com.koleff.kare_android.data.model.request.DeleteExerciseRequest
 import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
@@ -37,6 +38,11 @@ interface WorkoutApi {
     suspend fun deleteWorkout(
         @Body body: BaseWorkoutRequest
     ): BaseResponse
+
+    @DELETE("api/v1/workout/deleteexercise") //TODO: update endpoint...
+    suspend fun deleteExercise(
+        @Body body: DeleteExerciseRequest
+    ): GetWorkoutDetailsResponse
 
     @PUT("api/v1/workout/saveworkout") //TODO: update endpoint...
     suspend fun saveWorkout(

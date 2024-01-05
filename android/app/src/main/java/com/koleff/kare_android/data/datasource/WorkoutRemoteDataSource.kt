@@ -5,6 +5,7 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
+import com.koleff.kare_android.data.model.request.DeleteExerciseRequest
 import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
 import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
 import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
@@ -56,5 +57,14 @@ class WorkoutRemoteDataSource @Inject constructor(
         val body = SaveWorkoutRequest(workout)
 
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.saveWorkout(body)) })
+    }
+
+    override suspend fun deleteExercise(
+        workoutId: Int,
+        exerciseId: Int
+    ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
+        val body = DeleteExerciseRequest(workoutId, exerciseId)
+
+        return Network.executeApiCall(dispatcher, { GetWorkoutDetailsWrapper(workoutApi.deleteExercise(body)) })
     }
 }
