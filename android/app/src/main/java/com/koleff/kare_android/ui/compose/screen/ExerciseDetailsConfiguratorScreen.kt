@@ -4,9 +4,13 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,11 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.ExerciseSetRow
@@ -134,38 +140,42 @@ fun ExerciseDetailsConfiguratorContent(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (exerciseState.isLoading || updateWorkoutState.isLoading) {
-            item {
+        item {
+            if (exerciseState.isLoading || updateWorkoutState.isLoading) {
                 LoadingWheel()
-            }
-        } else {
-            item { //TODO: fix in place...
-                Text(
-                    modifier = Modifier.padding(
-                        PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 16.dp,
-                            bottom = 8.dp
-                        )
-                    ),
-                    text = exerciseState.exercise.name,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size((50 + 8 + 8).dp)
                 )
             }
+        }
+        item { //TODO: fix in place...
+            Text(
+                modifier = Modifier.padding(
+                    PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 8.dp
+                    )
+                ),
+                text = exerciseState.exercise.name,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
-            //Rows with sets / reps / weight configuration
-            items(exerciseState.exercise.sets.size) { currentSetId ->
-                val currentSet = exerciseState.exercise.sets[currentSetId]
-                ExerciseSetRow(set = currentSet)
-            }
+        //Rows with sets / reps / weight configuration
+        items(exerciseState.exercise.sets.size) { currentSetId ->
+            val currentSet = exerciseState.exercise.sets[currentSetId]
+            ExerciseSetRow(set = currentSet)
         }
     }
 }
@@ -182,12 +192,16 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
 
     val exerciseImageId = MuscleGroup.getImage(exerciseState.exercise.muscleGroup)
 
+    val onSubmitExercise: () -> Unit = {
+
+    }
+
     ExerciseDetailsConfiguratorScreenScaffold(
         screenTitle = exerciseState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
-        onSubmitExercise = {}
+        onSubmitExercise = onSubmitExercise
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
