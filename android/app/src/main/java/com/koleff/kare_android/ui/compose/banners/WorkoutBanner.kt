@@ -1,7 +1,11 @@
 package com.koleff.kare_android.ui.compose.banners
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,15 +16,25 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -28,22 +42,29 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
+import kotlin.math.roundToInt
 
 @Composable
 fun WorkoutBanner(
@@ -191,6 +212,70 @@ fun WorkoutBanner(
     }
 }
 
+@Composable
+fun SwipeableWorkoutBanner(
+    modifier: Modifier = Modifier,
+    workout: WorkoutDto,
+    hasDescription: Boolean = true,
+    onClick: (WorkoutDto) -> Unit,
+    onDelete: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    //Used for swipe left
+    var offsetX by remember { mutableStateOf(0f) }
+    val maxOffsetX = with(LocalDensity.current) { screenWidth.toPx() }
+    val swipeLimit = screenWidth * 0.2f
+
+    val iconSize = 50.dp
+
+    // This will animate the offset of the delete icon
+    val deleteIconOffset by animateDpAsState(
+        targetValue = if (offsetX.dp < 0.dp) offsetX.dp else 0.dp
+    )
+
+    Column(modifier = modifier
+        .offset { IntOffset(offsetX.roundToInt(), 0) }
+        .pointerInput(Unit) {
+            detectHorizontalDragGestures { change, dragAmount ->
+                val newOffsetX = (offsetX + dragAmount).coerceIn(-swipeLimit.toPx(), 0f)
+                offsetX = newOffsetX
+                change.consumeAllChanges()
+            }
+        }) {
+        WorkoutBanner(
+            modifier = Modifier,
+            workout = workout,
+            hasDescription = hasDescription,
+            onClick = onClick
+        )
+
+        //Delete option
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(screenWidth / 4)
+                .offset(x = deleteIconOffset)
+                .border(
+                    border = BorderStroke(2.dp, color = Color.Red),
+                    shape = RoundedCornerShape(25.dp)
+                ),
+        ) {
+            // Trash Icon
+            IconButton(
+                onClick = onDelete,
+                modifier = Modifier
+                    .size(iconSize),
+            ) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete")
+            }
+        }
+    }
+}
+
 fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostController) {
     navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId)) //No exercise is submitted
 }
@@ -251,5 +336,34 @@ fun WorkoutListPreview() {
         modifier = modifier,
         workoutList = workoutList,
         navController = navController
+    )
+}
+
+@Preview
+@Composable
+fun WorkoutBannerPreview() {
+    val workout = MockupDataGenerator.generateWorkout()
+
+    WorkoutBanner(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        onClick = {},
+        workout = workout
+    )
+}
+
+@Preview
+@Composable
+fun SwipeableWorkoutBannerPreview() {
+    val workout = MockupDataGenerator.generateWorkout()
+
+    SwipeableWorkoutBanner(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        onClick = {},
+        onDelete = {},
+        workout = workout
     )
 }

@@ -84,4 +84,20 @@ object MockupDataGenerator {
     fun generateExerciseSet(): ExerciseSet {
         return ExerciseSet(1, 12, 50f)
     }
+
+    fun generateWorkout(): WorkoutDto {
+        val workoutId = 1
+        val totalExercises = 5
+        val workout =
+            WorkoutDto(
+                workoutId = workoutId,
+                name = "Epic workout $workoutId",
+                muscleGroup = MuscleGroup.fromId(workoutId),
+                snapshot = "",
+                totalExercises = totalExercises,
+                isSelected = false
+            )
+
+        return workout
+    }
 }
