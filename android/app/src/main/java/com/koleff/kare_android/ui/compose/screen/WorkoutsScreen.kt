@@ -21,8 +21,7 @@ import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.banners.AddWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
-import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
-import com.koleff.kare_android.ui.compose.banners.WorkoutList
+import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
@@ -56,6 +55,10 @@ fun WorkoutsScreen(
                 )
             )
 
+        val workoutBannerModifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -81,15 +84,18 @@ fun WorkoutsScreen(
                     }
 
                     selectedWorkout?.let {
-                        WorkoutBanner(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp),
+                        SwipeableWorkoutBanner(
+                            modifier = workoutBannerModifier,
                             workout = selectedWorkout,
-                            hasDescription = true
-                        ) {
-                            openWorkoutDetailsScreen(workout = it, navController = navController)
-                        }
+                            hasDescription = true,
+                            onDelete = {},
+                            onClick = {
+                                openWorkoutDetailsScreen(
+                                    workout = it,
+                                    navController = navController
+                                )
+                            }
+                        )
                     } ?: run {
 
                         //No workout is selected
@@ -106,14 +112,14 @@ fun WorkoutsScreen(
                         items(workoutState.workoutList.size) { workoutId ->
                             val workout = workoutState.workoutList[workoutId]
 
-                            WorkoutBanner(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(200.dp),
+                            SwipeableWorkoutBanner(
+                                modifier = workoutBannerModifier,
                                 workout = workout,
-                            ) {
-                                openWorkoutDetailsScreen(workout, navController = navController)
-                            }
+                                onDelete = {},
+                                onClick = {
+                                    openWorkoutDetailsScreen(workout, navController = navController)
+                                }
+                            )
                         }
 
                         //Footer
