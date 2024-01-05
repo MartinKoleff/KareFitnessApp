@@ -18,10 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerV2
+import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
@@ -37,42 +39,44 @@ fun WorkoutDetailsScreen(
         if (workoutDetailsState.workout.name == "") "Loading..." else workoutDetailsState.workout.name
     val exercises = workoutDetailsState.workout.exercises
 
-    MainScreenScaffold(workoutTitle, navController, isNavigationInProgress) { innerPadding ->
-        val modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                PaddingValues(
-                    top = 4.dp + innerPadding.calculateTopPadding(),
-                    start = 4.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                    end = 4.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    bottom = 4.dp + innerPadding.calculateBottomPadding()
-                )
+    val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
+        navController.navigate(
+            MainScreen.ExerciseDetailsConfigurator.createRoute(
+                exerciseId = selectedExercise.exerciseId,
+                workoutId = workoutId,
+                muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
             )
+        )
+    }
+
+    val onExerciseDeleted: () -> Unit = {
+
+    }
+
+    MainScreenScaffold(workoutTitle, navController, isNavigationInProgress) { innerPadding ->
+        val contentModifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
 
         if (workoutDetailsState.isLoading) {
             LoadingWheel(innerPadding = innerPadding)
         } else {
             LazyColumn(
-                modifier = modifier,
+                modifier = contentModifier,
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(exercises.size) { currentExerciseId ->
                     val currentExercise = exercises[currentExerciseId]
-                    ExerciseBannerV2(
+                    
+                    SwipeableExerciseBanner(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp),
                         exercise = currentExercise,
-                    ) { selectedExercise ->
-                        navController.navigate(
-                            MainScreen.ExerciseDetailsConfigurator.createRoute(
-                                exerciseId = selectedExercise.exerciseId,
-                                workoutId = workoutId,
-                                muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
-                            )
-                        )
-                    }
+                        onClick = onExerciseSelected,
+                        onDelete = onExerciseDeleted
+                    )
                 }
 
                 item {

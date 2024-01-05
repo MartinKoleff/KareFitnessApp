@@ -9,9 +9,11 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 
 object MockupDataGenerator {
     fun generateExercise(): ExerciseDto {
+        val exerciseId = 1
+
         return ExerciseDto(
-            1,
-            "BARBELL BENCH PRESS 1",
+            exerciseId,
+            "BARBELL BENCH PRESS $exerciseId",
             MuscleGroup.CHEST,
             MachineType.BARBELL,
             "",
