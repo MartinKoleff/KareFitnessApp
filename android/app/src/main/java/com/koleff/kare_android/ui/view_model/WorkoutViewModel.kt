@@ -14,6 +14,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.state.DeleteWorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +34,11 @@ class WorkoutViewModel @Inject constructor(
     private val _state: MutableStateFlow<WorkoutState> = MutableStateFlow(WorkoutState())
     val state: StateFlow<WorkoutState>
         get() = _state
+
+    private val _deleteWorkoutState: MutableStateFlow<DeleteWorkoutState> =
+        MutableStateFlow(DeleteWorkoutState())
+    val deleteWorkoutState: StateFlow<DeleteWorkoutState>
+        get() = _deleteWorkoutState
 
     var isRefreshing by mutableStateOf(false)
         private set
@@ -105,6 +111,20 @@ class WorkoutViewModel @Inject constructor(
 //            }
 //        }
 //    }
+
+    fun deleteWorkout(workoutId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.deleteWorkoutUseCase(workoutId).collect { deleteWorkoutState ->
+                _deleteWorkoutState.value = deleteWorkoutState
+
+                //Update workout list
+                if (deleteWorkoutState.isSuccessful) {
+                    state.value.workoutList.removeIf { it.workoutId == workoutId }
+                    originalWorkoutList = state.value.workoutList
+                }
+            }
+        }
+    }
 
     fun getWorkouts() {
         val isLoading = !hasLoadedFromCache.value || isRefreshing

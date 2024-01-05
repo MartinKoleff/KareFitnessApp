@@ -75,6 +75,7 @@ fun WorkoutsScreen(
         )
 
         val workoutState by workoutListViewModel.state.collectAsState()
+        val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
 
         Box(
             Modifier
@@ -95,7 +96,7 @@ fun WorkoutsScreen(
                     workoutListViewModel = workoutListViewModel
                 )
 
-                if (workoutState.isLoading || workoutListViewModel.isRefreshing) { //Don't show loader if retrieved from cache...
+                if (workoutState.isLoading || workoutListViewModel.isRefreshing || deleteWorkoutState.isLoading) { //Don't show loader if retrieved from cache...
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
@@ -140,7 +141,9 @@ fun WorkoutsScreen(
                                 SwipeableWorkoutBanner(
                                     modifier = workoutBannerModifier,
                                     workout = workout,
-                                    onDelete = {},
+                                    onDelete = {
+                                        workoutListViewModel.deleteWorkout(workout.workoutId)
+                                    },
                                     onClick = {
                                         openWorkoutDetailsScreen(
                                             workout,
