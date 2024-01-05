@@ -101,7 +101,7 @@ fun WorkoutBanner(
         ),
         onClick = { onClick.invoke(workout) }
     ) {
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
             //Workout Image
             Image(
