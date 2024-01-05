@@ -1,6 +1,8 @@
 package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -35,6 +37,8 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
     val deleteExerciseState: StateFlow<DeleteExerciseState>
         get() = _deleteExerciseState
 
+    val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
+
     init {
         Log.d("WorkoutDetailsViewModel", "WorkoutId: $workoutId")
 
@@ -44,7 +48,7 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         }
     }
 
-    private fun getWorkoutDetails(workoutId: Int) {
+    fun getWorkoutDetails(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
                 _getWorkoutDetailsState.value = workoutDetailsState
