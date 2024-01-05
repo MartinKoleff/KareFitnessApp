@@ -1,18 +1,14 @@
-<div class="container" *ngIf="cardioExercises.length > 0">
-  <div>
-    <label for="cardioExercise">Select Cardio Exercise:</label>
-    <select id="cardioExercise" [(ngModel)]="selectedExercise" (change)="selectExercise(selectedExercise)">
-      <option *ngFor="let exercise of cardioExercises" [ngValue]="exercise">{{ exercise.name }}</option>
-    </select>
+<!-- Add this section in biceps.component.html -->
+<div *ngIf="selectedExercise && selectedExercise.sets && selectedExercise.sets.length > 0">
+  <h3>Sets</h3>
+  <div *ngFor="let set of selectedExercise.sets; let i = index">
+    <p>{{ 'Set ' + (i + 1) + ': Reps - ' + set.reps + ', Weight - ' + set.weight + 'kg' }}
+      <button (click)="editSet(set)">Edit</button>
+      <button (click)="deleteSet(set)">Delete</button>
+    </p>
   </div>
-  <div>
-    <input type="number" placeholder="reps" [(ngModel)]="workoutReps" name="reps" (keyup.Enter)="addExercise()">
-  </div>
+</div>
 
-  <input type="number" placeholder="sets" [(ngModel)]="workoutSets" name="sets" (keyup.Enter)="addExercise()">
-
-  <div *ngFor="let exercise of selectedExercises">
-    <!-- Display details of the selected exercise -->
-    <p>{{ exercise.name + " for " + exercise.reps + " reps and " + exercise.sets + " sets"  }}</p>
-  </div>
+<div>
+  <button (click)="addSet()">Add Set</button>
 </div>

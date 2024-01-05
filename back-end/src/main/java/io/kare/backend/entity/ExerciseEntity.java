@@ -1,7 +1,7 @@
 package io.kare.backend.entity;
 
-import io.kare.backend.data.MachineType;
-import io.kare.backend.data.MuscleGroup;
+import io.kare.backend.payload.data.MachineType;
+import io.kare.backend.payload.data.MuscleGroup;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -19,12 +19,14 @@ public class ExerciseEntity {
     public static final String DESCRIPTION_COLUMN = "description";
     public static final String MUSCLE_GROUP_COLUMN = "muscle_group";
     public static final String MACHINE_TYPE_COLUMN = "machine_type";
+    public static final String URL_COLUMN = "url";
 
     private String id;
     private String name;
     private String description;
     private MuscleGroup muscleGroup;
     private MachineType machineType;
+    private String url;
     private UserEntity user;
     private List<WorkoutEntity> workouts;
 
@@ -77,7 +79,16 @@ public class ExerciseEntity {
         this.machineType = machineType;
     }
 
-    @ManyToOne
+    @Column(name = URL_COLUMN)
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = UserEntity.ID_COLUMN, nullable = false)
     public UserEntity getUser() {
         return user;

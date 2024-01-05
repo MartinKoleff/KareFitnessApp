@@ -2,6 +2,8 @@ package io.kare.backend.configuration;
 
 import io.kare.backend.annotation.User;
 import io.kare.backend.component.user.UserJwtTokenGenerator;
+import io.kare.backend.entity.UserEntity;
+import io.kare.backend.exception.UnauthorizedUserException;
 import io.kare.backend.service.UserService;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -27,12 +29,17 @@ public class UserArgumentResolver implements HandlerMethodArgumentResolver {
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
         String token = webRequest.getHeader("Authorization");
-        if (token == null) {
-            return null;
+        if (token == null || !token.startsWith("Bearer ")) {
+            throw new UnauthorizedUserException();
         }
         token = token.replace("Bearer ", "");
         String userId = this.userJwtTokenGenerator.getUserIdFromToken(token);
+        UserEntity userEntity = this.userService.getUserById(userId);
 
-        return this.userService.getUserById(userId);
+        if (userEntity == null) {
+            throw new UnauthorizedUserException();
+        }
+
+        return userEntity;
     }
 }

@@ -69,7 +69,6 @@ button {
 .reg-button {
   color: hsl(295, 85%, 18%);
   background-color: rgba(255, 255, 255, 1);
-  border: 1px solid black;
   height: 2.5rem;
 }
 
