@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.banners.AddWorkoutBanner
@@ -77,8 +78,13 @@ fun WorkoutsScreen(
         val workoutState by workoutListViewModel.state.collectAsState()
         val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
 
+        val onDeleteWorkout: (WorkoutDto) -> Unit = { workout ->
+            workoutListViewModel.deleteWorkout(workout.workoutId)
+        }
+
         Box(
             Modifier
+                .fillMaxSize()
                 .pullRefresh(pullRefreshState)
         ) {
             Column(
@@ -114,7 +120,7 @@ fun WorkoutsScreen(
                                 modifier = workoutBannerModifier,
                                 workout = selectedWorkout,
                                 hasDescription = true,
-                                onDelete = {},
+                                onDelete = { onDeleteWorkout(selectedWorkout) },
                                 onClick = {
                                     openWorkoutDetailsScreen(
                                         workout = it,
@@ -141,9 +147,7 @@ fun WorkoutsScreen(
                                 SwipeableWorkoutBanner(
                                     modifier = workoutBannerModifier,
                                     workout = workout,
-                                    onDelete = {
-                                        workoutListViewModel.deleteWorkout(workout.workoutId)
-                                    },
+                                    onDelete = { onDeleteWorkout(workout) },
                                     onClick = {
                                         openWorkoutDetailsScreen(
                                             workout,
@@ -174,7 +178,7 @@ fun WorkoutsScreen(
                 modifier = Modifier.align(Alignment.TopCenter),
                 refreshing = workoutListViewModel.isRefreshing,
                 state = pullRefreshState
-            )
+            ) //If put as first content -> hides behind the screen...
         }
     }
 }

@@ -121,7 +121,7 @@ class WorkoutViewModel @Inject constructor(
                     val updatedList = state.value.workoutList.filterNot { it.workoutId == workoutId }
                     _state.value = _state.value.copy(workoutList = updatedList)
 
-                    originalWorkoutList = state.value.workoutList
+                    originalWorkoutList = originalWorkoutList.filterNot { it.workoutId == workoutId }
                 }
             }
         }
