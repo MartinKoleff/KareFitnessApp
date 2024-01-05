@@ -24,6 +24,8 @@ fun ExerciseDetailsBottomNavigationBar(
     isNavigationInProgress: MutableState<Boolean>,
     exerciseId: Int
 ) {
+    val isBlocked = mutableStateOf(isNavigationInProgress.value || exerciseId == -1)
+
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.secondary,
         tonalElevation = 5.dp,
@@ -35,7 +37,7 @@ fun ExerciseDetailsBottomNavigationBar(
                 screen = MainScreen.SearchWorkoutsScreen,
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
-                isBlocked = isNavigationInProgress, //TODO: Block if data is loading...
+                isBlocked = isBlocked,
                 tint = Color.White,
                 navigationArguments = NavigationArguments(exerciseId = exerciseId)
             )
