@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 @Table(name = UserEntity.TABLE_NAME)
 public class UserEntity {
 	public static final String TABLE_NAME = "users";
-	public static final String ID_COLUMN = "id";
+	public static final String ID_COLUMN = "user_id";
 	public static final String EMAIL_COLUMN = "email";
 	public static final String USERNAME_COLUMN = "username";
 	public static final String PASSWORD_COLUMN = "password";
