@@ -52,6 +52,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -227,27 +228,34 @@ fun SwipeableWorkoutBanner(
 
     //Used for swipe left
     var offsetX by remember { mutableStateOf(0f) }
-    val maxOffsetX = with(LocalDensity.current) { screenWidth.toPx() }
     val swipeLimit = screenWidth * 0.2f
 
     val iconSize = 50.dp
+    val deleteBoxWidth = screenWidth / 4
+    val deleteBoxModifier = Modifier
+        .height(200.dp) //Banner height
+        .width(deleteBoxWidth)
 
     // This will animate the offset of the delete icon
-    val deleteIconOffset by animateDpAsState(
-        targetValue = if (offsetX.dp < 0.dp) offsetX.dp else 0.dp
+    val deleteBoxOffset by animateDpAsState(
+        targetValue = if (offsetX.dp <= -swipeLimit)
+            screenWidth - deleteBoxWidth
+        else screenWidth - offsetX.dp
     )
 
-    Column(modifier = modifier
-        .offset { IntOffset(offsetX.roundToInt(), 0) }
-        .pointerInput(Unit) {
-            detectHorizontalDragGestures { change, dragAmount ->
-                val newOffsetX = (offsetX + dragAmount).coerceIn(-swipeLimit.toPx(), 0f)
-                offsetX = newOffsetX
-                change.consumeAllChanges()
-            }
-        }) {
+    Box {
         WorkoutBanner(
-            modifier = Modifier,
+            modifier = modifier
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { change, dragAmount ->
+                        val newOffsetX = (offsetX + dragAmount)
+                            .coerceIn(-swipeLimit.toPx(), 0f)
+
+                        offsetX = newOffsetX
+                        change.consumeAllChanges()
+                    }
+                },
             workout = workout,
             hasDescription = hasDescription,
             onClick = onClick
@@ -255,16 +263,14 @@ fun SwipeableWorkoutBanner(
 
         //Delete option
         Box(
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(screenWidth / 4)
-                .offset(x = deleteIconOffset)
+            modifier = deleteBoxModifier
+                .offset(x = deleteBoxOffset)
                 .border(
                     border = BorderStroke(2.dp, color = Color.Red),
                     shape = RoundedCornerShape(25.dp)
                 ),
+            contentAlignment = Alignment.Center
         ) {
-            // Trash Icon
             IconButton(
                 onClick = onDelete,
                 modifier = Modifier
