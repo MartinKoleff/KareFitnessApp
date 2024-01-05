@@ -1,6 +1,7 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { PostDataService } from '../../services/post-data.service';
 import { PostUser } from '../models/user.model';
+import { tap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-register',
@@ -10,7 +11,8 @@ import { PostUser } from '../models/user.model';
 })
 export class RegisterComponent {
   tempEmail: string = 'admin';
-  user: PostUser = {username:'',password:'',email:'',cpassword:''}
+  cpassword: string = '';
+  user: PostUser = {username:'',password:'',email:''}
 
   allPosts:any=[];
   constructor(
@@ -49,13 +51,14 @@ export class RegisterComponent {
       alert('You have to enter a password!');
     } else if (this.emailCheck()==true) {
       alert('This e-mail is already taken!');
-    } else if (this.user.password != this.user.cpassword) {
+    } else if (this.user.password != this.cpassword) {
       alert('The password did not match!  ');
     } else if (!uppercaseRegex.test(this.user.password) || !numberRegex.test(this.user.password)) {
       alert('This password must contain at least one uppercase letter and one number');
     }
     else {
       this.saveUser();
+
     }
   }
 }
