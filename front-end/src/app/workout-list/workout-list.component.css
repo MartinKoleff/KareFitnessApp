@@ -51,7 +51,7 @@ nav {
   min-height: 100vh;
 }
 .logForm{
-  background-color:#6B246B;
+  background-color:#6b246bc7;
   width: 90%;
   display: flex;
   flex-direction: column;
@@ -62,7 +62,7 @@ nav {
 }
 button {
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 10px;
   font-weight: 600;
   width: auto;
   transition: 0.4s;
@@ -77,8 +77,8 @@ button {
 
 button:hover {
   color: black  ;
-  box-shadow: 0 0 20px #ECBDF2;
-  background-color: #ECBDF2;
+  box-shadow: 0 0 8px #ECBDF2;
+  background-color: #d18cda;
 }
 .nav-container{
   display: flex;
@@ -106,7 +106,6 @@ img{
   border-radius:15%;
 }
 .group-container{
-  background-color:inherit;
   width: 90%;
   display: flex;
   flex-direction: row;
