@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -27,6 +28,7 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         get() = _state
 
     init {
+        Log.d("WorkoutDetailsViewModel", "WorkoutId: $workoutId")
 
         //Invalid id handling
         if (workoutId != -1) {

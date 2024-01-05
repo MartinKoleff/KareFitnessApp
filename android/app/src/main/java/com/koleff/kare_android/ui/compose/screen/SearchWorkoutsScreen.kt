@@ -49,13 +49,17 @@ fun SearchWorkoutsScreen(
 
     val alpha = remember { Animatable(1f) }  //Used for animated transition
     val screenTitle = remember { mutableStateOf("Select workout") }
-    LaunchedEffect(selectedWorkoutId, workoutDetailsState, updateWorkoutState) {
+
+    LaunchedEffect(selectedWorkoutId) {
         selectedWorkoutId != -1 || return@LaunchedEffect
 
         searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId).also {
             isUpdateLoading = true
             screenTitle.value = "Loading..."
         }
+    }
+
+    LaunchedEffect(key1 = workoutDetailsState) {
 
         //Await workout details
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
@@ -63,7 +67,9 @@ fun SearchWorkoutsScreen(
 
             searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
         }
+    }
 
+    LaunchedEffect(key1 = updateWorkoutState) {
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
 
@@ -72,7 +78,7 @@ fun SearchWorkoutsScreen(
                 targetValue = 0f,
                 animationSpec = TweenSpec(durationMillis = 500)
             ) {
-                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workoutDetailsState.workout.workoutId)) {
+                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = updateWorkoutState.workout.workoutId)) {
 
                     //Pop backstack and set the first element to be the dashboard
                     popUpTo(MainScreen.Dashboard.route) { inclusive = false }
@@ -106,7 +112,6 @@ fun SearchWorkoutsScreen(
 
         val workoutState by searchWorkoutViewModel.workoutsState.collectAsState()
         val allWorkouts = workoutState.workoutList
-
 
         //All workouts
         if (workoutState.isLoading || isUpdateLoading) {
