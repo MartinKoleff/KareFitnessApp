@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
+import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSet
@@ -97,7 +98,7 @@ class WorkoutLocalDataSource @Inject constructor(
             //Add sets from DB relations
             val exercisesWithSetsList = mutableListOf<ExerciseWithSet>()
             for (exercise in data.exercises) {
-                val exercisesWithSet = exerciseDao.getExerciseById(exercise.exerciseId)
+                val exercisesWithSet = exerciseDao.getExerciseById(exercise.exerciseId) //TODO: problem here...
 
                 exercisesWithSetsList.add(exercisesWithSet)
             }
@@ -141,7 +142,6 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    //TODO: fix ExerciseSet not updating...
     override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -149,7 +149,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val workoutId = workout.workoutId
 
-            //Contains different exercises -> setup cross ref
+            //Contains different exercises
             val currentEntryInDB: List<ExerciseDto> =
                 workoutDetailsDao.getWorkoutDetailsById(workoutId) //TODO: handle null
                     .exercises
@@ -160,7 +160,7 @@ class WorkoutLocalDataSource @Inject constructor(
                     workout.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
                 val exerciseIds = newExercises.map { it.exerciseId }
 
-                //Wire new exercises ids to workout id
+                //Wire new exercises ids to workout id -> setup cross refs
                 val crossRefs: List<WorkoutDetailsExerciseCrossRef> =
                     exerciseIds.map { exerciseId ->
                         WorkoutDetailsExerciseCrossRef(
@@ -172,14 +172,21 @@ class WorkoutLocalDataSource @Inject constructor(
                 workoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef(crossRefs)
             }
 
-            // Exercise sets -> setup cross ref
+            // Exercise sets -> setup cross refs
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> = workout.exercises.flatMap { exercise ->
                 exercise.sets.map { set ->
                     val setEntity = set.toSetEntity()
-                    exerciseSetDao.updateSet(setEntity)
 
                     if (set.setId == null) {
-                        exerciseDao.insertExerciseSets(setEntity) // Insert only if it's new
+                        //New set -> insert it
+                        val newSetId= UUID.randomUUID()
+                        setEntity.setId = newSetId
+
+                        exerciseSetDao.saveSet(setEntity)
+                    } else {
+                        //Existing set -> update it
+                        Log.d("SaveWorkout-LocalDatasource", "Exercise set with setId ${setEntity.setId} updated. Data: $setEntity")
+                        exerciseSetDao.updateSet(setEntity)
                     }
 
                     ExerciseSetCrossRef(
