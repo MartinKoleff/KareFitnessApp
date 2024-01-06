@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
@@ -72,8 +73,12 @@ class ExerciseDetailsConfiguratorViewModel @AssistedInject constructor(
             }
 
             is OnExerciseUpdateEvent.OnExerciseSubmit -> {
-                selectedWorkout = selectedWorkoutState.value.workout
-                selectedWorkout.exercises.add(event.exercise)
+                val newExercises: MutableList<ExerciseDto> =
+                    selectedWorkoutState.value.workout.exercises.filterNot { it.exerciseId == exerciseId } as MutableList<ExerciseDto>
+                newExercises.add(event.exercise)
+                newExercises.sortBy { it.exerciseId }
+
+                selectedWorkout = selectedWorkoutState.value.workout.copy(exercises = newExercises)
             }
         }
 
@@ -87,7 +92,10 @@ class ExerciseDetailsConfiguratorViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(@Assisted("exerciseId") exerciseId: Int, @Assisted("workoutId") workoutId: Int): ExerciseDetailsConfiguratorViewModel
+        fun create(
+            @Assisted("exerciseId") exerciseId: Int,
+            @Assisted("workoutId") workoutId: Int
+        ): ExerciseDetailsConfiguratorViewModel
     }
 
     companion object {
