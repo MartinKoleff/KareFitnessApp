@@ -14,7 +14,7 @@ import java.util.UUID
 )
 data class SetEntity(
     @PrimaryKey(autoGenerate = false)
-    val setId: UUID,
+    var setId: UUID,
     val number: Int,
     val reps: Int,
     val weight: Float,

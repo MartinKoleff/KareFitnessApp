@@ -157,9 +157,10 @@ object AppModule {
     fun provideExerciseDBManager(
         preferences: Preferences,
         exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao
+        exerciseDetailsDao: ExerciseDetailsDao,
+        exerciseSetDao: ExerciseSetDao
     ): ExerciseDBManager {
-        return ExerciseDBManager(preferences, exerciseDao, exerciseDetailsDao)
+        return ExerciseDBManager(preferences, exerciseDao, exerciseDetailsDao, exerciseSetDao)
     }
 
     @Provides

@@ -5,6 +5,7 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
+import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.SetEntity
@@ -18,7 +19,8 @@ import javax.inject.Inject
 class ExerciseDBManager @Inject constructor(
     private val preferences: Preferences,
     private val exerciseDao: ExerciseDao,
-    private val exerciseDetailsDao: ExerciseDetailsDao
+    private val exerciseDetailsDao: ExerciseDetailsDao,
+    private val exerciseSetDao: ExerciseSetDao
 ) {
     private val hasInitializedExerciseTableRoomDB = preferences.hasInitializedExerciseTableRoomDB()
 
@@ -52,15 +54,19 @@ class ExerciseDBManager @Inject constructor(
     private suspend fun loadExerciseSetsCrossRefs(allExercises: List<Exercise>): List<ExerciseSetCrossRef> {
         val crossRefs: MutableList<ExerciseSetCrossRef> = mutableListOf()
 
-        val exerciseSets = loadExerciseSets() //Generate new setId with same ExerciseSet data...
-
+        val exerciseSets: MutableList<SetEntity> = mutableListOf()
+        var counter: Int = 0
         for (exercise in allExercises) {
-            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[0].setId))
-            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[1].setId))
-            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[2].setId))
+            exerciseSets.addAll(loadExerciseSets()) //Generate new setId with same ExerciseSet data...
+
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 0].setId))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 1].setId))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 2].setId))
+
+            counter += 3
         }
 
-        exerciseDao.insertAllExerciseSets(exerciseSets) //Insert ExerciseSet
+        exerciseSetDao.insertAllExerciseSets(exerciseSets) //Insert ExerciseSet
         return crossRefs
     }
 
