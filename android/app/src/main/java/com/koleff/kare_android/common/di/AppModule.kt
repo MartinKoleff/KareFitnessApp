@@ -27,6 +27,7 @@ import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
+import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
@@ -175,6 +176,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideExerciseSetDao(kareDatabase: KareDatabase): ExerciseSetDao {
+        return kareDatabase.exerciseSetDao
+    }
+
+    @Provides
+    @Singleton
     fun provideWorkoutDBManager(
         preferences: Preferences,
         workoutDao: WorkoutDao,
@@ -213,12 +220,14 @@ object AppModule {
         workoutDao: WorkoutDao,
         exerciseDao: ExerciseDao,
         workoutDetailsDao: WorkoutDetailsDao,
+        exerciseSetDao: ExerciseSetDao,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
         return if (useLocalDataSource) WorkoutLocalDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
-            workoutDetailsDao = workoutDetailsDao
+            workoutDetailsDao = workoutDetailsDao,
+            exerciseSetDao = exerciseSetDao
         )
 //        else if (useMockupDataSource) WorkoutMockupDataSource()
         else WorkoutRemoteDataSource(workoutApi, dispatcher)
