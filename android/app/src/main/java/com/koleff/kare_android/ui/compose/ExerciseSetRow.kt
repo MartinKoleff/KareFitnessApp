@@ -29,9 +29,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseSet
+import java.util.UUID
 
 @Composable
-fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
+fun ExerciseSetRow(
+    modifier: Modifier = Modifier,
+    set: ExerciseSet,
+    onRepsChanged: (Int) -> Unit, // Callback when reps are updated
+    onWeightChanged: (Float) -> Unit // Callback when weight is updated
+) {
 
     // Initialize text field states
     val setNumber = set.number
@@ -62,7 +68,10 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
                 .weight(1f)
                 .padding(horizontal = 4.dp),
             value = repsState.value,
-            onValueChange = { repsState.value = it },
+            onValueChange = {
+                repsState.value = it
+                onRepsChanged(it.toIntOrNull() ?: set.reps) // Update the parent with the new value or retain the old value if null
+            },
             textStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.Bold
@@ -92,7 +101,7 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
 //                        fontWeight = FontWeight.Medium,
 //                        maxLines = 1
 //                    )
-                    
+
 //                    reps = if (repsState.value.isEmpty()) {
 //                        repsState.value.toInt()
 //                    } else set.reps
@@ -111,7 +120,10 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
                 .weight(1f)
                 .padding(horizontal = 4.dp),
             value = weightState.value,
-            onValueChange = { weightState.value = it },
+            onValueChange = {
+                weightState.value = it
+                onWeightChanged(it.toFloatOrNull() ?: set.weight) // Update the parent with the new value or retain the old value if null
+            },
             textStyle = TextStyle(
                 color = Color.Black,
                 fontWeight = FontWeight.Bold
@@ -157,7 +169,12 @@ fun ExerciseSetRow(modifier: Modifier = Modifier, set: ExerciseSet) {
 }
 
 @Composable
-fun ExerciseSetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
+fun ExerciseSetRowList(
+    modifier: Modifier,
+    exerciseSetList: List<ExerciseSet>,
+    onRepsChanged: (Int) -> Unit, // Callback when reps are updated
+    onWeightChanged: (Float) -> Unit // Callback when weight is updated
+) {
 
     val totalExerciseSets = if (exerciseSetList.size < 3) {
         3
@@ -168,15 +185,19 @@ fun ExerciseSetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
     LazyColumn(modifier = modifier) {
         items(totalExerciseSets) { currentSetId ->
 
-            //Check if set exists in the allowed boudns
+            //Check if set exists in the allowed bounds
             val currentSet = if (currentSetId >= 0 && currentSetId < exerciseSetList.size) {
                 exerciseSetList[currentSetId]
             } else {
 
                 //Default set
-                ExerciseSet(currentSetId + 1, 12, 0f)
+                ExerciseSet(UUID.randomUUID(), currentSetId + 1, 12, 0f)
             }
-            ExerciseSetRow(set = currentSet)
+            ExerciseSetRow(
+                set = currentSet,
+                onRepsChanged = onRepsChanged,
+                onWeightChanged = onWeightChanged
+            )
         }
     }
 }
@@ -186,12 +207,20 @@ fun ExerciseSetRowList(modifier: Modifier, exerciseSetList: List<ExerciseSet>) {
 @Composable
 fun ExerciseSetRowPreview() {
     val exerciseSet = MockupDataGenerator.generateExerciseSet()
-    ExerciseSetRow(set = exerciseSet)
+    ExerciseSetRow(
+        set = exerciseSet,
+        onWeightChanged = {},
+        onRepsChanged = {}
+    )
 }
 
 @Preview
 @Composable
 fun ExerciseSetRowListPreview() {
     val exerciseSetList = MockupDataGenerator.generateExerciseSetsList()
-    ExerciseSetRowList(modifier = Modifier.fillMaxSize(), exerciseSetList = exerciseSetList)
+    ExerciseSetRowList(
+        modifier = Modifier.fillMaxSize(),
+        exerciseSetList = exerciseSetList,
+        onWeightChanged = {},
+        onRepsChanged = {})
 }

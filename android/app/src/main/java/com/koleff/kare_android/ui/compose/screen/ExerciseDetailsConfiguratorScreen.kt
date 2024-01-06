@@ -68,7 +68,7 @@ fun ExerciseDetailsConfiguratorScreen(
     val exerciseImageId = MuscleGroup.getImage(MuscleGroup.fromId(initialMuscleGroupId))
 
     val onSubmitExercise: () -> Unit = {
-        if(!exerciseState.isLoading) {
+        if (!exerciseState.isLoading) {
             exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
                 OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
             )
@@ -177,7 +177,17 @@ fun ExerciseDetailsConfiguratorContent(
         //Rows with sets / reps / weight configuration
         items(exerciseState.exercise.sets.size) { currentSetId ->
             val currentSet = exerciseState.exercise.sets[currentSetId]
-            ExerciseSetRow(set = currentSet)
+            ExerciseSetRow(
+                set = currentSet,
+                onRepsChanged = { newReps ->
+                    currentSet.reps = newReps
+//                    currentSet.setId = null //When set is changed -> generate new UUID
+                 },
+                onWeightChanged = { newWeight ->
+                    currentSet.weight = newWeight
+//                    currentSet.setId = null //When set is changed -> generate new UUID
+                }
+            )
         }
     }
 }
