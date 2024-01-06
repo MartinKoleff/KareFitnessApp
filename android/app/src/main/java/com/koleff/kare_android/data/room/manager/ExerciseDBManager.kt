@@ -12,6 +12,7 @@ import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExercis
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.UUID
 import javax.inject.Inject
 
 class ExerciseDBManager @Inject constructor(
@@ -29,12 +30,10 @@ class ExerciseDBManager @Inject constructor(
             val exerciseDetailsList = loadExerciseDetails(muscleGroup)
             val exerciseDetailsExerciseCrossRef = loadAllCrossRefs()
 
-            val exerciseSets = loadExerciseSets()
             val exerciseSetsCrossRef = loadExerciseSetsCrossRefs(exercisesList)
 
             exerciseDao.insertAll(exercisesList)
             exerciseDetailsDao.insertAll(exerciseDetailsList)
-            exerciseDao.insertAllExerciseSets(exerciseSets)
 
             exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRef)
             exerciseDao.insertAllExerciseSetCrossRef(exerciseSetsCrossRef)
@@ -44,22 +43,25 @@ class ExerciseDBManager @Inject constructor(
 
     private fun loadExerciseSets(): List<SetEntity> {
         return listOf(
-            SetEntity(1, 12, 25f),
-            SetEntity(2, 10, 30f),
-            SetEntity(3, 8, 35f)
+            SetEntity(UUID.randomUUID(),1, 12, 25f),
+            SetEntity(UUID.randomUUID(),2, 10, 30f),
+            SetEntity(UUID.randomUUID(),3, 8, 35f)
         )
     }
 
-    private fun loadExerciseSetsCrossRefs(allExercises: List<Exercise>): List<ExerciseSetCrossRef> {
-        val exerciseSets: MutableList<ExerciseSetCrossRef> = mutableListOf()
+    private suspend fun loadExerciseSetsCrossRefs(allExercises: List<Exercise>): List<ExerciseSetCrossRef> {
+        val crossRefs: MutableList<ExerciseSetCrossRef> = mutableListOf()
+
+        val exerciseSets = loadExerciseSets() //Generate new setId with same ExerciseSet data...
 
         for (exercise in allExercises) {
-            exerciseSets.add(ExerciseSetCrossRef(exercise.exerciseId, 1))
-            exerciseSets.add(ExerciseSetCrossRef(exercise.exerciseId, 2))
-            exerciseSets.add(ExerciseSetCrossRef(exercise.exerciseId, 3))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[0].setId))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[1].setId))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[2].setId))
         }
 
-        return exerciseSets
+        exerciseDao.insertAllExerciseSets(exerciseSets) //Insert ExerciseSet
+        return crossRefs
     }
 
     private fun loadAllCrossRefs(): List<ExerciseDetailsExerciseCrossRef> {
