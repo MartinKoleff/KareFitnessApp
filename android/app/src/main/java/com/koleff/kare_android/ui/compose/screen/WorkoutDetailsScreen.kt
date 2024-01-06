@@ -69,7 +69,7 @@ fun WorkoutDetailsScreen(
         mutableStateOf(selectedWorkout.exercises)
     }
 
-    val showAddExerciseBanner by remember {
+    var showAddExerciseBanner by remember {
         mutableStateOf(workoutDetailsState.isSuccessful)
     }
 
@@ -79,6 +79,7 @@ fun WorkoutDetailsScreen(
             Log.d("WorkoutDetailsScreen", "Initial load completed.")
             selectedWorkout = workoutDetailsState.workout
             exercises = selectedWorkout.exercises
+            showAddExerciseBanner = true
         }
     }
 
