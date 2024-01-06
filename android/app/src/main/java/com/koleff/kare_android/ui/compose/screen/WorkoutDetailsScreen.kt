@@ -78,6 +78,10 @@ fun WorkoutDetailsScreen(
         mutableStateOf(selectedWorkout.exercises)
     }
 
+    val showAddExerciseBanner by remember {
+        mutableStateOf(workoutDetailsState.isSuccessful)
+    }
+
     //Update workout on initial load
     LaunchedEffect(key1 = workoutDetailsState) {
         if (workoutDetailsState.isSuccessful) {
@@ -136,13 +140,15 @@ fun WorkoutDetailsScreen(
                     }
 
                     item {
-                        AddExerciseToWorkoutBanner {
+                        if (showAddExerciseBanner) { //Show only after data is fetched
+                            AddExerciseToWorkoutBanner {
 
-                            //Open search exercise screen...
-                            openSearchExercisesScreen(
-                                navController = navController,
-                                workoutId = workoutId
-                            )
+                                //Open search exercise screen...
+                                openSearchExercisesScreen(
+                                    navController = navController,
+                                    workoutId = workoutId
+                                )
+                            }
                         }
                     }
                 }
