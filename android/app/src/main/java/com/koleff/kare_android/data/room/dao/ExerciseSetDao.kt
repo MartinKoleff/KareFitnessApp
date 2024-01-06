@@ -14,12 +14,19 @@ import com.koleff.kare_android.data.room.entity.SetEntity
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import java.util.UUID
 
 @Dao
 interface ExerciseSetDao {
 
+    @Query("SELECT * FROM exercise_set_table WHERE setId = :setId")
+    fun getSetById(setId: UUID): SetEntity
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveSet(setEntity: SetEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllExerciseSets(sets: List<SetEntity>)
 
     @Update
     suspend fun updateSet(setEntity: SetEntity)

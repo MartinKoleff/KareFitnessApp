@@ -24,12 +24,6 @@ interface ExerciseDao {
     suspend fun insertAll(exercises: List<Exercise>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExerciseSets(set: SetEntity)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllExerciseSets(sets: List<SetEntity>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
