@@ -6,6 +6,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseSet
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import java.util.UUID
 
 object MockupDataGenerator {
     fun generateExercise(): ExerciseDto {
@@ -75,16 +76,16 @@ object MockupDataGenerator {
 
     fun generateExerciseSetsList(): List<ExerciseSet> {
         val exerciseSetList = listOf(
-            ExerciseSet(1, 12, 50f),
-            ExerciseSet(2, 10, 55.5f),
-            ExerciseSet(3, 8, 60f)
+            ExerciseSet(UUID.randomUUID(),1, 12, 50f),
+            ExerciseSet(UUID.randomUUID(),2, 10, 55.5f),
+            ExerciseSet(UUID.randomUUID(),3, 8, 60f)
         )
 
         return exerciseSetList
     }
 
     fun generateExerciseSet(): ExerciseSet {
-        return ExerciseSet(1, 12, 50f)
+        return ExerciseSet(UUID.randomUUID(),1, 12, 50f)
     }
 
     fun generateWorkout(): WorkoutDto {
