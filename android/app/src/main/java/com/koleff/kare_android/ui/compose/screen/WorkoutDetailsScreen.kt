@@ -52,16 +52,7 @@ fun WorkoutDetailsScreen(
                 workoutId = workoutId,
                 muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
             )
-        ) {
-
-            //Add Workouts screen to backstack
-            popUpTo(MainScreen.Workouts.route) {
-                saveState = true
-            }
-
-            //Avoid multiple copies of the same destination
-            launchSingleTop = true
-        }
+        )
     }
 
 
