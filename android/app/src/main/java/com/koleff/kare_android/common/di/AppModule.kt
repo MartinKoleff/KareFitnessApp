@@ -42,12 +42,14 @@ import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
+import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.squareup.moshi.Moshi
@@ -262,7 +264,9 @@ object AppModule {
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
-            deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository)
+            deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
+            selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
+            getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository)
         )
     }
 
