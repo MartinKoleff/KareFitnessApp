@@ -109,13 +109,6 @@ fun WorkoutDetailsScreen(
         navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
     }
 
-    //BackHandler(enabled = true) {
-    //    if (hasUpdated) {
-    //        navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
-    //    }
-    //    navController.popBackStack()
-    //}
-
     //Dialogs
     if (showDeleteDialog && selectedExercise != null) {
         WarningDialog(

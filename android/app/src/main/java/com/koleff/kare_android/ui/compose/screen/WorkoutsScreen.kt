@@ -87,61 +87,6 @@ fun WorkoutsScreen(
             onRefresh = { workoutListViewModel.getWorkouts() }
         )
 
-//------------------------------------------------------------------
-//        //Update has happened in WorkoutDetails screen
-//        val navBackStackEntry = navController.currentBackStackEntryAsState()
-//        val hasUpdated = navBackStackEntry.value?.savedStateHandle?.get<Boolean>("hasUpdated") ?: false
-//
-//        //Refresh screen
-//        if(hasUpdated){
-//            workoutListViewModel.getWorkouts()
-//        }
-
-//------------------------------------------------------------------
-        //Update has happened in WorkoutDetails screen
-//        val hasUpdated = navController.currentBackStackEntry
-//            ?.savedStateHandle
-//            ?.getLiveData<Boolean>("hasUpdated")
-//            ?.observeAsState(initial = false)
-//
-//        //Refresh screen
-//        LaunchedEffect(hasUpdated.value) {
-//            if (hasUpdated.value) {
-//                workoutListViewModel.getWorkouts()
-//
-//                navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", false)
-//            }
-//        }
-
-//------------------------------------------------------------------
-//        var hasUpdated by remember { mutableStateOf(false) }
-//
-//        //Update has happened in WorkoutDetails screen
-//        DisposableEffect(navController) {
-//            val observer = Observer<Boolean> { value ->
-//                Log.d("WorkoutsScreen", "hasUpdated updated: $value")
-//
-//                hasUpdated = value
-//            }
-//
-//            val liveData = navController.currentBackStackEntry
-//                ?.savedStateHandle
-//                ?.getLiveData<Boolean>("hasUpdated")
-//
-//            liveData?.observeForever(observer)
-//
-//            onDispose {
-//                liveData?.removeObserver(observer)
-//            }
-//        }
-//
-//        //Refresh screen
-//        if (hasUpdated) {
-//            workoutListViewModel.getWorkouts()
-//
-//            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", false)
-//        }
-//------------------------------------------------------------------
         //Update has happened in WorkoutDetails screen
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val hasUpdated =
