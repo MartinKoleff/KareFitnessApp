@@ -14,7 +14,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.ui.state.DeleteWorkoutState
+import com.koleff.kare_android.ui.state.BaseState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -35,9 +35,9 @@ class WorkoutViewModel @Inject constructor(
     val state: StateFlow<WorkoutState>
         get() = _state
 
-    private val _deleteWorkoutState: MutableStateFlow<DeleteWorkoutState> =
-        MutableStateFlow(DeleteWorkoutState())
-    val deleteWorkoutState: StateFlow<DeleteWorkoutState>
+    private val _deleteWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val deleteWorkoutState: StateFlow<BaseState>
         get() = _deleteWorkoutState
 
     val isRefreshing by mutableStateOf(state.value.isLoading)

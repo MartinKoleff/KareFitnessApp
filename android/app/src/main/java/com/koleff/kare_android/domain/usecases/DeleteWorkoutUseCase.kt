@@ -8,30 +8,30 @@ import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.ui.state.DeleteWorkoutState
+import com.koleff.kare_android.ui.state.BaseState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class DeleteWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
 
-    suspend operator fun invoke(workoutId: Int): Flow<DeleteWorkoutState> =
+    suspend operator fun invoke(workoutId: Int): Flow<BaseState> =
         workoutRepository.deleteWorkout(workoutId).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {
-                    DeleteWorkoutState(
+                    BaseState(
                         isError = true,
                         error = apiResult.error ?: KareError.GENERIC
                     )
                 }
 
                 is ResultWrapper.Loading -> {
-                    DeleteWorkoutState(isLoading = true)
+                    BaseState(isLoading = true)
                 }
 
                 is ResultWrapper.Success -> {
                     Log.d("DeleteWorkoutUseCase", "Workout with id $workoutId deleted.")
 
-                    DeleteWorkoutState(
+                    BaseState(
                         isSuccessful = true
                     )
                 }
