@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.MainScreen
@@ -90,6 +91,12 @@ fun WorkoutDetailsScreen(
         }
     }
 
+    //Exercise has been added -> pass to WorkoutsScreen to refresh
+    val navBackStackEntry = navController.currentBackStackEntryAsState()
+    val hasUpdated =
+        navBackStackEntry.value?.savedStateHandle?.get<Boolean>("hasUpdated") ?: false
+    navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", hasUpdated)
+
     //Dialog visibility
     var showDeleteDialog by remember { mutableStateOf(false) }
 
@@ -97,7 +104,17 @@ fun WorkoutDetailsScreen(
     var selectedExercise by remember { mutableStateOf<ExerciseDto?>(null) }
     val onExerciseDeleted: (Int, ExerciseDto) -> Unit = { selectedWorkoutId, selectedExercise ->
         workoutDetailsViewModel.deleteExercise(selectedWorkoutId, selectedExercise.exerciseId)
+
+        //Raise a flag to update Workouts screen...
+        navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
     }
+
+    //BackHandler(enabled = true) {
+    //    if (hasUpdated) {
+    //        navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
+    //    }
+    //    navController.popBackStack()
+    //}
 
     //Dialogs
     if (showDeleteDialog && selectedExercise != null) {

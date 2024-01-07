@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -83,11 +84,13 @@ fun ExerciseDetailsConfiguratorScreen(
             navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = selectedWorkoutState.workout.workoutId)) {
 
                 //Pop backstack and set the first element to be the Workouts screen
-                popUpTo(MainScreen.Workouts.route) { inclusive = false }
 
                 //Clear all other entries in the back stack
                 launchSingleTop = true
             }
+
+            //Raise a flag to update Workouts screen...
+            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true) //TODO: pass to Workouts screen
         }
     }
 
@@ -182,7 +185,7 @@ fun ExerciseDetailsConfiguratorContent(
                 onRepsChanged = { newReps ->
                     currentSet.reps = newReps
 //                    currentSet.setId = null //When set is changed -> generate new UUID
-                 },
+                },
                 onWeightChanged = { newWeight ->
                     currentSet.weight = newWeight
 //                    currentSet.setId = null //When set is changed -> generate new UUID
