@@ -40,6 +40,11 @@ class WorkoutViewModel @Inject constructor(
     val deleteWorkoutState: StateFlow<BaseState>
         get() = _deleteWorkoutState
 
+    private val _selectWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val selectWorkoutState: StateFlow<BaseState>
+        get() = _selectWorkoutState
+
     val isRefreshing by mutableStateOf(state.value.isLoading)
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
@@ -122,6 +127,19 @@ class WorkoutViewModel @Inject constructor(
                     _state.value = _state.value.copy(workoutList = updatedList)
 
                     originalWorkoutList = originalWorkoutList.filterNot { it.workoutId == workoutId }
+                }
+            }
+        }
+    }
+
+    fun selectWorkout(workoutId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.selectWorkoutUseCase(workoutId).collect { selectWorkoutState ->
+                _selectWorkoutState.value = selectWorkoutState
+
+                //Update workout list
+                if (selectWorkoutState.isSuccessful) {
+                    getWorkouts()
                 }
             }
         }
