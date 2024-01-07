@@ -20,11 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
@@ -32,8 +36,11 @@ import com.koleff.kare_android.ui.compose.banners.AddWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
+import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
+import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
+import java.util.Locale
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -75,15 +82,75 @@ fun WorkoutsScreen(
             onRefresh = { workoutListViewModel.getWorkouts() }
         )
 
+        //States
         val workoutState by workoutListViewModel.state.collectAsState()
         val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
+        val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
 
-        val onDeleteWorkout: (WorkoutDto) -> Unit = { workout ->
-            workoutListViewModel.deleteWorkout(workout.workoutId)
+        //Dialog visibility
+        var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
+        var showSelectDialog by remember { mutableStateOf(false) }
+        var showDeleteDialog by remember { mutableStateOf(false) }
+
+        //Dialog callbacks
+        var selectedWorkout by remember { mutableStateOf<WorkoutDto?>(null) }
+
+        val onDeleteWorkout: () -> Unit = {
+            selectedWorkout?.let {
+                workoutListViewModel.deleteWorkout(selectedWorkout!!.workoutId)
+
+                showDeleteDialog = false
+            }
         }
 
-        val onSelectWorkout: (WorkoutDto) -> Unit = { workout ->
-            workoutListViewModel.selectWorkout(workout.workoutId)
+        val onSelectWorkout: () -> Unit = {
+            selectedWorkout?.let {
+                workoutListViewModel.selectWorkout(selectedWorkout!!.workoutId)
+
+                showSelectDialog = false
+            }
+        }
+
+        val onEditWorkoutName: (String) -> Unit = { newName ->
+            selectedWorkout?.let {
+                selectedWorkout = selectedWorkout!!.copy(name = newName)
+
+                //Update workout
+                workoutListViewModel.updateWorkout(selectedWorkout!!)
+
+                showEditWorkoutNameDialog = false
+            }
+        }
+
+        //Dialogs
+        if (showEditWorkoutNameDialog && selectedWorkout != null) {
+            EditWorkoutDialog(
+                currentName = selectedWorkout!!.name,
+                onDismiss = { showEditWorkoutNameDialog = false },
+                onConfirm = onEditWorkoutName
+            )
+        }
+
+        if (showDeleteDialog && selectedWorkout != null) {
+            WarningDialog(
+                title = "Delete Workout",
+                description = "Are you sure you want to delete this workout? This action cannot be undone.",
+                actionButtonTitle = "Delete",
+                onClick = onDeleteWorkout,
+                onDismiss = { showDeleteDialog = false }
+            )
+        }
+
+        if (showSelectDialog && selectedWorkout != null) {
+            val selectWord = if (selectedWorkout!!.isSelected) "De-select" else "Select"
+
+            WarningDialog(
+                title = "$selectWord Workout",
+                description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
+                actionButtonTitle = selectWord,
+                onClick = onSelectWorkout,
+                onDismiss = { showSelectDialog = false }
+            )
         }
 
         Box(
@@ -106,7 +173,7 @@ fun WorkoutsScreen(
                     workoutListViewModel = workoutListViewModel
                 )
 
-                if (workoutState.isLoading || workoutListViewModel.isRefreshing || deleteWorkoutState.isLoading) { //Don't show loader if retrieved from cache...
+                if (workoutState.isLoading || workoutListViewModel.isRefreshing || deleteWorkoutState.isLoading || updateWorkoutState.isLoading) { //Don't show loader if retrieved from cache...
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
@@ -115,17 +182,20 @@ fun WorkoutsScreen(
 
                     //MyWorkout Screen
                     if (workoutState.isMyWorkoutScreen) {
-                        val selectedWorkout = workoutState.workoutList.firstOrNull {
+                        val workout = workoutState.workoutList.firstOrNull {
                             it.isSelected
                         }
 
-                        selectedWorkout?.let {
+                        workout?.let {
                             SwipeableWorkoutBanner(
                                 modifier = workoutBannerModifier,
-                                workout = selectedWorkout,
+                                workout = workout,
                                 hasDescription = true,
-                                onDelete = { onDeleteWorkout(selectedWorkout) },
-                                onSelect = { onSelectWorkout(selectedWorkout) },
+                                onDelete = {
+                                    showDeleteDialog = true
+                                    selectedWorkout = workout
+                                },
+                                onSelect = { showSelectDialog = true },
                                 onClick = {
                                     openWorkoutDetailsScreen(
                                         workout = it,
@@ -133,7 +203,8 @@ fun WorkoutsScreen(
                                     )
                                 },
                                 onEdit = {
-                                    //Edit prompt -> update workout use case
+                                    showEditWorkoutNameDialog = true
+                                    selectedWorkout = workout
                                 }
                             )
                         } ?: run {
@@ -155,8 +226,14 @@ fun WorkoutsScreen(
                                 SwipeableWorkoutBanner(
                                     modifier = workoutBannerModifier,
                                     workout = workout,
-                                    onDelete = { onDeleteWorkout(workout) },
-                                    onSelect = { onSelectWorkout(workout) },
+                                    onDelete = {
+                                        showDeleteDialog = true
+                                        selectedWorkout = workout
+                                    },
+                                    onSelect = {
+                                        showSelectDialog = true
+                                        selectedWorkout = workout
+                                    },
                                     onClick = {
                                         openWorkoutDetailsScreen(
                                             workout,
@@ -164,7 +241,8 @@ fun WorkoutsScreen(
                                         )
                                     },
                                     onEdit = {
-                                        //Edit prompt -> update workout use case
+                                        showEditWorkoutNameDialog = true
+                                        selectedWorkout = workout
                                     }
                                 )
                             }

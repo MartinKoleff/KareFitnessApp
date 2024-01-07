@@ -176,6 +176,7 @@ fun WarningDialog(
     description: String,
     onDismiss: () -> Unit,
     onClick: () -> Unit,
+    actionButtonTitle: String
 ) {
     AlertDialog(
         title = {
@@ -217,7 +218,7 @@ fun WarningDialog(
                 onDismiss()
             }) {
                 Text(
-                    text = "Delete",
+                    text = actionButtonTitle,
                     style = TextStyle(
                         color = Color.White,
                         fontSize = 16.sp,
@@ -255,6 +256,7 @@ fun WarningDialogPreview() {
     WarningDialog(
         title = "Delete Workout",
         description = "Are you sure you want to delete this workout? This action cannot be undone.",
+        actionButtonTitle = "Delete",
         onClick = {},
         onDismiss = {}
     )
@@ -269,6 +271,7 @@ fun SelectWorkoutDialogPreview() {
     WarningDialog(
         title = "$selectWord Workout",
         description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
+        actionButtonTitle = selectWord,
         onClick = {},
         onDismiss = {}
     )
@@ -283,6 +286,7 @@ fun DeselectWorkoutDialogPreview() {
     WarningDialog(
         title = "$selectWord Workout",
         description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
+        actionButtonTitle = selectWord,
         onClick = {},
         onDismiss = {}
     )
