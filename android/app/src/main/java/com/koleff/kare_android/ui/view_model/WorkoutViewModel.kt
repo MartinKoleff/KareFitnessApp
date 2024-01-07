@@ -16,6 +16,7 @@ import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.SelectedWorkoutState
+import com.koleff.kare_android.ui.state.UpdateWorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +51,11 @@ class WorkoutViewModel @Inject constructor(
         MutableStateFlow(SelectedWorkoutState())
     val getSelectedWorkoutState: StateFlow<SelectedWorkoutState>
         get() = _getSelectedWorkoutState
+
+    private val _updateWorkoutState: MutableStateFlow<UpdateWorkoutState> =
+        MutableStateFlow(UpdateWorkoutState())
+    val updateWorkoutState: StateFlow<UpdateWorkoutState>
+        get() = _updateWorkoutState
 
     val isRefreshing by mutableStateOf(state.value.isLoading)
 
@@ -129,10 +135,12 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update workout list
                 if (deleteWorkoutState.isSuccessful) {
-                    val updatedList = state.value.workoutList.filterNot { it.workoutId == workoutId }
+                    val updatedList =
+                        state.value.workoutList.filterNot { it.workoutId == workoutId }
                     _state.value = _state.value.copy(workoutList = updatedList)
 
-                    originalWorkoutList = originalWorkoutList.filterNot { it.workoutId == workoutId }
+                    originalWorkoutList =
+                        originalWorkoutList.filterNot { it.workoutId == workoutId }
                 }
             }
         }
@@ -160,7 +168,8 @@ class WorkoutViewModel @Inject constructor(
                 if (getSelectedWorkoutState.isSuccessful) {
                     val selectedWorkout = getSelectedWorkoutState.selectedWorkout
 
-                    val updatedList = state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
+                    val updatedList =
+                        state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
                     updatedList.add(selectedWorkout)
 
                     _state.value = _state.value.copy(workoutList = updatedList)
@@ -169,6 +178,28 @@ class WorkoutViewModel @Inject constructor(
             }
         }
     }
+
+    fun updateWorkout(workoutDto: WorkoutDto) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.updateWorkoutUseCase(workoutDto).collect { updateWorkoutState ->
+                _updateWorkoutState.value = updateWorkoutState
+
+                //Update workout list
+                if (updateWorkoutState.isSuccessful) {
+                    val selectedWorkout = updateWorkoutState.workout
+
+                    val updatedList =
+                        state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
+                    updatedList.add(selectedWorkout)
+                    updatedList.sortBy { it.name }
+
+                    _state.value = _state.value.copy(workoutList = updatedList)
+                    originalWorkoutList = updatedList
+                }
+            }
+        }
+    }
+
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
