@@ -231,10 +231,14 @@ fun SwipeableWorkoutBanner(
 
     //Used for swipe left
     var offsetX by remember { mutableStateOf(0f) }
-    val swipeLimit = screenWidth * 0.75f //This is 3/4 of the screen. One option takes 1/4 of the screen.
+    val swipeLimit = screenWidth * 0.25f //This is 1/4 of the screen.
 
     val optionBoxWidth = screenWidth / 4
     val optionBoxModifier = Modifier
+        .height(200.dp / 3) //3 options to fill in the column
+        .width(optionBoxWidth)
+
+    val optionColumnModifier = Modifier
         .height(200.dp) //Banner height
         .width(optionBoxWidth)
 
@@ -255,41 +259,34 @@ fun SwipeableWorkoutBanner(
             onClick = onClick
         )
 
-        //Select option
-        EditButton(
-            modifier = optionBoxModifier
-                .offset {
-                    IntOffset(
-                        (screenWidth.toPx() + offsetX).roundToInt(), 0
-                    )
-                },
-            onEdit = onEdit,
-            title = "Edit Workout Name"
-        )
+        //Options
+        Column(modifier = optionColumnModifier .offset {
+            IntOffset(
+                (screenWidth.toPx() + offsetX).roundToInt(), 0
+            )
+        }) {
 
-        //Select option
-        SelectButton(
-            modifier = optionBoxModifier
-                .offset {
-                    IntOffset(
-                        (screenWidth.toPx() + optionBoxWidth.toPx() + offsetX).roundToInt(), 0
-                    )
-                },
-            onSelect = onSelect,
-            title = "Select Workout"
-        )
+            //Select option
+            EditButton(
+                modifier = optionBoxModifier,
+                onEdit = onEdit,
+                title = "Edit Workout Name"
+            )
 
-        //Delete option
-        DeleteButton(
-            modifier = optionBoxModifier
-                .offset {
-                    IntOffset(
-                        (screenWidth.toPx() + (optionBoxWidth.toPx() * 2) + offsetX).roundToInt(), 0
-                    )
-                },
-            onDelete = onDelete,
-            title = "Delete Workout"
-        )
+            //Select option
+            SelectButton(
+                modifier = optionBoxModifier,
+                onSelect = onSelect,
+                title = "Select Workout"
+            )
+
+            //Delete option
+            DeleteButton(
+                modifier = optionBoxModifier,
+                onDelete = onDelete,
+                title = "Delete Workout"
+            )
+        }
     }
 }
 

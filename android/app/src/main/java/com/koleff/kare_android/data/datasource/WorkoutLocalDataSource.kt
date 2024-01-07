@@ -43,7 +43,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.selectWorkoutById(workoutId)
 
             val result = ServerResponseData(
-                BaseResponse()
+                BaseResponse() //TODO: return selected workout...
             )
 
             emit(ResultWrapper.Success(result))
@@ -98,7 +98,7 @@ class WorkoutLocalDataSource @Inject constructor(
             //Add sets from DB relations
             val exercisesWithSetsList = mutableListOf<ExerciseWithSet>()
             for (exercise in data.exercises) {
-                val exercisesWithSet = exerciseDao.getExerciseById(exercise.exerciseId) //TODO: problem here...
+                val exercisesWithSet = exerciseDao.getExerciseById(exercise.exerciseId)
 
                 exercisesWithSetsList.add(exercisesWithSet)
             }
