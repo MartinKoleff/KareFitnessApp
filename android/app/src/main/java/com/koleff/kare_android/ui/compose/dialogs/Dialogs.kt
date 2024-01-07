@@ -112,7 +112,6 @@ fun SuccessDialog(
     onClick: () -> Unit,
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
         title = {
             Text(
                 text = title,
@@ -148,7 +147,10 @@ fun SuccessDialog(
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Button(onClick = onClick) {
+                Button(onClick = {
+                    onClick()
+                    onDismiss()
+                }) {
                     Text(
                         text = "OK",
                         style = TextStyle(
@@ -162,7 +164,9 @@ fun SuccessDialog(
                     )
                 }
             }
-        }
+        },
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     )
 }
 
@@ -174,7 +178,6 @@ fun WarningDialog(
     onClick: () -> Unit,
 ) {
     AlertDialog(
-        onDismissRequest = onDismiss,
         title = {
             Box(
                 modifier = Modifier
@@ -209,7 +212,10 @@ fun WarningDialog(
             )
         },
         confirmButton = {
-            Button(onClick = onClick) {
+            Button(onClick = {
+                onClick()
+                onDismiss()
+            }) {
                 Text(
                     text = "Delete",
                     style = TextStyle(
@@ -237,7 +243,9 @@ fun WarningDialog(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-        }
+        },
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     )
 }
 
