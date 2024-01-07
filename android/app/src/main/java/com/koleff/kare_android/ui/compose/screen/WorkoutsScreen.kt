@@ -82,6 +82,10 @@ fun WorkoutsScreen(
             workoutListViewModel.deleteWorkout(workout.workoutId)
         }
 
+        val onSelectWorkout: (WorkoutDto) -> Unit = { workout ->
+            workoutListViewModel.selectWorkout(workout.workoutId)
+        }
+
         Box(
             Modifier
                 .fillMaxSize()
@@ -121,6 +125,7 @@ fun WorkoutsScreen(
                                 workout = selectedWorkout,
                                 hasDescription = true,
                                 onDelete = { onDeleteWorkout(selectedWorkout) },
+                                onSelect = { onSelectWorkout(selectedWorkout) },
                                 onClick = {
                                     openWorkoutDetailsScreen(
                                         workout = it,
@@ -148,6 +153,7 @@ fun WorkoutsScreen(
                                     modifier = workoutBannerModifier,
                                     workout = workout,
                                     onDelete = { onDeleteWorkout(workout) },
+                                    onSelect = { onSelectWorkout(workout) },
                                     onClick = {
                                         openWorkoutDetailsScreen(
                                             workout,

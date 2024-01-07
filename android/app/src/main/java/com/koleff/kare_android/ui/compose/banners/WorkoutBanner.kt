@@ -1,6 +1,5 @@
 package com.koleff.kare_android.ui.compose.banners
 
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,7 +28,6 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -48,13 +46,11 @@ import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -66,7 +62,6 @@ import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
 import kotlin.math.roundToInt
 
 @Composable
@@ -221,7 +216,8 @@ fun SwipeableWorkoutBanner(
     workout: WorkoutDto,
     hasDescription: Boolean = true,
     onClick: (WorkoutDto) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onSelect: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
@@ -230,12 +226,12 @@ fun SwipeableWorkoutBanner(
 
     //Used for swipe left
     var offsetX by remember { mutableStateOf(0f) }
-    val swipeLimit = screenWidth * 0.25f
+    val swipeLimit = screenWidth * 0.50f
 
-    val deleteBoxWidth = screenWidth / 4
-    val deleteBoxModifier = Modifier
+    val optionBoxWidth = screenWidth / 4
+    val optionBoxModifier = Modifier
         .height(200.dp) //Banner height
-        .width(deleteBoxWidth)
+        .width(optionBoxWidth)
 
     Box {
         WorkoutBanner(
@@ -255,8 +251,19 @@ fun SwipeableWorkoutBanner(
         )
 
         //Delete option
+        SelectButton(
+            modifier = optionBoxModifier
+                .offset {
+                    IntOffset(
+                        (screenWidth.toPx() + offsetX).roundToInt(), 0
+                    )
+                },
+            onSelect = onSelect
+        )
+
+        //Delete option
         DeleteButton(
-            modifier = deleteBoxModifier
+            modifier = optionBoxModifier
                 .offset {
                     IntOffset(
                         (screenWidth.toPx() + offsetX).roundToInt(), 0
@@ -292,6 +299,37 @@ fun DeleteButton(
         Icon(
             imageVector = Icons.Default.Delete,
             contentDescription = "Delete",
+            tint = Color.White,
+            modifier = Modifier.size(iconSize)
+        )
+    }
+}
+
+@Composable
+fun SelectButton(
+    modifier: Modifier,
+    onSelect: () -> Unit
+) {
+    val iconSize = 20.dp
+    val cornerSize = 24.dp
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                color = Color.Green,
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .clickable(onClick = onSelect)
+    ) {
+        Icon(
+            painterResource(id = R.drawable.ic_vector_select),
+            contentDescription = "Select",
             tint = Color.White,
             modifier = Modifier.size(iconSize)
         )
@@ -386,6 +424,7 @@ fun SwipeableWorkoutBannerPreview() {
             .height(200.dp),
         onClick = {},
         onDelete = {},
+        onSelect = {},
         workout = workout
     )
 }
