@@ -5,6 +5,7 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSet
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -173,28 +174,32 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             // Exercise sets -> setup cross refs
-            val exerciseSetCrossRefs: List<ExerciseSetCrossRef> = workout.exercises.flatMap { exercise ->
-                exercise.sets.map { set ->
-                    val setEntity = set.toSetEntity()
+            val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
+                workout.exercises.flatMap { exercise ->
+                    exercise.sets.map { set ->
+                        val setEntity = set.toSetEntity()
 
-                    if (set.setId == null) {
-                        //New set -> insert it
-                        val newSetId= UUID.randomUUID()
-                        setEntity.setId = newSetId
+                        if (set.setId == null) {
+                            //New set -> insert it
+                            val newSetId = UUID.randomUUID()
+                            setEntity.setId = newSetId
 
-                        exerciseSetDao.saveSet(setEntity)
-                    } else {
-                        //Existing set -> update it
-                        Log.d("SaveWorkout-LocalDatasource", "Exercise set with setId ${setEntity.setId} updated. Data: $setEntity")
-                        exerciseSetDao.updateSet(setEntity)
+                            exerciseSetDao.saveSet(setEntity)
+                        } else {
+                            //Existing set -> update it
+                            Log.d(
+                                "SaveWorkout-LocalDatasource",
+                                "Exercise set with setId ${setEntity.setId} updated. Data: $setEntity"
+                            )
+                            exerciseSetDao.updateSet(setEntity)
+                        }
+
+                        ExerciseSetCrossRef(
+                            exerciseId = exercise.exerciseId,
+                            setId = setEntity.setId
+                        )
                     }
-
-                    ExerciseSetCrossRef(
-                        exerciseId = exercise.exerciseId,
-                        setId = setEntity.setId
-                    )
                 }
-            }
 
             exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
 
@@ -205,6 +210,46 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
             workoutDetailsDao.insertWorkoutDetails(workout.toWorkoutDetails())
+
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun updateWorkout(
+        workout: WorkoutDto
+    ): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            workoutDao.updateWorkout(workout.toWorkout())
+
+            //Update duplicate data between Workout and WorkoutDetails...
+            val workoutDetailsWithExercises =
+                workoutDetailsDao.getWorkoutDetailsById(workout.workoutId)
+
+            val updatedWorkoutDetails = workoutDetailsWithExercises.workoutDetails.copy(
+                workoutDetailsId = workout.workoutId,
+                name = workout.name,
+                description = workoutDetailsWithExercises.workoutDetails.description,
+                muscleGroup = workout.muscleGroup,
+                isSelected = workout.isSelected
+            )
+
+//            val updatedWorkoutDetailsWithExercises =
+//                workoutDetailsWithExercises.copy(workoutDetails = updatedWorkoutDetails)
+//            val exercises: MutableList<ExerciseDto> =
+//                updatedWorkoutDetailsWithExercises.exercises.map { Exercise::toExerciseDto } as MutableList<ExerciseDto>
+//
+//            val workoutDetails = updatedWorkoutDetailsWithExercises.workoutDetails
+//                .toWorkoutDetailsDto(exercises)
+
+//            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
+
+            workoutDetailsDao.updateWorkoutDetails(updatedWorkoutDetails)
 
             val result = ServerResponseData(
                 BaseResponse()
