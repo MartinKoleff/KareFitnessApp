@@ -131,6 +131,9 @@ fun WorkoutsScreen(
                                         workout = it,
                                         navController = navController
                                     )
+                                },
+                                onEdit = {
+                                    //Edit prompt -> update workout use case
                                 }
                             )
                         } ?: run {
@@ -159,6 +162,9 @@ fun WorkoutsScreen(
                                             workout,
                                             navController = navController
                                         )
+                                    },
+                                    onEdit = {
+                                        //Edit prompt -> update workout use case
                                     }
                                 )
                             }

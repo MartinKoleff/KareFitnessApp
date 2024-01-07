@@ -354,7 +354,8 @@ fun SwipeableExerciseBanner(
                         (screenWidth.toPx() + offsetX).roundToInt(), 0
                     )
                 },
-            onDelete = onDelete
+            onDelete = onDelete,
+            title = "Delete Exercise"
         )
     }
 }
