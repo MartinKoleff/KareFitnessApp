@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import {map, Observable, of, tap} from 'rxjs';
-import { PostUser } from '../app/models/user.model';
+import { Observable, tap} from 'rxjs';
+import {GetUser, PostUser} from '../app/models/user.model';
 import {AuthService} from "./auth-service";
 import { CookieService } from 'ngx-cookie';
 
@@ -52,30 +52,29 @@ export class PostDataService {
     );
   }
 
-  login(user: { email: string; password: string }): Observable<any> {
+  login(user: GetUser): Observable<any> {
+
     const headers = new HttpHeaders().set('Content-Type', 'application/json; charset=utf-8');
 
-    // Make an HTTP GET request to fetch all users from the API endpoint
-    return this.http.get<any[]>(this.loginUrl, { headers }).pipe(
-      map((users) => {
-        // Check if the provided email and password match any user from the API response
-        const matchingUser = users.find(apiUser => apiUser.email === user.email && apiUser.password === user.password);
+    // Check if there's already a token or user ID in cookies
+    const existingToken = this.cookieService.get('token');
+    const existingUserId = this.cookieService.get('userId');
 
-        if (matchingUser) {
-          // If a matching user is found, extract the user ID and token from the API response
-          const userId = matchingUser.id;
-          const token = matchingUser.token;
+    if (existingToken || existingUserId) {
+      // Cookies already have values, handle it based on your requirements
+      alert('User is already logged in.');
+    }
 
-          // Store token and user ID in cookies
-          this.cookieService.put('token', token);
-          this.cookieService.put('userId', userId);
+    // Cookies are empty, proceed with the API call
+    return this.http.post(this.loginUrl, JSON.stringify(user), {headers: headers}).pipe(
+      tap((response: any) => {
+        const userId = response.id;
+        const token = response.token;
 
-          // Return the response as-is
-          return matchingUser;
-        } else {
-          // If no matching user is found, return an error or handle it as needed
-          throw new Error('Invalid email or password');
-        }
+        // Store token and user ID in cookies
+        this.cookieService.put('token', token);
+        this.cookieService.put('userId', userId);
+
       })
     );
   }
