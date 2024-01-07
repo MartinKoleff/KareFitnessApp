@@ -15,6 +15,7 @@ import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.state.SelectedWorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +45,11 @@ class WorkoutViewModel @Inject constructor(
         MutableStateFlow(BaseState())
     val selectWorkoutState: StateFlow<BaseState>
         get() = _selectWorkoutState
+
+    private val _getSelectedWorkoutState: MutableStateFlow<SelectedWorkoutState> =
+        MutableStateFlow(SelectedWorkoutState())
+    val getSelectedWorkoutState: StateFlow<SelectedWorkoutState>
+        get() = _getSelectedWorkoutState
 
     val isRefreshing by mutableStateOf(state.value.isLoading)
 
@@ -140,6 +146,25 @@ class WorkoutViewModel @Inject constructor(
                 //Update workout list
                 if (selectWorkoutState.isSuccessful) {
                     getWorkouts()
+                }
+            }
+        }
+    }
+
+    fun getSelectWorkout() {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.getSelectedWorkoutUseCase().collect { getSelectedWorkoutState ->
+                _getSelectedWorkoutState.value = getSelectedWorkoutState
+
+                //Update selected workout
+                if (getSelectedWorkoutState.isSuccessful) {
+                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout
+
+                    val updatedList = state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
+                    updatedList.add(selectedWorkout)
+
+                    _state.value = _state.value.copy(workoutList = updatedList)
+                    originalWorkoutList = updatedList
                 }
             }
         }
