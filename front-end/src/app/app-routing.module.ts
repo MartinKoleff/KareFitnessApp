@@ -15,14 +15,15 @@ import { CardioComponent } from './exercise-components/cardio/cardio.component';
 import { AbsComponent } from './exercise-components/abs/abs.component';
 import { ShouldersComponent } from './exercise-components/shoulders/shoulders.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
+import {AuthGuard} from "../services/auth-guard";
 
 const routes: Routes = [
-  {path:'', component:StartupComponent},
-  {path:'startup', component: StartupComponent},
-  {path:'login', component:LoginComponent},
-  {path:'register', component:RegisterComponent},
+  {path:'', component:StartupComponent, canActivate: [AuthGuard]},
+  {path:'startup', component: StartupComponent, canActivate: [AuthGuard]},
+  { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
   {path:'home', component: HomeComponent},
-  {path:'main', component: MainComponent},
+  {path:'main', component: MainComponent, },
   {path:'create-workout', component: CreateworkoutComponent},
   {path:'workout-list', component: WorkoutListComponent},
 
@@ -37,7 +38,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation:'reload'})],
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
