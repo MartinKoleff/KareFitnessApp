@@ -171,6 +171,7 @@ class WorkoutViewModel @Inject constructor(
                     val updatedList =
                         state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
                     updatedList.add(selectedWorkout)
+                    updatedList.sortBy { it.name }
 
                     _state.value = _state.value.copy(workoutList = updatedList)
                     originalWorkoutList = updatedList

@@ -25,10 +25,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
+import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
@@ -55,11 +57,7 @@ fun WorkoutDetailsScreen(
         )
     }
 
-
     val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
-    val onExerciseDeleted: (Int, ExerciseDto) -> Unit = { selectedWorkoutId, selectedExercise ->
-        workoutDetailsViewModel.deleteExercise(selectedWorkoutId, selectedExercise.exerciseId)
-    }
 
     var selectedWorkout by remember {
         mutableStateOf(workoutDetailsState.workout)
@@ -90,6 +88,26 @@ fun WorkoutDetailsScreen(
             selectedWorkout = deleteExerciseState.workout
             exercises = selectedWorkout.exercises
         }
+    }
+
+    //Dialog visibility
+    var showDeleteDialog by remember { mutableStateOf(false) }
+
+    //Dialog callbacks
+    var selectedExercise by remember { mutableStateOf<ExerciseDto?>(null) }
+    val onExerciseDeleted: (Int, ExerciseDto) -> Unit = { selectedWorkoutId, selectedExercise ->
+        workoutDetailsViewModel.deleteExercise(selectedWorkoutId, selectedExercise.exerciseId)
+    }
+
+    //Dialogs
+    if (showDeleteDialog && selectedExercise != null) {
+        WarningDialog(
+            title = "Delete Exercise",
+            description = "Are you sure you want to delete this exercise? This action cannot be undone.",
+            actionButtonTitle = "Delete",
+            onClick = { onExerciseDeleted(workoutId, selectedExercise!!) },
+            onDismiss = { showDeleteDialog = false }
+        )
     }
 
     //Pull to refresh
@@ -127,7 +145,10 @@ fun WorkoutDetailsScreen(
                                 .height(200.dp),
                             exercise = currentExercise,
                             onClick = onExerciseSelected,
-                            onDelete = { onExerciseDeleted(workoutId, currentExercise) }
+                            onDelete = {
+                                showDeleteDialog = true
+                                selectedExercise = currentExercise
+                            }
                         )
                     }
 
