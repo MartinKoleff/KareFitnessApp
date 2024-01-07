@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -41,7 +42,9 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.consumeAllChanges
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
@@ -49,6 +52,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -217,7 +221,8 @@ fun SwipeableWorkoutBanner(
     hasDescription: Boolean = true,
     onClick: (WorkoutDto) -> Unit,
     onDelete: () -> Unit,
-    onSelect: () -> Unit
+    onSelect: () -> Unit,
+    onEdit: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
@@ -226,7 +231,7 @@ fun SwipeableWorkoutBanner(
 
     //Used for swipe left
     var offsetX by remember { mutableStateOf(0f) }
-    val swipeLimit = screenWidth * 0.50f
+    val swipeLimit = screenWidth * 0.75f //This is 3/4 of the screen. One option takes 1/4 of the screen.
 
     val optionBoxWidth = screenWidth / 4
     val optionBoxModifier = Modifier
@@ -250,15 +255,28 @@ fun SwipeableWorkoutBanner(
             onClick = onClick
         )
 
-        //Delete option
-        SelectButton(
+        //Select option
+        EditButton(
             modifier = optionBoxModifier
                 .offset {
                     IntOffset(
                         (screenWidth.toPx() + offsetX).roundToInt(), 0
                     )
                 },
-            onSelect = onSelect
+            onEdit = onEdit,
+            title = "Edit Workout Name"
+        )
+
+        //Select option
+        SelectButton(
+            modifier = optionBoxModifier
+                .offset {
+                    IntOffset(
+                        (screenWidth.toPx() + optionBoxWidth.toPx() + offsetX).roundToInt(), 0
+                    )
+                },
+            onSelect = onSelect,
+            title = "Select Workout"
         )
 
         //Delete option
@@ -266,10 +284,11 @@ fun SwipeableWorkoutBanner(
             modifier = optionBoxModifier
                 .offset {
                     IntOffset(
-                        (screenWidth.toPx() + offsetX).roundToInt(), 0
+                        (screenWidth.toPx() + (optionBoxWidth.toPx() * 2) + offsetX).roundToInt(), 0
                     )
                 },
-            onDelete = onDelete
+            onDelete = onDelete,
+            title = "Delete Workout"
         )
     }
 }
@@ -277,13 +296,15 @@ fun SwipeableWorkoutBanner(
 @Composable
 fun DeleteButton(
     modifier: Modifier,
+    title: String,
     onDelete: () -> Unit
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
 
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
             .clip(RoundedCornerShape(cornerSize))
             .border(
@@ -302,19 +323,33 @@ fun DeleteButton(
             tint = Color.White,
             modifier = Modifier.size(iconSize)
         )
+
+        Text(
+            text = title,
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
+        )
     }
 }
 
 @Composable
 fun SelectButton(
     modifier: Modifier,
+    title: String,
     onSelect: () -> Unit
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
 
-    Box(
-        contentAlignment = Alignment.Center,
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = modifier
             .clip(RoundedCornerShape(cornerSize))
             .border(
@@ -327,14 +362,75 @@ fun SelectButton(
             )
             .clickable(onClick = onSelect)
     ) {
-        Icon(
-            painterResource(id = R.drawable.ic_vector_select),
+        val image: Painter = painterResource(id = R.drawable.ic_vector_select)
+
+        Image(
+            painter = image,
             contentDescription = "Select",
-            tint = Color.White,
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier.size(iconSize),
+            colorFilter = ColorFilter.tint(Color.White),
+            contentScale = ContentScale.Crop // This makes the image fill the bounds of the box
+        )
+
+        Text(
+            text = title,
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
         )
     }
 }
+
+@Composable
+fun EditButton(
+    modifier: Modifier,
+    title: String,
+    onEdit: () -> Unit
+) {
+    val iconSize = 20.dp
+    val cornerSize = 24.dp
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                color = Color.Blue,
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .clickable(onClick = onEdit)
+    ) {
+        Icon(
+            imageVector = Icons.Default.Edit,
+            contentDescription = "Edit",
+            tint = Color.White,
+            modifier = Modifier.size(iconSize)
+        )
+
+        Text(
+            text = title,
+            style = TextStyle(
+                color = Color.White,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.SemiBold
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
 
 fun openWorkoutDetailsScreen(workout: WorkoutDto, navController: NavHostController) {
     navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = workout.workoutId)) //No exercise is submitted
@@ -425,6 +521,58 @@ fun SwipeableWorkoutBannerPreview() {
         onClick = {},
         onDelete = {},
         onSelect = {},
+        onEdit = {},
         workout = workout
+    )
+}
+
+@Preview
+@Composable
+fun DeleteButtonPreview() {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    DeleteButton(
+        modifier = Modifier
+            .width(screenWidth / 4)
+            .height(200.dp),
+        onDelete = {},
+        title = "Delete Workout"
+    )
+}
+
+@Preview
+@Composable
+fun SelectButtonPreview() {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    SelectButton(
+        modifier = Modifier
+            .width(screenWidth / 4)
+            .height(200.dp),
+        onSelect = {},
+        title = "Select Workout"
+    )
+}
+
+@Preview
+@Composable
+fun EditButtonPreview() {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    EditButton(
+        modifier = Modifier
+            .width(screenWidth / 4)
+            .height(200.dp),
+        onEdit = {},
+        title = "Edit Workout Name"
     )
 }
