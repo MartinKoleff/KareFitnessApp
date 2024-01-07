@@ -41,7 +41,7 @@ public class WorkoutController {
         return ResponseEntity.status(HttpStatus.OK).body(this.workoutService.getWorkouts(user));
     }
 
-    @GetMapping("/get")
+    @PostMapping("/get")
     public ResponseEntity<GetWorkoutResponse> getWorkout(@RequestBody GetWorkoutRequest request, @User UserEntity user) {
         return ResponseEntity.status(HttpStatus.OK).body(this.workoutService.getWorkout(request, user));
     }

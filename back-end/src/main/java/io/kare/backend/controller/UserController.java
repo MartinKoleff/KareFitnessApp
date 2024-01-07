@@ -22,7 +22,7 @@ public class UserController {
 			.body(this.userService.register(request));
 	}
 
-	@GetMapping("/login")
+	@PostMapping("/login")
 	public ResponseEntity<LoginUserResponse> login(@RequestBody LoginUserRequest request) {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(this.userService.login(request));
