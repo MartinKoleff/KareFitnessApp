@@ -8,6 +8,8 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: password
       POSTGRES_DB: KARE_database
+    ports:
+      - "5433:5432"
     networks:
       - default
 

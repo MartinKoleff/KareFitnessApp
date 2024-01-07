@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { PostDataService } from '../../services/post-data.service';
 import { GetUser,  } from '../models/user.model';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth-service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -36,14 +36,22 @@ check() {
   return false;  // No match found, return false
 }
 
-  loginCheck(){
-    if (this.check()==false){
-      alert('Wrong email or password!')
-    }
-    else{
-      alert('success')
-      this.router.navigate(['/main']);
-    }
+  loginCheck() {
+    const userCredentials = { email: this.user.email, password: this.user.password };
+
+    this.post.login(userCredentials).subscribe(
+      (response: any) => {
+        console.log('User logged in successfully:', response);
+        this.navigateToMain();  // Optionally navigate to main after successful login
+      },
+      (error) => {
+        console.error('Error logging in:', error);
+        alert('Invalid email or password');
+      }
+    );
+  }
+  private navigateToMain() {
+    this.router.navigate(['/main']);
   }
 // loginCheck() {
 //   this.authService.setAuthToken('amogus');

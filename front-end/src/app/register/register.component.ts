@@ -1,7 +1,8 @@
 import { Component, ViewEncapsulation } from '@angular/core';
 import { PostDataService } from '../../services/post-data.service';
 import { PostUser } from '../models/user.model';
-import { tap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import {AuthService} from "../../services/auth-service";
 
 @Component({
   selector: 'app-register',
@@ -17,21 +18,33 @@ export class RegisterComponent {
   allPosts:any=[];
   constructor(
     private post: PostDataService,
-    private PostDataService: PostDataService,
-    ) {
+    private authService: AuthService,  // Inject AuthService
+    private router: Router,
+  ) {
     this.post.getPosts().subscribe((data) => {
       this.allPosts = data;
     });
+
   }
   saveUser() {
-    this.PostDataService.saveUser(this.user).subscribe(
+    this.post.saveUser(this.user).subscribe(
       (response: any) => {
-        console.log('User saved successfully:', response);
+        if (response && response.token) {
+          console.log('User saved successfully:', response);
+          this.navigateToMain(response.token);
+        } else {
+          console.error('Error saving user:', response);
+          alert('Error saving user. Please try again.');
+        }
       },
       (error) => {
         console.error('Error saving user:', error);
+        alert('Error saving user. Please try again.');
       }
     );
+  }
+  private navigateToMain(token: string) {
+    this.router.navigate(['/main'], { queryParams: { token: token } });
   }
 
   emailCheck() {
