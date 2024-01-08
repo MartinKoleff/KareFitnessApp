@@ -94,7 +94,7 @@ fun ExerciseDetailsConfiguratorScreen(
             exerciseDetailsConfiguratorViewModel.resetUpdateWorkoutState()
 
             //Raise a flag to update Workouts screen...
-            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
+            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true) //TODO: test
         }
     }
 
