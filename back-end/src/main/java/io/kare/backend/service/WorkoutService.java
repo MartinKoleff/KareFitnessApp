@@ -27,4 +27,6 @@ public interface WorkoutService {
 	AddWorkoutResponse addFullWorkout(AddFullWorkoutRequest request, UserEntity user);
 
     EmptyResponse updateWorkout(UpdateWorkoutRequest request, UserEntity user);
+
+	Void deleteWorkout(DeleteWorkoutRequest request, UserEntity user);
 }

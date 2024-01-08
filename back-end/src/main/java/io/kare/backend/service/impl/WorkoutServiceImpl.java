@@ -160,4 +160,12 @@ public class WorkoutServiceImpl implements WorkoutService {
 		this.exerciseOptionService.update(request.exercises(), workoutEntity.getExercises(), workoutEntity);
 		return new EmptyResponse();
 	}
+
+	@Override
+	public Void deleteWorkout(DeleteWorkoutRequest request, UserEntity user) {
+		Optional<WorkoutEntity> optional = this.workoutRepository.findByIdAndUser(request.id(), user);
+		WorkoutEntity workoutEntity = optional.orElseThrow(() -> new WorkoutNotFoundException(request.id()));
+		this.workoutRepository.delete(workoutEntity);
+		return null;
+	}
 }

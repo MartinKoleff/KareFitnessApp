@@ -2,6 +2,7 @@ package io.kare.backend.controller;
 
 import io.kare.backend.annotation.User;
 import io.kare.backend.entity.UserEntity;
+import io.kare.backend.payload.data.WorkoutFullExercisePayload;
 import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.AddWorkoutResponse;
 import io.kare.backend.payload.response.GetWorkoutResponse;
@@ -26,8 +27,8 @@ public class WorkoutController {
     }
 
     @PostMapping("/add_full")
-    public ResponseEntity<AddWorkoutResponse> addFullWorkout(@RequestBody AddFullWorkoutRequest request, @User UserEntity user) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(this.workoutService.addFullWorkout(request, user));
+    public ResponseEntity<AddWorkoutResponse> addFullWorkout(@RequestBody AddFullWorkoutFormattedRequest request, @User UserEntity user) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(this.workoutService.addFullWorkout(this.mapToAddFullWorkoutRequest(request), user));
     }
 
     @PutMapping("/select")
@@ -54,6 +55,28 @@ public class WorkoutController {
     @PutMapping("/update")
     public ResponseEntity<?> updateWorkout(@RequestBody UpdateWorkoutRequest request, @User UserEntity user) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.workoutService.updateWorkout(request, user));
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteWorkout(@RequestBody DeleteWorkoutRequest request, @User UserEntity user) {
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.workoutService.deleteWorkout(request, user));
+    }
+
+    private AddFullWorkoutRequest mapToAddFullWorkoutRequest(AddFullWorkoutFormattedRequest request) {
+        return new AddFullWorkoutRequest(
+            request.exercises().stream().map(exercise -> new WorkoutFullExercisePayload(
+                exercise.sets().size(),
+                exercise.sets().get(0).reps(),
+                exercise.sets().get(0).weight(),
+                exercise.name(),
+                exercise.description(),
+                exercise.url(),
+                exercise.muscleGroup(),
+                exercise.machineType()
+            )).toList(),
+            request.name(),
+            request.description()
+        );
     }
 
 }
