@@ -5,33 +5,69 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
+import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.data.room.entity.SetEntity
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.util.UUID
 import javax.inject.Inject
 
 class ExerciseDBManager @Inject constructor(
-    private val preferences: Preferences
+    private val preferences: Preferences,
+    private val exerciseDao: ExerciseDao,
+    private val exerciseDetailsDao: ExerciseDetailsDao,
+    private val exerciseSetDao: ExerciseSetDao
 ) {
-    val hasInitializedExerciseTableRoomDB = preferences.hasInitializedExerciseTableRoomDB()
+    private val hasInitializedExerciseTableRoomDB = preferences.hasInitializedExerciseTableRoomDB()
 
-    suspend fun initializeExerciseTableRoomDB(
-        exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao
-    ) = withContext(Dispatchers.IO) {
+    suspend fun initializeExerciseTableRoomDB() = withContext(Dispatchers.IO) {
+        if (hasInitializedExerciseTableRoomDB) return@withContext
+
         for (muscleGroup in MuscleGroup.values()) {
             val exercisesList = loadExercises(muscleGroup)
             val exerciseDetailsList = loadExerciseDetails(muscleGroup)
-            val crossRefs = loadAllCrossRefs()
+            val exerciseDetailsExerciseCrossRef = loadAllCrossRefs()
+
+            val exerciseSetsCrossRef = loadExerciseSetsCrossRefs(exercisesList)
 
             exerciseDao.insertAll(exercisesList)
             exerciseDetailsDao.insertAll(exerciseDetailsList)
 
-            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(crossRefs)
+            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRef)
+            exerciseDao.insertAllExerciseSetCrossRef(exerciseSetsCrossRef)
         }
         preferences.initializeExerciseTableRoomDB()
+    }
+
+    private fun loadExerciseSets(): List<SetEntity> {
+        return listOf(
+            SetEntity(UUID.randomUUID(),1, 12, 25f),
+            SetEntity(UUID.randomUUID(),2, 10, 30f),
+            SetEntity(UUID.randomUUID(),3, 8, 35f)
+        )
+    }
+
+    private suspend fun loadExerciseSetsCrossRefs(allExercises: List<Exercise>): List<ExerciseSetCrossRef> {
+        val crossRefs: MutableList<ExerciseSetCrossRef> = mutableListOf()
+
+        val exerciseSets: MutableList<SetEntity> = mutableListOf()
+        var counter: Int = 0
+        for (exercise in allExercises) {
+            exerciseSets.addAll(loadExerciseSets()) //Generate new setId with same ExerciseSet data...
+
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 0].setId))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 1].setId))
+            crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 2].setId))
+
+            counter += 3
+        }
+
+        exerciseSetDao.insertAllExerciseSets(exerciseSets) //Insert ExerciseSet
+        return crossRefs
     }
 
     private fun loadAllCrossRefs(): List<ExerciseDetailsExerciseCrossRef> {
@@ -108,9 +144,7 @@ class ExerciseDBManager @Inject constructor(
             MuscleGroup.BICEPS -> getBicepsExerciseDetails()
             MuscleGroup.SHOULDERS -> getShoulderExerciseDetails()
             MuscleGroup.LEGS -> getLegsExerciseDetails()
-            MuscleGroup.ARMS, MuscleGroup.ABS, MuscleGroup.CARDIO, MuscleGroup.FULL_BODY, MuscleGroup.PUSH_PULL_LEGS, MuscleGroup.UPPER_LOWER_BODY, MuscleGroup.OTHER, MuscleGroup.NONE -> {
-                emptyList()
-            }
+            else -> emptyList()
         }
     }
 
@@ -122,9 +156,7 @@ class ExerciseDBManager @Inject constructor(
             MuscleGroup.BICEPS -> getBicepsExercises()
             MuscleGroup.SHOULDERS -> getShoulderExercises()
             MuscleGroup.LEGS -> getLegsExercises()
-            MuscleGroup.ARMS, MuscleGroup.ABS, MuscleGroup.CARDIO, MuscleGroup.FULL_BODY, MuscleGroup.PUSH_PULL_LEGS, MuscleGroup.UPPER_LOWER_BODY, MuscleGroup.OTHER, MuscleGroup.NONE -> {
-                emptyList()
-            }
+            else -> emptyList()
         }
     }
 

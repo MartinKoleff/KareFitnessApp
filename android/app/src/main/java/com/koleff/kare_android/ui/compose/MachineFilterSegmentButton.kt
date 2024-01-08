@@ -17,8 +17,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.koleff.kare_android.data.model.event.OnFilterEvent
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.data.model.dto.MachineType
+import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
+import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +28,7 @@ fun MachineFilterSegmentButton(
     modifier: Modifier = Modifier,
     selectedOptionIndex: Int = -1,
     isDisabled: Boolean,
-    exerciseListViewModel: ExerciseViewModel
+    exerciseListViewModel: ExerciseListViewModel
 ) {
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
@@ -46,23 +47,23 @@ fun MachineFilterSegmentButton(
                     //Filter
                     when (selectedIndex) {
                         0 -> {
-                            exerciseListViewModel.onEvent(OnFilterEvent.DumbbellFilter)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.DUMBBELL)
                         }
 
                         1 -> {
-                            exerciseListViewModel.onEvent(OnFilterEvent.BarbellFilter)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.BARBELL)
                         }
 
                         2 -> {
-                            exerciseListViewModel.onEvent(OnFilterEvent.MachineFilter)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.MACHINE)
                         }
 
                         3 -> {
-                            exerciseListViewModel.onEvent(OnFilterEvent.CalisthenicsFilter)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.CALISTHENICS)
                         }
 
                         -1 -> { //Disabled filter -> show all
-                            exerciseListViewModel.onEvent(OnFilterEvent.NoFilter)
+                            exerciseListViewModel.onFilterExercisesEvent(MachineType.NONE)
                         }
                     }
                 },

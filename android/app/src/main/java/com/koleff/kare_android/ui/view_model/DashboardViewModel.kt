@@ -8,8 +8,8 @@ import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.state.DashboardState
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.ui.state.DashboardState
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher

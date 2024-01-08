@@ -12,7 +12,7 @@ data class Workout(
     val name: String,
     val muscleGroup: MuscleGroup,
     val snapshot: String,
-    val totalExercises: Int,
+    var totalExercises: Int,
     val isSelected: Boolean,
 ) {
     fun toWorkoutDto(): WorkoutDto {

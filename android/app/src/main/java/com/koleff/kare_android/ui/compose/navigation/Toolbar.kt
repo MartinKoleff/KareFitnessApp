@@ -1,6 +1,5 @@
 package com.koleff.kare_android.ui.compose.navigation
 
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Settings
@@ -12,11 +11,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
-import com.koleff.kare_android.data.MainScreen
+import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.ui.MainScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +35,7 @@ fun Toolbar(
             titleContentColor = MaterialTheme.colorScheme.primary,
         ),
         title = {
-            if(hasTitle){
+            if (hasTitle) {
                 Text(
                     text = title,
                     maxLines = 2,
@@ -62,5 +63,16 @@ fun Toolbar(
             )
         },
         scrollBehavior = scrollBehavior
+    )
+}
+
+@Preview
+@Composable
+fun ToolbarPreview() {
+    val navController = rememberNavController()
+
+    Toolbar(
+        navController = navController,
+        isNavigationInProgress = mutableStateOf(false)
     )
 }

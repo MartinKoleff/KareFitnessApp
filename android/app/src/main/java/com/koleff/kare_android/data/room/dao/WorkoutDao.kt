@@ -13,7 +13,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
 interface WorkoutDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkout(workout: Workout)
+    suspend fun insertWorkout(workout: Workout): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(workouts: List<Workout>)
@@ -41,4 +41,8 @@ interface WorkoutDao {
     @Transaction
     @Query("SELECT * FROM workout_table WHERE isSelected = 1") //true = 1, false = 0
     fun getWorkoutByIsSelected(): Workout
+
+    @Transaction
+    @Query("SELECT * FROM workout_table WHERE workoutId = :workoutId") //true = 1, false = 0
+    fun getWorkoutById(workoutId: Int): Workout
 }

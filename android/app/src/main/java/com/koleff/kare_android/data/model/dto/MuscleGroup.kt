@@ -16,6 +16,7 @@ enum class MuscleGroup(val muscleGroupId: Int) {
     UPPER_LOWER_BODY(11),
     ARMS(12),
     OTHER(13),
+    ALL(14),
     NONE(-1);
 
     companion object {
@@ -27,10 +28,10 @@ enum class MuscleGroup(val muscleGroupId: Int) {
                 MuscleGroup.CHEST -> R.drawable.ic_chest
                 MuscleGroup.BACK -> R.drawable.ic_back
                 MuscleGroup.TRICEPS -> R.drawable.ic_triceps
-                MuscleGroup.BICEPS -> R.drawable.ic_biceps
+                MuscleGroup.BICEPS, ARMS -> R.drawable.ic_biceps
                 MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
                 MuscleGroup.LEGS -> R.drawable.ic_legs
-                else -> -1
+                else -> R.drawable.ic_default
             }
         }
     }

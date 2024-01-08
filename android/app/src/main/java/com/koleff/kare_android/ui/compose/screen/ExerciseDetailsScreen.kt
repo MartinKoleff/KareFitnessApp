@@ -3,7 +3,6 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,49 +29,34 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.koleff.kare_android.R
-import com.koleff.kare_android.data.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.state.ExerciseDetailsState
-import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
+import com.koleff.kare_android.ui.state.ExerciseDetailsState
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.YoutubeVideoPlayer
-import com.koleff.kare_android.ui.compose.navigation.FloatingNavigationItem
+import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 
 @Composable
 fun ExerciseDetailsScreen(
     navController: NavHostController,
-    exerciseId: Int = -1, //Invalid exercise selected...
-    initialMuscleGroupId: Int = -1, //Invalid muscle group selected...
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory
+    exerciseDetailsViewModel: ExerciseDetailsViewModel
 ) {
-    val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
+    val exerciseDetailsState by exerciseDetailsViewModel.state.collectAsState()
 
-    val exerciseDetailsViewModel = viewModel<ExerciseDetailsViewModel>(
-        factory = ExerciseDetailsViewModel.provideExerciseDetailsViewModelFactory(
-            factory = exerciseDetailsViewModelFactory,
-            exerciseId = exerciseId,
-            initialMuscleGroup = initialMuscleGroup
-        )
-    )
-
-    val exerciseDetailsState = exerciseDetailsViewModel.state.collectAsState()
-
-    Log.d("ExerciseDetailsScreen", exerciseDetailsState.value.exercise.muscleGroup.toString())
-    val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.value.exercise.muscleGroup)
+    Log.d("ExerciseDetailsScreen", exerciseDetailsState.exercise.muscleGroup.toString())
+    val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
 
     ExerciseDetailsScreenScaffold(
-        screenTitle = exerciseDetailsState.value.exercise.name,
+        screenTitle = exerciseDetailsState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
-        exerciseImageId = exerciseImageId
+        exerciseImageId = exerciseImageId,
+        exerciseId = exerciseDetailsState.exercise.id
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -90,7 +75,7 @@ fun ExerciseDetailsScreen(
 
         ExerciseDetailsContent(
             modifier = modifier,
-            exerciseDetailsState = exerciseDetailsState.value,
+            exerciseDetailsState = exerciseDetailsState,
         )
     }
 }
@@ -191,6 +176,7 @@ fun ExerciseDetailsScreenPreview() {
     val isNavigationInProgress = mutableStateOf(false)
     val exerciseDetailsState = ExerciseDetailsState(
         exercise = ExerciseDetailsDto(
+            id = 1,
             name = "Bulgarian split squad",
             description = "Description: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
             muscleGroup = MuscleGroup.LEGS,
@@ -205,7 +191,8 @@ fun ExerciseDetailsScreenPreview() {
         screenTitle = exerciseDetailsState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
-        exerciseImageId = exerciseImageId
+        exerciseImageId = exerciseImageId,
+        exerciseId = exerciseDetailsState.exercise.id
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

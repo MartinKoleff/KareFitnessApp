@@ -1,21 +1,13 @@
 package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Entity(
-    tableName = "exercise_table",
-//    foreignKeys = [
-//        ForeignKey(
-//            entity = ExerciseDetails::class,
-//            parentColumns = ["exerciseId"],
-//            childColumns = ["exerciseDetailsId"]
-//        )
-//    ]
+    tableName = "exercise_table"
 )
 data class Exercise(
     @PrimaryKey(autoGenerate = true)

@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.room.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -16,7 +17,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExer
 interface WorkoutDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutDetails(workout: WorkoutDetails)
+    suspend fun insertWorkoutDetails(workout: WorkoutDetails): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllDetails(workouts: List<WorkoutDetails>)
@@ -26,6 +27,12 @@ interface WorkoutDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
+
+    @Delete
+    suspend fun deleteWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
+
+    @Delete
+    suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
 
     @Query("DELETE FROM workout_details_table WHERE workoutDetailsId = :workoutId")
     suspend fun deleteWorkoutDetails(workoutId: Int)
@@ -47,5 +54,5 @@ interface WorkoutDetailsDao {
 
     @Transaction
     @Query("SELECT * FROM workout_details_table w WHERE workoutDetailsId = :workoutId")
-    fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises
+    fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises?
 }
