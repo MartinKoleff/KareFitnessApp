@@ -35,6 +35,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.banners.AddWorkoutBanner
@@ -103,6 +104,26 @@ fun WorkoutsScreen(
         val workoutState by workoutListViewModel.state.collectAsState()
         val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
         val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
+        val createWorkoutState by workoutListViewModel.createWorkoutState.collectAsState()
+
+        LaunchedEffect(createWorkoutState) {
+
+            //Await update workout
+            if (createWorkoutState.isSuccessful) {
+
+                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = createWorkoutState.workout.workoutId)) {
+
+                    //Pop backstack and set the first element to be the Workouts screen
+                    popUpTo(MainScreen.Workouts.route) { inclusive = true }
+
+                    //Clear all other entries in the back stack
+                    launchSingleTop = true
+                }
+
+                //Raise a flag to update Workouts screen...
+                navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
+            }
+        }
 
         //Dialog visibility
         var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
@@ -190,7 +211,12 @@ fun WorkoutsScreen(
                     workoutListViewModel = workoutListViewModel
                 )
 
-                if (workoutState.isLoading || workoutListViewModel.isRefreshing || deleteWorkoutState.isLoading || updateWorkoutState.isLoading) { //Don't show loader if retrieved from cache...
+                if (workoutState.isLoading ||
+                    workoutListViewModel.isRefreshing ||
+                    deleteWorkoutState.isLoading ||
+                    updateWorkoutState.isLoading ||
+                    createWorkoutState.isLoading
+                ) { //Don't show loader if retrieved from cache...
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
@@ -272,7 +298,13 @@ fun WorkoutsScreen(
                                     }
                                 } else {
                                     AddWorkoutBanner {
-                                        //Navigate to WorkoutDetails...
+                                        workoutListViewModel.createWorkout()
+
+//                                        //Navigate to WorkoutDetails...
+//                                        openWorkoutDetailsScreen(
+//                                            navController = navController,
+//                                            workout = newWorkout
+//                                        )
                                     }
                                 }
                             }

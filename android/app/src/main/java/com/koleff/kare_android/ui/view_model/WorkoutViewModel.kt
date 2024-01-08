@@ -57,6 +57,12 @@ class WorkoutViewModel @Inject constructor(
     val updateWorkoutState: StateFlow<UpdateWorkoutState>
         get() = _updateWorkoutState
 
+    private val _createWorkoutState: MutableStateFlow<UpdateWorkoutState> =
+        MutableStateFlow(UpdateWorkoutState())
+    val createWorkoutState: StateFlow<UpdateWorkoutState>
+        get() = _createWorkoutState
+
+
     val isRefreshing by mutableStateOf(state.value.isLoading)
 
     private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
@@ -192,6 +198,26 @@ class WorkoutViewModel @Inject constructor(
                     val updatedList =
                         state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
                     updatedList.add(selectedWorkout)
+                    updatedList.sortBy { it.name }
+
+                    _state.value = _state.value.copy(workoutList = updatedList)
+                    originalWorkoutList = updatedList
+                }
+            }
+        }
+    }
+
+    fun createWorkout() {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.createWorkoutUseCase().collect { createWorkoutState ->
+                _createWorkoutState.value = createWorkoutState
+
+                //Update workout list
+                if (createWorkoutState.isSuccessful) {
+                    val createdWorkout = createWorkoutState.workout
+
+                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
+                    updatedList.add(createdWorkout)
                     updatedList.sortBy { it.name }
 
                     _state.value = _state.value.copy(workoutList = updatedList)
