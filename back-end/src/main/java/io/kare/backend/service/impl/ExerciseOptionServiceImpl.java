@@ -63,4 +63,9 @@ public class ExerciseOptionServiceImpl implements ExerciseOptionService {
 	public List<ExerciseOptionEntity> save(List<ExerciseOptionEntity> exerciseOptionEntities) {
 		return this.exerciseOptionRepository.saveAll(exerciseOptionEntities);
 	}
+
+	@Override
+	public void removeExerciseOptionsByWorkout(WorkoutEntity workout) {
+		this.exerciseOptionRepository.deleteAllByWorkout(workout);
+	}
 }

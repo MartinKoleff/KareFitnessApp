@@ -22,4 +22,7 @@ public interface ExerciseRepository extends JpaRepository<ExerciseEntity, String
     );
 
 	Optional<ExerciseEntity> findByNameAndUser(String name, UserEntity user);
+
+	@Query("SELECT e FROM ExerciseEntity e WHERE :workout MEMBER OF e.workouts")
+	List<ExerciseEntity> findByWorkout(WorkoutEntity workout);
 }

@@ -19,6 +19,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 	private final ExerciseMapper exerciseMapper;
 	private final ExerciseOptionService exerciseOptionService;
 	private final SelectedWorkoutService selectedWorkoutService;
+	private final ProgramService programService;
 	private final WorkoutMapper workoutMapper;
 
 	public WorkoutServiceImpl(
@@ -27,6 +28,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 		ExerciseMapper exerciseMapper,
 		ExerciseOptionService exerciseOptionService,
 		SelectedWorkoutService selectedWorkoutService,
+		ProgramService programService,
 		WorkoutMapper workoutMapper
 	) {
 		this.workoutRepository = workoutRepository;
@@ -34,6 +36,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 		this.exerciseMapper = exerciseMapper;
 		this.exerciseOptionService = exerciseOptionService;
 		this.selectedWorkoutService = selectedWorkoutService;
+		this.programService = programService;
 		this.workoutMapper = workoutMapper;
 	}
 
@@ -165,6 +168,10 @@ public class WorkoutServiceImpl implements WorkoutService {
 	public Void deleteWorkout(DeleteWorkoutRequest request, UserEntity user) {
 		Optional<WorkoutEntity> optional = this.workoutRepository.findByIdAndUser(request.id(), user);
 		WorkoutEntity workoutEntity = optional.orElseThrow(() -> new WorkoutNotFoundException(request.id()));
+		this.exerciseService.removeWorkoutFromExercises(workoutEntity);
+		this.exerciseOptionService.removeExerciseOptionsByWorkout(workoutEntity);
+		this.selectedWorkoutService.delete(workoutEntity);
+		this.programService.removeWorkout(workoutEntity);
 		this.workoutRepository.delete(workoutEntity);
 		return null;
 	}

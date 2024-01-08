@@ -64,13 +64,22 @@ public class ProgramServiceImpl implements ProgramService {
 	}
 
 	@Override
-	public EmptyResponse updateProgram(UpdateProgramRequest request, UserEntity user) {
+	public Void updateProgram(UpdateProgramRequest request, UserEntity user) {
 		ProgramEntity entity = this.programRepository.findById(request.id())
 			.orElseThrow(ProgramNotFoundException::new);
 		List<WorkoutEntity> workouts = this.workoutService.getWorkouts(request.workoutIds(), user);
 		entity.setName(request.name());
 		entity.setWorkouts(workouts);
 		this.programRepository.save(entity);
-		return new EmptyResponse();
+		return null;
+	}
+
+	@Override
+	public void removeWorkout(WorkoutEntity workoutEntity) {
+		List<ProgramEntity> programEntities = this.programRepository.findAllByWorkoutsContaining(workoutEntity);
+		programEntities.forEach(programEntity -> {
+			programEntity.getWorkouts().remove(workoutEntity);
+			this.programRepository.save(programEntity);
+		});
 	}
 }

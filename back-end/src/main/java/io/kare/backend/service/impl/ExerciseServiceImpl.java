@@ -1,7 +1,6 @@
 package io.kare.backend.service.impl;
 
-import io.kare.backend.entity.ExerciseEntity;
-import io.kare.backend.entity.UserEntity;
+import io.kare.backend.entity.*;
 import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.ExerciseRepository;
@@ -68,5 +67,14 @@ public class ExerciseServiceImpl implements ExerciseService {
         exerciseEntity.setUrl(request.url());
         this.exerciseRepository.save(exerciseEntity);
         return new EmptyResponse();
+    }
+
+    @Override
+    public void removeWorkoutFromExercises(WorkoutEntity workout) {
+        List<ExerciseEntity> exercises = this.exerciseRepository.findByWorkout(workout);
+        for (ExerciseEntity exercise : exercises) {
+            exercise.getWorkouts().remove(workout);
+        }
+        this.exerciseRepository.saveAll(exercises);
     }
 }

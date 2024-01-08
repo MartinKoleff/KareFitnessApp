@@ -43,4 +43,14 @@ public class SelectedWorkoutServiceImpl implements SelectedWorkoutService {
 			.orElseThrow(() -> new RuntimeException("No selected workout found"))
 			.getWorkout();
 	}
+
+	@Override
+	public void delete(WorkoutEntity workoutEntity) {
+		Optional<SelectedWorkoutEntity> selectedWorkoutEntityOptional = this.selectedWorkoutRepository.findByWorkout(
+			workoutEntity);
+		selectedWorkoutEntityOptional.ifPresentOrElse(
+			this.selectedWorkoutRepository::delete,
+			() -> {}
+		);
+	}
 }
