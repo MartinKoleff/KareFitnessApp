@@ -110,15 +110,18 @@ fun WorkoutsScreen(
 
             //Await update workout
             if (createWorkoutState.isSuccessful) {
-
+                Log.d("WorkoutsScreen", "Create workout with id ${createWorkoutState.workout.workoutId}")
                 navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = createWorkoutState.workout.workoutId)) {
 
                     //Pop backstack and set the first element to be the Workouts screen
-                    popUpTo(MainScreen.Workouts.route) { inclusive = true }
+                    popUpTo(MainScreen.Workouts.route) { inclusive = false }
 
                     //Clear all other entries in the back stack
                     launchSingleTop = true
                 }
+
+                //Reset state
+                workoutListViewModel.resetCreateWorkoutState()
 
                 //Raise a flag to update Workouts screen...
                 navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
@@ -303,12 +306,6 @@ fun WorkoutsScreen(
                                 } else {
                                     AddWorkoutBanner {
                                         workoutListViewModel.createWorkout()
-
-//                                        //Navigate to WorkoutDetails...
-//                                        openWorkoutDetailsScreen(
-//                                            navController = navController,
-//                                            workout = newWorkout
-//                                        )
                                     }
                                 }
                             }

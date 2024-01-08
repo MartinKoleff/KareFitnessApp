@@ -10,6 +10,7 @@ import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.state.UpdateWorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -116,5 +117,9 @@ class SearchWorkoutViewModel @Inject constructor(
                 _updateWorkoutState.value = updateWorkoutState
             }
         }
+    }
+
+    fun resetUpdateWorkoutState() {
+        _updateWorkoutState.value = WorkoutDetailsState()
     }
 }

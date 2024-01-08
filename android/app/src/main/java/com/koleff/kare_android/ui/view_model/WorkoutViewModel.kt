@@ -227,6 +227,10 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+    fun resetCreateWorkoutState() {
+        _createWorkoutState.value = UpdateWorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+    }
+
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {

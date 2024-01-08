@@ -81,12 +81,15 @@ fun SearchWorkoutsScreen(
                 navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = updateWorkoutState.workout.workoutId)) {
 
                     //Pop backstack and set the first element to be the dashboard
-                    popUpTo(MainScreen.Workouts.route) { inclusive = true }
+                    popUpTo(MainScreen.Workouts.route) { inclusive = false }
 
                     //Clear all other entries in the back stack
                     launchSingleTop = true
                 }
             }
+
+            //Reset state
+            searchWorkoutViewModel.resetUpdateWorkoutState()
         }
     }
 
