@@ -35,7 +35,7 @@
   height:100%;
   min-height: 100vh;
 }
-.logForm{
+.createForm{
   background-color:#6B246B;
   width: 90%;
   display: flex;
@@ -60,7 +60,7 @@ button:hover {
   box-shadow: 0 0 20px #ECBDF2;
   background-color: #ECBDF2;
 }
-.startupBox {
+.create-startupBox {
   border:0;
   width: 45%;
   height: 10%;
@@ -86,7 +86,7 @@ img{
   line-height:1;
   font-style: italic;
 }
-.group-container{
+.create-container{
   background-color:inherit;
   width: 90%;
   display: flex;
