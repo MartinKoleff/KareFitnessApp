@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.compose.banners
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,6 +25,10 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -30,6 +36,8 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.consumeAllChanges
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -37,16 +45,20 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutDto
+import kotlin.math.roundToInt
 
 @Composable
 fun ExerciseBannerV1(
@@ -143,14 +155,15 @@ fun ExerciseBannerV2(
         ),
         onClick = { onClick.invoke(exercise) }
     ) {
-        Box(modifier = modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
             //Fixes left side white overlay
             Box(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2)
-                    .background(color = Color.Black)
+                    .graphicsLayer { alpha = 0.95f }
+                    .background(color = Color.Black) //TODO: add blend mode...
                     .align(Alignment.TopStart),
             )
 
@@ -294,18 +307,63 @@ fun ExerciseList(
     }
 }
 
+@Composable
+fun SwipeableExerciseBanner(
+    modifier: Modifier,
+    exercise: ExerciseDto,
+    hasDescription: Boolean = true,
+    onClick: (ExerciseDto) -> Unit,
+    onDelete: () -> Unit
+) {
+    val configuration = LocalConfiguration.current
 
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    //Used for swipe left
+    var offsetX by remember { mutableStateOf(0f) }
+    val swipeLimit = screenWidth * 0.25f
+
+    val deleteBoxWidth = screenWidth / 4
+    val deleteBoxModifier = Modifier
+        .height(200.dp) //Banner height
+        .width(deleteBoxWidth)
+
+    Box {
+        ExerciseBannerV2(
+            modifier = modifier
+                .offset { IntOffset(offsetX.roundToInt(), 0) }
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { change, dragAmount ->
+                        val newOffsetX = (offsetX + dragAmount)
+                            .coerceIn(-swipeLimit.toPx(), 0f)
+                        offsetX = newOffsetX
+                        change.consumeAllChanges()
+                    }
+                },
+            exercise = exercise,
+            hasDescription = hasDescription,
+            onClick = onClick
+        )
+
+        //Delete option
+        DeleteButton(
+            modifier = deleteBoxModifier
+                .offset {
+                    IntOffset(
+                        (screenWidth.toPx() + offsetX).roundToInt(), 0
+                    )
+                },
+            onDelete = onDelete,
+            title = "Delete Exercise"
+        )
+    }
+}
 
 @Preview
 @Composable
 fun ExerciseBannerV1AndV2ComparingPreview() {
-    val exercise = ExerciseDto(
-        -1,
-        "BARBELL BENCH PRESS",
-        MuscleGroup.CHEST,
-        MachineType.BARBELL,
-        ""
-    )
+    val exercise = MockupDataGenerator.generateExercise()
 
     Column(
         Modifier
@@ -327,11 +385,28 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
         )
 
         ExerciseBannerV1(
-            Modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp), exercise, {}
+                .height(200.dp),
+            exercise = exercise,
+            onClick = {}
         )
     }
+}
+
+@Preview
+@Composable
+fun SwipeableExerciseBannerPreview() {
+    val exercise = MockupDataGenerator.generateExercise()
+
+    SwipeableExerciseBanner(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        exercise = exercise,
+        onClick = {},
+        onDelete = {}
+    )
 }
 
 @Preview

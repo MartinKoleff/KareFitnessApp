@@ -13,7 +13,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
 interface WorkoutDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkout(workout: Workout)
+    suspend fun insertWorkout(workout: Workout): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(workouts: List<Workout>)

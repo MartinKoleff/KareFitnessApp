@@ -8,9 +8,9 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.state.ExerciseDetailsState
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
-import com.koleff.kare_android.domain.repository.ExerciseRepository
+import com.koleff.kare_android.ui.state.ExerciseDetailsState
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class ExerciseDetailsViewModel @AssistedInject constructor(
-    private val exerciseRepository: ExerciseRepository,
+    private val exerciseUseCases: ExerciseUseCases,
     @Assisted private val exerciseId: Int,
     @Assisted private val initialMuscleGroup: MuscleGroup,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
@@ -43,29 +43,15 @@ class ExerciseDetailsViewModel @AssistedInject constructor(
 
     private fun getExerciseDetails(exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseRepository.getExerciseDetails(exerciseId).collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = ExerciseDetailsState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
+            exerciseUseCases.getExerciseDetailsUseCase(exerciseId).collect { exerciseDetailsState ->
 
-                    is ResultWrapper.Loading -> {
-                        _state.value = state.value.copy( //Resets initial muscle group state if not using copy...
-                            isLoading = true
-                        )
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("ExerciseDetailsViewModel", "Flow received.")
-
-                        _state.value = ExerciseDetailsState(
-                            isSuccessful = true,
-                            exercise = apiResult.data.exerciseDetails
-                        )
-                    }
+                //Don't clear the exercise initial muscle group data...
+                if (exerciseDetailsState.isLoading) {
+                    _state.value = state.value.copy(
+                        isLoading = true
+                    )
+                } else {
+                    _state.value = exerciseDetailsState
                 }
             }
         }

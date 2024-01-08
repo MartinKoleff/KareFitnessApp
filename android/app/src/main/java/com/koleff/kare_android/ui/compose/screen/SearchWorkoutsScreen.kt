@@ -1,5 +1,7 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,52 +16,89 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.event.OnSearchEvent
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchWorkoutList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutViewModel
+import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
 @Composable
 fun SearchWorkoutsScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     exercise: ExerciseDto,
-    workoutViewModel: WorkoutViewModel,
-    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory,
+    searchWorkoutViewModel: SearchWorkoutViewModel,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    var selectedWorkoutId by remember { mutableStateOf<Int>(-1) }
-    val workoutDetailsViewModel: WorkoutDetailsViewModel = viewModel(
-        key = "WorkoutDetailsViewModel-$selectedWorkoutId",
-        factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
-            factory = workoutDetailsViewModelFactory,
-            workoutId = selectedWorkoutId
-        )
-    )
-    val workoutDetailsState by workoutDetailsViewModel.state.collectAsState()
+    var selectedWorkoutId by remember { mutableStateOf(-1) }
 
-    //Adds exercise to workout
-    LaunchedEffect(workoutDetailsState.workout) {
-        if (workoutDetailsState.workout.workoutId != -1) {
-            workoutDetailsState.workout.exercises.add(exercise)
-            workoutViewModel.updateWorkout(workoutDetailsState.workout)
+    val workoutDetailsState by searchWorkoutViewModel.selectedWorkoutState.collectAsState()
+    val updateWorkoutState by searchWorkoutViewModel.updateWorkoutState.collectAsState()
+
+    var isUpdateLoading by remember { mutableStateOf(false) } //Used to show loading between getWorkoutDetails and updateWorkout
+
+    val alpha = remember { Animatable(1f) }  //Used for animated transition
+    val screenTitle = remember { mutableStateOf("Select workout") }
+
+    LaunchedEffect(selectedWorkoutId) {
+        selectedWorkoutId != -1 || return@LaunchedEffect
+
+        searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId).also {
+            isUpdateLoading = true
+            screenTitle.value = "Loading..."
         }
     }
 
-    SearchListScaffold("Select workout", navController, isNavigationInProgress) { innerPadding ->
+    LaunchedEffect(key1 = workoutDetailsState) {
+
+        //Await workout details
+        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
+            workoutDetailsState.workout.exercises.add(exercise)
+
+            searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
+        }
+    }
+
+    LaunchedEffect(key1 = updateWorkoutState) {
+        //Await update workout
+        if (updateWorkoutState.isSuccessful) {
+
+            //Animate transition navigation
+            alpha.animateTo(
+                targetValue = 0f,
+                animationSpec = TweenSpec(durationMillis = 500)
+            ) {
+                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = updateWorkoutState.workout.workoutId)) {
+
+                    //Pop backstack and set the first element to be the dashboard
+                    popUpTo(MainScreen.Workouts.route) { inclusive = false }
+
+                    //Clear all other entries in the back stack
+                    launchSingleTop = true
+                }
+            }
+
+            //Reset state
+            searchWorkoutViewModel.resetUpdateWorkoutState()
+        }
+    }
+
+    SearchListScaffold(
+//        modifier = Modifier.alpha(alpha.value), //Animation transition
+        screenTitle = screenTitle.value,
+        navController = navController,
+        isNavigationInProgress = isNavigationInProgress
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .pointerInput(Unit) {
@@ -74,12 +113,11 @@ fun SearchWorkoutsScreen(
             }
             .fillMaxSize()
 
-        val workoutState by workoutViewModel.state.collectAsState()
+        val workoutState by searchWorkoutViewModel.workoutsState.collectAsState()
         val allWorkouts = workoutState.workoutList
 
-
         //All workouts
-        if (workoutState.isLoading) {
+        if (workoutState.isLoading || isUpdateLoading) {
             LoadingWheel()
         } else {
             Column(modifier = modifier) {
@@ -89,10 +127,10 @@ fun SearchWorkoutsScreen(
                         .fillMaxWidth()
                         .padding(8.dp),
                     onSearch = { text ->
-                        workoutViewModel.onSearchEvent(OnSearchEvent.OnSearchTextChange(text))
+                        searchWorkoutViewModel.onTextChange(text)
                     },
                     onToggleSearch = {
-                        workoutViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
+                        searchWorkoutViewModel.onToggleSearch()
                     })
 
                 SearchWorkoutList(

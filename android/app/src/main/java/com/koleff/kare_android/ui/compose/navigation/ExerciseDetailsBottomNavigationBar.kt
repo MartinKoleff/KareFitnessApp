@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.MainScreen
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.NavigationArguments
 
 
@@ -24,6 +24,8 @@ fun ExerciseDetailsBottomNavigationBar(
     isNavigationInProgress: MutableState<Boolean>,
     exerciseId: Int
 ) {
+    val isBlocked = mutableStateOf(isNavigationInProgress.value || exerciseId == -1)
+
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.secondary,
         tonalElevation = 5.dp,
@@ -35,7 +37,7 @@ fun ExerciseDetailsBottomNavigationBar(
                 screen = MainScreen.SearchWorkoutsScreen,
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
-                isBlocked = isNavigationInProgress,
+                isBlocked = isBlocked,
                 tint = Color.White,
                 navigationArguments = NavigationArguments(exerciseId = exerciseId)
             )

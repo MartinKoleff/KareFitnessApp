@@ -6,10 +6,10 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
-import com.koleff.kare_android.data.model.wrapper.GetExerciseDetailsWrapper
-import com.koleff.kare_android.data.model.wrapper.GetExerciseWrapper
-import com.koleff.kare_android.data.model.wrapper.GetExercisesWrapper
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.GetExerciseDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.GetExerciseWrapper
+import com.koleff.kare_android.domain.wrapper.GetExercisesWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise

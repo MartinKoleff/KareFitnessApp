@@ -5,17 +5,17 @@ import com.squareup.moshi.Json
 
 data class WorkoutDto(
     @field:Json(name = "id")
-    val workoutId: Int,
+    val workoutId: Int = 0, //0 -> DB generates new id
     @field:Json(name = "name")
-    val name: String,
+    val name: String = "Workout $workoutId",
     @field:Json(name = "muscle_group")
-    val muscleGroup: MuscleGroup,
+    val muscleGroup: MuscleGroup = MuscleGroup.NONE,
     @field:Json(name = "snapshot")
-    val snapshot: String, //TODO: image...
+    val snapshot: String = "", //TODO: image...
     @field:Json(name = "total_exercises")
-    val totalExercises: Int,
+    val totalExercises: Int = 0,
     @field:Json(name = "is_selected")
-    val isSelected: Boolean,
+    val isSelected: Boolean = false,
 ) {
     fun toWorkout(): Workout {
         return Workout(

@@ -4,13 +4,18 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,44 +32,70 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navOptions
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.event.OnWorkoutDetailsEvent
-import com.koleff.kare_android.data.model.state.ExerciseState
-import com.koleff.kare_android.ui.compose.LoadingWheel
+import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.ExerciseSetRow
+import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsConfiguratorScreenScaffold
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
+import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
+import com.koleff.kare_android.ui.state.ExerciseState
+import com.koleff.kare_android.ui.state.WorkoutDetailsState
+import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
 
 @Composable
 fun ExerciseDetailsConfiguratorScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseViewModel: ExerciseViewModel,
-    workoutDetailsViewModel: WorkoutDetailsViewModel,
+    exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel,
     initialMuscleGroupId: Int
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val exerciseState by exerciseViewModel.state.collectAsState()
-    val workoutState by workoutDetailsViewModel.state.collectAsState()
+    val exerciseState by exerciseDetailsConfiguratorViewModel.exerciseState.collectAsState()
+    val selectedWorkoutState by exerciseDetailsConfiguratorViewModel.selectedWorkoutState.collectAsState()
+    val updateWorkoutState by exerciseDetailsConfiguratorViewModel.updateWorkoutState.collectAsState()
 
     Log.d("ExerciseDetailsConfiguratorScreen", exerciseState.exercise.muscleGroup.toString())
-    val exercise = exerciseState.exercise
-    val workoutId = workoutState.workout.workoutId
     val exerciseImageId = MuscleGroup.getImage(MuscleGroup.fromId(initialMuscleGroupId))
+
     val onSubmitExercise: () -> Unit = {
-        workoutDetailsViewModel.onEvent(OnWorkoutDetailsEvent.OnExerciseSubmit(exercise))
-        openWorkoutDetailsScreen(workoutId = workoutId, navController = navController)
+        if (!exerciseState.isLoading) {
+            exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
+                OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
+            )
+        }
+    }
+
+    LaunchedEffect(updateWorkoutState) {
+
+        //Await update workout
+        if (updateWorkoutState.isSuccessful) {
+
+            navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = selectedWorkoutState.workout.workoutId)) {
+
+                //Pop backstack and set the first element to be the Workouts screen
+                popUpTo(MainScreen.Workouts.route) { inclusive = false }
+
+                //Clear all other entries in the back stack
+                launchSingleTop = true
+            }
+
+            //Reset state
+            exerciseDetailsConfiguratorViewModel.resetUpdateWorkoutState()
+
+            //Raise a flag to update Workouts screen...
+            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
+        }
     }
 
     ExerciseDetailsConfiguratorScreenScaffold(
@@ -102,6 +133,7 @@ fun ExerciseDetailsConfiguratorScreen(
         ExerciseDetailsConfiguratorContent(
             modifier = modifier,
             exerciseState = exerciseState,
+            updateWorkoutState = updateWorkoutState
         )
     }
 }
@@ -110,44 +142,59 @@ fun ExerciseDetailsConfiguratorScreen(
 fun ExerciseDetailsConfiguratorContent(
     modifier: Modifier,
     exerciseState: ExerciseState,
+    updateWorkoutState: WorkoutDetailsState,
 ) {
     LazyColumn(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (exerciseState.isLoading) {
-            item {
+        item {
+            if (exerciseState.isLoading || updateWorkoutState.isLoading) {
                 LoadingWheel()
-            }
-        } else {
-            item { //TODO: fix in place...
-                Text(
-                    modifier = Modifier.padding(
-                        PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 16.dp,
-                            bottom = 8.dp
-                        )
-                    ),
-                    text = exerciseState.exercise.name,
-                    style = TextStyle(
-                        color = Color.White,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+            } else {
+                Box(
+                    modifier = Modifier
+                        .size((50 + 8 + 8).dp)
                 )
             }
+        }
+        item { //TODO: fix in place...
+            Text(
+                modifier = Modifier.padding(
+                    PaddingValues(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 16.dp,
+                        bottom = 8.dp
+                    )
+                ),
+                text = exerciseState.exercise.name,
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
 
-            //Rows with sets / reps / weight configuration
-            items(exerciseState.exercise.sets.size) { currentSetId ->
-                val currentSet = exerciseState.exercise.sets[currentSetId]
-                ExerciseSetRow(set = currentSet)
-            }
+        //Rows with sets / reps / weight configuration
+        items(exerciseState.exercise.sets.size) { currentSetId ->
+            val currentSet = exerciseState.exercise.sets[currentSetId]
+            ExerciseSetRow(
+                set = currentSet,
+                onRepsChanged = { newReps ->
+                    currentSet.reps = newReps
+//                    currentSet.setId = null //When set is changed -> generate new UUID
+                },
+                onWeightChanged = { newWeight ->
+                    currentSet.weight = newWeight
+//                    currentSet.setId = null //When set is changed -> generate new UUID
+                }
+            )
         }
     }
 }
@@ -161,14 +208,19 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
         exercise = MockupDataGenerator.generateExercise(),
         isSuccessful = true
     )
+
     val exerciseImageId = MuscleGroup.getImage(exerciseState.exercise.muscleGroup)
+
+    val onSubmitExercise: () -> Unit = {
+
+    }
 
     ExerciseDetailsConfiguratorScreenScaffold(
         screenTitle = exerciseState.exercise.name,
         navController = navController,
         isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
-        onSubmitExercise = {}
+        onSubmitExercise = onSubmitExercise
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -185,9 +237,11 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
                 )
             )
 
+        val updateWorkoutState = WorkoutDetailsState()
         ExerciseDetailsConfiguratorContent(
             modifier = modifier,
-            exerciseState = exerciseState
+            exerciseState = exerciseState,
+            updateWorkoutState = updateWorkoutState
         )
     }
 }

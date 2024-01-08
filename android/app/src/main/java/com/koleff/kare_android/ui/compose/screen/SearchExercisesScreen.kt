@@ -1,12 +1,10 @@
 package com.koleff.kare_android.ui.compose.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -21,24 +19,27 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.data.model.event.OnSearchEvent
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchExercisesList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
-import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
+import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 
 @Composable
 fun SearchExercisesScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
     workoutId: Int,
-    exercisesListViewModel: ExerciseListViewModel
+    searchExercisesViewModel: SearchExercisesViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    SearchListScaffold("Select exercise", navController, isNavigationInProgress) { innerPadding ->
+    SearchListScaffold(
+        screenTitle = "Select exercise",
+        navController = navController,
+        isNavigationInProgress = isNavigationInProgress
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .pointerInput(Unit) {
@@ -53,7 +54,7 @@ fun SearchExercisesScreen(
             }
             .fillMaxSize()
 
-        val exercisesState by exercisesListViewModel.state.collectAsState()
+        val exercisesState by searchExercisesViewModel.state.collectAsState()
         val allExercises = exercisesState.exerciseList
 
         //All exercises
@@ -68,10 +69,10 @@ fun SearchExercisesScreen(
                         .fillMaxWidth()
                         .padding(8.dp),
                     onSearch = { text ->
-                        exercisesListViewModel.onSearchEvent(OnSearchEvent.OnSearchTextChange(text))
+                        searchExercisesViewModel.onTextChange(searchText = text)
                     },
                     onToggleSearch = {
-                        exercisesListViewModel.onSearchEvent(OnSearchEvent.OnToggleSearch())
+                        searchExercisesViewModel.onToggleSearch()
                     })
 
                 SearchExercisesList(
@@ -94,9 +95,9 @@ fun SearchExercisesScreenPreview() {
     val focusManager = LocalFocusManager.current
 
     SearchListScaffold(
-        "Select exercise",
-        navController,
-        mutableStateOf(false)
+       screenTitle =  "Select exercise",
+        navController = navController,
+        isNavigationInProgress = mutableStateOf(false)
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

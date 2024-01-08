@@ -15,5 +15,8 @@ data class WorkoutDetailsWithExercises(
         entityColumn = "exerciseId",
         associateBy = Junction(WorkoutDetailsExerciseCrossRef::class)
     )
-    val exercises: List<Exercise>
-)
+    val exercises: List<Exercise>?
+) {
+    val safeExercises: List<Exercise>
+        get() = exercises ?: emptyList()
+}

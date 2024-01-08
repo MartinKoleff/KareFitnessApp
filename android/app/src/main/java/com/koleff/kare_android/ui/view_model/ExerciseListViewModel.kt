@@ -1,39 +1,26 @@
 package com.koleff.kare_android.ui.view_model
 
-import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.Constants.fakeSmallDelay
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.model.event.OnFilterEvent
-import com.koleff.kare_android.data.model.event.OnSearchEvent
-import com.koleff.kare_android.data.model.wrapper.ResultWrapper
-import com.koleff.kare_android.domain.repository.ExerciseRepository
-import com.koleff.kare_android.data.model.state.ExercisesState
-import com.koleff.kare_android.data.model.state.SearchState
+import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
+import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
+import com.koleff.kare_android.ui.state.ExercisesState
+import com.koleff.kare_android.ui.state.SearchState
+import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ExerciseListViewModel @AssistedInject constructor(
-    private val exerciseRepository: ExerciseRepository,
+    private val exerciseUseCases: ExerciseUseCases,
     @Assisted private val muscleGroupId: Int,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -44,139 +31,49 @@ class ExerciseListViewModel @AssistedInject constructor(
 
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
 
-    private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
-    val searchState: StateFlow<SearchState>
-        get() = _searchState
-
-//    val searchState = _searchState
-//        .debounce(Constants.fakeSmallDelay)
-//        .onEach { exercisesState ->  exercisesState.isSearching = true }
-//        .combine(_state) { searchState, exercisesState ->
-//            when {
-//                searchState.searchText.isNotEmpty() -> exercisesState.exerciseList.filter { exercises ->
-//                    exercises.name.contains(searchState.searchText, ignoreCase = true)
-//                }
-//
-//                else -> exercisesState.exerciseList
-//            }
-//        }.stateIn(
-//            scope = viewModelScope,
-//            initialValue = _searchState,
-//            started = SharingStarted.WhileSubscribed(5000L)
-//        )
-
     init {
         getExercises(muscleGroupId)
     }
 
-    fun onSearchEvent(event: OnSearchEvent) {
-        when (event) {
-            is OnSearchEvent.OnToggleSearch -> {
-                val isSearching = _searchState.value.isSearching
-                _searchState.value = searchState.value.copy(
-                    isSearching = !isSearching
-                )
 
-                if (!isSearching) {
-                    onSearchEvent(OnSearchEvent.OnSearchTextChange(""))
-                }
+    fun onFilterExercisesEvent(machineType: MachineType) {
+        when (machineType) {
+            MachineType.DUMBBELL -> {
+                filterExercises(OnFilterExercisesEvent.DumbbellFilter(exercises = originalExerciseList))
             }
-            is OnSearchEvent.OnSearchTextChange -> {
-                _searchState.value = searchState.value.copy(
-                    searchText = event.searchText
-                )
+            MachineType.BARBELL -> {
+                filterExercises(OnFilterExercisesEvent.BarbellFilter(exercises = originalExerciseList))
+            }
 
-                //Search filter
-                _state.value = state.value.copy(
-                    exerciseList = originalExerciseList.filter {
+            MachineType.MACHINE -> {
+                filterExercises(OnFilterExercisesEvent.MachineFilter(exercises = originalExerciseList))
+            }
 
-                        //Custom search filter...
-                        it.name.contains(event.searchText, ignoreCase = true)
-                    }
-                )
+            MachineType.CALISTHENICS -> {
+                filterExercises(OnFilterExercisesEvent.CalisthenicsFilter(exercises = originalExerciseList))
+            }
+
+            MachineType.NONE -> {
+                filterExercises(OnFilterExercisesEvent.NoFilter(exercises = originalExerciseList))
             }
         }
     }
 
-    fun onFilterEvent(event: OnFilterEvent) {
+    private fun filterExercises(event: OnFilterExercisesEvent) {
         viewModelScope.launch(dispatcher) {
-            _state.value = state.value.copy(
-                isLoading = true
-            )
-            delay(fakeSmallDelay)
-
-            when (event) {
-                OnFilterEvent.DumbbellFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.DUMBBELL
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.BarbellFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.BARBELL
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.MachineFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.MACHINE
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.CalisthenicsFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList.filter {
-                            it.machineType == MachineType.CALISTHENICS
-                        },
-                        isLoading = false
-                    )
-                }
-
-                OnFilterEvent.NoFilter -> {
-                    _state.value = state.value.copy(
-                        exerciseList = originalExerciseList,
-                        isLoading = false
-                    )
-                }
+            exerciseUseCases.onFilterExercisesUseCase(event).collect{ exerciseState ->
+                _state.value = exerciseState
             }
         }
     }
 
     private fun getExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseRepository.getExercises(muscleGroupId).collect { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
-                        _state.value = ExercisesState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
+            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect{exerciseState ->
+                _state.value = exerciseState
 
-                    is ResultWrapper.Loading -> {
-                        _state.value = ExercisesState(isLoading = true)
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("ExerciseListViewModel", "Flow received.")
-
-                        _state.value = ExercisesState(
-                            isSuccessful = true,
-                            exerciseList = apiResult.data.exercises
-                        )
-
-                        originalExerciseList = _state.value.exerciseList
-                    }
+                if(_state.value.isSuccessful){
+                    originalExerciseList = _state.value.exerciseList
                 }
             }
         }

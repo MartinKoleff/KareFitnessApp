@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
+import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
@@ -31,7 +32,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         ExerciseDetailsExerciseCrossRef::class,
         ExerciseSetCrossRef::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false,
 )
 abstract class KareDatabase : RoomDatabase() {
@@ -39,6 +40,7 @@ abstract class KareDatabase : RoomDatabase() {
     abstract val exerciseDetailsDao: ExerciseDetailsDao
     abstract val workoutDao: WorkoutDao
     abstract val workoutDetailsDao: WorkoutDetailsDao
+    abstract val exerciseSetDao: ExerciseSetDao
 
     companion object {
         @Volatile

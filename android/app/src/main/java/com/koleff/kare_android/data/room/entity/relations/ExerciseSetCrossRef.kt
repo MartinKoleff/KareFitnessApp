@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.room.entity.relations
 
 import androidx.room.Entity
+import java.util.UUID
 
 @Entity(
     tableName = "exercise_set_cross_ref",
@@ -8,5 +9,5 @@ import androidx.room.Entity
 )
 data class ExerciseSetCrossRef(
     val exerciseId: Int,
-    val setId: Int
+    val setId: UUID
 )
