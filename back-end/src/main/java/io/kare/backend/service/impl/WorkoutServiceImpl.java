@@ -9,6 +9,7 @@ import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.WorkoutRepository;
 import io.kare.backend.service.*;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,7 +20,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 	private final ExerciseMapper exerciseMapper;
 	private final ExerciseOptionService exerciseOptionService;
 	private final SelectedWorkoutService selectedWorkoutService;
-	private final ProgramService programService;
+	private ProgramService programService;
 	private final WorkoutMapper workoutMapper;
 
 	public WorkoutServiceImpl(
@@ -28,7 +29,6 @@ public class WorkoutServiceImpl implements WorkoutService {
 		ExerciseMapper exerciseMapper,
 		ExerciseOptionService exerciseOptionService,
 		SelectedWorkoutService selectedWorkoutService,
-		ProgramService programService,
 		WorkoutMapper workoutMapper
 	) {
 		this.workoutRepository = workoutRepository;
@@ -36,8 +36,12 @@ public class WorkoutServiceImpl implements WorkoutService {
 		this.exerciseMapper = exerciseMapper;
 		this.exerciseOptionService = exerciseOptionService;
 		this.selectedWorkoutService = selectedWorkoutService;
-		this.programService = programService;
 		this.workoutMapper = workoutMapper;
+	}
+
+	@Autowired
+	private void setProgram(ProgramService programService) {
+		this.programService = programService;
 	}
 
 	@Override
