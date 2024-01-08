@@ -254,7 +254,9 @@ fun WorkoutsScreen(
 
                             //No workout is selected
                             NoWorkoutSelectedBanner {
+
                                 //Navigate to SearchWorkoutsScreen...
+                                openSearchWorkoutScreen(navController) //TODO: test
                             }
                         }
                     } else {
@@ -294,7 +296,9 @@ fun WorkoutsScreen(
                             item {
                                 if (workoutState.workoutList.isEmpty()) {
                                     NoWorkoutSelectedBanner {
+
                                         //Navigate to SearchWorkoutsScreen...
+                                        openSearchWorkoutScreen(navController) //TODO: test
                                     }
                                 } else {
                                     AddWorkoutBanner {
@@ -320,5 +324,9 @@ fun WorkoutsScreen(
             ) //If put as first content -> hides behind the screen...
         }
     }
+}
+
+fun openSearchWorkoutScreen(navController: NavHostController) {
+    navController.navigate(MainScreen.SearchWorkoutsScreen.createRoute(exerciseId = -1))
 }
 
