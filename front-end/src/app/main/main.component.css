@@ -1,15 +1,6 @@
 /* *{
   outline: green 1px solid;
 } */
-.logo{
-  background-image:url('../../assets/Images/logo.png');
-  background-size:cover;
-  width:5%;
-  transition:all 0.3s ease-in-out;
-    &:hover{
-        transform:scale(1.1)
-    }
-}
 nav {
   border-bottom: 5px solid #6B246B;
   margin-bottom: 18px;

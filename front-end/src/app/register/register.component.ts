@@ -2,7 +2,6 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { PostDataService } from '../../services/post-data.service';
 import { PostUser } from '../models/user.model';
 import { Router } from '@angular/router';
-import {AuthService} from "../../services/auth-service";
 
 @Component({
   selector: 'app-register',
@@ -18,7 +17,6 @@ export class RegisterComponent {
   allPosts:any=[];
   constructor(
     private post: PostDataService,
-    private authService: AuthService,  // Inject AuthService
     private router: Router,
   ) {
     this.post.getPosts().subscribe((data) => {
