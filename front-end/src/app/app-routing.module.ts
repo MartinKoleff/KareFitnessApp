@@ -31,7 +31,7 @@ const routes: Routes = [
   {path:'biceps', component: BicepsComponent, canActivate: [OutAuthGuard]},
   {path:'triceps', component: TricepsComponent, canActivate: [OutAuthGuard]},
   {path:'legs', component: LegsComponent, canActivate: [OutAuthGuard]},
-  {path:'back', component: BackComponent},
+  {path:'back', component: BackComponent, canActivate: [OutAuthGuard]},
   {path:'shoulders', component: ShouldersComponent, canActivate: [OutAuthGuard]},
   {path:'chest', component: ChestComponent, canActivate: [OutAuthGuard]},
   {path:'cardio', component: CardioComponent, canActivate: [OutAuthGuard]},
