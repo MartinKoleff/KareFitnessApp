@@ -14,8 +14,5 @@ public interface ExerciseOptionRepository extends JpaRepository<ExerciseOptionEn
 	@Query("SELECT eo FROM ExerciseOptionEntity eo WHERE eo.workout.id = :workoutId AND eo.exercise.id IN :exerciseIds")
 	List<ExerciseOptionEntity> findByWorkoutIdAndExerciseIds(String workoutId, List<String> exerciseIds);
 
-	// write me @Query to delete all by workout
-	@Query("DELETE FROM ExerciseOptionEntity eo WHERE eo.workout = :workout")
-	@Modifying
-	void deleteAllByWorkout(WorkoutEntity workout);
+	List<ExerciseOptionEntity> findAllByWorkout(WorkoutEntity workout);
 }

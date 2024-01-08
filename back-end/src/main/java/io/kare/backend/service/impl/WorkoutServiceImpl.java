@@ -8,6 +8,7 @@ import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.WorkoutRepository;
 import io.kare.backend.service.*;
+import jakarta.transaction.Transactional;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -169,6 +170,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 	}
 
 	@Override
+	@Transactional(rollbackOn = Exception.class)
 	public Void deleteWorkout(DeleteWorkoutRequest request, UserEntity user) {
 		Optional<WorkoutEntity> optional = this.workoutRepository.findByIdAndUser(request.id(), user);
 		WorkoutEntity workoutEntity = optional.orElseThrow(() -> new WorkoutNotFoundException(request.id()));

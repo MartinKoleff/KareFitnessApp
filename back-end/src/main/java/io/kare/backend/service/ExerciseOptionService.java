@@ -20,5 +20,5 @@ public interface ExerciseOptionService {
 
 	List<ExerciseOptionEntity> save(List<ExerciseOptionEntity> exerciseOptionEntities);
 
-	void removeExerciseOptionsByWorkout(WorkoutEntity workout);
+	void removeExerciseOptionsByWorkout(WorkoutEntity workoutEntity);
 }
