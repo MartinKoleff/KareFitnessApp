@@ -8,6 +8,7 @@ import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.ProgramRepository;
 import io.kare.backend.service.ProgramService;
 import io.kare.backend.service.WorkoutService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,15 +18,18 @@ public class ProgramServiceImpl implements ProgramService {
 
 	private final ProgramRepository programRepository;
 	private final ProgramMapper programMapper;
-	private final WorkoutService workoutService;
+	private WorkoutService workoutService;
 
 	public ProgramServiceImpl(
 		ProgramRepository programRepository,
-		ProgramMapper programMapper,
-		WorkoutService workoutService
+		ProgramMapper programMapper
 	) {
 		this.programRepository = programRepository;
 		this.programMapper = programMapper;
+	}
+
+	@Autowired
+	private void setWorkoutService(WorkoutService workoutService) {
 		this.workoutService = workoutService;
 	}
 
