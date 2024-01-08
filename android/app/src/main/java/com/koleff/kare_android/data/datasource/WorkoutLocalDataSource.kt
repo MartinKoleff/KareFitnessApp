@@ -331,15 +331,24 @@ class WorkoutLocalDataSource @Inject constructor(
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
             val updatedWorkoutDto = updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
 
-            //Delete cross ref
-            val crossRef =
+            //Delete workout details - exercise cross ref
+            val workoutDetailsExerciseCrossRef =
                 WorkoutDetailsExerciseCrossRef(
                     workoutDetailsId = workoutId,
                     exerciseId = exerciseId
                 )
-            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(crossRef)
+            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
 
-            //TODO: delete exercise - sets cross ref?
+            //Delete exercise - set cross ref
+            val deletedExercise = exerciseDao.getExerciseById(exerciseId)
+            for (set in deletedExercise.sets) {
+                val exerciseSetCrossRef =
+                    ExerciseSetCrossRef(
+                        exerciseId = exerciseId,
+                        setId = set.setId
+                    )
+                exerciseDao.deleteExerciseSetCrossRef(exerciseSetCrossRef)
+            }
 
             //Update workout and workout details DAOs
 //            workoutDetailsDao.insertWorkoutDetails(updatedWorkoutDto)
