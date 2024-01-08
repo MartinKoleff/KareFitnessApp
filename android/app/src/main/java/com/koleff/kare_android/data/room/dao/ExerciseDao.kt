@@ -13,6 +13,7 @@ import com.koleff.kare_android.data.room.entity.SetEntity
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 
 @Dao
 interface ExerciseDao {
@@ -37,6 +38,12 @@ interface ExerciseDao {
 
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
+
+    @Delete
+    suspend fun deleteExerciseSetCrossRef(crossRef: ExerciseSetCrossRef)
+
+    @Delete
+    suspend fun deleteAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId")
