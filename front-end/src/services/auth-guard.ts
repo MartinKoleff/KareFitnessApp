@@ -15,11 +15,16 @@ export class AuthGuard implements CanActivate {
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
     const token = this.cookieService.get('token');
+    const userId = this.cookieService.get('userId')
 
-    if (token) {
+    if (token && userId) {
       // User has a valid token, prevent access to /login or /register
-      this.router.navigate(['/main']); // Redirect to your main route or another secure route
+      this.router.navigate(['/main']); // Redirect to main route
       return false;
+    }
+    else{
+      //User don't have valid token, prevent them from entering the user pages
+      this.router.navigate(['/register']); //Redirect to register page
     }
 
     // User doesn't have a valid token, allow access to /login or /register
