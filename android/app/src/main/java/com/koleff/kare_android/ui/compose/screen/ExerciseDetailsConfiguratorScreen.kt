@@ -84,6 +84,7 @@ fun ExerciseDetailsConfiguratorScreen(
             navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = selectedWorkoutState.workout.workoutId)) {
 
                 //Pop backstack and set the first element to be the Workouts screen
+                popUpTo(MainScreen.Workouts.route) { inclusive = true }
 
                 //Clear all other entries in the back stack
                 launchSingleTop = true
