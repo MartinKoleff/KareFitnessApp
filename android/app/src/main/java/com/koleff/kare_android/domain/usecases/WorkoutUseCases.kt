@@ -10,5 +10,6 @@ data class WorkoutUseCases(
     val deleteExerciseUseCase: DeleteExerciseUseCase,
     val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     val selectWorkoutUseCase: SelectWorkoutUseCase,
-    val getSelectedWorkoutUseCase: GetSelectedWorkoutUseCase
+    val getSelectedWorkoutUseCase: GetSelectedWorkoutUseCase,
+    val createWorkoutUseCase: CreateWorkoutUseCase
 )
