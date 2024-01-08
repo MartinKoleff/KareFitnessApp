@@ -14,7 +14,7 @@ export class PostDataService {
   private registerUrl= '/api/user/register'; //post
   private workoutSelectUrl= '/api/workout/select'; // post
   private workoutSelectedUrl= '/api/workout/selected'; // get
-  private workoutGetUrl= '/api/workout/get'; // get
+  private workoutGetUrl= '/api/workout/get'; // post
   private workoutAllUrl= '/api/workout/all'; // get
   private wokroutUpdateUrl= '/api/workout/update'; // put
   private workoutAdd_fullUrl= '/api/workout/add_full'; // post //adds full workout

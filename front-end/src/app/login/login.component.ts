@@ -27,15 +27,6 @@ export class LoginComponent {
     });
   }
 
-check() {
-  for (const userData of this.allPosts) {
-    if (this.user.email === userData.email && this.user.password === userData.password) {
-      return true;  // Found a match, return true
-    }
-  }
-  return false;  // No match found, return false
-}
-
   loginCheck() {
     const userCredentials = { email: this.user.email, password: this.user.password };
 
