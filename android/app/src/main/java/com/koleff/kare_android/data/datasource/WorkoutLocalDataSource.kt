@@ -282,9 +282,13 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val workout = WorkoutDto()
 
-            val workoutId = workoutDao.insertWorkout(workout.toWorkout())
+            val workoutId = workoutDao.insertWorkout(workout.toWorkout()) //Get workout id
+            val workoutName = "Workout $workoutId"
 
-            val workoutDetails = WorkoutDetailsDto().copy(workoutId = workoutId.toInt())
+            val workoutUpdatedName = workout.copy(workoutId = workoutId.toInt(), name = workoutName).toWorkout()
+            workoutDao.updateWorkout(workoutUpdatedName) //Update workout name
+
+            val workoutDetails = WorkoutDetailsDto().copy(workoutId = workoutId.toInt(), name = workoutName)
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails()) //returns 0
 
@@ -301,7 +305,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val result = GetWorkoutWrapper(
                 GetWorkoutResponse(
-                    workout.copy(workoutId = workoutId.toInt())
+                    workout.copy(workoutId = workoutId.toInt(), name = workoutName)
                 )
             )
 
