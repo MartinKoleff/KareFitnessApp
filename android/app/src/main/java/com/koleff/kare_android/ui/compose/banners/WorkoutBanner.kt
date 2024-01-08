@@ -80,15 +80,7 @@ fun WorkoutBanner(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val workoutImage: Int = when (workout.muscleGroup) {
-        MuscleGroup.CHEST -> R.drawable.ic_chest
-        MuscleGroup.BACK -> R.drawable.ic_back
-        MuscleGroup.TRICEPS -> R.drawable.ic_triceps
-        MuscleGroup.BICEPS, MuscleGroup.ARMS -> R.drawable.ic_biceps
-        MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
-        MuscleGroup.LEGS -> R.drawable.ic_legs
-        else -> -1 //TODO: handle invalid muscle group...
-    }
+    val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
 
     Card(
         modifier = modifier
