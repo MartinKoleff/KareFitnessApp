@@ -258,6 +258,39 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
+    override suspend fun createWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val workout = WorkoutDto()
+
+            val workoutId = workoutDao.insertWorkout(workout.toWorkout())
+
+            val workoutDetails = WorkoutDetailsDto().copy(workoutId = workoutId.toInt())
+            val workoutDetailsId =
+                workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails()) //returns 0
+
+            //Setup cross refs
+            Log.d(
+                "WorkoutLocalDataSource-CreateWorkout",
+                "WorkoutId: $workoutId, WorkoutDetailsId: $workoutDetailsId"
+            )
+            val crossRef = WorkoutDetailsWorkoutCrossRef(
+                workoutDetailsId = workoutId.toInt(),
+                workoutId = workoutDetailsId.toInt()
+            )
+            workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+
+            val result = GetWorkoutWrapper(
+                GetWorkoutResponse(
+                    workout.copy(workoutId = workoutId.toInt())
+                )
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
     override suspend fun deleteExercise(
         workoutId: Int,
         exerciseId: Int
