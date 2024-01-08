@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { PostDataService } from '../../services/post-data.service';
 import { GetUser,  } from '../models/user.model';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../services/auth-service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -20,7 +19,6 @@ export class LoginComponent {
     private post: PostDataService,
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService,
     ) {
     this.post.getPosts().subscribe((data) => {
       this.allPosts = data;

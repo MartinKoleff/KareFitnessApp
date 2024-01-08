@@ -1,10 +1,10 @@
-<nav class="nav-container" *ngIf="!isStartupRoute()">
-  <img routerLink="/startup" alt="amogus" class="logo " src="../../assets/Images/logo.png">
+<nav class="nav-container" *ngIf="!isRestrictedRoute()">
+  <img routerLink="/startup" alt="amogus" class="logo " src="../src/assets/Images/logo.png">
   <div class="spacer"></div>
   <button class="button">
     <p class="buttonText">Account</p>
   </button>
-  <button class="button">
+  <button class="button" (click)="logout()">
     <p class="buttonText">Log out</p>
   </button>
 </nav>

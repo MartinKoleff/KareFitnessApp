@@ -2,8 +2,8 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, tap} from 'rxjs';
 import {GetUser, PostUser} from '../app/models/user.model';
-import {AuthService} from "./auth-service";
 import { CookieService } from 'ngx-cookie';
+import {Workout} from "../app/models/exercise.model";
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +20,7 @@ export class PostDataService {
   private workoutAdd_fullUrl= '/api/workout/add_full'; // post //adds full workout
 
 
-  constructor(private http: HttpClient, private authService: AuthService, private cookieService: CookieService) {}
+  constructor(private http: HttpClient,  private cookieService: CookieService) {}
 
   getPosts(): Observable<any> {
     return this.http.get(this.apiUrl);
@@ -77,5 +77,12 @@ export class PostDataService {
 
       })
     );
+  }
+  submitWorkout(workout: Workout): Observable<any> {
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json; charset=utf-8',
+      'Authorization': `Bearer ${this.cookieService.get('token')}`
+    });
+    return this.http.post(this.workoutAdd_fullUrl, workout, { headers });
   }
 }
