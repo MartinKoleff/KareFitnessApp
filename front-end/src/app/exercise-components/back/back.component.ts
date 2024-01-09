@@ -40,7 +40,6 @@ export class BackComponent {
 
   editSet(set: ExerciseSet, index: number) {
     // Implement editing logic for a set
-    // You may open a modal or use an inline form for editing
     if (this.selectedExercise && this.selectedExercise.sets && this.workoutReps && this.workoutWeight) {
       // Assuming workoutReps and workoutWeight are the updated values from the input boxes
       const updatedSet: ExerciseSet = {
@@ -48,7 +47,6 @@ export class BackComponent {
         weight: parseInt(this.workoutWeight)
       };
 
-      // Replace the set at the specified index with the updated set
       this.selectedExercise.sets[index] = updatedSet;
 
       // Clear the reps and weight after editing
@@ -68,39 +66,11 @@ export class BackComponent {
     // Handle null case or emit the event with the selected exercise
     if (exercise) {
       this.selectedExercise = exercise;
+      this.workoutReps = ''; // Reset reps value
+      this.workoutWeight = ''; // Reset weight value
       this.exerciseSelected.emit(exercise);
     } else {
       this.selectedExercise = null;
-    }
-  }
-
-  addExercise() {
-    // Add the selected exercise and its reps to the array
-    if (this.selectedExercise && this.workoutReps) {
-      const newExercise: Exercises = {
-        name: this.selectedExercise.name,
-        description: this.selectedExercise.description,
-        machineType: this.selectedExercise.machineType,
-        sets: this.selectedExercise.sets || [],
-      };
-
-      // Ensure that 'sets' is defined
-      if (!newExercise.sets) {
-        newExercise.sets = [];
-      }
-
-      // Add the new set
-      newExercise.sets.push({
-        reps: parseInt(this.workoutReps),
-        weight: parseInt(this.workoutWeight),
-      });
-
-      this.selectedExercises.push(newExercise);
-
-      // Clear the selected exercise and reps after adding
-      this.selectedExercise = null;
-      this.workoutReps = '';
-      this.workoutSets = '';
     }
   }
 }
