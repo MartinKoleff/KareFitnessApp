@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Exercises, MuscleGroup, Workout, biceps, back, triceps, legs, shoulders, chest, abs } from '../models/exercise.model';
 import {PostDataService} from "../../services/post-data.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-createworkout',
@@ -17,7 +18,7 @@ export class CreateworkoutComponent {
   //showCardioExercise: boolean = false;
   showAbsExercise: boolean = false;
 
-  constructor(private postDataService: PostDataService) {}
+  constructor(private postDataService: PostDataService, private router : Router) {}
   toggleBicepsExercise() {
     this.showBicepsExercise = !this.showBicepsExercise;
   }
@@ -103,6 +104,7 @@ export class CreateworkoutComponent {
       this.postDataService.submitWorkout(submittedWorkout).subscribe(
         (response) => {
           console.log('Successfully submitted workout:', response);
+          this.router.navigate(['/workout-list']);
         },
         (error) => {
           console.error('Error submitting workout:', error);

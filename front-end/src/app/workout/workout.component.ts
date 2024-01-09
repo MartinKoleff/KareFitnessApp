@@ -16,7 +16,8 @@ export class WorkoutComponent {
     const workoutId = this.workout.id; // Assuming 'id' is the property that holds the workout's unique identifier
     this.postDataService.deleteWorkout(workoutId).subscribe(
       () => {
-        // Handle successful deletion (e.g., navigate to a different page, update the workout list)
+        // Reload the page after successful deletion
+        window.location.reload();
       },
       (error) => {
         console.error('Error deleting workout:', error);
