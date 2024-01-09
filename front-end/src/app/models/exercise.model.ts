@@ -1,3 +1,4 @@
+
 export interface Workout{
   name:string;
   description?:string;
@@ -25,25 +26,25 @@ export const biceps: MuscleGroup = {
     {
       name: 'Bicep curl',
       description: 'Description for bicep curl exercise.',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'biceps',
     },
     {
-      name: 'Incline dumbell curl',
-      description: 'Description for incline dumbell curl exercise.',
-      machineType: 'dumbell',
+      name: 'Incline dumbbell curl',
+      description: 'Description for incline dumbbell curl exercise.',
+      machineType: 'dumbbell',
       muscleGroup: 'biceps',
     },
     {
       name: 'Hammer curl',
       description: 'Description for hammer curl exercise.',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'biceps',
     },
     {
       name: 'Concentration curl',
       description: 'Description for concentration curl exercise.',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'biceps',
     },
     {
@@ -72,7 +73,7 @@ export const triceps: MuscleGroup = {
     {
       name: 'Overhead triceps extensions',
       description: 'Description for overhead triceps extensions',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'triceps',
     },
     {
@@ -107,7 +108,7 @@ export const legs: MuscleGroup = {
     {
       name: 'Bulgarian split-squats',
       description: 'Description for bulgarian split-squats',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'legs',
     },
     {
@@ -146,9 +147,9 @@ export const back: MuscleGroup = {
       muscleGroup: 'back',
     },
     {
-      name: 'One-arm dumbell rows',
-      description: 'Description for one-arm dumbell row',
-      machineType: 'dumbell',
+      name: 'One-arm dumbbell rows',
+      description: 'Description for one-arm dumbbell row',
+      machineType: 'dumbbell',
       muscleGroup: 'back',
     },
     {
@@ -177,13 +178,13 @@ export const shoulders: MuscleGroup = {
     {
       name: 'Lateral raises',
       description: 'Description for lateral raises',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'shoulders',
     },
     {
       name: 'Front raises',
       description: 'Description for front raises',
-      machineType: 'dumbell',
+      machineType: 'dumbbell',
       muscleGroup: 'shoulders',
     },
     {
@@ -216,9 +217,9 @@ export const chest: MuscleGroup = {
       muscleGroup: 'chest',
     },
     {
-      name: 'Incline dumbell press',
-      description: 'Description for incline dumbell press',
-      machineType: 'dumbell',
+      name: 'Incline dumbbell press',
+      description: 'Description for incline dumbbell press',
+      machineType: 'dumbbell',
       muscleGroup: 'chest',
     },
     {

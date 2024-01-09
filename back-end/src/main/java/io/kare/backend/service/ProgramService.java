@@ -1,6 +1,6 @@
 package io.kare.backend.service;
 
-import io.kare.backend.entity.UserEntity;
+import io.kare.backend.entity.*;
 import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.*;
 
@@ -11,5 +11,7 @@ public interface ProgramService {
 
     GetProgramResponse getProgram(GetProgramRequest request, UserEntity user);
 
-    EmptyResponse updateProgram(UpdateProgramRequest request, UserEntity user);
+    Void updateProgram(UpdateProgramRequest request, UserEntity user);
+
+    void removeWorkout(WorkoutEntity workoutEntity);
 }

@@ -10,12 +10,9 @@ import { RegisterModule } from './register/register.module';
 import { MainModule } from './main/main.module';
 import { StartupModule } from './startup/startup.module';
 import { HomeModule } from './home/home.module';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { AuthInterceptor } from '../services/auth-interceptor.service';
 import { CreateworkoutModule } from './createworkout/createworkout.module';
-import { WorkoutListComponent } from './workout-list/workout-list.component';
 import { WorkoutListModule } from './workout-list/workout-list.module';
-import { WorkoutComponent } from './workout/workout.component';
+import { CookieModule } from 'ngx-cookie';
 
 @NgModule({
   declarations: [
@@ -34,9 +31,9 @@ import { WorkoutComponent } from './workout/workout.component';
     HomeModule,
     CreateworkoutModule,
     WorkoutListModule,
+    CookieModule.forRoot(),
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     PostDataService
   ],
   bootstrap: [AppComponent],

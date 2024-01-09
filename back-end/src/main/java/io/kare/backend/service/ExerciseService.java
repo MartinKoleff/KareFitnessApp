@@ -1,7 +1,6 @@
 package io.kare.backend.service;
 
-import io.kare.backend.entity.ExerciseEntity;
-import io.kare.backend.entity.UserEntity;
+import io.kare.backend.entity.*;
 import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.*;
 
@@ -21,4 +20,6 @@ public interface ExerciseService {
 	Optional<ExerciseEntity> findByName(String id, UserEntity user);
 
 	EmptyResponse updateExercise(UpdateExerciseRequest request, UserEntity user);
+
+	void removeWorkoutFromExercises(WorkoutEntity workout);
 }

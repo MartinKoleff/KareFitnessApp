@@ -1,20 +1,10 @@
 <div class="background">
-  <nav class="nav-container">
-    <img routerLink="/startup" alt="amogus" class="logo " src="../../assets/Images/logo.png">
-    <div class="spacer"></div>
-    <button class="button">
-      <p class="buttonText">Account</p>
-    </button>
-    <button class="button">
-      <p class="buttonText">Log out</p>
-    </button>
-  </nav>
   <div class="container">
-    <div class="logForm">
-      <div class="startupBox">
+    <div class="createForm">
+      <div class="create-startupBox">
         <input placeholder="Name your workout" [(ngModel)]="workout.name" name="workout.name" (input)="updateSubmitButtonState()">
       </div>
-        <div class="group-container">
+        <div class="create-container">
           <div class="panel" (click)="toggleBicepsExercise()">
               <img src="../../assets/Images/biceps.jpg">
               <p class="category-text">biceps</p>
@@ -118,4 +108,5 @@
               <button class="submit-text" (click)="submitWorkout()">Submit</button>
         </div>
   </div>
+</div>
 </div>

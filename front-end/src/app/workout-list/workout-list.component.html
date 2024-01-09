@@ -1,30 +1,20 @@
 <div class="background">
-  <nav class="nav-container">
-    <img routerLink="/startup" alt="amogus" class="logo " src="../../assets/Images/logo.png">
-    <div class="spacer"></div>
-    <button class="button">
-      <p class="buttonText">Account</p>
-    </button>
-    <button class="button">
-      <p class="buttonText">Log out</p>
-    </button>
-  </nav>
   <div class="container">
     <div class="logForm">
       <div class="startupBox">
         <p> Workout List </p>
       </div>
-        <ng-container *ngFor="let user of selectedUsers">
-          <div class="startupBox">
-          <app-workout [user]="user"></app-workout>
-          </div>
-        </ng-container>
+      <ng-container *ngIf="selectedWorkout">
+        <div class="startupBox">
+          <app-workout [workout]="selectedWorkout"></app-workout>
+        </div>
+      </ng-container>
       <div class="group-container">
-        <button *ngIf="users==null" routerLink="/create-workout">
+        <button *ngIf="workouts == null" routerLink="/create-workout">
           Create Workout
         </button>
-        <button *ngFor="let user of users" (click)="toggleUserComponent(user)">
-          {{ user.username }}
+        <button *ngFor="let workout of workouts" (click)="toggleWorkoutComponent(workout)">
+          {{ workout.name }}
         </button>
       </div>
     </div>

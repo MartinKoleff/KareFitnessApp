@@ -19,4 +19,6 @@ public interface ExerciseOptionService {
 	ExerciseOptionEntity mapToEntity(WorkoutFullExercisePayload exercisePayload, ExerciseEntity exercise, WorkoutEntity workoutEntity);
 
 	List<ExerciseOptionEntity> save(List<ExerciseOptionEntity> exerciseOptionEntities);
+
+	void removeExerciseOptionsByWorkout(WorkoutEntity workoutEntity);
 }

@@ -8,7 +8,9 @@ import io.kare.backend.payload.request.*;
 import io.kare.backend.payload.response.*;
 import io.kare.backend.repository.WorkoutRepository;
 import io.kare.backend.service.*;
+import jakarta.transaction.Transactional;
 import java.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +21,7 @@ public class WorkoutServiceImpl implements WorkoutService {
 	private final ExerciseMapper exerciseMapper;
 	private final ExerciseOptionService exerciseOptionService;
 	private final SelectedWorkoutService selectedWorkoutService;
+	private ProgramService programService;
 	private final WorkoutMapper workoutMapper;
 
 	public WorkoutServiceImpl(
@@ -35,6 +38,11 @@ public class WorkoutServiceImpl implements WorkoutService {
 		this.exerciseOptionService = exerciseOptionService;
 		this.selectedWorkoutService = selectedWorkoutService;
 		this.workoutMapper = workoutMapper;
+	}
+
+	@Autowired
+	private void setProgram(ProgramService programService) {
+		this.programService = programService;
 	}
 
 	@Override
@@ -159,5 +167,18 @@ public class WorkoutServiceImpl implements WorkoutService {
 		this.workoutRepository.save(workoutEntity);
 		this.exerciseOptionService.update(request.exercises(), workoutEntity.getExercises(), workoutEntity);
 		return new EmptyResponse();
+	}
+
+	@Override
+	@Transactional(rollbackOn = Exception.class)
+	public Void deleteWorkout(DeleteWorkoutRequest request, UserEntity user) {
+		Optional<WorkoutEntity> optional = this.workoutRepository.findByIdAndUser(request.id(), user);
+		WorkoutEntity workoutEntity = optional.orElseThrow(() -> new WorkoutNotFoundException(request.id()));
+		this.exerciseService.removeWorkoutFromExercises(workoutEntity);
+		this.exerciseOptionService.removeExerciseOptionsByWorkout(workoutEntity);
+		this.selectedWorkoutService.delete(workoutEntity);
+		this.programService.removeWorkout(workoutEntity);
+		this.workoutRepository.delete(workoutEntity);
+		return null;
 	}
 }

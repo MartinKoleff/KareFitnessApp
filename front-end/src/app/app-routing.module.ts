@@ -15,31 +15,32 @@ import { CardioComponent } from './exercise-components/cardio/cardio.component';
 import { AbsComponent } from './exercise-components/abs/abs.component';
 import { ShouldersComponent } from './exercise-components/shoulders/shoulders.component';
 import { WorkoutListComponent } from './workout-list/workout-list.component';
+import {AuthGuard} from "../services/auth-guard";
+import {OutAuthGuard} from "../services/out-auth-guard";
 
 const routes: Routes = [
-  {path:'', component:StartupComponent},
-  {path:'startup', component: StartupComponent},
-  {path:'login', component:LoginComponent},
-  {path:'register', component:RegisterComponent},
-  {path:'home', component: HomeComponent},
-  {path:'main', component: MainComponent},
-  {path:'create-workout', component: CreateworkoutComponent},
-  {path:'workout-list', component: WorkoutListComponent},
+  {path:'', component:StartupComponent, canActivate: [AuthGuard]},
+  {path:'startup', component: StartupComponent, canActivate: [AuthGuard]},
+  { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [AuthGuard] },
+  {path:'home', component: HomeComponent, canActivate:[OutAuthGuard]},
+  {path:'main', component: MainComponent, canActivate:[OutAuthGuard]},
+  {path:'create-workout', component: CreateworkoutComponent, canActivate: [OutAuthGuard]},
+  {path:'workout-list', component: WorkoutListComponent, canActivate: [OutAuthGuard]},
 
-  {path:'biceps', component: BicepsComponent},
-  {path:'triceps', component: TricepsComponent},
-  {path:'legs', component: LegsComponent},
-  {path:'back', component: BackComponent},
-  {path:'shoulders', component: ShouldersComponent},
-  {path:'chest', component: ChestComponent},
-  {path:'cardio', component: CardioComponent},
-  {path:'abs', component: AbsComponent},
+  {path:'biceps', component: BicepsComponent, canActivate: [OutAuthGuard]},
+  {path:'triceps', component: TricepsComponent, canActivate: [OutAuthGuard]},
+  {path:'legs', component: LegsComponent, canActivate: [OutAuthGuard]},
+  {path:'back', component: BackComponent, canActivate: [OutAuthGuard]},
+  {path:'shoulders', component: ShouldersComponent, canActivate: [OutAuthGuard]},
+  {path:'chest', component: ChestComponent, canActivate: [OutAuthGuard]},
+  {path:'cardio', component: CardioComponent, canActivate: [OutAuthGuard]},
+  {path:'abs', component: AbsComponent, canActivate: [OutAuthGuard]},
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, {onSameUrlNavigation:'reload'})],
+  imports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule {
-
 }

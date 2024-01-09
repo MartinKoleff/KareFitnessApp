@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { PostDataService } from '../../services/post-data.service';
 import { GetUser,  } from '../models/user.model';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../../services/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -20,30 +19,28 @@ export class LoginComponent {
     private post: PostDataService,
     private router: Router,
     private http: HttpClient,
-    private authService: AuthService,
     ) {
     this.post.getPosts().subscribe((data) => {
       this.allPosts = data;
     });
   }
 
-check() {
-  for (const userData of this.allPosts) {
-    if (this.user.email === userData.email && this.user.password === userData.password) {
-      return true;  // Found a match, return true
-    }
-  }
-  return false;  // No match found, return false
-}
+  loginCheck() {
+    const userCredentials = { email: this.user.email, password: this.user.password };
 
-  loginCheck(){
-    if (this.check()==false){
-      alert('Wrong email or password!')
-    }
-    else{
-      alert('success')
-      this.router.navigate(['/main']);
-    }
+    this.post.login(userCredentials).subscribe(
+      (response: any) => {
+        console.log('User logged in successfully:', response);
+        this.navigateToMain();  // Optionally navigate to main after successful login
+      },
+      (error) => {
+        console.error('Error logging in:', error);
+        alert('Invalid email or password');
+      }
+    );
+  }
+  private navigateToMain() {
+    this.router.navigate(['/main']);
   }
 // loginCheck() {
 //   this.authService.setAuthToken('amogus');

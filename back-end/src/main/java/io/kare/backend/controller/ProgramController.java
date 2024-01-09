@@ -35,7 +35,7 @@ public class ProgramController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<EmptyResponse> updateProgram(@RequestBody UpdateProgramRequest request, @User UserEntity user) {
+    public ResponseEntity<Void> updateProgram(@RequestBody UpdateProgramRequest request, @User UserEntity user) {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).body(this.programService.updateProgram(request, user));
     }
 }

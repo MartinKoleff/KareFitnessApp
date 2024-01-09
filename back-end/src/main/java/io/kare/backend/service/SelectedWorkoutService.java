@@ -9,4 +9,6 @@ public interface SelectedWorkoutService {
 	void edit(WorkoutEntity workoutEntity, UserEntity user);
 
 	WorkoutEntity getSelectedWorkout(UserEntity user);
+
+	void delete(WorkoutEntity workoutEntity);
 }

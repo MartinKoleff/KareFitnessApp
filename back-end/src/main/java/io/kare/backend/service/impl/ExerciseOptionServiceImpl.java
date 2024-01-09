@@ -6,6 +6,7 @@ import io.kare.backend.payload.data.*;
 import io.kare.backend.repository.ExerciseOptionRepository;
 import io.kare.backend.service.ExerciseOptionService;
 import java.util.*;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -62,5 +63,11 @@ public class ExerciseOptionServiceImpl implements ExerciseOptionService {
 	@Override
 	public List<ExerciseOptionEntity> save(List<ExerciseOptionEntity> exerciseOptionEntities) {
 		return this.exerciseOptionRepository.saveAll(exerciseOptionEntities);
+	}
+
+	@Override
+	public void removeExerciseOptionsByWorkout(WorkoutEntity workout) {
+		List<ExerciseOptionEntity> entities = this.exerciseOptionRepository.findAllByWorkout(workout);
+		this.exerciseOptionRepository.deleteAll(entities);
 	}
 }
