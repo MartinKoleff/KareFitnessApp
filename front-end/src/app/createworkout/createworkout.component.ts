@@ -15,7 +15,6 @@ export class CreateworkoutComponent {
   showBackExercise: boolean = false;
   showShouldersExercise: boolean = false;
   showChestExercise: boolean = false;
-  //showCardioExercise: boolean = false;
   showAbsExercise: boolean = false;
 
   constructor(private postDataService: PostDataService, private router : Router) {}
@@ -37,28 +36,16 @@ export class CreateworkoutComponent {
   toggleChestExercise() {
     this.showChestExercise = !this.showChestExercise;
   }
-  // toggleCardioExercise() {
-  //   this.showCardioExercise = !this.showCardioExercise;
-  // }
   toggleAbsExercise() {
     this.showAbsExercise = !this.showAbsExercise;
   }
 
-  bicepsExercises: Exercises[] = [];
   biceps: MuscleGroup = biceps;
-  backExercises: Exercises[] = [];
   back : MuscleGroup = back;
-  tricepsExercises: Exercises[] = [];
   triceps: MuscleGroup = triceps;
-  legsExercises: Exercises[] = [];
   legs: MuscleGroup = legs;
-  shouldersExercises: Exercises[] = [];
   shoulders: MuscleGroup = shoulders;
-  chestExercises: Exercises[] = [];
   chest: MuscleGroup = chest;
-  // cardioExercises: Exercises[] = [];
-  // cardio: MuscleGroup = cardio;
-  absExercises: Exercises[] = [];
   abs: MuscleGroup = abs;
 
   isNameProvided: boolean = false;
@@ -88,11 +75,11 @@ export class CreateworkoutComponent {
   }
 
   submitWorkout() {
-    if (!this.isNameProvided) {
-      alert('Please choose a name for your workout');
-    } else if (this.selectedExercises.every(ex => ex.sets && ex.sets.every(set => set.reps === undefined))) {
-      alert('Enter reps, please');
-    } else {
+    // Remove exercises with invalid sets
+    this.selectedExercises = this.selectedExercises.filter(ex => ex.sets != null && ex.sets.length > 0);
+
+    // Check if there are still exercises left
+    if (this.selectedExercises.length > 0) {
       // Create a Workout object
       const submittedWorkout: Workout = {
         name: this.workout.name,
@@ -110,13 +97,10 @@ export class CreateworkoutComponent {
           console.error('Error submitting workout:', error);
         }
       );
+    } else {
+      alert('Please make sure at least one exercise has valid sets');
     }
   }
-
-  ngOnInit() {
-    this.updateSubmitButtonState();
-  }
-
   updateSubmitButtonState() {
     this.isNameProvided = this.workout.name != null && this.workout.name.trim() !== '';
   }
