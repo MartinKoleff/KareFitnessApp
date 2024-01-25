@@ -5,6 +5,7 @@ plugins {
     id "androidx.navigation.safeargs"
     id 'com.google.dagger.hilt.android'
     id 'kotlin-parcelize'
+    id 'com.google.gms.google-services'
 }
 
 android {
@@ -126,6 +127,10 @@ dependencies {
 
     //YouTube player
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:chromecast-sender:0.28'
+
+    //GMS
+    implementation platform('com.google.firebase:firebase-bom:32.7.1')
+    implementation 'com.google.firebase:firebase-analytics'
 
     //JUnit and testing
     testImplementation 'junit:junit:4.13.2'
