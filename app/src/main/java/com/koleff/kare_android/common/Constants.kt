@@ -20,4 +20,6 @@ object Constants {
     const val DATABASE_NAME = "my_database"
     const val EXERCISE_TABLE_NAME = "ExerciseDto"
     const val WORKOUT_TABLE_NAME = "WorkoutDto"
+
+    const val NOTIFICATION_CHANNEL_ID = "MY_CHANNEL_ID"
 }
