@@ -27,7 +27,8 @@ fun SettingsListItem(
     title: String,
     icon: ImageVector,
     description: String,
-    hasSwitch: Boolean = false
+    hasSwitch: Boolean = false,
+    customCallback: () -> Unit = {},
 ) {
     ListItem(
         headlineContent = { Text(title) },
@@ -39,8 +40,8 @@ fun SettingsListItem(
         },
         trailingContent = {
             if (hasSwitch) {
-                SwitchButton()
-            }else{
+                SwitchButton(customCallback)
+            } else {
                 Icon(
                     painterResource(id = R.drawable.ic_vector_arrow_forward),
                     contentDescription = "Go inside"
@@ -56,7 +57,8 @@ fun SettingsListItem(
     title: String,
     icon: Painter,
     description: String,
-    hasSwitch: Boolean = false
+    hasSwitch: Boolean = false,
+    customCallback: () -> Unit = {}
 ) {
     ListItem(
         headlineContent = { Text(title) },
@@ -68,8 +70,8 @@ fun SettingsListItem(
         },
         trailingContent = {
             if (hasSwitch) {
-                SwitchButton()
-            }else{
+                SwitchButton(customCallback)
+            } else {
                 Icon(
                     painterResource(id = R.drawable.ic_vector_arrow_forward),
                     contentDescription = "Go inside",
@@ -86,29 +88,58 @@ fun SettingsCategory(title: String) {
 }
 
 @Composable
-fun SwitchButton() {
-    var checked by remember { mutableStateOf(true) }
+fun SwitchButton(customCallback: () -> Unit) {
+    var checked by remember { mutableStateOf(false) }
 
     Switch(
         checked = checked,
         onCheckedChange = {
             checked = it
 
-            //TODO: add biometrics authentication dialog / screen logic...
+            customCallback()
         }
     )
 }
 
 @Composable
-fun SettingsList(modifier: Modifier = Modifier) {
+fun SettingsList(
+    modifier: Modifier = Modifier,
+    notificationCallback: () -> Unit,
+    biometricsCallback: () -> Unit
+) {
     Column(modifier = modifier) {
-        SettingsListItem("Logout", painterResource(R.drawable.ic_vector_logout), "Logout from account")
+        SettingsListItem(
+            "Logout",
+            painterResource(R.drawable.ic_vector_logout),
+            "Logout from account"
+        )
         SettingsListItem("Change email", Icons.Default.Email, "Change login email")
-        SettingsListItem("Change password", painterResource(R.drawable.ic_vector_password), "Change password")
+        SettingsListItem(
+            "Change password",
+            painterResource(R.drawable.ic_vector_password),
+            "Change password"
+        )
 
-        SettingsListItem("Push notifications", Icons.Default.Notifications, "Push notifications settings")
-        SettingsListItem("Change language", painterResource(R.drawable.ic_vector_language), "Change language")
-        SettingsListItem("Biometric authentication", painterResource(R.drawable.ic_faceid), "Biometric authentication", true)
+        SettingsListItem(
+            "Push notifications",
+            Icons.Default.Notifications,
+            "Push notifications settings",
+            true,
+            notificationCallback
+        )
+
+        SettingsListItem(
+            "Change language",
+            painterResource(R.drawable.ic_vector_language),
+            "Change language"
+        )
+        SettingsListItem(
+            "Biometric authentication",
+            painterResource(R.drawable.ic_faceid),
+            "Biometric authentication",
+            true,
+            biometricsCallback
+        )
 
         SettingsCategory("Privacy policy")
         SettingsListItem("Privacy policy", Icons.Default.Info, "Privacy policy")
