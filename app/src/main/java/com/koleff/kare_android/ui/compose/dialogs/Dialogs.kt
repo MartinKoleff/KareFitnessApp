@@ -250,6 +250,32 @@ fun WarningDialog(
     )
 }
 
+@Composable
+fun EnableNotificationsDialog(
+    onClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    WarningDialog(
+        title = "Enable Notifications",
+        description = "Notifications are important for our app. Please enable them in settings.",
+        actionButtonTitle = "Open Settings",
+        onClick = onClick,
+        onDismiss = onDismiss
+    )
+}
+
+@Preview
+@Composable
+fun EnableNotificationsDialogPreview() {
+    WarningDialog(
+        title = "Enable Notifications",
+        description = "Notifications are important for our app. Please enable them in settings.",
+        actionButtonTitle = "Open Settings",
+        onClick = {},
+        onDismiss = {}
+    )
+}
+
 @Preview
 @Composable
 fun WarningDialogPreview() {
