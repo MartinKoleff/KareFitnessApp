@@ -4,14 +4,18 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.PermissionManager
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.SettingsList
+import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
 
 @Composable
 fun SettingsScreen(
@@ -23,21 +27,56 @@ fun SettingsScreen(
             .padding(innerPadding)
             .fillMaxSize()
 
-        //TODO: send broadcast?
         val context = LocalContext.current
-        val notificationCallback: () -> Unit = { PermissionManager.requestNotificationPermission(context) } //TODO: update to boolean flag...
-        val biometricsCallback: () -> Unit = {}
-        val notificationIsChecked = remember {
+
+        //Used for API 33 below -> custom prompt
+        var showNotificationDialog by remember {
+            mutableStateOf(false)
+        }
+
+        val notificationCallback: () -> Unit = {
+            showNotificationDialog = PermissionManager.requestNotificationPermission(context)
+        }
+
+        var notificationIsChecked by remember {
             mutableStateOf(PermissionManager.hasNotificationPermission(context))
         }
-//        val biometricsIsChecked = PermissionManager.hasBiometricsPermission(context)
+
+        val openNotificationSettingsCallback = {
+            NotificationManager.openNotificationSettings(context)
+
+            //TODO: fix state reset...
+        }
+
+        if (showNotificationDialog) {
+            EnableNotificationsDialog(
+                onClick = openNotificationSettingsCallback,
+                onDismiss = {
+                    showNotificationDialog = false
+                    notificationIsChecked = false
+                }
+            )
+        }
+
+        val biometricsCallback: () -> Unit = {}
+        var biometricsIsChecked by remember {
+            mutableStateOf(PermissionManager.hasBiometricsPermission(context))
+        }
 
         SettingsList(
             modifier = modifier,
-            notificationCallback = notificationCallback,
-            biometricsCallback = biometricsCallback,
-            notificationIsChecked = notificationIsChecked.value,
-            biometricsIsChecked = false
+            notificationIsChecked = notificationIsChecked,
+            biometricsIsChecked = false,
+            onNotificationSwitchChange = { newState ->
+                notificationIsChecked = newState
+
+                notificationCallback()
+            },
+            onBiometricsSwitchChange = { newState ->
+                biometricsIsChecked = newState
+
+                biometricsCallback()
+            }
         )
     }
 }
