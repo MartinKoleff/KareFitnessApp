@@ -176,7 +176,8 @@ fun WarningDialog(
     description: String,
     onDismiss: () -> Unit,
     onClick: () -> Unit,
-    actionButtonTitle: String
+    actionButtonTitle: String,
+    callDismissOnConfirm: Boolean = true
 ) {
     AlertDialog(
         title = {
@@ -215,7 +216,7 @@ fun WarningDialog(
         confirmButton = {
             Button(onClick = {
                 onClick()
-                onDismiss()
+                if(callDismissOnConfirm) onDismiss()
             }) {
                 Text(
                     text = actionButtonTitle,
@@ -260,7 +261,8 @@ fun EnableNotificationsDialog(
         description = "Notifications are important for our app. Please enable them in settings.",
         actionButtonTitle = "Open Settings",
         onClick = onClick,
-        onDismiss = onDismiss
+        onDismiss = onDismiss,
+        callDismissOnConfirm = false
     )
 }
 
