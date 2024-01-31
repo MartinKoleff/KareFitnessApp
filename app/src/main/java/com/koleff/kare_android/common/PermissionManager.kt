@@ -31,7 +31,7 @@ object PermissionManager {
                 )
             }
         } else {
-            //Old version -> show custom prompt
+            //Old version (< API 33) -> show custom prompt
             val notificationManagerCompat = NotificationManagerCompat.from(context)
             val areNotificationsEnabled = notificationManagerCompat.areNotificationsEnabled()
 
@@ -55,11 +55,16 @@ object PermissionManager {
                 Manifest.permission.POST_NOTIFICATIONS
             ) == PackageManager.PERMISSION_GRANTED
         } else {
-            //Old version
+            //Old version (< API 33)
             val notificationManagerCompat = NotificationManagerCompat.from(context)
             val areNotificationsEnabled = notificationManagerCompat.areNotificationsEnabled()
             return areNotificationsEnabled
         }
     }
+
+    fun hasBiometricsPermission(context: Context): Boolean {
+        return false
+
+        //TODO: update...
     }
 }
