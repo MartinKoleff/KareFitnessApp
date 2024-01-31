@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.PermissionManager
 
 @Composable
 fun SettingsListItem(
@@ -29,6 +30,7 @@ fun SettingsListItem(
     description: String,
     hasSwitch: Boolean = false,
     customCallback: () -> Unit = {},
+    isChecked: Boolean = false
 ) {
     ListItem(
         headlineContent = { Text(title) },
@@ -40,7 +42,7 @@ fun SettingsListItem(
         },
         trailingContent = {
             if (hasSwitch) {
-                SwitchButton(customCallback)
+                SwitchButton(isChecked = isChecked, customCallback = customCallback)
             } else {
                 Icon(
                     painterResource(id = R.drawable.ic_vector_arrow_forward),
@@ -58,7 +60,8 @@ fun SettingsListItem(
     icon: Painter,
     description: String,
     hasSwitch: Boolean = false,
-    customCallback: () -> Unit = {}
+    customCallback: () -> Unit = {},
+    isChecked: Boolean = false
 ) {
     ListItem(
         headlineContent = { Text(title) },
@@ -70,7 +73,7 @@ fun SettingsListItem(
         },
         trailingContent = {
             if (hasSwitch) {
-                SwitchButton(customCallback)
+                SwitchButton(isChecked = isChecked, customCallback = customCallback)
             } else {
                 Icon(
                     painterResource(id = R.drawable.ic_vector_arrow_forward),
@@ -88,8 +91,8 @@ fun SettingsCategory(title: String) {
 }
 
 @Composable
-fun SwitchButton(customCallback: () -> Unit) {
-    var checked by remember { mutableStateOf(false) }
+fun SwitchButton(isChecked: Boolean = false, customCallback: () -> Unit) {
+    var checked by remember { mutableStateOf(isChecked) }
 
     Switch(
         checked = checked,
@@ -105,7 +108,9 @@ fun SwitchButton(customCallback: () -> Unit) {
 fun SettingsList(
     modifier: Modifier = Modifier,
     notificationCallback: () -> Unit,
-    biometricsCallback: () -> Unit
+    biometricsCallback: () -> Unit,
+    notificationIsChecked: Boolean,
+    biometricsIsChecked: Boolean
 ) {
     Column(modifier = modifier) {
         SettingsListItem(
@@ -125,7 +130,8 @@ fun SettingsList(
             Icons.Default.Notifications,
             "Push notifications settings",
             true,
-            notificationCallback
+            notificationCallback,
+            notificationIsChecked
         )
 
         SettingsListItem(
@@ -138,7 +144,8 @@ fun SettingsList(
             painterResource(R.drawable.ic_faceid),
             "Biometric authentication",
             true,
-            biometricsCallback
+            biometricsCallback,
+            biometricsIsChecked
         )
 
         SettingsCategory("Privacy policy")
