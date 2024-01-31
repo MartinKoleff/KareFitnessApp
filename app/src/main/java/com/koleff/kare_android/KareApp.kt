@@ -11,6 +11,7 @@ import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -28,7 +29,7 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
         super<MultiDexApplication>.onCreate()
 
         //Initialize Room DB on app start
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
             exerciseDBManager.initializeExerciseTableRoomDB()
             workoutDBManager.initializeWorkoutTableRoomDB()
         }
@@ -38,11 +39,11 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
             val channel = NotificationChannel(
                 Constants.NOTIFICATION_CHANNEL_ID,
                 "Push notifications channel",
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
 
-            val manager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            manager.createNotificationChannel(channel)
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
