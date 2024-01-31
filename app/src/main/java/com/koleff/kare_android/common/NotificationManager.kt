@@ -2,6 +2,8 @@ package com.koleff.kare_android.common
 
 import android.Manifest
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -58,5 +60,18 @@ object NotificationManager {
             }
         }
         startActivity(context, intent, null)
+    }
+
+    fun createNotificationChannel(context: Context) = with(context){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                Constants.NOTIFICATION_CHANNEL_ID,
+                "Push notifications channel",
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 }

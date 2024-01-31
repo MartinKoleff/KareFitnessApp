@@ -1,12 +1,12 @@
 package com.koleff.kare_android
 
 import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.multidex.MultiDexApplication
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import dagger.hilt.android.HiltAndroidApp
@@ -34,16 +34,7 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
             workoutDBManager.initializeWorkoutTableRoomDB()
         }
 
-        //Push notification channel
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                Constants.NOTIFICATION_CHANNEL_ID,
-                "Push notifications channel",
-                NotificationManager.IMPORTANCE_HIGH
-            )
-
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
+        //Create push notification channel
+        NotificationManager.createNotificationChannel(this@KareApp)
     }
 }
