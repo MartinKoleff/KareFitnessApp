@@ -22,4 +22,5 @@ object Constants {
     const val WORKOUT_TABLE_NAME = "WorkoutDto"
 
     const val NOTIFICATION_CHANNEL_ID = "MY_CHANNEL_ID"
+    const val isTestingNotifications = false
 }
