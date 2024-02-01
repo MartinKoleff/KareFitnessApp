@@ -40,8 +40,6 @@ fun SetupNavGraph(
         mutableStateOf(false)
     }
 
-    val dashboardViewModel: DashboardViewModel = hiltViewModel()
-
     NavHost(
         navController = navController,
         startDestination = MainScreen.Dashboard.route
@@ -49,8 +47,7 @@ fun SetupNavGraph(
         composable(MainScreen.Dashboard.route) { backStackEntry ->
             DashboardScreen(
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                dashboardViewModel = dashboardViewModel
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(MainScreen.Workouts.route) {
@@ -62,8 +59,7 @@ fun SetupNavGraph(
         composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
             MuscleGroupScreen(
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                dashboardViewModel = dashboardViewModel
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(route = MainScreen.WorkoutDetails.route) { backStackEntry ->

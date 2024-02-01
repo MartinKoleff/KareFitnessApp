@@ -7,6 +7,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
@@ -17,7 +18,7 @@ import com.koleff.kare_android.ui.view_model.DashboardViewModel
 fun DashboardScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    dashboardViewModel: DashboardViewModel
+    dashboardViewModel: DashboardViewModel = hiltViewModel()
 ) {
     MainScreenScaffold("Dashboard", navController, isNavigationInProgress) { innerPadding ->
         val muscleGroupState by dashboardViewModel.state.collectAsState()

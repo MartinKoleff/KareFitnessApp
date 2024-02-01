@@ -27,11 +27,8 @@ import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 fun MuscleGroupScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    dashboardViewModel: DashboardViewModel,
     exerciseListViewModel: ExerciseListViewModel = hiltViewModel()
 ) {
-    val muscleGroupState by dashboardViewModel.state.collectAsState()
-
     val exerciseListState by exerciseListViewModel.state.collectAsState()
     val muscleGroup = exerciseListViewModel.muscleGroup
 
