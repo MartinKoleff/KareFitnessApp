@@ -10,12 +10,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.MainScreen
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
@@ -27,20 +25,14 @@ import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutViewModel
-import kotlinx.coroutines.flow.first
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
 fun SetupNavGraph(
-    exerciseListViewModelFactory: ExerciseListViewModel.Factory,
     exerciseViewModelFactory: ExerciseViewModel.Factory,
     exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
 ) {
@@ -73,21 +65,9 @@ fun SetupNavGraph(
             )
         }
         composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
-            val muscleGroupId =
-                backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
-
-            val exerciseListViewModel = viewModel<ExerciseListViewModel>(
-                factory = ExerciseListViewModel.provideExerciseListViewModelFactory(
-                    factory = exerciseListViewModelFactory,
-                    muscleGroupId = muscleGroupId + 1
-                )
-            )
-
             MuscleGroupScreen(
-                muscleGroupId = muscleGroupId,
                 navController = navController,
                 isNavigationInProgress = isNavigationInProgress,
-                exerciseListViewModel = exerciseListViewModel,
                 dashboardViewModel = dashboardViewModel
             )
         }

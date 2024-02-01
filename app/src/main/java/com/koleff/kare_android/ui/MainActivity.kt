@@ -22,9 +22,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var exerciseListViewModelFactory: ExerciseListViewModel.Factory
-
-    @Inject
     lateinit var exerciseViewModelFactory: ExerciseViewModel.Factory
 
     @Inject
@@ -36,7 +33,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             KareTheme {
                 SetupNavGraph(
-                    exerciseListViewModelFactory = exerciseListViewModelFactory,
                     exerciseViewModelFactory = exerciseViewModelFactory,
                     exerciseDetailsConfiguratorViewModelFactory = exerciseDetailsConfiguratorViewModelFactory
                 )

@@ -1,11 +1,13 @@
 package com.koleff.kare_android.ui.view_model
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.ui.state.ExercisesState
@@ -14,16 +16,23 @@ import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ExerciseListViewModel @AssistedInject constructor(
+@HiltViewModel
+class ExerciseListViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
-    @Assisted private val muscleGroupId: Int,
+    private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    private val muscleGroupId = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull()
+        ?.plus(1)
+        ?: -1
+    val muscleGroup = MuscleGroup.fromId(muscleGroupId)
 
     private val _state: MutableStateFlow<ExercisesState> = MutableStateFlow(ExercisesState())
     val state: StateFlow<ExercisesState>
@@ -75,22 +84,6 @@ class ExerciseListViewModel @AssistedInject constructor(
                 if(_state.value.isSuccessful){
                     originalExerciseList = _state.value.exerciseList
                 }
-            }
-        }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(muscleGroupId: Int): ExerciseListViewModel
-    }
-
-    companion object {
-        fun provideExerciseListViewModelFactory(
-            factory: Factory,
-            muscleGroupId: Int,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(muscleGroupId) as T
             }
         }
     }
