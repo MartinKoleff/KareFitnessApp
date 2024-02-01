@@ -56,12 +56,9 @@ fun SetupNavGraph(
             )
         }
         composable(MainScreen.Workouts.route) {
-            val workoutViewModel: WorkoutViewModel = hiltViewModel()
-
             WorkoutsScreen(
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                workoutListViewModel = workoutViewModel
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
