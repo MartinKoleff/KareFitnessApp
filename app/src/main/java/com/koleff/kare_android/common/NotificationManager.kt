@@ -45,6 +45,7 @@ object NotificationManager {
 
             var pendingIntent: PendingIntent? = null
             if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
                 //Pop up notification
                 val intent = Intent(context, MainActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -102,6 +103,6 @@ object NotificationManager {
     }
 
     suspend fun subscribeToTopic() {
-        Firebase.messaging.subscribeToTopic("Gym").await()
+        Firebase.messaging.subscribeToTopic(Constants.UNIVERSAL_NOTIFICATION_TOPIC).await()
     }
 }

@@ -23,4 +23,5 @@ object Constants {
 
     const val NOTIFICATION_CHANNEL_ID = "MY_CHANNEL_ID"
     const val isTestingNotifications = false
+    const val UNIVERSAL_NOTIFICATION_TOPIC = "KARE"
 }
