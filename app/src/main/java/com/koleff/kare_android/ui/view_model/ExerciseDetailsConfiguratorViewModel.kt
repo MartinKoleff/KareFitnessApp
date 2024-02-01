@@ -35,11 +35,8 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
 
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
-
-//    private val muscleGroupId = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull()
-//        ?.plus(1)
-//        ?: -1
-//    val muscleGroup = MuscleGroup.fromId(muscleGroupId)
+    private val initialMuscleGroupId = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
+    val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
 
     private val _exerciseState: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
     val exerciseState: StateFlow<ExerciseState>
