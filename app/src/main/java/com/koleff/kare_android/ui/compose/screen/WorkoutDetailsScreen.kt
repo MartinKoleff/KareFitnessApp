@@ -17,12 +17,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -39,13 +41,16 @@ import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 @Composable
 fun WorkoutDetailsScreen(
     navController: NavHostController,
-    workoutId: Int = -1, //Invalid workout selected...
     isNavigationInProgress: MutableState<Boolean>,
-    workoutDetailsViewModel: WorkoutDetailsViewModel
+    workoutDetailsViewModel: WorkoutDetailsViewModel = hiltViewModel()
 ) {
     val workoutDetailsState by workoutDetailsViewModel.getWorkoutDetailsState.collectAsState()
     val workoutTitle =
         if (workoutDetailsState.workout.name == "") "Loading..." else workoutDetailsState.workout.name
+
+    val workoutId by remember {
+        mutableIntStateOf(workoutDetailsState.workout.workoutId)
+    }
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
 

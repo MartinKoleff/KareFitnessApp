@@ -1,30 +1,23 @@
 package com.koleff.kare_android.ui
 
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import android.Manifest
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
 import com.koleff.kare_android.ui.theme.KareTheme
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
-import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
@@ -33,9 +26,6 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var exerciseViewModelFactory: ExerciseViewModel.Factory
-
-    @Inject
-    lateinit var workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
 
     @Inject
     lateinit var exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
@@ -48,7 +38,6 @@ class MainActivity : ComponentActivity() {
                 SetupNavGraph(
                     exerciseListViewModelFactory = exerciseListViewModelFactory,
                     exerciseViewModelFactory = exerciseViewModelFactory,
-                    workoutDetailsViewModelFactory = workoutDetailsViewModelFactory,
                     exerciseDetailsConfiguratorViewModelFactory = exerciseDetailsConfiguratorViewModelFactory
                 )
             }

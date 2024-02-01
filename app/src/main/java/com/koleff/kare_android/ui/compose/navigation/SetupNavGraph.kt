@@ -42,7 +42,6 @@ import kotlinx.coroutines.flow.first
 fun SetupNavGraph(
     exerciseListViewModelFactory: ExerciseListViewModel.Factory,
     exerciseViewModelFactory: ExerciseViewModel.Factory,
-    workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory,
     exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
 ) {
     val navController = rememberNavController()
@@ -93,21 +92,9 @@ fun SetupNavGraph(
             )
         }
         composable(route = MainScreen.WorkoutDetails.route) { backStackEntry ->
-            val workoutId =
-                backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
-
-            val workoutDetailsViewModel = viewModel<WorkoutDetailsViewModel>(
-                factory = WorkoutDetailsViewModel.provideWorkoutDetailsViewModelFactory(
-                    factory = workoutDetailsViewModelFactory,
-                    workoutId = workoutId
-                )
-            )
-
             WorkoutDetailsScreen(
-                workoutId = workoutId,
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                workoutDetailsViewModel = workoutDetailsViewModel
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(MainScreen.ExerciseDetails.route) { backStackEntry ->
