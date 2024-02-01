@@ -32,8 +32,7 @@ import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 fun SearchExercisesScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    searchExercisesViewModel: SearchExercisesViewModel = hiltViewModel(),
-    savedStateHandle: SavedStateHandle = SavedStateHandle()
+    searchExercisesViewModel: SearchExercisesViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -59,7 +58,7 @@ fun SearchExercisesScreen(
 
         val exercisesState by searchExercisesViewModel.state.collectAsState()
         val allExercises = exercisesState.exerciseList
-        val workoutId = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+        val workoutId = searchExercisesViewModel.workoutId
 
         //All exercises
         if (exercisesState.isLoading) {
