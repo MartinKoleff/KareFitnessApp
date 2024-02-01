@@ -100,4 +100,8 @@ object NotificationManager {
             notificationManager.createNotificationChannel(channel)
         }
     }
+
+    suspend fun subscribeToTopic() {
+        Firebase.messaging.subscribeToTopic("Gym").await()
+    }
 }

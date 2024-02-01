@@ -24,6 +24,7 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
     @Inject
     lateinit var workoutDBManager: WorkoutDBManager
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
         super<MultiDexApplication>.onCreate()
@@ -36,5 +37,10 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
         //Create push notification channel
         NotificationManager.createNotificationChannel(this@KareApp)
+
+        //Subscribe to topic -> allow broadcasts.
+        GlobalScope.launch(Dispatchers.IO)  {
+            NotificationManager.subscribeToTopic()
+        }
     }
 }
