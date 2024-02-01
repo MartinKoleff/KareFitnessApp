@@ -35,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -55,8 +56,7 @@ import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewMode
 fun ExerciseDetailsConfiguratorScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel,
-    initialMuscleGroupId: Int
+    exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -66,7 +66,8 @@ fun ExerciseDetailsConfiguratorScreen(
     val updateWorkoutState by exerciseDetailsConfiguratorViewModel.updateWorkoutState.collectAsState()
 
     Log.d("ExerciseDetailsConfiguratorScreen", exerciseState.exercise.muscleGroup.toString())
-    val exerciseImageId = MuscleGroup.getImage(MuscleGroup.fromId(initialMuscleGroupId))
+    val exerciseMuscleGroup = exerciseState.exercise.muscleGroup
+    val exerciseImageId = MuscleGroup.getImage(exerciseMuscleGroup)
 
     val onSubmitExercise: () -> Unit = {
         if (!exerciseState.isLoading) {

@@ -1,10 +1,7 @@
 package com.koleff.kare_android.ui.compose.navigation
 
-import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -24,16 +21,11 @@ import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
-import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
-import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
-fun SetupNavGraph(
-    exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
-) {
+fun SetupNavGraph() {
     val navController = rememberNavController()
 
     val isNavigationInProgress = rememberSaveable {
@@ -75,29 +67,9 @@ fun SetupNavGraph(
             )
         }
         composable(MainScreen.ExerciseDetailsConfigurator.route) { backStackEntry ->
-            val exerciseId =
-                backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
-
-            val workoutId =
-                backStackEntry.arguments?.getString("workout_id")?.toInt() ?: -1
-
-            val exerciseDetailsConfiguratorViewModel = viewModel<ExerciseDetailsConfiguratorViewModel>(
-                factory = ExerciseDetailsConfiguratorViewModel.provideExerciseDetailsConfiguratorViewModelFactory(
-                    factory = exerciseDetailsConfiguratorViewModelFactory,
-                    exerciseId = exerciseId,
-                    workoutId = workoutId
-                )
-            )
-
-            //If wired with ExerciseDetails...
-            val initialMuscleGroupId =
-                backStackEntry.arguments?.getString("muscle_group_id")?.toInt() ?: -1
-
             ExerciseDetailsConfiguratorScreen(
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                exerciseDetailsConfiguratorViewModel = exerciseDetailsConfiguratorViewModel,
-                initialMuscleGroupId = initialMuscleGroupId
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(MainScreen.Settings.route) {
