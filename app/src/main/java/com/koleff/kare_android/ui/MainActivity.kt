@@ -35,9 +35,6 @@ class MainActivity : ComponentActivity() {
     lateinit var exerciseViewModelFactory: ExerciseViewModel.Factory
 
     @Inject
-    lateinit var exerciseDetailsViewModelFactory: ExerciseDetailsViewModel.Factory
-
-    @Inject
     lateinit var workoutDetailsViewModelFactory: WorkoutDetailsViewModel.Factory
 
     @Inject
@@ -51,7 +48,6 @@ class MainActivity : ComponentActivity() {
                 SetupNavGraph(
                     exerciseListViewModelFactory = exerciseListViewModelFactory,
                     exerciseViewModelFactory = exerciseViewModelFactory,
-                    exerciseDetailsViewModelFactory = exerciseDetailsViewModelFactory,
                     workoutDetailsViewModelFactory = workoutDetailsViewModelFactory,
                     exerciseDetailsConfiguratorViewModelFactory = exerciseDetailsConfiguratorViewModelFactory
                 )
