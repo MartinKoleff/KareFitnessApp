@@ -25,7 +25,6 @@ import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
@@ -33,7 +32,6 @@ import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 @ExperimentalAnimationApi
 @Composable
 fun SetupNavGraph(
-    exerciseViewModelFactory: ExerciseViewModel.Factory,
     exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
 ) {
     val navController = rememberNavController()
@@ -113,26 +111,9 @@ fun SetupNavGraph(
             )
         }
         composable(MainScreen.SearchWorkoutsScreen.route) { backStackEntry ->
-            val exerciseId =
-                backStackEntry.arguments?.getString("exercise_id")?.toInt() ?: -1
-
-            val exerciseViewModel = viewModel<ExerciseViewModel>(
-                factory = ExerciseViewModel.provideExerciseViewModelFactory(
-                    factory = exerciseViewModelFactory,
-                    exerciseId = exerciseId
-                )
-            )
-
-            val exerciseState by exerciseViewModel.state.collectAsState() //Recomposition will occur...
-            Log.d("ExerciseViewModel", "Exercise selected in SearchWorkoutScreen: ${exerciseState.exercise}")
-
-            val searchWorkoutViewModel = hiltViewModel<SearchWorkoutViewModel>()
-
             SearchWorkoutsScreen(
                 navController = navController,
-                isNavigationInProgress = isNavigationInProgress,
-                exercise = exerciseState.exercise,
-                searchWorkoutViewModel = searchWorkoutViewModel
+                isNavigationInProgress = isNavigationInProgress
             )
         }
         composable(MainScreen.SearchExercisesScreen.route) { backStackEntry ->

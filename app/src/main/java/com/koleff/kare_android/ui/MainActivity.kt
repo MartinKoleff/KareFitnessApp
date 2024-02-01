@@ -10,8 +10,6 @@ import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
 import com.koleff.kare_android.ui.theme.KareTheme
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
-import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -22,9 +20,6 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var exerciseViewModelFactory: ExerciseViewModel.Factory
-
-    @Inject
     lateinit var exerciseDetailsConfiguratorViewModelFactory: ExerciseDetailsConfiguratorViewModel.Factory
 
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
@@ -33,7 +28,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             KareTheme {
                 SetupNavGraph(
-                    exerciseViewModelFactory = exerciseViewModelFactory,
                     exerciseDetailsConfiguratorViewModelFactory = exerciseDetailsConfiguratorViewModelFactory
                 )
             }
