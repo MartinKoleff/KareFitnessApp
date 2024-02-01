@@ -19,9 +19,15 @@ import com.koleff.kare_android.ui.MainActivity
 
 object NotificationManager {
 
-    fun sendTestNotification(context: Context) {
-        // 'notificationId' is a unique int for each notification that you must define
-        val notificationId = 1 // For testing, you can use a fixed ID.
+    fun sendNotification(context: Context, title: String, message: String) {
+        //Check for notification permission
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
+        }
+
+        val notificationId = 1 //'notificationId' is a unique int for each notification that you must define. For testing, you can use a fixed ID.
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val builder = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
@@ -34,17 +40,6 @@ object NotificationManager {
                 .setOngoing(false)
 
             with(NotificationManagerCompat.from(context)) {
-                val activity = context as? Activity ?: return
-
-                //Check for permission
-                if (ActivityCompat.checkSelfPermission(
-                        activity,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    return
-                }
-
                 notify(notificationId, builder.build())
             }
         }

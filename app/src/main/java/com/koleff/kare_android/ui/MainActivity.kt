@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
             GlobalScope.launch {
                 delay(5000)
 
-                NotificationManager.sendTestNotification(this@MainActivity)
+                NotificationManager.sendNotification(this@MainActivity, "Test Notification", "This is a sample notification using the channel.")
             }
         }
     }
