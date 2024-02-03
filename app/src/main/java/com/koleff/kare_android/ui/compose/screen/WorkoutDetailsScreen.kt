@@ -48,16 +48,12 @@ fun WorkoutDetailsScreen(
     val workoutTitle =
         if (workoutDetailsState.workout.name == "") "Loading..." else workoutDetailsState.workout.name
 
-    val workoutId by remember {
-        mutableIntStateOf(workoutDetailsState.workout.workoutId)
-    }
-
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
 
         navController.navigate(
             MainScreen.ExerciseDetailsConfigurator.createRoute(
                 exerciseId = selectedExercise.exerciseId,
-                workoutId = workoutId,
+                workoutId = workoutDetailsState.workout.workoutId,
                 muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
             )
         )
@@ -120,7 +116,7 @@ fun WorkoutDetailsScreen(
             title = "Delete Exercise",
             description = "Are you sure you want to delete this exercise? This action cannot be undone.",
             actionButtonTitle = "Delete",
-            onClick = { onExerciseDeleted(workoutId, selectedExercise!!) },
+            onClick = { onExerciseDeleted(workoutDetailsState.workout.workoutId, selectedExercise!!) },
             onDismiss = { showDeleteDialog = false }
         )
     }
@@ -128,7 +124,7 @@ fun WorkoutDetailsScreen(
     //Pull to refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = workoutDetailsViewModel.isRefreshing,
-        onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutId) }
+        onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutDetailsState.workout.workoutId) }
     )
 
     MainScreenScaffold(workoutTitle, navController, isNavigationInProgress) { innerPadding ->
@@ -174,7 +170,7 @@ fun WorkoutDetailsScreen(
                                 //Open search exercise screen...
                                 openSearchExercisesScreen(
                                     navController = navController,
-                                    workoutId = workoutId
+                                    workoutId = workoutDetailsState.workout.workoutId
                                 )
                             }
                         }
