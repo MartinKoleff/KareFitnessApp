@@ -17,12 +17,14 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -39,9 +41,8 @@ import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 @Composable
 fun WorkoutDetailsScreen(
     navController: NavHostController,
-    workoutId: Int = -1, //Invalid workout selected...
     isNavigationInProgress: MutableState<Boolean>,
-    workoutDetailsViewModel: WorkoutDetailsViewModel
+    workoutDetailsViewModel: WorkoutDetailsViewModel = hiltViewModel()
 ) {
     val workoutDetailsState by workoutDetailsViewModel.getWorkoutDetailsState.collectAsState()
     val workoutTitle =
@@ -52,7 +53,7 @@ fun WorkoutDetailsScreen(
         navController.navigate(
             MainScreen.ExerciseDetailsConfigurator.createRoute(
                 exerciseId = selectedExercise.exerciseId,
-                workoutId = workoutId,
+                workoutId = workoutDetailsState.workout.workoutId,
                 muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
             )
         )
@@ -106,7 +107,7 @@ fun WorkoutDetailsScreen(
         workoutDetailsViewModel.deleteExercise(selectedWorkoutId, selectedExercise.exerciseId)
 
         //Raise a flag to update Workouts screen...
-        navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
+        navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
     }
 
     //Dialogs
@@ -115,7 +116,7 @@ fun WorkoutDetailsScreen(
             title = "Delete Exercise",
             description = "Are you sure you want to delete this exercise? This action cannot be undone.",
             actionButtonTitle = "Delete",
-            onClick = { onExerciseDeleted(workoutId, selectedExercise!!) },
+            onClick = { onExerciseDeleted(workoutDetailsState.workout.workoutId, selectedExercise!!) },
             onDismiss = { showDeleteDialog = false }
         )
     }
@@ -123,7 +124,7 @@ fun WorkoutDetailsScreen(
     //Pull to refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = workoutDetailsViewModel.isRefreshing,
-        onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutId) }
+        onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutDetailsState.workout.workoutId) }
     )
 
     MainScreenScaffold(workoutTitle, navController, isNavigationInProgress) { innerPadding ->
@@ -169,7 +170,7 @@ fun WorkoutDetailsScreen(
                                 //Open search exercise screen...
                                 openSearchExercisesScreen(
                                     navController = navController,
-                                    workoutId = workoutId
+                                    workoutId = workoutDetailsState.workout.workoutId
                                 )
                             }
                         }

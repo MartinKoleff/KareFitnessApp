@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,17 +15,23 @@ import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ExerciseDetailsViewModel @AssistedInject constructor(
+@HiltViewModel
+class ExerciseDetailsViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
-    @Assisted private val exerciseId: Int,
-    @Assisted private val initialMuscleGroup: MuscleGroup,
+    private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
+
+    private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
+    private val initialMuscleGroupId: Int = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
+    private val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
 
     private val _state: MutableStateFlow<ExerciseDetailsState> =
         MutableStateFlow(ExerciseDetailsState())
@@ -53,23 +60,6 @@ class ExerciseDetailsViewModel @AssistedInject constructor(
                 } else {
                     _state.value = exerciseDetailsState
                 }
-            }
-        }
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(exerciseId: Int, initialMuscleGroup: MuscleGroup): ExerciseDetailsViewModel
-    }
-
-    companion object {
-        fun provideExerciseDetailsViewModelFactory(
-            factory: Factory,
-            exerciseId: Int,
-            initialMuscleGroup: MuscleGroup,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(exerciseId, initialMuscleGroup) as T
             }
         }
     }

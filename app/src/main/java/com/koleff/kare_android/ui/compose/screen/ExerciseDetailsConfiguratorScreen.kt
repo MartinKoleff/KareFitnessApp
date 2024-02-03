@@ -20,6 +20,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -35,6 +36,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navOptions
@@ -55,8 +58,7 @@ import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewMode
 fun ExerciseDetailsConfiguratorScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel,
-    initialMuscleGroupId: Int
+    exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -66,7 +68,8 @@ fun ExerciseDetailsConfiguratorScreen(
     val updateWorkoutState by exerciseDetailsConfiguratorViewModel.updateWorkoutState.collectAsState()
 
     Log.d("ExerciseDetailsConfiguratorScreen", exerciseState.exercise.muscleGroup.toString())
-    val exerciseImageId = MuscleGroup.getImage(MuscleGroup.fromId(initialMuscleGroupId))
+    val initialMuscleGroup = exerciseDetailsConfiguratorViewModel.initialMuscleGroup
+    val exerciseImageId = MuscleGroup.getImage(initialMuscleGroup)
 
     val onSubmitExercise: () -> Unit = {
         if (!exerciseState.isLoading) {
@@ -203,7 +206,9 @@ fun ExerciseDetailsConfiguratorContent(
 @Composable
 fun ExerciseDetailsConfiguratorScreenPreview() {
     val navController = rememberNavController()
-    val isNavigationInProgress = mutableStateOf(false)
+    val isNavigationInProgress = remember {
+        mutableStateOf(false)
+    }
     val exerciseState = ExerciseState(
         exercise = MockupDataGenerator.generateExercise(),
         isSuccessful = true

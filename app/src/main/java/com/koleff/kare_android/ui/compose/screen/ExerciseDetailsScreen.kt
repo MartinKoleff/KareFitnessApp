@@ -17,6 +17,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
@@ -44,7 +46,7 @@ import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 fun ExerciseDetailsScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseDetailsViewModel: ExerciseDetailsViewModel
+    exerciseDetailsViewModel: ExerciseDetailsViewModel = hiltViewModel()
 ) {
     val exerciseDetailsState by exerciseDetailsViewModel.state.collectAsState()
 
@@ -173,7 +175,7 @@ fun ExerciseDetailsContent(
 @Composable
 fun ExerciseDetailsScreenPreview() {
     val navController = rememberNavController()
-    val isNavigationInProgress = mutableStateOf(false)
+    val isNavigationInProgress = remember { mutableStateOf(false) }
     val exerciseDetailsState = ExerciseDetailsState(
         exercise = ExerciseDetailsDto(
             id = 1,

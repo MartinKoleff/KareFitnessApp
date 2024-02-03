@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.MachineFilterSegmentButton
@@ -25,15 +26,11 @@ import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 @Composable
 fun MuscleGroupScreen(
     navController: NavHostController,
-    muscleGroupId: Int = -1, //Invalid group selected...
     isNavigationInProgress: MutableState<Boolean>,
-    exerciseListViewModel: ExerciseListViewModel,
-    dashboardViewModel: DashboardViewModel
+    exerciseListViewModel: ExerciseListViewModel = hiltViewModel()
 ) {
-    val muscleGroupState by dashboardViewModel.state.collectAsState()
-    val muscleGroup = muscleGroupState.muscleGroupList[muscleGroupId]
-
     val exerciseListState by exerciseListViewModel.state.collectAsState()
+    val muscleGroup = exerciseListViewModel.muscleGroup
 
     MainScreenScaffold(muscleGroup.name, navController, isNavigationInProgress) { innerPadding ->
         val buttonModifier = Modifier

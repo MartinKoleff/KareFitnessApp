@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -12,18 +13,22 @@ import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 typealias DeleteExerciseState = WorkoutDetailsState
 
-class WorkoutDetailsViewModel @AssistedInject constructor(
+@HiltViewModel
+class WorkoutDetailsViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
-    @Assisted private val workoutId: Int,
+    private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -60,23 +65,6 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
         viewModelScope.launch(dispatcher) {
             workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId).collect { deleteExerciseState ->
                 _deleteExerciseState.value = deleteExerciseState
-            }
-        }
-    }
-
-
-    @AssistedFactory
-    interface Factory {
-        fun create(workoutId: Int): WorkoutDetailsViewModel
-    }
-
-    companion object {
-        fun provideWorkoutDetailsViewModelFactory(
-            factory: Factory,
-            workoutId: Int
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(workoutId) as T
             }
         }
     }

@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Observer
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -53,7 +54,7 @@ import java.util.Locale
 fun WorkoutsScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    workoutListViewModel: WorkoutViewModel
+    workoutListViewModel: WorkoutViewModel = hiltViewModel()
 ) {
     MainScreenScaffold("Workouts", navController, isNavigationInProgress) { innerPadding ->
         val buttonModifier = Modifier

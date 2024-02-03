@@ -21,6 +21,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.ui.MainScreen
@@ -28,14 +29,16 @@ import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchWorkoutList
 import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.view_model.ExerciseViewModel
+import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
 @Composable
 fun SearchWorkoutsScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    exercise: ExerciseDto,
-    searchWorkoutViewModel: SearchWorkoutViewModel,
+    searchWorkoutViewModel: SearchWorkoutViewModel = hiltViewModel(),
+    exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -49,6 +52,11 @@ fun SearchWorkoutsScreen(
 
     val alpha = remember { Animatable(1f) }  //Used for animated transition
     val screenTitle = remember { mutableStateOf("Select workout") }
+
+    val exerciseState by exerciseViewModel.state.collectAsState()
+    val exercise by remember {
+        mutableStateOf(exerciseState.exercise)
+    }
 
     LaunchedEffect(selectedWorkoutId) {
         selectedWorkoutId != -1 || return@LaunchedEffect

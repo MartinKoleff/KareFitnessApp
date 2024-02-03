@@ -1,10 +1,12 @@
 package com.koleff.kare_android.ui.view_model
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
@@ -15,19 +17,26 @@ import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 import javax.inject.Qualifier
 
-class ExerciseDetailsConfiguratorViewModel @AssistedInject constructor(
+@HiltViewModel
+class ExerciseDetailsConfiguratorViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
     private val workoutUseCases: WorkoutUseCases,
-    @Assisted("exerciseId") private val exerciseId: Int,
-    @Assisted("workoutId") private val workoutId: Int,
+    private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
+
+    private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
+    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+    private val initialMuscleGroupId = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
+    val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
 
     private val _exerciseState: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
     val exerciseState: StateFlow<ExerciseState>
@@ -93,25 +102,5 @@ class ExerciseDetailsConfiguratorViewModel @AssistedInject constructor(
 
     fun resetUpdateWorkoutState() {
         _updateWorkoutState.value = WorkoutDetailsState()
-    }
-
-    @AssistedFactory
-    interface Factory {
-        fun create(
-            @Assisted("exerciseId") exerciseId: Int,
-            @Assisted("workoutId") workoutId: Int
-        ): ExerciseDetailsConfiguratorViewModel
-    }
-
-    companion object {
-        fun provideExerciseDetailsConfiguratorViewModelFactory(
-            factory: Factory,
-            exerciseId: Int,
-            workoutId: Int
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(exerciseId, workoutId) as T
-            }
-        }
     }
 }

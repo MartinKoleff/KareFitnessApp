@@ -10,12 +10,15 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
@@ -29,8 +32,7 @@ import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 fun SearchExercisesScreen(
     navController: NavHostController,
     isNavigationInProgress: MutableState<Boolean>,
-    workoutId: Int,
-    searchExercisesViewModel: SearchExercisesViewModel
+    searchExercisesViewModel: SearchExercisesViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -56,6 +58,7 @@ fun SearchExercisesScreen(
 
         val exercisesState by searchExercisesViewModel.state.collectAsState()
         val allExercises = exercisesState.exerciseList
+        val workoutId = searchExercisesViewModel.workoutId
 
         //All exercises
         if (exercisesState.isLoading) {
@@ -94,10 +97,14 @@ fun SearchExercisesScreenPreview() {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    val isNavigationInProgress = remember {
+        mutableStateOf(false)
+    }
+
     SearchListScaffold(
-       screenTitle =  "Select exercise",
+        screenTitle = "Select exercise",
         navController = navController,
-        isNavigationInProgress = mutableStateOf(false)
+        isNavigationInProgress = isNavigationInProgress
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

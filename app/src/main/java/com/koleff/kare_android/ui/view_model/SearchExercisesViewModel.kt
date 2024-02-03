@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -21,8 +22,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchExercisesViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
+    private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
+    val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _state: MutableStateFlow<ExercisesState> = MutableStateFlow(ExercisesState())
     val state: StateFlow<ExercisesState>
