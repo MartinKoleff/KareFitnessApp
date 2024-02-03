@@ -107,7 +107,7 @@ fun WorkoutDetailsScreen(
         workoutDetailsViewModel.deleteExercise(selectedWorkoutId, selectedExercise.exerciseId)
 
         //Raise a flag to update Workouts screen...
-        navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
+        navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
     }
 
     //Dialogs
