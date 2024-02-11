@@ -120,5 +120,8 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 inclusive = false
             )
         )
+
+        //Reset state
+        resetUpdateWorkoutState()
     }
 }
