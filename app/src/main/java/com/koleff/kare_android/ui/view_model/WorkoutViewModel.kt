@@ -7,8 +7,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
@@ -30,8 +34,9 @@ import javax.inject.Inject
 class WorkoutViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
     private val preferences: Preferences,
+    private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController = navigationController) {
 
     private val _state: MutableStateFlow<WorkoutState> = MutableStateFlow(WorkoutState())
     val state: StateFlow<WorkoutState>
@@ -99,6 +104,8 @@ class WorkoutViewModel @Inject constructor(
                         isMyWorkoutScreen = false,
                         isLoading = false
                     )
+
+                    super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
                 }
 
                 OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
@@ -115,6 +122,8 @@ class WorkoutViewModel @Inject constructor(
                             preferences.saveSelectedWorkout(it.workoutList.first())
                         }
                     }
+
+                    super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
                 }
             }
         }
@@ -228,7 +237,8 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun resetCreateWorkoutState() {
-        _createWorkoutState.value = UpdateWorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+        _createWorkoutState.value =
+            UpdateWorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
     }
 
 
@@ -244,5 +254,31 @@ class WorkoutViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun openSearchWorkoutScreen(exerciseId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.SearchWorkoutsScreen.createRoute(
+                    exerciseId = exerciseId
+                )
+            )
+        )
+    }
+
+    fun openWorkoutDetailsScreen(workout: WorkoutDto) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.WorkoutDetails.createRoute(workoutId = workout.workoutId)
+            )
+        )
+    }
+
+    fun openWorkoutDetailsScreen(workoutId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.WorkoutDetails.createRoute(workoutId = workoutId)
+            )
+        )
     }
 }
