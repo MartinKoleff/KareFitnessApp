@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.lifecycle_event
+package com.koleff.kare_android.ui.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
