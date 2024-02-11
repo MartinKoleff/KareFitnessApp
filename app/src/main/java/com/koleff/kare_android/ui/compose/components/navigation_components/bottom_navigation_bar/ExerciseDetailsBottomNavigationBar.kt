@@ -21,6 +21,11 @@ fun ExerciseDetailsBottomNavigationBar(
     onNavigateSubmitExercise: () -> Unit
 ) {
     val isBlocked = mutableStateOf(exerciseId == -1)
+    val submitExerciseAction = if (isBlocked.value) {
+        {}
+    } else {
+        onNavigateSubmitExercise
+    }
 
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.secondary,
@@ -32,7 +37,7 @@ fun ExerciseDetailsBottomNavigationBar(
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
                 tint = Color.White,
-                onNavigateAction = onNavigateSubmitExercise
+                onNavigateAction = submitExerciseAction
             )
 
             Spacer(Modifier.weight(1f))
