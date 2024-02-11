@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 open class BaseViewModel @Inject constructor(
     private val navigationController: NavigationController,
-    @MainDispatcher private val dispatcher: CoroutineDispatcher
+    @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
     fun onNavigationEvent(navigationEvent: NavigationEvent) {
@@ -22,6 +22,10 @@ open class BaseViewModel @Inject constructor(
             when (navigationEvent) {
                 is NavigationEvent.ClearBackstackAndNavigateTo -> {
                     navigationController.clearBackstackAndNavigateTo(navigationEvent.destination)
+                }
+
+                is NavigationEvent.ClearBackstackAndNavigateToRoute -> {
+                    navigationController.clearBackstackAndNavigateToRoute(navigationEvent.route)
                 }
 
                 NavigationEvent.NavigateBack -> {

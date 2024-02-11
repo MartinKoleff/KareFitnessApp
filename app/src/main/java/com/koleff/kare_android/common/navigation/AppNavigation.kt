@@ -39,6 +39,11 @@ fun AppNavigation(
                 ) {
                     popUpTo(navController.graph.id)
                 }
+                is NavigationEvent.ClearBackstackAndNavigateToRoute -> navController.navigate(
+                    navigationEvent.route
+                ) {
+                    popUpTo(navController.graph.id)
+                }
                 NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }

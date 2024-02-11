@@ -14,5 +14,8 @@ sealed interface NavigationEvent {
             get() = destination.route
     }
 
+    //Used for custom routes
+    data class ClearBackstackAndNavigateToRoute(val route: String) : NavigationEvent
+
     data object NavigateBack : NavigationEvent
 }

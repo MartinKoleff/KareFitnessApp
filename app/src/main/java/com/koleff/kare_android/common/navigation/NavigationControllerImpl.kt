@@ -24,6 +24,10 @@ class NavigationControllerImpl @Inject constructor() : NavigationController, Nav
         _navigationEvents.emit(NavigationEvent.ClearBackstackAndNavigateTo(destination))
     }
 
+    override suspend fun clearBackstackAndNavigateToRoute(route: String) {
+        _navigationEvents.emit(NavigationEvent.ClearBackstackAndNavigateToRoute(route))
+    }
+
     override suspend fun navigateBack() {
         _navigationEvents.emit(NavigationEvent.NavigateBack)
     }
