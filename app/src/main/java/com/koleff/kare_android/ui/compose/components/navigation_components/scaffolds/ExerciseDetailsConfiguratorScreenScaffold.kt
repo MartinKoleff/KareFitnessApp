@@ -22,6 +22,7 @@ fun ExerciseDetailsConfiguratorScreenScaffold(
     screenTitle: String,
     exerciseImageId: Int,
     onSubmitExercise: () -> Unit,
+    onNavigateBackAction: () -> Unit,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -43,7 +44,8 @@ fun ExerciseDetailsConfiguratorScreenScaffold(
                         shape = RoundedToolbarShape(hasTopOutline = false)
                     ),
                 exerciseImageId = exerciseImageId,
-                onSubmitExercise = onSubmitExercise
+                onSubmitExercise = onSubmitExercise,
+                onNavigateBackAction = onNavigateBackAction
             )
         },
     ) { innerPadding ->

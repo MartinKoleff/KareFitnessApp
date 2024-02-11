@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
@@ -84,11 +85,18 @@ fun ExerciseDetailsConfiguratorScreen(
         navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
     }
 
+    //Navigation Callbacks
+    val onNavigateBack: () -> Unit = {
+        exerciseDetailsConfiguratorViewModel.onNavigationEvent(
+            NavigationEvent.NavigateBack
+        )
+    }
+
     ExerciseDetailsConfiguratorScreenScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
-        onSubmitExercise = onSubmitExercise
-    ) { innerPadding ->
+        onSubmitExercise = onSubmitExercise,
+        onNavigateBackAction = onNavigateBack) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
@@ -186,10 +194,6 @@ fun ExerciseDetailsConfiguratorContent(
 @Preview
 @Composable
 fun ExerciseDetailsConfiguratorScreenPreview() {
-    val navController = rememberNavController()
-    val isNavigationInProgress = remember {
-        mutableStateOf(false)
-    }
     val exerciseState = ExerciseState(
         exercise = MockupDataGenerator.generateExercise(),
         isSuccessful = true
@@ -197,14 +201,11 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
 
     val exerciseImageId = MuscleGroup.getImage(exerciseState.exercise.muscleGroup)
 
-    val onSubmitExercise: () -> Unit = {
-
-    }
-
     ExerciseDetailsConfiguratorScreenScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
-        onSubmitExercise = onSubmitExercise
+        onSubmitExercise = {},
+        onNavigateBackAction = {}
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

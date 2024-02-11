@@ -31,7 +31,8 @@ import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
 fun ExerciseDetailsConfiguratorToolbar(
     modifier: Modifier,
     exerciseImageId: Int,
-    onSubmitExercise: () -> Unit
+    onSubmitExercise: () -> Unit,
+    onNavigateBackAction: () -> Unit
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
@@ -63,18 +64,16 @@ fun ExerciseDetailsConfiguratorToolbar(
             NavigationItem(
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                tint = Color.White
+                tint = Color.White,
+                onNavigateAction = onNavigateBackAction
             )
 
-            IconButton(
-                onClick = onSubmitExercise,
-            ) {
-                Icon(
-                    painterResource(id = R.drawable.ic_vector_select),
-                    contentDescription = "Submit button",
-                    tint = Color.Green
-                )
-            }
+            NavigationItem(
+                icon = painterResource(id = R.drawable.ic_vector_select),
+                label = "Submit button",
+                tint = Color.Green,
+                onNavigateAction = onSubmitExercise
+            )
         }
     }
 }
@@ -91,10 +90,10 @@ fun PreviewExerciseConfiguratorToolbar() {
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
             .background(color = MaterialTheme.colorScheme.primaryContainer),
-        exerciseImageId = R.drawable.ic_legs
-    ) {
-
-    }
+        exerciseImageId = R.drawable.ic_legs,
+        onNavigateBackAction = {},
+        onSubmitExercise = {}
+    )
 }
 
 
