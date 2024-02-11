@@ -8,7 +8,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
@@ -51,7 +50,7 @@ fun AppNavigation(
 
     NavHost(
         navController = navController,
-        startDestination = MainScreen.Dashboard.route
+        startDestination = Destination.Dashboard.route
     ) {
         addDestinations()
     }
@@ -60,14 +59,11 @@ fun AppNavigation(
 private fun NavGraphBuilder.addDestinations() {
 
     //TODO: remove navController and isNavigationInProgress as dependencies...
-    composable(MainScreen.Dashboard.route) { backStackEntry ->
+    composable(Destination.Dashboard.route) { backStackEntry ->
         DashboardScreen()
     }
-    composable(MainScreen.Workouts.route) {
-        WorkoutsScreen(
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress
-        )
+    composable(Destination.Workouts.route) {
+        WorkoutsScreen()
     }
     composable(MainScreen.MuscleGroupExercisesList.route) { backStackEntry ->
         MuscleGroupScreen(
