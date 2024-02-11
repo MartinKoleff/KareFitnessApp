@@ -61,7 +61,7 @@ fun SearchWorkoutsScreen(
     LaunchedEffect(key1 = workoutDetailsState) {
 
         //Await workout details
-        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) { //TODO: error here...
+        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
             workoutDetailsState.workout.exercises.add(exerciseState.exercise)
 
             searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)

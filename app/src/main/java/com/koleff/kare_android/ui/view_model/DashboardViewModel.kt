@@ -72,6 +72,8 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
+
+    //Navigation
     fun navigateToMuscleGroupDetails(muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateToRoute(

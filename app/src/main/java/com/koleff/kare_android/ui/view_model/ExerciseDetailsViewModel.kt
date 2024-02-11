@@ -61,6 +61,7 @@ class ExerciseDetailsViewModel @Inject constructor(
         }
     }
 
+    //Navigation
     fun openSearchWorkoutScreen() {
         super.onNavigationEvent(
             NavigationEvent.NavigateToRoute(

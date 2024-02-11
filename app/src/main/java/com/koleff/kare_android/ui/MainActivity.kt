@@ -11,6 +11,7 @@ import com.koleff.kare_android.common.navigation.AppNavigation
 import com.koleff.kare_android.common.navigation.NavigationNotifier
 import com.koleff.kare_android.ui.theme.KareTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationNotifier: NavigationNotifier
 
-    @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class)
+    @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class, FlowPreview::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {

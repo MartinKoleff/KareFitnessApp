@@ -109,6 +109,7 @@ class SearchExercisesViewModel @Inject constructor(
         }
     }
 
+    //Navigation
     fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(

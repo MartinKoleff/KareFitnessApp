@@ -127,6 +127,7 @@ class SearchWorkoutViewModel @Inject constructor(
         _updateWorkoutState.value = WorkoutDetailsState()
     }
 
+    //Navigation
     fun openWorkoutDetailsScreen(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(

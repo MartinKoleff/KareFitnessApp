@@ -257,15 +257,6 @@ fun ExerciseBannerV2(
     }
 }
 
-//fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
-//    navController.navigate(
-//        MainScreen.ExerciseDetails.createRoute(
-//            exerciseId = exercise.exerciseId,
-//            muscleGroupId = exercise.muscleGroup.muscleGroupId
-//        )
-//    )
-//}
-
 @Composable
 fun ExerciseList(
     innerPadding: PaddingValues = PaddingValues(0.dp),

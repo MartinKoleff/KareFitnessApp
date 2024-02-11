@@ -94,6 +94,7 @@ class ExerciseListViewModel @Inject constructor(
         }
     }
 
+    //Navigation
     fun openExerciseDetailsScreen(exerciseId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateToRoute(
