@@ -18,14 +18,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.ui.MainScreen
+import com.koleff.kare_android.ui.compose.NavigationIconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Toolbar(
-    navController: NavHostController,
     title: String = "",
     hasTitle: Boolean = true,
-    isNavigationInProgress: MutableState<Boolean>
+    onNavigateBackAction: () -> Unit,
+    onNavigateToAction: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -45,21 +46,17 @@ fun Toolbar(
             }
         },
         navigationIcon = {
-            NavigationItem(
-                navController = navController,
-                screen = null, //Backstack pop
+            NavigationIconButton(
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                isBlocked = isNavigationInProgress
+                onNavigateAction = onNavigateBackAction
             )
         },
         actions = {
-            NavigationItem(
-                navController = navController,
-                screen = MainScreen.Settings,
+            NavigationIconButton(
                 icon = Icons.Filled.Settings,
                 label = "Settings",
-                isBlocked = isNavigationInProgress
+                onNavigateAction = onNavigateToAction
             )
         },
         scrollBehavior = scrollBehavior
@@ -72,7 +69,7 @@ fun ToolbarPreview() {
     val navController = rememberNavController()
 
     Toolbar(
-        navController = navController,
-        isNavigationInProgress = mutableStateOf(false)
+        onNavigateBackAction = {},
+        onNavigateToAction = {}
     )
 }

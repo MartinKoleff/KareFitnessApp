@@ -16,20 +16,19 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.MainScreen
+import com.koleff.kare_android.ui.compose.NavigationIconButton
 
 @Composable
 fun BottomNavigationBar(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToWorkouts: () -> Unit,
 ) {
     BottomAppBar(
         actions = {
-            NavigationItem(
-                navController = navController,
-                screen = MainScreen.Dashboard,
+            NavigationIconButton(
                 icon = Icons.Filled.Star,
                 label = "Dashboard",
-                isBlocked = isNavigationInProgress
+                onNavigateAction = onNavigateToDashboard
             )
 
             //Spacing between items
@@ -39,12 +38,10 @@ fun BottomNavigationBar(
                     .width(0.dp)
             )
 
-            NavigationItem(
-                navController = navController,
-                screen = MainScreen.Workouts,
+            NavigationIconButton(
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
                 label = "Workout screen",
-                isBlocked = isNavigationInProgress
+                onNavigateAction = onNavigateToWorkouts
             )
         }
     )
@@ -53,9 +50,8 @@ fun BottomNavigationBar(
 @Preview
 @Composable
 fun PreviewBottomNavigationBar() {
-    val navController = rememberNavController()
-        BottomNavigationBar(
-        navController = navController,
-        isNavigationInProgress = mutableStateOf(false)
+    BottomNavigationBar(
+        onNavigateToDashboard = {},
+        onNavigateToWorkouts = {}
     )
 }
