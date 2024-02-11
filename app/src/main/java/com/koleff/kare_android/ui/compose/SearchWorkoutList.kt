@@ -18,7 +18,6 @@ import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
 @Composable
 fun SearchWorkoutList(
     modifier: Modifier,
-    navController: NavHostController,
     workoutList: List<WorkoutDto>,
     onExerciseAddToWorkout: (Int) -> Unit,
 ) {
@@ -34,8 +33,6 @@ fun SearchWorkoutList(
                 onExerciseAddToWorkout(workout.workoutId)
 
                 //TODO: show dialog for successfully added workout...
-
-//                navController.navigate(MainScreen.Dashboard.route)
             }
         }
     }
@@ -54,7 +51,6 @@ fun SearchWorkoutListPreview() {
     SearchWorkoutList(
         modifier = modifier,
         workoutList = workoutList,
-        navController = rememberNavController()
     ) {
 
     }

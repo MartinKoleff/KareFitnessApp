@@ -14,14 +14,18 @@ import com.koleff.kare_android.ui.compose.navigation.Toolbar
 fun SearchListScaffold(
     modifier: Modifier = Modifier,
     screenTitle: String,
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
+    onNavigateBackAction: () -> Unit,
+    onNavigateToAction: () -> Unit,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            Toolbar(navController = navController, title = screenTitle, isNavigationInProgress = isNavigationInProgress)
+            Toolbar(
+                title = screenTitle,
+                onNavigateBackAction = onNavigateBackAction,
+                onNavigateToAction = onNavigateToAction
+            )
         }
     ) { innerPadding ->
         modifierPadding(innerPadding)
