@@ -1,11 +1,11 @@
-package com.koleff.kare_android.ui.compose.scaffolds
+package com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.koleff.kare_android.ui.compose.components.navigation_components.Toolbar
+import com.koleff.kare_android.ui.compose.components.navigation_components.toolbar.Toolbar
 
 @Composable
 fun SearchListScaffold(

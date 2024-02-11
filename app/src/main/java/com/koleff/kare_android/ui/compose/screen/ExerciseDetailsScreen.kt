@@ -35,7 +35,7 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.YoutubeVideoPlayer
-import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.state.ExerciseDetailsState
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 

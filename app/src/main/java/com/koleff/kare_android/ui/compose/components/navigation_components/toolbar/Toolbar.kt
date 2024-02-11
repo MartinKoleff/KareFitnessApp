@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.components.navigation_components
+package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack

@@ -1,3 +1,5 @@
+package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

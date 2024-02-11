@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.components.navigation_components
+package com.koleff.kare_android.ui.compose.components.navigation_components.bottom_navigation_bar
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.width
