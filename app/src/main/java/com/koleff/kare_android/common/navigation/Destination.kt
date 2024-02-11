@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.navigation
+package com.koleff.kare_android.common.navigation
 
 sealed class Destination(val route: String) {
     object Dashboard : Destination("dashboard") //Muscle group screen

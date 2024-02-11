@@ -11,8 +11,8 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.DashboardState
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.DashboardRepository
-import com.koleff.kare_android.ui.navigation.NavigationController
-import com.koleff.kare_android.ui.navigation.NavigationEvent
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

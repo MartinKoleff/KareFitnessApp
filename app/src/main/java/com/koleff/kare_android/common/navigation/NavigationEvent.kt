@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.navigation
+package com.koleff.kare_android.common.navigation
 
 //TODO: add navigation options for custom screen routes...
 sealed interface NavigationEvent {

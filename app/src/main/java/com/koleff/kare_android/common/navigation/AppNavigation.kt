@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.navigation
+package com.koleff.kare_android.common.navigation
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable

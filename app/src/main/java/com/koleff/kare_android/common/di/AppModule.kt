@@ -53,8 +53,8 @@ import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.ui.navigation.NavigationController
-import com.koleff.kare_android.ui.navigation.NavigationControllerImpl
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationControllerImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -302,7 +302,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNavigationController(): NavigationController{
+    fun provideNavigationController(): NavigationController {
         return NavigationControllerImpl()
     }
 }
