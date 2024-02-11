@@ -1,5 +1,6 @@
 package com.koleff.kare_android.common.navigation
 
+import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,7 +18,10 @@ import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flowOn
 
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -29,7 +33,14 @@ fun AppNavigation(
 
     //Navigation observer
     LaunchedEffect(Unit) {
-        navigationNotifier.navigationEvents.collectLatest { navigationEvent ->
+        Log.d("AppNavigation", "Successfully registered navigation events observer!")
+
+        navigationNotifier.navigationEvents
+            .flowOn(Dispatchers.Main)
+            .catch { e -> Log.e("AppNavigation", "Error collecting navigation events", e) }
+            .collectLatest { navigationEvent ->
+
+            Log.d("AppNavigation", "Navigation event: $navigationEvent")
             when (navigationEvent) {
                 is NavigationEvent.NavigateTo -> navController.navigate(navigationEvent.route)
                 is NavigationEvent.NavigateToRoute -> navController.navigate(navigationEvent.route)
@@ -44,7 +55,6 @@ fun AppNavigation(
                 ) {
                     popUpTo(navController.graph.id)
                 }
-
                 NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
