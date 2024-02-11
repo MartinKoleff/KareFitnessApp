@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
+@Singleton
 class NavigationControllerImpl @Inject constructor() : NavigationController, NavigationNotifier {
 
     private val _navigationEvents = MutableSharedFlow<NavigationEvent>(
