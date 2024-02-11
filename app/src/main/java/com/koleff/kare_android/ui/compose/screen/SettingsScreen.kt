@@ -10,21 +10,45 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavHostController
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.PermissionManager
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
 import com.koleff.kare_android.ui.compose.lifecycle_event.observeLifecycleEvent
+import com.koleff.kare_android.ui.view_model.BaseViewModel
+
+typealias SettingsViewModel = BaseViewModel
 
 @Composable
 fun SettingsScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>
+    settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-    MainScreenScaffold("Settings", navController, isNavigationInProgress) { innerPadding ->
+
+    //Navigation Callbacks
+    val onNavigateToDashboard = {
+        settingsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+    val onNavigateToWorkouts = {
+        settingsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+    val onNavigateToSettings = {
+        settingsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = { settingsViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
+    MainScreenScaffold(
+        "Settings",
+        onNavigateToDashboard = onNavigateToDashboard,
+        onNavigateToWorkouts = onNavigateToWorkouts,
+        onNavigateBackAction = onNavigateBack,
+        onNavigateToSettings = onNavigateToSettings
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
