@@ -48,9 +48,6 @@ fun SearchWorkoutsScreen(
     val screenTitle = remember { mutableStateOf("Select workout") }
 
     val exerciseState by exerciseViewModel.state.collectAsState()
-    val exercise by remember {
-        mutableStateOf(exerciseState.exercise)
-    }
 
     LaunchedEffect(selectedWorkoutId) {
         selectedWorkoutId != -1 || return@LaunchedEffect
@@ -64,8 +61,8 @@ fun SearchWorkoutsScreen(
     LaunchedEffect(key1 = workoutDetailsState) {
 
         //Await workout details
-        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
-            workoutDetailsState.workout.exercises.add(exercise)
+        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) { //TODO: error here...
+            workoutDetailsState.workout.exercises.add(exerciseState.exercise)
 
             searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
         }
