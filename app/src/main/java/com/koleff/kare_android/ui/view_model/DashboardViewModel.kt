@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.di.MainDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -85,7 +86,15 @@ class DashboardViewModel @Inject constructor(
                 is NavigationEvent.NavigateTo -> {
                     navigationController.navigateTo(navigationEvent.destination)
                 }
+
+                is NavigationEvent.NavigateToRoute -> {
+                    navigationController.navigateToRoute(navigationEvent.route)
+                }
             }
         }
+    }
+
+    fun navigateToMuscleGroupDetails(muscleGroupId: Int) {
+        onNavigationEvent(NavigationEvent.NavigateToRoute(Destination.MuscleGroupExercisesList.createRoute(muscleGroupId)))
     }
 }

@@ -12,8 +12,8 @@ import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.MuscleGroupGrid
-import com.koleff.kare_android.ui.navigation.Destination
-import com.koleff.kare_android.ui.navigation.NavigationEvent
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 
 @Composable
@@ -47,9 +47,10 @@ fun DashboardScreen(dashboardViewModel: DashboardViewModel = hiltViewModel()) {
 
             MuscleGroupGrid(
                 modifier = modifier,
-                navController = navController,
                 muscleGroupList = muscleGroupState.muscleGroupList
-            )
+            ) { muscleGroup ->
+                dashboardViewModel.navigateToMuscleGroupDetails(muscleGroup)
+            }
         }
     }
 }

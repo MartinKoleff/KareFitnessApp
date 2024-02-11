@@ -93,8 +93,8 @@ fun ImageCard(
 @Composable
 fun MuscleGroupGrid(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
-    muscleGroupList: List<MuscleGroupUI>
+    muscleGroupList: List<MuscleGroupUI>,
+    onMuscleGroupSelected: (Int) -> Unit
 ) {
     LazyVerticalStaggeredGrid(
         modifier = modifier,
@@ -122,12 +122,8 @@ fun MuscleGroupGrid(
                         )
                     )
             ) {
-                openMuscleGroupScreen(currentMuscleGroupId, navController)
+                onMuscleGroupSelected(currentMuscleGroupId)
             }
         }
     }
-}
-
-fun openMuscleGroupScreen(currentMuscleGroupId: Int, navController: NavHostController) {
-    navController.navigate(MainScreen.MuscleGroupExercisesList.createRoute(currentMuscleGroupId))
 }
