@@ -2,19 +2,15 @@ package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.ui.state.ExerciseDetailsState
-import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.koleff.kare_android.ui.state.ExerciseDetailsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,9 +21,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ExerciseDetailsViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
+    private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
 
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
     private val initialMuscleGroupId: Int = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
@@ -62,5 +59,13 @@ class ExerciseDetailsViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun openSearchWorkoutScreen() {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.SearchWorkoutsScreen.createRoute(state.value.exercise.id)
+            )
+        )
     }
 }
