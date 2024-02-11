@@ -49,15 +49,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import kotlin.math.roundToInt
 
 @Composable
@@ -135,15 +131,7 @@ fun ExerciseBannerV2(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val exerciseImage: Int = when (exercise.muscleGroup) {
-        MuscleGroup.CHEST -> R.drawable.ic_chest
-        MuscleGroup.BACK -> R.drawable.ic_back
-        MuscleGroup.TRICEPS -> R.drawable.ic_triceps
-        MuscleGroup.BICEPS -> R.drawable.ic_biceps
-        MuscleGroup.SHOULDERS -> R.drawable.ic_shoulder
-        MuscleGroup.LEGS -> R.drawable.ic_legs
-        else -> -1 //TODO: handle invalid muscle group...
-    }
+   val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
 
     Card(
         modifier = modifier
@@ -269,20 +257,20 @@ fun ExerciseBannerV2(
     }
 }
 
-fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
-    navController.navigate(
-        MainScreen.ExerciseDetails.createRoute(
-            exerciseId = exercise.exerciseId,
-            muscleGroupId = exercise.muscleGroup.muscleGroupId
-        )
-    )
-}
+//fun openExerciseDetailsScreen(exercise: ExerciseDto, navController: NavHostController) {
+//    navController.navigate(
+//        MainScreen.ExerciseDetails.createRoute(
+//            exerciseId = exercise.exerciseId,
+//            muscleGroupId = exercise.muscleGroup.muscleGroupId
+//        )
+//    )
+//}
 
 @Composable
 fun ExerciseList(
     innerPadding: PaddingValues = PaddingValues(0.dp),
     exerciseList: List<ExerciseDto>,
-    navController: NavHostController
+    openExerciseDetailsScreen: (ExerciseDto) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -301,7 +289,7 @@ fun ExerciseList(
                     .height(200.dp),
                 exercise = exercise,
             ) {
-                openExerciseDetailsScreen(exercise, navController = navController)
+                openExerciseDetailsScreen(exercise)
             }
         }
     }
@@ -414,7 +402,6 @@ fun SwipeableExerciseBannerPreview() {
 fun ExerciseListPreview() {
     val n = 5
     val exercisesList: MutableList<ExerciseDto> = mutableListOf()
-    val navController = rememberNavController()
 
     repeat(n) { index ->
         val currentExercise = ExerciseDto(
@@ -427,5 +414,7 @@ fun ExerciseListPreview() {
         exercisesList.add(currentExercise)
     }
 
-    ExerciseList(exerciseList = exercisesList, navController = navController)
+    ExerciseList(exerciseList = exercisesList){ exercise ->
+
+    }
 }

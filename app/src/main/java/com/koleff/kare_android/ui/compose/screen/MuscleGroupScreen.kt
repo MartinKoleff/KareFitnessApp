@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.MachineFilterSegmentButton
 import com.koleff.kare_android.ui.compose.banners.ExerciseList
@@ -25,14 +27,31 @@ import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 @Composable
 fun MuscleGroupScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     exerciseListViewModel: ExerciseListViewModel = hiltViewModel()
 ) {
+
+    //Navigation Callbacks
+    val onNavigateToDashboard = {
+        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+    val onNavigateToWorkouts = {
+        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+    val onNavigateToSettings = {
+        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = { exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
     val exerciseListState by exerciseListViewModel.state.collectAsState()
     val muscleGroup = exerciseListViewModel.muscleGroup
 
-    MainScreenScaffold(muscleGroup.name, navController, isNavigationInProgress) { innerPadding ->
+    MainScreenScaffold(
+        muscleGroup.name,
+        onNavigateToDashboard = onNavigateToDashboard,
+        onNavigateToWorkouts = onNavigateToWorkouts,
+        onNavigateBackAction = onNavigateBack,
+        onNavigateToSettings = onNavigateToSettings
+    ) { innerPadding ->
         val buttonModifier = Modifier
             .fillMaxWidth()
             .padding(
@@ -63,7 +82,12 @@ fun MuscleGroupScreen(
                 ExerciseList(
                     innerPadding = innerPadding,
                     exerciseList = exerciseListState.exerciseList,
-                    navController = navController
+                    openExerciseDetailsScreen = { exercise ->
+                        exerciseListViewModel.openExerciseDetailsScreen(
+                            exerciseId = exercise.exerciseId,
+                            muscleGroupId = exercise.muscleGroup.muscleGroupId
+                        )
+                    }
                 )
             }
         }
