@@ -68,11 +68,8 @@ private fun NavGraphBuilder.addDestinations() {
     composable(Destination.MuscleGroupExercisesList.route) { backStackEntry ->
         MuscleGroupScreen()
     }
-    composable(route = MainScreen.WorkoutDetails.route) { backStackEntry ->
-        WorkoutDetailsScreen(
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress
-        )
+    composable(Destination.WorkoutDetails.route) { backStackEntry ->
+        WorkoutDetailsScreen()
     }
     composable(MainScreen.ExerciseDetails.route) { backStackEntry ->
         ExerciseDetailsScreen(
