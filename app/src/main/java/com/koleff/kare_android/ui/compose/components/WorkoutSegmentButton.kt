@@ -43,13 +43,13 @@ fun WorkoutSegmentButton(
                         0 -> {
 
                             //MyWorkout screen
-                            workoutListViewModel.onEvent(OnWorkoutScreenSwitchEvent.SelectedWorkout)
+                            workoutListViewModel.onWorkoutFilterEvent(OnWorkoutScreenSwitchEvent.SelectedWorkout)
                         }
 
                         1 -> {
 
                             //Workouts Screen
-                            workoutListViewModel.onEvent(OnWorkoutScreenSwitchEvent.AllWorkouts)
+                            workoutListViewModel.onWorkoutFilterEvent(OnWorkoutScreenSwitchEvent.AllWorkouts)
                         }
                     }
                 },

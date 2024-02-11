@@ -90,7 +90,7 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: OnWorkoutScreenSwitchEvent) {
+    fun onWorkoutFilterEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {
             _state.value = WorkoutState(
                 isLoading = true
