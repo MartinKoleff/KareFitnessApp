@@ -9,6 +9,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
@@ -19,10 +20,13 @@ import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 
+@FlowPreview
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
 @Composable
@@ -38,6 +42,7 @@ fun AppNavigation(
         navigationNotifier.navigationEvents
             .flowOn(Dispatchers.Main)
             .catch { e -> Log.e("AppNavigation", "Error collecting navigation events", e) }
+            .debounce(Constants.navigationDelay)
             .collectLatest { navigationEvent ->
 
             Log.d("AppNavigation", "Navigation event: $navigationEvent")
