@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.assisted.Assisted
@@ -25,9 +28,10 @@ typealias DeleteExerciseState = WorkoutDetailsState
 @HiltViewModel
 class WorkoutDetailsViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
+    private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
@@ -63,9 +67,30 @@ class WorkoutDetailsViewModel @Inject constructor(
 
     fun deleteExercise(workoutId: Int, exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId).collect { deleteExerciseState ->
-                _deleteExerciseState.value = deleteExerciseState
-            }
+            workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId)
+                .collect { deleteExerciseState ->
+                    _deleteExerciseState.value = deleteExerciseState
+                }
         }
+    }
+
+    fun openSearchExercisesScreen(workoutId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.SearchExercisesScreen.createRoute(workoutId)
+            )
+        )
+    }
+
+    fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.ExerciseDetailsConfigurator.createRoute(
+                    exerciseId = exerciseId,
+                    workoutId = workoutId,
+                    muscleGroupId = muscleGroupId
+                )
+            )
+        )
     }
 }
