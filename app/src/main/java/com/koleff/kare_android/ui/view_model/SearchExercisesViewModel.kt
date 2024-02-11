@@ -111,12 +111,14 @@ class SearchExercisesViewModel @Inject constructor(
 
     fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.ExerciseDetailsConfigurator.createRoute(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = Destination.Workouts.route,
+                destinationRoute = Destination.ExerciseDetailsConfigurator.createRoute(
                     exerciseId,
                     muscleGroupId,
                     workoutId
-                )
+                ),
+                inclusive = false
             )
         )
     }
