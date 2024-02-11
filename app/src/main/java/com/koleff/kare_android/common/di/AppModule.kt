@@ -53,6 +53,8 @@ import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.navigation.NavigationController
+import com.koleff.kare_android.ui.navigation.NavigationControllerImpl
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -296,5 +298,11 @@ object AppModule {
     @Singleton
     fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
         return DefaultPreferences(sharedPreferences)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNavigationController(): NavigationController{
+        return NavigationControllerImpl()
     }
 }
