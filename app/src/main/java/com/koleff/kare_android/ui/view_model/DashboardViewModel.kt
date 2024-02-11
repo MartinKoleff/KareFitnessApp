@@ -30,7 +30,7 @@ class DashboardViewModel @Inject constructor(
     private val preferences: Preferences,
     private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : ViewModel() {
+) : BaseViewModel(navigationController = navigationController, dispatcher = dispatcher) {
 
     private val _state: MutableStateFlow<DashboardState> =
         MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))
@@ -72,29 +72,13 @@ class DashboardViewModel @Inject constructor(
         }
     }
 
-    fun onNavigationEvent(navigationEvent: NavigationEvent) {
-        viewModelScope.launch(dispatcher) {
-            when (navigationEvent) {
-                is NavigationEvent.ClearBackstackAndNavigateTo -> {
-                    navigationController.clearBackstackAndNavigateTo(navigationEvent.destination)
-                }
-
-                NavigationEvent.NavigateBack -> {
-                    navigationController.navigateBack()
-                }
-
-                is NavigationEvent.NavigateTo -> {
-                    navigationController.navigateTo(navigationEvent.destination)
-                }
-
-                is NavigationEvent.NavigateToRoute -> {
-                    navigationController.navigateToRoute(navigationEvent.route)
-                }
-            }
-        }
-    }
-
     fun navigateToMuscleGroupDetails(muscleGroupId: Int) {
-        onNavigationEvent(NavigationEvent.NavigateToRoute(Destination.MuscleGroupExercisesList.createRoute(muscleGroupId)))
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.MuscleGroupExercisesList.createRoute(
+                    muscleGroupId
+                )
+            )
+        )
     }
 }
