@@ -30,7 +30,7 @@ class DashboardViewModel @Inject constructor(
     private val preferences: Preferences,
     private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : BaseViewModel(navigationController = navigationController, dispatcher = dispatcher) {
+) : BaseViewModel(navigationController = navigationController) {
 
     private val _state: MutableStateFlow<DashboardState> =
         MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))

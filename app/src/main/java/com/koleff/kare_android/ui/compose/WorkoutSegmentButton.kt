@@ -20,7 +20,6 @@ import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 @Composable
 fun WorkoutSegmentButton(
     modifier: Modifier = Modifier,
-    navController: NavHostController,
     selectedOptionIndex: Int,
     isDisabled: Boolean,
     workoutListViewModel: WorkoutViewModel
