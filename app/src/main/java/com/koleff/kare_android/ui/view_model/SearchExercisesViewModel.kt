@@ -5,6 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
@@ -23,8 +26,9 @@ import javax.inject.Inject
 class SearchExercisesViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
     private val savedStateHandle: SavedStateHandle,
+    private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
     val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _state: MutableStateFlow<ExercisesState> = MutableStateFlow(ExercisesState())
@@ -95,13 +99,25 @@ class SearchExercisesViewModel @Inject constructor(
 
     private fun getExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect{exerciseState ->
+            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect { exerciseState ->
                 _state.value = exerciseState
 
-                if(_state.value.isSuccessful){
+                if (_state.value.isSuccessful) {
                     originalExerciseList = _state.value.exerciseList
                 }
             }
         }
+    }
+
+    fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.ExerciseDetailsConfigurator.createRoute(
+                    exerciseId,
+                    muscleGroupId,
+                    workoutId
+                )
+            )
+        )
     }
 }
