@@ -59,11 +59,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import kotlin.math.roundToInt
@@ -252,7 +250,7 @@ fun SwipeableWorkoutBanner(
         )
 
         //Options
-        Column(modifier = optionColumnModifier .offset {
+        Column(modifier = optionColumnModifier.offset {
             IntOffset(
                 (screenWidth.toPx() + offsetX).roundToInt(), 0
             )
@@ -433,7 +431,7 @@ fun EditButton(
 fun WorkoutList(
     modifier: Modifier,
     workoutList: List<WorkoutDto>,
-    navController: NavHostController
+    openWorkoutDetailsScreen: (WorkoutDto) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         items(workoutList) { workout ->
@@ -443,7 +441,7 @@ fun WorkoutList(
                     .height(200.dp),
                 workout = workout,
             ) {
-                openWorkoutDetailsScreen(workout, navController = navController)
+                openWorkoutDetailsScreen(workout)
             }
         }
     }
@@ -480,7 +478,9 @@ fun WorkoutListPreview() {
     WorkoutList(
         modifier = modifier,
         workoutList = workoutList,
-        navController = navController
+        openWorkoutDetailsScreen = { workoutDto ->
+
+        }
     )
 }
 
