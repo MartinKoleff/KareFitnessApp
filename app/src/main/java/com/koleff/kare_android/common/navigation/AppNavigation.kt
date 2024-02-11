@@ -33,12 +33,12 @@ fun AppNavigation(
         navigationNotifier.navigationEvents.collectLatest { navigationEvent ->
             when (navigationEvent) {
                 is NavigationEvent.NavigateTo -> navController.navigate(navigationEvent.route)
+                is NavigationEvent.NavigateToRoute -> navController.navigate(navigationEvent.route)
                 is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
                     navigationEvent.route
                 ) {
                     popUpTo(navController.graph.id)
                 }
-
                 NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
@@ -56,10 +56,7 @@ private fun NavGraphBuilder.addDestinations() {
 
     //TODO: remove navController and isNavigationInProgress as dependencies...
     composable(MainScreen.Dashboard.route) { backStackEntry ->
-        DashboardScreen(
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress
-        )
+        DashboardScreen()
     }
     composable(MainScreen.Workouts.route) {
         WorkoutsScreen(
