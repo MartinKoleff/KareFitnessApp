@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.navigation
 
+//TODO: add navigation options for custom screen routes...
 sealed interface NavigationEvent {
     data class NavigateTo(val destination: Destination) : NavigationEvent {
         val route

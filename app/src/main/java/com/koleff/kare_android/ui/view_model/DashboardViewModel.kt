@@ -11,6 +11,8 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.DashboardState
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.DashboardRepository
+import com.koleff.kare_android.ui.navigation.NavigationController
+import com.koleff.kare_android.ui.navigation.NavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +27,7 @@ typealias MuscleGroupUIList = List<MuscleGroupUI>
 class DashboardViewModel @Inject constructor(
     private val dashboardRepository: DashboardRepository,
     private val preferences: Preferences,
+    private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
 
@@ -63,6 +66,24 @@ class DashboardViewModel @Inject constructor(
                             preferences.saveDashboardMuscleGroupList(muscleGroupList = it.muscleGroupList)
                         }
                     }
+                }
+            }
+        }
+    }
+
+    fun onNavigationEvent(navigationEvent: NavigationEvent) {
+        viewModelScope.launch(dispatcher) {
+            when (navigationEvent) {
+                is NavigationEvent.ClearBackstackAndNavigateTo -> {
+                    navigationController.clearBackstackAndNavigateTo(navigationEvent.destination)
+                }
+
+                NavigationEvent.NavigateBack -> {
+                    navigationController.navigateBack()
+                }
+
+                is NavigationEvent.NavigateTo -> {
+                    navigationController.navigateTo(navigationEvent.destination)
                 }
             }
         }
