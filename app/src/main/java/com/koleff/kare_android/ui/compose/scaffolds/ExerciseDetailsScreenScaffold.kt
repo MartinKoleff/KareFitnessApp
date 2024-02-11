@@ -23,10 +23,11 @@ import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
 @Composable
 fun ExerciseDetailsScreenScaffold(
     screenTitle: String,
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     exerciseImageId: Int,
     exerciseId: Int,
+    onNavigateAction: () -> Unit,
+    onNavigateBack: () -> Unit,
+    onNavigateSubmitExercise: () -> Unit,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -47,16 +48,15 @@ fun ExerciseDetailsScreenScaffold(
                         border = BorderStroke(2.dp, color = Color.White),
                         shape = RoundedToolbarShape(hasTopOutline = false)
                     ),
-                isNavigationInProgress = isNavigationInProgress,
-                navController = navController,
-                exerciseImageId = exerciseImageId
+                exerciseImageId = exerciseImageId,
+                onNavigateAction = onNavigateAction,
+                onNavigateBackAction = onNavigateBack
             )
         },
         bottomBar = {
             ExerciseDetailsBottomNavigationBar(
-                isNavigationInProgress = isNavigationInProgress,
-                navController = navController,
-                exerciseId = exerciseId
+                exerciseId = exerciseId,
+                onNavigateSubmitExercise = onNavigateSubmitExercise
             )
         }
     ) { innerPadding ->

@@ -4,27 +4,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.MainScreen
-import com.koleff.kare_android.data.model.dto.NavigationArguments
+import com.koleff.kare_android.ui.compose.NavigationIconButton
 
 
 @Composable
 fun ExerciseDetailsBottomNavigationBar(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
-    exerciseId: Int
+    exerciseId: Int,
+    onNavigateSubmitExercise: () -> Unit
 ) {
-    val isBlocked = mutableStateOf(isNavigationInProgress.value || exerciseId == -1)
+    val isBlocked = mutableStateOf(exerciseId == -1)
 
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.secondary,
@@ -32,14 +28,11 @@ fun ExerciseDetailsBottomNavigationBar(
         actions = {
             Spacer(Modifier.weight(1f))
 
-            NavigationItem(
-                navController = navController,
-                screen = MainScreen.SearchWorkoutsScreen,
+            NavigationIconButton(
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
-                isBlocked = isBlocked,
                 tint = Color.White,
-                navigationArguments = NavigationArguments(exerciseId = exerciseId)
+                onNavigateAction = onNavigateSubmitExercise
             )
 
             Spacer(Modifier.weight(1f))
@@ -52,8 +45,7 @@ fun ExerciseDetailsBottomNavigationBar(
 fun PreviewExerciseDetailsBottomNavigationBar() {
     val navController = rememberNavController()
     ExerciseDetailsBottomNavigationBar(
-        navController = navController,
-        isNavigationInProgress = mutableStateOf(false),
-        exerciseId = -1
+        exerciseId = -1,
+        onNavigateSubmitExercise = {}
     )
 }
