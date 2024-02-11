@@ -23,7 +23,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.components.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
 
 
@@ -60,7 +60,7 @@ fun ExerciseDetailsConfiguratorToolbar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            NavigationIconButton(
+            NavigationItem(
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
                 tint = Color.White

@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.components.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
 
 
@@ -65,7 +65,7 @@ fun ExerciseDetailsToolbar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            NavigationIconButton(
+            NavigationItem(
 //                modifier = Modifier.drawBehind {
 //                    drawRect(
 //                        color = primaryContainerColor
@@ -77,7 +77,7 @@ fun ExerciseDetailsToolbar(
                 onNavigateAction = onNavigateBackAction
             )
 
-            NavigationIconButton(
+            NavigationItem(
 //                modifier = Modifier.drawBehind {
 //                    drawRect(
 //                        color = primaryContainerColor

@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.components
+package com.koleff.kare_android.ui.compose.components.navigation_components
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun NavigationIconButton(
+fun NavigationItem(
     modifier: Modifier = Modifier,
     icon: Any, //Can be Painter or ImageVector
     label: String,

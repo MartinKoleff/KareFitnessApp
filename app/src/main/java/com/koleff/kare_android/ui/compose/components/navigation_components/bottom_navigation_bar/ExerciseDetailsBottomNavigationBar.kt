@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.components.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
 
 @Composable
@@ -33,7 +33,7 @@ fun ExerciseDetailsBottomNavigationBar(
         actions = {
             Spacer(Modifier.weight(1f))
 
-            NavigationIconButton(
+            NavigationItem(
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
                 tint = Color.White,

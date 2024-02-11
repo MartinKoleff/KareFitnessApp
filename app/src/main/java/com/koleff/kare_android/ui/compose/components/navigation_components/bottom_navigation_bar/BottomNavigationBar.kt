@@ -11,7 +11,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.components.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
 @Composable
 fun BottomNavigationBar(
@@ -20,7 +20,7 @@ fun BottomNavigationBar(
 ) {
     BottomAppBar(
         actions = {
-            NavigationIconButton(
+            NavigationItem(
                 icon = Icons.Filled.Star,
                 label = "Dashboard",
                 onNavigateAction = onNavigateToDashboard
@@ -33,7 +33,7 @@ fun BottomNavigationBar(
                     .width(0.dp)
             )
 
-            NavigationIconButton(
+            NavigationItem(
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
                 label = "Workout screen",
                 onNavigateAction = onNavigateToWorkouts

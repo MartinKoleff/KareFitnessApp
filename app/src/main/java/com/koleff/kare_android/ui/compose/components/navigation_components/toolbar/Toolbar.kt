@@ -14,7 +14,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
-import com.koleff.kare_android.ui.compose.components.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,14 +42,14 @@ fun Toolbar(
             }
         },
         navigationIcon = {
-            NavigationIconButton(
+            NavigationItem(
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
                 onNavigateAction = onNavigateBackAction
             )
         },
         actions = {
-            NavigationIconButton(
+            NavigationItem(
                 icon = Icons.Filled.Settings,
                 label = "Settings",
                 onNavigateAction = onNavigateToAction
