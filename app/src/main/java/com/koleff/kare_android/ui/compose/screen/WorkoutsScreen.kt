@@ -55,6 +55,8 @@ import java.util.Locale
 fun WorkoutsScreen(
     workoutListViewModel: WorkoutViewModel = hiltViewModel()
 ) {
+
+    //Navigation Callbacks
     val onNavigateToDashboard = {
         workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
     }
@@ -134,13 +136,7 @@ fun WorkoutsScreen(
                     "WorkoutsScreen",
                     "Create workout with id ${createWorkoutState.workout.workoutId}"
                 )
-                workoutListViewModel.onNavigationEvent(
-                    NavigationEvent.NavigateToRoute(
-                        Destination.WorkoutDetails.createRoute(
-                            workoutId = createWorkoutState.workout.workoutId
-                        )
-                    )
-                )
+                workoutListViewModel.openWorkoutDetailsScreen(createWorkoutState.workout.workoutId)
 
                 //Reset state
                 workoutListViewModel.resetCreateWorkoutState()
