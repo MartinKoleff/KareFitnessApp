@@ -10,10 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerV2
 import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
@@ -24,7 +21,7 @@ fun SearchExercisesList(
     modifier: Modifier,
     exerciseList: List<ExerciseDto>,
     workoutId: Int,
-    navController: NavHostController
+    openExerciseDetailsConfiguratorScreen: (ExerciseDto, Int) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         val muscleGroups = exerciseList.map(ExerciseDto::muscleGroup).distinct()
@@ -49,13 +46,7 @@ fun SearchExercisesList(
                         .height(200.dp),
                     exercise = currentExercise,
                 ) { selectedExercise ->
-                    navController.navigate(
-                        MainScreen.ExerciseDetailsConfigurator.createRoute(
-                            exerciseId = selectedExercise.exerciseId,
-                            workoutId = workoutId,
-                            muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
-                        )
-                    )
+                    openExerciseDetailsConfiguratorScreen(selectedExercise, workoutId)
                 }
             }
         }
@@ -76,6 +67,8 @@ fun SearchExercisesListPreview() {
         modifier = modifier,
         exerciseList = exerciseList,
         workoutId = 1,
-        navController = rememberNavController()
+        openExerciseDetailsConfiguratorScreen = { exercise, workoutId ->
+
+        }
     )
 }
