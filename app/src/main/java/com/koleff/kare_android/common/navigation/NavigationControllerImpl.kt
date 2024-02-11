@@ -11,11 +11,7 @@ import javax.inject.Singleton
 @Singleton
 class NavigationControllerImpl @Inject constructor() : NavigationController, NavigationNotifier {
 
-    private val _navigationEvents = MutableSharedFlow<NavigationEvent>(
-        replay = 1,
-        extraBufferCapacity = 0,
-        onBufferOverflow = BufferOverflow.SUSPEND
-    )
+    private val _navigationEvents = MutableSharedFlow<NavigationEvent>(replay = 1)
 
     override val navigationEvents: Flow<NavigationEvent> = _navigationEvents.asSharedFlow()
 
