@@ -104,8 +104,6 @@ class WorkoutViewModel @Inject constructor(
                         isMyWorkoutScreen = false,
                         isLoading = false
                     )
-
-                    super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
                 }
 
                 OnWorkoutScreenSwitchEvent.SelectedWorkout -> {
@@ -122,8 +120,6 @@ class WorkoutViewModel @Inject constructor(
                             preferences.saveSelectedWorkout(it.workoutList.first())
                         }
                     }
-
-                    super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
                 }
             }
         }
