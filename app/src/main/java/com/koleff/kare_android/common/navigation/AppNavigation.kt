@@ -80,11 +80,8 @@ private fun NavGraphBuilder.addDestinations() {
     composable(Destination.Settings.route) {
         SettingsScreen()
     }
-    composable(MainScreen.SearchWorkoutsScreen.route) { backStackEntry ->
-        SearchWorkoutsScreen(
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress
-        )
+    composable(Destination.SearchWorkoutsScreen.route) { backStackEntry ->
+        SearchWorkoutsScreen()
     }
     composable(MainScreen.SearchExercisesScreen.route) { backStackEntry ->
         SearchExercisesScreen(
