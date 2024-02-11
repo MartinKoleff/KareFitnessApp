@@ -6,8 +6,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -16,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,21 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.SavedStateHandle
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navOptions
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.ui.compose.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsConfiguratorScreenScaffold
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.state.ExerciseState
@@ -56,8 +46,6 @@ import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewMode
 
 @Composable
 fun ExerciseDetailsConfiguratorScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -79,32 +67,25 @@ fun ExerciseDetailsConfiguratorScreen(
         }
     }
 
+    //Used for hasUpdated
+    val navController = rememberNavController()
+
     LaunchedEffect(updateWorkoutState) {
 
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
-
-            navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = selectedWorkoutState.workout.workoutId)) {
-
-                //Pop backstack and set the first element to be the Workouts screen
-                popUpTo(MainScreen.Workouts.route) { inclusive = false }
-
-                //Clear all other entries in the back stack
-                launchSingleTop = true
-            }
-
-            //Reset state
-            exerciseDetailsConfiguratorViewModel.resetUpdateWorkoutState()
-
-            //Raise a flag to update Workouts screen...
-            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true) //TODO: test
+            exerciseDetailsConfiguratorViewModel.openWorkoutDetailsScreen(selectedWorkoutState.workout.workoutId)
         }
+
+        //Reset state
+        exerciseDetailsConfiguratorViewModel.resetUpdateWorkoutState()
+
+        //Raise a flag to update Workouts screen...
+        navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
     }
 
     ExerciseDetailsConfiguratorScreenScaffold(
         screenTitle = exerciseState.exercise.name,
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = onSubmitExercise
     ) { innerPadding ->
@@ -222,8 +203,6 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
 
     ExerciseDetailsConfiguratorScreenScaffold(
         screenTitle = exerciseState.exercise.name,
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = onSubmitExercise
     ) { innerPadding ->
