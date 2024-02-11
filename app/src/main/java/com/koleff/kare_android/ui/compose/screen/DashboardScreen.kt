@@ -16,6 +16,8 @@ import com.koleff.kare_android.ui.view_model.DashboardViewModel
 
 @Composable
 fun DashboardScreen(dashboardViewModel: DashboardViewModel = hiltViewModel()) {
+
+    //Navigation Callbacks
     val onNavigateToDashboard = {
         dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
     }

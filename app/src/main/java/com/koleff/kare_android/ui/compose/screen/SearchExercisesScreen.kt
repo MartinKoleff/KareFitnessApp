@@ -32,7 +32,7 @@ fun SearchExercisesScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    //Navigation callbacks
+    //Navigation Callbacks
     val onNavigateToSettings = {
         searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }

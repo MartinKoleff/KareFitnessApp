@@ -59,8 +59,6 @@ fun AppNavigation(
 }
 
 private fun NavGraphBuilder.addDestinations() {
-
-    //TODO: remove navController and isNavigationInProgress as dependencies...
     composable(Destination.Dashboard.route) { backStackEntry ->
         DashboardScreen()
     }

@@ -48,7 +48,7 @@ fun ExerciseDetailsScreen(
     Log.d("ExerciseDetailsScreen", exerciseDetailsState.exercise.muscleGroup.toString())
     val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
 
-    //Navigation callbacks
+    //Navigation Callbacks
     val onNavigateToSettings = {
         exerciseDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }

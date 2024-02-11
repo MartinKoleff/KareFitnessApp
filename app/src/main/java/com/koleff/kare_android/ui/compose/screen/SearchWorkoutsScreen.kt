@@ -88,7 +88,7 @@ fun SearchWorkoutsScreen(
         }
     }
 
-    //Navigation callbacks
+    //Navigation Callbacks
     val onNavigateToSettings = {
         searchWorkoutViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }
