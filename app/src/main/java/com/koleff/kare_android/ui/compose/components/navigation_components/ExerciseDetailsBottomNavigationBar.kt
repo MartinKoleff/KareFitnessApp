@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.navigation
+package com.koleff.kare_android.ui.compose.components.navigation_components
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.BottomAppBar
@@ -12,7 +12,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.NavigationIconButton
 
 
 @Composable

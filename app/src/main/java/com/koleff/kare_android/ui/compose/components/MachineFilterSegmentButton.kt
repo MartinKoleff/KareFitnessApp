@@ -1,6 +1,5 @@
-package com.koleff.kare_android.ui.compose
+package com.koleff.kare_android.ui.compose.components
 
-import androidx.compose.foundation.shape.CornerBasedShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -12,13 +11,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 

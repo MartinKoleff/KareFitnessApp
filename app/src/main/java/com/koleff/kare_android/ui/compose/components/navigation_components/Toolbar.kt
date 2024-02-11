@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.navigation
+package com.koleff.kare_android.ui.compose.components.navigation_components
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -10,15 +10,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.koleff.kare_android.ui.MainScreen
-import com.koleff.kare_android.ui.compose.NavigationIconButton
+import com.koleff.kare_android.ui.compose.components.NavigationIconButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

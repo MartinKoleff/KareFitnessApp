@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose
+package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton

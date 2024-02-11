@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose
+package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,8 +28,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import com.koleff.kare_android.ui.MainScreen
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 
 @Composable

@@ -7,31 +7,29 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.compose.NavigationIconButton
-import com.koleff.kare_android.ui.compose.navigation.shapes.RoundedToolbarShape
+import com.koleff.kare_android.ui.compose.components.NavigationIconButton
+import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
 
 
 @Composable
-fun ExerciseDetailsToolbar(
+fun ExerciseDetailsConfiguratorToolbar(
     modifier: Modifier,
     exerciseImageId: Int,
-    onNavigateAction: () -> Unit,
-    onNavigateBackAction: () -> Unit,
+    onSubmitExercise: () -> Unit
 ) {
     val primaryColor = MaterialTheme.colorScheme.primary
     val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
@@ -49,75 +47,52 @@ fun ExerciseDetailsToolbar(
             painter = painterResource(id = exerciseImageId),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
-            modifier = modifier.clip(RoundedToolbarShape())
+            modifier = modifier.clip(RoundedToolbarShape(hasTopOutline = false))
         )
 
         //Navigation
         Row(
             Modifier
                 .fillMaxWidth()
-                .height(50.dp)
-                .drawBehind {
-
-                },
+                .height(50.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             NavigationIconButton(
-//                modifier = Modifier.drawBehind {
-//                    drawRect(
-//                        color = primaryContainerColor
-//                    )
-//                },
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                tint = Color.White,
-                onNavigateAction = onNavigateBackAction
+                tint = Color.White
             )
 
-            NavigationIconButton(
-//                modifier = Modifier.drawBehind {
-//                    drawRect(
-//                        color = primaryContainerColor
-//                    )
-//                },
-                icon = Icons.Filled.Settings,
-                label = "Settings",
-                tint = Color.White,
-                onNavigateAction = onNavigateAction
-            )
+            IconButton(
+                onClick = onSubmitExercise,
+            ) {
+                Icon(
+                    painterResource(id = R.drawable.ic_vector_select),
+                    contentDescription = "Submit button",
+                    tint = Color.Green
+                )
+            }
         }
     }
 }
 
 @Preview
 @Composable
-fun PreviewExerciseDetailsToolbar() {
-    val navController = rememberNavController()
+fun PreviewExerciseConfiguratorToolbar() {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    ExerciseDetailsToolbar(
+    ExerciseDetailsConfiguratorToolbar(
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
-            .background(
-//                brush = Brush.verticalGradient(
-//                    colors = listOf(
-//                        MaterialTheme.colorScheme.primaryContainer,
-//                        MaterialTheme.colorScheme.primaryContainer,
-//                        MaterialTheme.colorScheme.primaryContainer,
-//                        MaterialTheme.colorScheme.primary,
-//                        MaterialTheme.colorScheme.primary
-//                    )
-//                )
-                color = MaterialTheme.colorScheme.primaryContainer
-            ),
-        exerciseImageId = R.drawable.ic_legs,
-        onNavigateBackAction = {},
-        onNavigateAction = {}
-    )
+            .background(color = MaterialTheme.colorScheme.primaryContainer),
+        exerciseImageId = R.drawable.ic_legs
+    ) {
+
+    }
 }
 
 

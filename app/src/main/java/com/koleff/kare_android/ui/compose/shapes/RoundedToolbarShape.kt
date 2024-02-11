@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.navigation.shapes
+package com.koleff.kare_android.ui.compose.shapes
 
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size

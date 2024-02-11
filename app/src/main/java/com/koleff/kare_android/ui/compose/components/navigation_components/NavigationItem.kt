@@ -1,4 +1,4 @@
-package com.koleff.kare_android.ui.compose.navigation
+package com.koleff.kare_android.ui.compose.components.navigation_components
 
 import android.util.Log
 import androidx.compose.material3.FloatingActionButton

@@ -28,7 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.ui.compose.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog

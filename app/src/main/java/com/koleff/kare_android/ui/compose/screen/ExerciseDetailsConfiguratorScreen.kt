@@ -36,8 +36,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.ui.compose.ExerciseSetRow
-import com.koleff.kare_android.ui.compose.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsConfiguratorScreenScaffold
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.state.ExerciseState
