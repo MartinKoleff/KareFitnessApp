@@ -13,17 +13,26 @@ import com.koleff.kare_android.ui.compose.navigation.Toolbar
 @Composable
 fun MainScreenScaffold(
     screenTitle: String,
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
+    onNavigateToSettings: () -> Unit,
+    onNavigateBackAction: () -> Unit,
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToWorkouts: () -> Unit,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            Toolbar(navController = navController, title = screenTitle, isNavigationInProgress = isNavigationInProgress)
+            Toolbar(
+                title = screenTitle,
+                onNavigateToAction = onNavigateToSettings,
+                onNavigateBackAction = onNavigateBackAction
+            )
         },
         bottomBar = {
-            BottomNavigationBar(navController = navController, isNavigationInProgress = isNavigationInProgress)
+            BottomNavigationBar(
+                onNavigateToDashboard = onNavigateToDashboard,
+                onNavigateToWorkouts = onNavigateToWorkouts
+            )
         }
     ) { innerPadding ->
         modifierPadding(innerPadding)

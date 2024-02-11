@@ -12,15 +12,30 @@ import androidx.navigation.NavHostController
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.MuscleGroupGrid
+import com.koleff.kare_android.ui.navigation.Destination
+import com.koleff.kare_android.ui.navigation.NavigationEvent
 import com.koleff.kare_android.ui.view_model.DashboardViewModel
 
 @Composable
-fun DashboardScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
-    dashboardViewModel: DashboardViewModel = hiltViewModel()
-) {
-    MainScreenScaffold("Dashboard", navController, isNavigationInProgress) { innerPadding ->
+fun DashboardScreen(dashboardViewModel: DashboardViewModel = hiltViewModel()) {
+    val onNavigateToDashboard = {
+        dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+    val onNavigateToWorkouts = {
+        dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+    val onNavigateToSettings = {
+        dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = { dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
+    MainScreenScaffold(
+        "Dashboard",
+        onNavigateToDashboard = onNavigateToDashboard,
+        onNavigateToWorkouts = onNavigateToWorkouts,
+        onNavigateBackAction = onNavigateBack,
+        onNavigateToSettings = onNavigateToSettings
+    ) { innerPadding ->
         val muscleGroupState by dashboardViewModel.state.collectAsState()
 
         if (muscleGroupState.isLoading && muscleGroupState.muscleGroupList.isEmpty()) { //Don't show loader if retrieved from cache...
