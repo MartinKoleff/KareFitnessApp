@@ -39,6 +39,15 @@ open class BaseViewModel @Inject constructor(
                 is NavigationEvent.NavigateToRoute -> {
                     navigationController.navigateToRoute(navigationEvent.route)
                 }
+
+                is NavigationEvent.PopUpToAndNavigateTo -> {
+                    navigationController.popUpToAndNavigateTo(
+                        popUpToRoute = navigationEvent.popUpToRoute,
+                        destinationRoute = navigationEvent.destinationRoute,
+                        inclusive = navigationEvent.inclusive,
+                        saveState = navigationEvent.saveState
+                    )
+                }
             }
         }
     }

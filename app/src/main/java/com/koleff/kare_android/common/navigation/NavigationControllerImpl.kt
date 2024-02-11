@@ -43,6 +43,26 @@ class NavigationControllerImpl @Inject constructor() : NavigationController, Nav
         _navigationEvents.emit(NavigationEvent.ClearBackstackAndNavigateToRoute(route))
     }
 
+    override suspend fun popUpToAndNavigateTo(
+        popUpToRoute: String,
+        destinationRoute: String,
+        inclusive: Boolean,
+        saveState: Boolean
+    ) {
+        Log.d(
+            "NavigationController",
+            "Emitting PopUpToAndNavigateTo Event. Destination: {$destinationRoute}, PopUpToRoute: {$popUpToRoute}, Inclusive: $inclusive"
+        )
+        _navigationEvents.emit(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = popUpToRoute,
+                destinationRoute = destinationRoute,
+                inclusive = inclusive,
+                saveState = saveState
+            )
+        )
+    }
+
     override suspend fun navigateBack() {
         Log.d("NavigationController", "Emitting NavigateBack Event")
         _navigationEvents.emit(NavigationEvent.NavigateBack)

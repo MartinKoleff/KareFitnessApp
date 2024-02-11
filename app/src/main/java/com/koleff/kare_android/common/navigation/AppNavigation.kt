@@ -45,24 +45,43 @@ fun AppNavigation(
             .debounce(Constants.navigationDelay)
             .collectLatest { navigationEvent ->
 
-            Log.d("AppNavigation", "Navigation event: $navigationEvent")
-            when (navigationEvent) {
-                is NavigationEvent.NavigateTo -> navController.navigate(navigationEvent.route)
-                is NavigationEvent.NavigateToRoute -> navController.navigate(navigationEvent.route)
-                is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
-                    navigationEvent.route
-                ) {
-                    popUpTo(navController.graph.id)
+                Log.d("AppNavigation", "Navigation event: $navigationEvent")
+                when (navigationEvent) {
+                    is NavigationEvent.NavigateTo -> navController.navigate(navigationEvent.route)
+                    is NavigationEvent.NavigateToRoute -> navController.navigate(navigationEvent.route)
+                    is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
+                        navigationEvent.route
+                    ) {
+                        popUpTo(navController.graph.id)
+                    }
+
+                    is NavigationEvent.ClearBackstackAndNavigateToRoute -> navController.navigate(
+                        navigationEvent.route
+                    ) {
+                        popUpTo(navController.graph.id)
+                    }
+
+                    is NavigationEvent.PopUpToAndNavigateTo -> {
+                        navController.navigate(navigationEvent.destinationRoute) {
+                            popUpTo(navigationEvent.popUpToRoute) {
+                                this.inclusive = navigationEvent.inclusive
+                                this.saveState = navigationEvent.saveState
+                            }
+
+                            launchSingleTop = true
+                        }
+                    }
+
+                    NavigationEvent.NavigateBack -> navController.popBackStack()
                 }
 
-                is NavigationEvent.ClearBackstackAndNavigateToRoute -> navController.navigate(
-                    navigationEvent.route
-                ) {
-                    popUpTo(navController.graph.id)
+                val navigationBackstack = navController.currentBackStack.value
+                Log.d("AppNavigation", "----------------------------\n")
+                Log.d("AppNavigation", "Backstack: \n")
+                navigationBackstack.forEach { navigationBackstackEntry ->
+                    Log.d("AppNavigation", "$navigationBackstackEntry\n")
                 }
-                NavigationEvent.NavigateBack -> navController.popBackStack()
             }
-        }
     }
 
     NavHost(
