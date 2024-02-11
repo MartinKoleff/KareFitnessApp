@@ -15,7 +15,7 @@ import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.PermissionManager
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
-import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.components.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
 import com.koleff.kare_android.ui.compose.lifecycle_event.observeLifecycleEvent

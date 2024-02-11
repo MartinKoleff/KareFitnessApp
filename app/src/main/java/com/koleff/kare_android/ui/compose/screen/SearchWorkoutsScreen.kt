@@ -25,7 +25,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.SearchWorkoutList
-import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 

@@ -39,7 +39,7 @@ import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
-import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import java.util.Locale
 

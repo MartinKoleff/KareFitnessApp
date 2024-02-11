@@ -19,7 +19,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.MachineFilterSegmentButton
 import com.koleff.kare_android.ui.compose.banners.ExerciseList
-import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 
 @Composable

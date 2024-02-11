@@ -32,7 +32,7 @@ import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
-import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
