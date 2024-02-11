@@ -8,6 +8,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.ui.compose.navigation.SetupNavGraph
+import com.koleff.kare_android.ui.navigation.AppNavigation
 import com.koleff.kare_android.ui.theme.KareTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -22,7 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             KareTheme {
-                SetupNavGraph()
+                AppNavigation()
             }
         }
 
