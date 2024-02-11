@@ -22,6 +22,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.LoadingWheel
 import com.koleff.kare_android.ui.compose.SearchBar
 import com.koleff.kare_android.ui.compose.SearchExercisesList
@@ -30,17 +32,21 @@ import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 
 @Composable
 fun SearchExercisesScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     searchExercisesViewModel: SearchExercisesViewModel = hiltViewModel()
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    //Navigation callbacks
+    val onNavigateToSettings = {
+        searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = { searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
     SearchListScaffold(
         screenTitle = "Select exercise",
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress
+        onNavigateToAction = onNavigateToSettings,
+        onNavigateBackAction = onNavigateBack
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -83,7 +89,13 @@ fun SearchExercisesScreen(
                         .fillMaxSize(),
                     exerciseList = allExercises,
                     workoutId = workoutId,
-                    navController = navController
+                    openExerciseDetailsConfiguratorScreen = { selectedExercise, workoutId ->
+                        searchExercisesViewModel.openExerciseDetailsConfiguratorScreen(
+                            exerciseId = selectedExercise.exerciseId,
+                            workoutId = workoutId,
+                            muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
+                        )
+                    }
                 )
             }
         }
@@ -97,14 +109,10 @@ fun SearchExercisesScreenPreview() {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val isNavigationInProgress = remember {
-        mutableStateOf(false)
-    }
-
     SearchListScaffold(
         screenTitle = "Select exercise",
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress
+        onNavigateBackAction = {},
+        onNavigateToAction = {},
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -136,7 +144,9 @@ fun SearchExercisesScreenPreview() {
                     .padding(top = 5.dp),
                 exerciseList = allExercises,
                 workoutId = 1,
-                navController = navController
+                openExerciseDetailsConfiguratorScreen = { exercise, workoutId ->
+
+                }
             )
         }
     }

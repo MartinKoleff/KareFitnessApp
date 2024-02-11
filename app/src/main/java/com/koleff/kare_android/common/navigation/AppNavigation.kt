@@ -38,11 +38,13 @@ fun AppNavigation(
                 ) {
                     popUpTo(navController.graph.id)
                 }
+
                 is NavigationEvent.ClearBackstackAndNavigateToRoute -> navController.navigate(
                     navigationEvent.route
                 ) {
                     popUpTo(navController.graph.id)
                 }
+
                 NavigationEvent.NavigateBack -> navController.popBackStack()
             }
         }
@@ -83,10 +85,7 @@ private fun NavGraphBuilder.addDestinations() {
     composable(Destination.SearchWorkoutsScreen.route) { backStackEntry ->
         SearchWorkoutsScreen()
     }
-    composable(MainScreen.SearchExercisesScreen.route) { backStackEntry ->
-        SearchExercisesScreen(
-            navController = navController,
-            isNavigationInProgress = isNavigationInProgress,
-        )
+    composable(Destination.SearchExercisesScreen.route) { backStackEntry ->
+        SearchExercisesScreen()
     }
 }
