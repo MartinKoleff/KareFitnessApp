@@ -114,11 +114,11 @@ class SearchExercisesViewModel @Inject constructor(
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
                 popUpToRoute = Destination.Workouts.route,
-                destinationRoute = Destination.ExerciseDetailsConfigurator.createRoute(
+                destinationRoute = Destination.ExerciseDetailsConfigurator(
                     exerciseId,
                     muscleGroupId,
                     workoutId
-                ),
+                ).route,
                 inclusive = false
             )
         )
