@@ -61,9 +61,6 @@ fun WorkoutsScreen(
     }
     val onNavigateBack = { workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
 
-    //Used for hasUpdated
-    val navController = rememberNavController()
-
     MainScreenScaffold(
         "Workouts",
         onNavigateToDashboard = onNavigateToDashboard,
@@ -103,16 +100,10 @@ fun WorkoutsScreen(
             onRefresh = { workoutListViewModel.getWorkouts() }
         )
 
-        //Update has happened in WorkoutDetails screen
-        val navBackStackEntry = navController.currentBackStackEntryAsState()
-        val hasUpdated =
-            navBackStackEntry.value?.savedStateHandle?.get<Boolean>("hasUpdated") ?: false
-
         //Refresh screen
-        if (hasUpdated) {
+        LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
+            Log.d("WorkoutsScreen", "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdated}.")
             workoutListViewModel.getWorkouts()
-
-            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", false)
         }
 
         //States
@@ -133,9 +124,6 @@ fun WorkoutsScreen(
 
                 //Reset state
                 workoutListViewModel.resetCreateWorkoutState()
-
-                //Raise a flag to update Workouts screen...
-                navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
             }
         }
 

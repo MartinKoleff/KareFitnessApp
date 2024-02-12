@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
@@ -72,6 +73,9 @@ class WorkoutDetailsViewModel @Inject constructor(
                     _deleteExerciseState.value = deleteExerciseState
                 }
         }
+
+        savedStateHandle["hasUpdated"] = true
+        Log.d("ExerciseDetailsConfiguratorViewModel", "hasUpdated set to true.")
     }
 
     //Navigation

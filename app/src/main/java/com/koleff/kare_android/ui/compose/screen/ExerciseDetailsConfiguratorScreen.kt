@@ -68,17 +68,11 @@ fun ExerciseDetailsConfiguratorScreen(
         }
     }
 
-    //Used for hasUpdated
-    val navController = rememberNavController()
-
     LaunchedEffect(updateWorkoutState) {
 
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
             exerciseDetailsConfiguratorViewModel.openWorkoutDetailsScreen(selectedWorkoutState.workout.workoutId)
-
-            //Raise a flag to update Workouts screen...
-            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
         }
     }
 

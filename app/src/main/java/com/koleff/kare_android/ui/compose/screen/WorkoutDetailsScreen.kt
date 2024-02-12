@@ -48,7 +48,7 @@ fun WorkoutDetailsScreen(
 
         workoutDetailsViewModel.openExerciseDetailsConfiguratorScreen(
             exerciseId = selectedExercise.exerciseId,
-            workoutId =  workoutDetailsState.workout.workoutId,
+            workoutId = workoutDetailsState.workout.workoutId,
             muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
         )
     }
@@ -86,38 +86,26 @@ fun WorkoutDetailsScreen(
         }
     }
 
-    //Used for hasUpdated
-    val navController = rememberNavController()
-
-    //Exercise has been added -> pass to WorkoutsScreen to refresh
-    val navBackStackEntry = navController.currentBackStackEntryAsState()
-    val hasUpdated =
-        navBackStackEntry.value?.savedStateHandle?.get<Boolean>("hasUpdated") ?: false
-    navController.previousBackStackEntry?.savedStateHandle?.set("hasUpdated", hasUpdated)
-
     //Dialog visibility
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     //Dialog callbacks
     var selectedExercise by remember { mutableStateOf<ExerciseDto?>(null) }
-    val onExerciseDeleted: (Int, ExerciseDto) -> Unit = { selectedWorkoutId, selectedExercise ->
-        workoutDetailsViewModel.deleteExercise(selectedWorkoutId, selectedExercise.exerciseId)
-
-        //Raise a flag to update Workouts screen...
-        navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
-    }
 
     //Dialogs
-    if (showDeleteDialog && selectedExercise != null) {
+    if (showDeleteDialog) {
         WarningDialog(
             title = "Delete Exercise",
             description = "Are you sure you want to delete this exercise? This action cannot be undone.",
             actionButtonTitle = "Delete",
             onClick = {
-                onExerciseDeleted(
-                    workoutDetailsState.workout.workoutId,
-                    selectedExercise!!
-                )
+                selectedExercise?.let {
+                    workoutDetailsViewModel.deleteExercise(
+                        workoutDetailsState.workout.workoutId,
+                        selectedExercise!!.exerciseId
+                    )
+                }
+
             },
             onDismiss = { showDeleteDialog = false }
         )
@@ -177,8 +165,8 @@ fun WorkoutDetailsScreen(
                             exercise = currentExercise,
                             onClick = onExerciseSelected,
                             onDelete = {
-                                showDeleteDialog = true
                                 selectedExercise = currentExercise
+                                showDeleteDialog = true
                             }
                         )
                     }
@@ -206,7 +194,4 @@ fun WorkoutDetailsScreen(
     }
 }
 
-//fun openSearchExercisesScreen(navController: NavHostController, workoutId: Int) {
-//    navController.navigate(MainScreen.SearchExercisesScreen.createRoute(workoutId))
-//}
 

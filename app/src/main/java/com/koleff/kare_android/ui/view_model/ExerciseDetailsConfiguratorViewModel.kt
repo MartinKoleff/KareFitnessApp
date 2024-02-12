@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -105,7 +106,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         }
     }
 
-    fun resetUpdateWorkoutState() {
+    private fun resetUpdateWorkoutState() {
         _updateWorkoutState.value = WorkoutDetailsState()
     }
 
@@ -120,6 +121,10 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 inclusive = false
             )
         )
+
+        //Raise a flag to update Workouts screen...
+        savedStateHandle["hasUpdated"] = true
+        Log.d("ExerciseDetailsConfiguratorViewModel", "hasUpdated set to true.")
 
         //Reset state
         resetUpdateWorkoutState()
