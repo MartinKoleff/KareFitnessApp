@@ -47,15 +47,9 @@ fun AppNavigation(
 
                 Log.d("AppNavigation", "Navigation event: $navigationEvent")
                 when (navigationEvent) {
-                    is NavigationEvent.NavigateTo -> navController.navigate(navigationEvent.route)
-                    is NavigationEvent.NavigateToRoute -> navController.navigate(navigationEvent.route)
-                    is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
-                        navigationEvent.route
-                    ) {
-                        popUpTo(navController.graph.id)
                     }
 
-                    is NavigationEvent.ClearBackstackAndNavigateToRoute -> navController.navigate(
+                    is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
                         navigationEvent.route
                     ) {
                         popUpTo(navController.graph.id)

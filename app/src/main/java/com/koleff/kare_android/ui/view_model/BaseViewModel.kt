@@ -24,20 +24,12 @@ open class BaseViewModel @Inject constructor(
                     navigationController.clearBackstackAndNavigateTo(navigationEvent.destination)
                 }
 
-                is NavigationEvent.ClearBackstackAndNavigateToRoute -> {
-                    navigationController.clearBackstackAndNavigateToRoute(navigationEvent.route)
-                }
-
                 NavigationEvent.NavigateBack -> {
                     navigationController.navigateBack()
                 }
 
                 is NavigationEvent.NavigateTo -> {
                     navigationController.navigateTo(navigationEvent.destination)
-                }
-
-                is NavigationEvent.NavigateToRoute -> {
-                    navigationController.navigateToRoute(navigationEvent.route)
                 }
 
                 is NavigationEvent.PopUpToAndNavigateTo -> {
