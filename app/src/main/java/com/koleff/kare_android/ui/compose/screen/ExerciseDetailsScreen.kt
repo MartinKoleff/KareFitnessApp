@@ -13,11 +13,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -31,21 +28,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.YoutubeVideoPlayer
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.state.ExerciseDetailsState
-import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.YoutubeVideoPlayer
-import com.koleff.kare_android.ui.compose.scaffolds.ExerciseDetailsScreenScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 
 @Composable
 fun ExerciseDetailsScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     exerciseDetailsViewModel: ExerciseDetailsViewModel = hiltViewModel()
 ) {
     val exerciseDetailsState by exerciseDetailsViewModel.state.collectAsState()
@@ -53,12 +48,24 @@ fun ExerciseDetailsScreen(
     Log.d("ExerciseDetailsScreen", exerciseDetailsState.exercise.muscleGroup.toString())
     val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
 
+    //Navigation Callbacks
+    val onNavigateToSettings = {
+        exerciseDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = {
+        exerciseDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateBack)
+    }
+    val onNavigateSubmitExercise = {
+        exerciseDetailsViewModel.openSearchWorkoutScreen() //exerciseDetailsState.exercise
+    }
+
     ExerciseDetailsScreenScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
-        exerciseId = exerciseDetailsState.exercise.id
+        exerciseId = exerciseDetailsState.exercise.id,
+        onNavigateAction = onNavigateToSettings,
+        onNavigateBack = onNavigateBack,
+        onNavigateSubmitExercise = onNavigateSubmitExercise
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -174,8 +181,6 @@ fun ExerciseDetailsContent(
 @Preview
 @Composable
 fun ExerciseDetailsScreenPreview() {
-    val navController = rememberNavController()
-    val isNavigationInProgress = remember { mutableStateOf(false) }
     val exerciseDetailsState = ExerciseDetailsState(
         exercise = ExerciseDetailsDto(
             id = 1,
@@ -191,10 +196,11 @@ fun ExerciseDetailsScreenPreview() {
 
     ExerciseDetailsScreenScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress,
         exerciseImageId = exerciseImageId,
-        exerciseId = exerciseDetailsState.exercise.id
+        exerciseId = exerciseDetailsState.exercise.id,
+        onNavigateBack = {},
+        onNavigateAction = {},
+        onNavigateSubmitExercise = {}
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

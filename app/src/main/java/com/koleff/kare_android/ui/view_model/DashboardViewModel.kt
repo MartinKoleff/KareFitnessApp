@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.di.MainDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.MuscleGroupUI
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.DashboardState
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.DashboardRepository
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +28,9 @@ typealias MuscleGroupUIList = List<MuscleGroupUI>
 class DashboardViewModel @Inject constructor(
     private val dashboardRepository: DashboardRepository,
     private val preferences: Preferences,
+    private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : ViewModel() {
+) : BaseViewModel(navigationController = navigationController) {
 
     private val _state: MutableStateFlow<DashboardState> =
         MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))
@@ -66,5 +70,17 @@ class DashboardViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+
+    //Navigation
+    fun navigateToMuscleGroupDetails(muscleGroupId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.MuscleGroupExercisesList.createRoute(
+                    muscleGroupId
+                )
+            )
+        )
     }
 }

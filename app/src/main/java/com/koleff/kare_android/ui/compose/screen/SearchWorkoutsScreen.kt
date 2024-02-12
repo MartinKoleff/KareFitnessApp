@@ -9,34 +9,28 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.ui.MainScreen
-import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.SearchBar
-import com.koleff.kare_android.ui.compose.SearchWorkoutList
-import com.koleff.kare_android.ui.compose.scaffolds.SearchListScaffold
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.SearchBar
+import com.koleff.kare_android.ui.compose.components.SearchWorkoutList
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
-import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
 @Composable
 fun SearchWorkoutsScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     searchWorkoutViewModel: SearchWorkoutViewModel = hiltViewModel(),
     exerciseViewModel: ExerciseViewModel = hiltViewModel()
 ) {
@@ -54,9 +48,6 @@ fun SearchWorkoutsScreen(
     val screenTitle = remember { mutableStateOf("Select workout") }
 
     val exerciseState by exerciseViewModel.state.collectAsState()
-    val exercise by remember {
-        mutableStateOf(exerciseState.exercise)
-    }
 
     LaunchedEffect(selectedWorkoutId) {
         selectedWorkoutId != -1 || return@LaunchedEffect
@@ -71,7 +62,7 @@ fun SearchWorkoutsScreen(
 
         //Await workout details
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
-            workoutDetailsState.workout.exercises.add(exercise)
+            workoutDetailsState.workout.exercises.add(exerciseState.exercise)
 
             searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
         }
@@ -86,14 +77,7 @@ fun SearchWorkoutsScreen(
                 targetValue = 0f,
                 animationSpec = TweenSpec(durationMillis = 500)
             ) {
-                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = updateWorkoutState.workout.workoutId)) {
-
-                    //Pop backstack and set the first element to be the dashboard
-                    popUpTo(MainScreen.Workouts.route) { inclusive = false }
-
-                    //Clear all other entries in the back stack
-                    launchSingleTop = true
-                }
+                searchWorkoutViewModel.openWorkoutDetailsScreen(updateWorkoutState.workout.workoutId)
             }
 
             //Reset state
@@ -101,11 +85,17 @@ fun SearchWorkoutsScreen(
         }
     }
 
+    //Navigation Callbacks
+    val onNavigateToSettings = {
+        searchWorkoutViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = { searchWorkoutViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
     SearchListScaffold(
 //        modifier = Modifier.alpha(alpha.value), //Animation transition
         screenTitle = screenTitle.value,
-        navController = navController,
-        isNavigationInProgress = isNavigationInProgress
+        onNavigateToAction = onNavigateToSettings,
+        onNavigateBackAction = onNavigateBack
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
@@ -144,7 +134,6 @@ fun SearchWorkoutsScreen(
                 SearchWorkoutList(
                     modifier = Modifier.fillMaxSize(),
                     workoutList = allWorkouts,
-                    navController = navController
                 ) { workoutId ->
 
                     //Updates WorkoutDetailsViewModel...

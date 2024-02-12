@@ -11,16 +11,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,32 +27,47 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Observer
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.koleff.kare_android.common.MockupDataGenerator
+import androidx.navigation.compose.rememberNavController
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.MainScreen
-import com.koleff.kare_android.ui.compose.LoadingWheel
-import com.koleff.kare_android.ui.compose.WorkoutSegmentButton
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.banners.AddWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.NoWorkoutSelectedBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
-import com.koleff.kare_android.ui.compose.banners.openWorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
-import com.koleff.kare_android.ui.compose.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import java.util.Locale
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutsScreen(
-    navController: NavHostController,
-    isNavigationInProgress: MutableState<Boolean>,
     workoutListViewModel: WorkoutViewModel = hiltViewModel()
 ) {
-    MainScreenScaffold("Workouts", navController, isNavigationInProgress) { innerPadding ->
+
+    //Navigation Callbacks
+    val onNavigateToDashboard = {
+        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+    val onNavigateToWorkouts = {
+        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+    val onNavigateToSettings = {
+        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack = { workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
+    MainScreenScaffold(
+        "Workouts",
+        onNavigateToDashboard = onNavigateToDashboard,
+        onNavigateToWorkouts = onNavigateToWorkouts,
+        onNavigateBackAction = onNavigateBack,
+        onNavigateToSettings = onNavigateToSettings
+    ) { innerPadding ->
         val buttonModifier = Modifier
             .fillMaxWidth()
             .padding(
@@ -89,16 +100,10 @@ fun WorkoutsScreen(
             onRefresh = { workoutListViewModel.getWorkouts() }
         )
 
-        //Update has happened in WorkoutDetails screen
-        val navBackStackEntry = navController.currentBackStackEntryAsState()
-        val hasUpdated =
-            navBackStackEntry.value?.savedStateHandle?.get<Boolean>("hasUpdated") ?: false
-
         //Refresh screen
-        if (hasUpdated) {
+        LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
+            Log.d("WorkoutsScreen", "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdated}.")
             workoutListViewModel.getWorkouts()
-
-            navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", false)
         }
 
         //States
@@ -111,21 +116,14 @@ fun WorkoutsScreen(
 
             //Await update workout
             if (createWorkoutState.isSuccessful) {
-                Log.d("WorkoutsScreen", "Create workout with id ${createWorkoutState.workout.workoutId}")
-                navController.navigate(MainScreen.WorkoutDetails.createRoute(workoutId = createWorkoutState.workout.workoutId)) {
-
-                    //Pop backstack and set the first element to be the Workouts screen
-                    popUpTo(MainScreen.Workouts.route) { inclusive = false }
-
-                    //Clear all other entries in the back stack
-                    launchSingleTop = true
-                }
+                Log.d(
+                    "WorkoutsScreen",
+                    "Create workout with id ${createWorkoutState.workout.workoutId}"
+                )
+                workoutListViewModel.openWorkoutDetailsScreen(createWorkoutState.workout.workoutId)
 
                 //Reset state
                 workoutListViewModel.resetCreateWorkoutState()
-
-                //Raise a flag to update Workouts screen...
-                navController.currentBackStackEntry?.savedStateHandle?.set("hasUpdated", true)
             }
         }
 
@@ -209,7 +207,6 @@ fun WorkoutsScreen(
                 //Filter buttons
                 WorkoutSegmentButton(
                     modifier = buttonModifier,
-                    navController = navController,
                     selectedOptionIndex = 1, //Workouts screen
                     isDisabled = workoutState.isLoading,
                     workoutListViewModel = workoutListViewModel
@@ -244,9 +241,8 @@ fun WorkoutsScreen(
                                 },
                                 onSelect = { showSelectDialog = true },
                                 onClick = {
-                                    openWorkoutDetailsScreen(
-                                        workout = it,
-                                        navController = navController
+                                    workoutListViewModel.openWorkoutDetailsScreen(
+                                        workout = it
                                     )
                                 },
                                 onEdit = {
@@ -260,7 +256,7 @@ fun WorkoutsScreen(
                             NoWorkoutSelectedBanner {
 
                                 //Navigate to SearchWorkoutsScreen...
-                                openSearchWorkoutScreen(navController) //TODO: test
+                                workoutListViewModel.openSearchWorkoutScreen(-1) //TODO: test
                             }
                         }
                     } else {
@@ -284,9 +280,8 @@ fun WorkoutsScreen(
                                         selectedWorkout = workout
                                     },
                                     onClick = {
-                                        openWorkoutDetailsScreen(
-                                            workout,
-                                            navController = navController
+                                        workoutListViewModel.openWorkoutDetailsScreen(
+                                            workout = workout
                                         )
                                     },
                                     onEdit = {
@@ -302,7 +297,7 @@ fun WorkoutsScreen(
                                     NoWorkoutSelectedBanner {
 
                                         //Navigate to SearchWorkoutsScreen...
-                                        openSearchWorkoutScreen(navController) //TODO: test
+                                        workoutListViewModel.openSearchWorkoutScreen(-1) //TODO: test
                                     }
                                 } else {
                                     AddWorkoutBanner {
@@ -322,9 +317,5 @@ fun WorkoutsScreen(
             ) //If put as first content -> hides behind the screen...
         }
     }
-}
-
-fun openSearchWorkoutScreen(navController: NavHostController) {
-    navController.navigate(MainScreen.SearchWorkoutsScreen.createRoute(exerciseId = -1))
 }
 

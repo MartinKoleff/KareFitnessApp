@@ -1,10 +1,14 @@
 package com.koleff.kare_android.ui.view_model
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
@@ -29,13 +33,15 @@ import javax.inject.Qualifier
 class ExerciseDetailsConfiguratorViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
     private val workoutUseCases: WorkoutUseCases,
+    private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
 
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
-    private val initialMuscleGroupId = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
+    private val initialMuscleGroupId =
+        savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
     val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
 
     private val _exerciseState: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
@@ -100,7 +106,27 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         }
     }
 
-    fun resetUpdateWorkoutState() {
+    private fun resetUpdateWorkoutState() {
         _updateWorkoutState.value = WorkoutDetailsState()
+    }
+
+    //Navigation
+    fun openWorkoutDetailsScreen(workoutId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                destinationRoute = Destination.WorkoutDetails.createRoute(
+                    workoutId
+                ),
+                popUpToRoute = Destination.Workouts.route,
+                inclusive = false
+            )
+        )
+
+        //Raise a flag to update Workouts screen...
+        savedStateHandle["hasUpdated"] = true
+        Log.d("ExerciseDetailsConfiguratorViewModel", "hasUpdated set to true.")
+
+        //Reset state
+        resetUpdateWorkoutState()
     }
 }

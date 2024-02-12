@@ -175,6 +175,8 @@ class WorkoutLocalDataSource @Inject constructor(
             if (currentEntryInDB.size <= workout.exercises.size) {
                 val newExercises =
                     workout.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
+                Log.d("SaveWorkout-LocalDataSource", "New exercises: $newExercises")
+
                 val exerciseIds = newExercises.map { it.exerciseId }
 
                 //Wire new exercises ids to workout id -> setup cross refs
@@ -285,10 +287,12 @@ class WorkoutLocalDataSource @Inject constructor(
             val workoutId = workoutDao.insertWorkout(workout.toWorkout()) //Get workout id
             val workoutName = "Workout $workoutId"
 
-            val workoutUpdatedName = workout.copy(workoutId = workoutId.toInt(), name = workoutName).toWorkout()
+            val workoutUpdatedName =
+                workout.copy(workoutId = workoutId.toInt(), name = workoutName).toWorkout()
             workoutDao.updateWorkout(workoutUpdatedName) //Update workout name
 
-            val workoutDetails = WorkoutDetailsDto().copy(workoutId = workoutId.toInt(), name = workoutName)
+            val workoutDetails =
+                WorkoutDetailsDto().copy(workoutId = workoutId.toInt(), name = workoutName)
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails()) //returns 0
 

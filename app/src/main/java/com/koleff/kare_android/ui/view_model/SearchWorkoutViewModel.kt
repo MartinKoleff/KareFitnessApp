@@ -3,6 +3,9 @@ package com.koleff.kare_android.ui.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
@@ -24,8 +27,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchWorkoutViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
+    private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
 
     private val _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -121,5 +125,18 @@ class SearchWorkoutViewModel @Inject constructor(
 
     fun resetUpdateWorkoutState() {
         _updateWorkoutState.value = WorkoutDetailsState()
+    }
+
+    //Navigation
+    fun openWorkoutDetailsScreen(workoutId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = Destination.Dashboard.route,
+                destinationRoute = Destination.WorkoutDetails.createRoute(
+                    workoutId
+                ),
+                inclusive = false
+            )
+        )
     }
 }
