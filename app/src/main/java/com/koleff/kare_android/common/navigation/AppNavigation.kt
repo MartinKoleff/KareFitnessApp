@@ -49,6 +49,12 @@ fun AppNavigation(
 
                 Log.d("AppNavigation", "Navigation event: $navigationEvent")
                 when (navigationEvent) {
+                    is NavigationEvent.NavigateTo -> {
+
+                        //Trying to navigate to the same screen
+                        if (navigationEvent.route != navController.currentBackStackEntry?.destination?.route) {
+                            navController.navigate(navigationEvent.route)
+                        }
                     }
 
                     is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
@@ -68,7 +74,10 @@ fun AppNavigation(
                         }
                     }
 
-                    NavigationEvent.NavigateBack -> navController.popBackStack()
+                    NavigationEvent.NavigateBack -> {
+                        if (navController.currentBackStack.value.size == 2) return@collectLatest //Don't pop up starting location
+                        navController.popBackStack()
+                    }
                 }
 
                 val navigationBackstack = navController.currentBackStack.value
