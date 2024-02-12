@@ -121,9 +121,6 @@ fun WorkoutsScreen(
                     "Create workout with id ${createWorkoutState.workout.workoutId}"
                 )
                 workoutListViewModel.openWorkoutDetailsScreen(createWorkoutState.workout.workoutId)
-
-                //Reset state
-                workoutListViewModel.resetCreateWorkoutState()
             }
         }
 

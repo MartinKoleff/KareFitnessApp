@@ -1,5 +1,6 @@
 package com.koleff.kare_android.common.navigation
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.Composable
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flowOn
 
+@SuppressLint("RestrictedApi")
 @FlowPreview
 @ExperimentalComposeUiApi
 @ExperimentalAnimationApi
@@ -47,15 +49,15 @@ fun AppNavigation(
 
                 Log.d("AppNavigation", "Navigation event: $navigationEvent")
                 when (navigationEvent) {
-                    is NavigationEvent.NavigateTo -> navController.navigate(navigationEvent.route)
-                    is NavigationEvent.NavigateToRoute -> navController.navigate(navigationEvent.route)
-                    is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
-                        navigationEvent.route
-                    ) {
-                        popUpTo(navController.graph.id)
+                    is NavigationEvent.NavigateTo -> {
+
+                        //Trying to navigate to the same screen
+                        if (navigationEvent.route != navController.currentBackStackEntry?.destination?.route) {
+                            navController.navigate(navigationEvent.route)
+                        }
                     }
 
-                    is NavigationEvent.ClearBackstackAndNavigateToRoute -> navController.navigate(
+                    is NavigationEvent.ClearBackstackAndNavigateTo -> navController.navigate(
                         navigationEvent.route
                     ) {
                         popUpTo(navController.graph.id)
@@ -72,7 +74,10 @@ fun AppNavigation(
                         }
                     }
 
-                    NavigationEvent.NavigateBack -> navController.popBackStack()
+                    NavigationEvent.NavigateBack -> {
+                        if (navController.currentBackStack.value.size == 2) return@collectLatest //Don't pop up starting location
+                        navController.popBackStack()
+                    }
                 }
 
                 val navigationBackstack = navController.currentBackStack.value
@@ -93,31 +98,31 @@ fun AppNavigation(
 }
 
 private fun NavGraphBuilder.addDestinations() {
-    composable(Destination.Dashboard.route) { backStackEntry ->
+    composable(Destination.Dashboard.ROUTE) { backStackEntry ->
         DashboardScreen()
     }
-    composable(Destination.Workouts.route) {
+    composable(Destination.Workouts.ROUTE) {
         WorkoutsScreen()
     }
-    composable(Destination.MuscleGroupExercisesList.route) { backStackEntry ->
+    composable(Destination.MuscleGroupExercisesList.ROUTE) { backStackEntry ->
         MuscleGroupScreen()
     }
-    composable(Destination.WorkoutDetails.route) { backStackEntry ->
+    composable(Destination.WorkoutDetails.ROUTE) { backStackEntry ->
         WorkoutDetailsScreen()
     }
-    composable(Destination.ExerciseDetails.route) { backStackEntry ->
+    composable(Destination.ExerciseDetails.ROUTE) { backStackEntry ->
         ExerciseDetailsScreen()
     }
-    composable(Destination.ExerciseDetailsConfigurator.route) { backStackEntry ->
+    composable(Destination.ExerciseDetailsConfigurator.ROUTE) { backStackEntry ->
         ExerciseDetailsConfiguratorScreen()
     }
-    composable(Destination.Settings.route) {
+    composable(Destination.Settings.ROUTE) {
         SettingsScreen()
     }
-    composable(Destination.SearchWorkoutsScreen.route) { backStackEntry ->
+    composable(Destination.SearchWorkoutsScreen.ROUTE) { backStackEntry ->
         SearchWorkoutsScreen()
     }
-    composable(Destination.SearchExercisesScreen.route) { backStackEntry ->
+    composable(Destination.SearchExercisesScreen.ROUTE) { backStackEntry ->
         SearchExercisesScreen()
     }
 }

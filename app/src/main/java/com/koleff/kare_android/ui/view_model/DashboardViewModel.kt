@@ -76,8 +76,8 @@ class DashboardViewModel @Inject constructor(
     //Navigation
     fun navigateToMuscleGroupDetails(muscleGroupId: Int) {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.MuscleGroupExercisesList.createRoute(
+            NavigationEvent.NavigateTo(
+                Destination.MuscleGroupExercisesList(
                     muscleGroupId
                 )
             )

@@ -6,16 +6,10 @@ sealed interface NavigationEvent {
             get() = destination.route
     }
 
-    //Used for custom routes
-    data class NavigateToRoute(val route: String) : NavigationEvent
-
     data class ClearBackstackAndNavigateTo(val destination: Destination) : NavigationEvent {
         val route
             get() = destination.route
     }
-
-    //Used for custom routes
-    data class ClearBackstackAndNavigateToRoute(val route: String) : NavigationEvent
 
     data class PopUpToAndNavigateTo(
         val popUpToRoute: String,

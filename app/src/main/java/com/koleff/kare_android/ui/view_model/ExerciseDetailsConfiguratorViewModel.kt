@@ -114,9 +114,9 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
     fun openWorkoutDetailsScreen(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
-                destinationRoute = Destination.WorkoutDetails.createRoute(
+                destinationRoute = Destination.WorkoutDetails(
                     workoutId
-                ),
+                ).route,
                 popUpToRoute = Destination.Workouts.route,
                 inclusive = false
             )
