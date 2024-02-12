@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -19,7 +20,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingWheel(innerPadding: PaddingValues = PaddingValues(0.dp), hideScreen: Boolean = false) {
-    val background = if (hideScreen) Color.White else Color.Transparent
+    val background = if (hideScreen) {
+        MaterialTheme.colorScheme.background //Dark theme applied too
+    } else Color.Transparent
 
     Box(
         modifier = Modifier
