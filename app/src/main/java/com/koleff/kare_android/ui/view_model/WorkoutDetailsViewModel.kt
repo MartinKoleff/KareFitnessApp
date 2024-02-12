@@ -3,27 +3,37 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 typealias DeleteExerciseState = WorkoutDetailsState
 
-class WorkoutDetailsViewModel @AssistedInject constructor(
+@HiltViewModel
+class WorkoutDetailsViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
-    @Assisted private val workoutId: Int,
+    private val navigationController: NavigationController,
+    private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
+    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -58,26 +68,34 @@ class WorkoutDetailsViewModel @AssistedInject constructor(
 
     fun deleteExercise(workoutId: Int, exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId).collect { deleteExerciseState ->
-                _deleteExerciseState.value = deleteExerciseState
-            }
+            workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId)
+                .collect { deleteExerciseState ->
+                    _deleteExerciseState.value = deleteExerciseState
+                }
         }
+
+        savedStateHandle["hasUpdated"] = true
+        Log.d("ExerciseDetailsConfiguratorViewModel", "hasUpdated set to true.")
     }
 
-
-    @AssistedFactory
-    interface Factory {
-        fun create(workoutId: Int): WorkoutDetailsViewModel
+    //Navigation
+    fun openSearchExercisesScreen(workoutId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.SearchExercisesScreen.createRoute(workoutId)
+            )
+        )
     }
 
-    companion object {
-        fun provideWorkoutDetailsViewModelFactory(
-            factory: Factory,
-            workoutId: Int
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return factory.create(workoutId) as T
-            }
-        }
+    fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateToRoute(
+                Destination.ExerciseDetailsConfigurator.createRoute(
+                    exerciseId = exerciseId,
+                    workoutId = workoutId,
+                    muscleGroupId = muscleGroupId
+                )
+            )
+        )
     }
 }

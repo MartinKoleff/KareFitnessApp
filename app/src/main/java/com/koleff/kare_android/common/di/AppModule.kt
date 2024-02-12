@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
+import androidx.navigation.Navigation
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
@@ -53,6 +54,9 @@ import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationControllerImpl
+import com.koleff.kare_android.common.navigation.NavigationNotifier
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
