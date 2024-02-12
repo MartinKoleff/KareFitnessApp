@@ -239,7 +239,7 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun resetCreateWorkoutState() {
+    private fun resetCreateWorkoutState() {
         _createWorkoutState.value =
             UpdateWorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
     }
@@ -286,6 +286,9 @@ class WorkoutViewModel @Inject constructor(
                 Destination.WorkoutDetails.createRoute(workoutId = workoutId)
             )
         )
+
+        //Reset state
+        resetCreateWorkoutState()
 
         //Raise a flag to update Workouts screen...
         savedStateHandle["hasUpdated"] = true
