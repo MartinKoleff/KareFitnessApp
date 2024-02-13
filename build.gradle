@@ -7,6 +7,10 @@ buildscript {
     //https://developer.android.com/build/releases/gradle-plugin
     ext.gradle_version = "8.2.2"
 
+    //https://developer.android.com/build/migrate-to-ksp#groovy
+    //https://github.com/google/ksp/releases
+    ext.ksp_version = "1.9.22-1.0.17"
+
     //https://developer.android.com/jetpack/androidx/releases/core
     ext.androidx_core_version = "1.12.0"
 
@@ -139,4 +143,5 @@ plugins {
     id 'org.jetbrains.kotlin.android' version "$kotlin_version" apply false
     id 'com.google.dagger.hilt.android' version "$dagger_hilt_version" apply false
     id 'com.google.gms.google-services' version "$google_services_version" apply false
+    id 'com.google.devtools.ksp' version "$ksp_version" apply false
 }
