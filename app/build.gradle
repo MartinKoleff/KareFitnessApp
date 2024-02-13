@@ -72,7 +72,7 @@ dependencies {
     //AndroidX
     implementation "androidx.core:core-ktx:$androidx_core_version"
     implementation "androidx.activity:activity-compose:$compose_activity_version"
-//    implemetation "androidx.biometric:biometric:$androidx_biometric_version"
+    implementation "androidx.biometric:biometric:$androidx_biometric_version"
 //    implementation "androidx.appcompat:appcompat:$app_compat_version"
 
 

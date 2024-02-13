@@ -99,7 +99,7 @@ buildscript {
     ext.ktor_version = "2.3.8" //TODO: for future use...
 
     //https://developer.android.com/jetpack/androidx/releases/biometric
-    ext.androidx_biometric_version = "1.2.0-alpha04" //TODO: for future use...
+    ext.androidx_biometric_version = "1.2.0-alpha04"
 
     //https://developer.android.com/build/multidex
     ext.multidex_version = "2.0.1"
@@ -127,7 +127,7 @@ buildscript {
     ext.youtube_video_player_version = "12.1.0"
 
     dependencies {
-        classpath("androidx.navigation:navigation-safe-args-gradle-plugin:$compose_navigation_version")
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$compose_navigation_version"
         classpath "com.google.gms:google-services:$google_services_version"
         //move gradle dependency classpath here?
     }
