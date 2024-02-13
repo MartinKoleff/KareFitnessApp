@@ -22,6 +22,14 @@ android {
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        //Enable tests.
+        testOptions {
+            unitTests.all {
+                useJUnitPlatform()
+            }
+        }
+
         vectorDrawables {
             useSupportLibrary true
         }
@@ -157,7 +165,7 @@ dependencies {
 
     //Coroutine Testing
     androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
-    testImplementation"org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutine_version"
 
     //JUnit 5
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
