@@ -1,5 +1,6 @@
 package com.koleff.kare_android.workout
 
+import android.util.Log
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
@@ -21,10 +22,22 @@ import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.exercise.data.ExerciseDaoFake
+import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
+import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
+import io.mockk.every
+import io.mockk.mockkStatic
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.advanceUntilIdle
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertTrue
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
@@ -54,6 +67,8 @@ class WorkoutUseCasesUnitTest {
     fun setup() {
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake()
+        exerciseDao = ExerciseDaoFake()
+        exerciseSetDao = ExerciseSetDaoFake()
 
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
@@ -89,5 +104,62 @@ class WorkoutUseCasesUnitTest {
 
         logger = TestLogger()
     }
+
+    @Test
+    fun `create workout test`() = runTest {
+        val workouts = workoutDao.getWorkoutsOrderedById()
+        val workoutsInDB = workouts.size
+
+        val createWorkoutState = workoutUseCases.createWorkoutUseCase().toList() //invoke() doesn't work
+
+        val workoutsAfterCreate = workoutDao.getWorkoutsOrderedById()
+        val workoutsInDBAfterCreate = workoutsAfterCreate.size
+
+        logger.i(TAG, "Assert new workout is created")
+        assert(workoutsInDB + 1 == workoutsInDBAfterCreate)
+
+        val createdWorkout = workoutsAfterCreate.stream()
+            .filter {
+                !workouts.contains(it)
+            }
+            .findFirst()
+            .orElseThrow()
+
+        logger.i(TAG, "Assert Workout is not selected")
+        assert(!createdWorkout.isSelected)
+
+        logger.i(TAG, "Assert workoutId is the size of all workouts list")
+        assert(createdWorkout.workoutId == workoutsInDBAfterCreate)
+
+        logger.i(TAG, "Assert name is Workout $workoutsInDBAfterCreate -> all workouts in DB index")
+        assert(createdWorkout.name == "Workout $workoutsInDBAfterCreate")
+
+        logger.i(TAG, "Assert no exercises are in Workout")
+        assert(createdWorkout.totalExercises == 0)
+
+        val createdWorkoutDetails =
+            workoutDetailsDao.getWorkoutDetailsById(createdWorkout.workoutId)
+
+        logger.i(TAG, "Assert no exercises are in WorkoutDetails")
+        assert(createdWorkoutDetails?.exercises?.isEmpty() == true)
+
+        logger.i(TAG, "Assert name is Workout $workoutsInDBAfterCreate -> all workouts in DB index")
+        assert(createdWorkoutDetails?.workoutDetails?.name == "Workout $workoutsInDBAfterCreate")
+    }
+
+    @Test
+    fun `create workout emits success state`() = runTest {
+        val createWorkoutState = workoutUseCases.createWorkoutUseCase().toList()
+
+        logger.i(TAG, "isLoading state raised.")
+        assertTrue { createWorkoutState.any { it.isLoading } }
+
+        logger.i(TAG, "isSuccessful state raised.")
+        assertTrue { createWorkoutState.any { it.isSuccessful } }
+
+        val successState = createWorkoutState.find { it.isSuccessful }
+
+        logger.i(TAG, "Workout created: ${successState?.workout}")
+        assertTrue { successState?.workout != null }
     }
 }
