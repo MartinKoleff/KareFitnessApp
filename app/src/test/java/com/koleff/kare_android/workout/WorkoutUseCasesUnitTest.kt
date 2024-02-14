@@ -1,5 +1,6 @@
 package com.koleff.kare_android.workout
 
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
@@ -26,7 +27,6 @@ import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
-import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
@@ -145,18 +145,11 @@ class WorkoutUseCasesUnitTest {
         assert(createdWorkoutDetails?.workoutDetails?.name == "Workout $workoutsInDBAfterCreate")
     }
 
-    @Test
     @RepeatedTest(50)
     fun `get workout from GetWorkoutUseCase test`() = runTest {
 
-        //Generate mock workout
-        val workout = mockk<WorkoutDto>(relaxed = true)
-        every {workout.workoutId} returns Random.nextInt(1, 100) //Not important...
-        every {workout.name} returns "Workout ${workout.workoutId}"
-        every {workout.muscleGroup} returns MuscleGroup.fromId(Random.nextInt(1, 14))
-        every {workout.totalExercises} returns Random.nextInt(4, 12)
-        every {workout.isSelected} returns Random.nextBoolean()
-
+        //Generate workout
+        val workout = MockupDataGenerator.generateWorkout()
         logger.i(TAG, "Mocked workout: $workout")
 
         //Insert
@@ -179,18 +172,11 @@ class WorkoutUseCasesUnitTest {
         assertTrue(fetchedWorkout == workout)
     }
 
-    @Test
     @RepeatedTest(50)
     fun `get workout from WorkoutDao test`() = runTest {
-        //TODO: mocks don't have the same behaviour as real objects. Example: toString() doesn't work on them.
 
-        //Generate mock workout
-        val workout = mockk<WorkoutDto>(relaxed = true)
-        every {workout.workoutId} returns Random.nextInt(1, 100) //Not important...
-        every {workout.name} returns "Workout ${workout.workoutId}"
-        every {workout.muscleGroup} returns MuscleGroup.fromId(Random.nextInt(1, 14))
-        every {workout.totalExercises} returns Random.nextInt(4, 12)
-        every {workout.isSelected} returns Random.nextBoolean()
+        //Generate workout
+        val workout = MockupDataGenerator.generateWorkout()
 
         val entity = workout.toWorkout()
         logger.i(TAG, "Mocked workout mapped to entity: $entity")
@@ -205,6 +191,4 @@ class WorkoutUseCasesUnitTest {
 
         assertTrue(fetchedWorkout == workout.toWorkout())
     }
-
-
 }
