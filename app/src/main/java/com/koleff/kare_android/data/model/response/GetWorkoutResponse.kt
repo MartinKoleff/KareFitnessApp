@@ -6,5 +6,5 @@ import com.squareup.moshi.Json
 
 data class GetWorkoutResponse(
     @Json(name = "data")
-    val workout: WorkoutDto
+    val workout: WorkoutDto?
 ) : BaseResponse()

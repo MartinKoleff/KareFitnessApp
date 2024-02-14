@@ -3,7 +3,7 @@ package com.koleff.kare_android.data.datasource
 import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseSet
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
@@ -58,7 +58,7 @@ class WorkoutLocalDataSource @Inject constructor(
         val data = workoutDao.getWorkoutByIsSelected()
 
         val result = GetWorkoutWrapper(
-            GetWorkoutResponse(data.toWorkoutDto())
+            GetWorkoutResponse(data?.toWorkoutDto())
         )
 
         emit(ResultWrapper.Success(result))
