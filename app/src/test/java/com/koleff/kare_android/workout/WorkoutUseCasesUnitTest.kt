@@ -1,13 +1,11 @@
 package com.koleff.kare_android.workout
 
-import android.util.Log
-import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
+import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
-import com.koleff.kare_android.workout.data.WorkoutDaoFake
-import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -25,19 +23,19 @@ import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.utils.TestLogger
+import com.koleff.kare_android.workout.data.WorkoutDaoFake
+import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
+import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
-import io.mockk.mockkStatic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.async
+import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.advanceUntilIdle
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.RepeatedTest
+import org.junit.jupiter.api.Test
+import kotlin.random.Random
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
@@ -59,7 +57,7 @@ class WorkoutUseCasesUnitTest {
 
     private lateinit var logger: TestLogger
 
-    companion object{
+    companion object {
         private const val TAG = "WorkoutUseCasesUnitTest"
     }
 
@@ -95,22 +93,22 @@ class WorkoutUseCasesUnitTest {
             createWorkoutUseCase = CreateWorkoutUseCase(workoutRepository)
         )
 
-        //Log
-//        mockkStatic(Log::class)
-//        every { Log.v(any(), any()) } returns 0
-//        every { Log.d(any(), any()) } returns 0
-//        every { Log.i(any(), any()) } returns 0
-//        every { Log.e(any(), any()) } returns 0
-
         logger = TestLogger()
     }
 
     @Test
-    fun `create workout test`() = runTest {
+    fun `create workout from CreateWorkoutUseCase test`() = runTest {
         val workouts = workoutDao.getWorkoutsOrderedById()
         val workoutsInDB = workouts.size
 
-        val createWorkoutState = workoutUseCases.createWorkoutUseCase().toList() //invoke() doesn't work
+        val createWorkoutState =
+            workoutUseCases.createWorkoutUseCase().toList() //invoke() doesn't work
+
+        logger.i(TAG, "Create workout -> isLoading state raised.")
+        assertTrue { createWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Create workout -> isSuccessful state raised.")
+        assertTrue { createWorkoutState[1].isSuccessful }
 
         val workoutsAfterCreate = workoutDao.getWorkoutsOrderedById()
         val workoutsInDBAfterCreate = workoutsAfterCreate.size
@@ -148,18 +146,65 @@ class WorkoutUseCasesUnitTest {
     }
 
     @Test
-    fun `create workout emits success state`() = runTest {
-        val createWorkoutState = workoutUseCases.createWorkoutUseCase().toList()
+    @RepeatedTest(50)
+    fun `get workout from GetWorkoutUseCase test`() = runTest {
 
-        logger.i(TAG, "isLoading state raised.")
-        assertTrue { createWorkoutState.any { it.isLoading } }
+        //Generate mock workout
+        val workout = mockk<WorkoutDto>(relaxed = true)
+        every {workout.workoutId} returns Random.nextInt(1, 100) //Not important...
+        every {workout.name} returns "Workout ${workout.workoutId}"
+        every {workout.muscleGroup} returns MuscleGroup.fromId(Random.nextInt(1, 14))
+        every {workout.totalExercises} returns Random.nextInt(4, 12)
+        every {workout.isSelected} returns Random.nextBoolean()
 
-        logger.i(TAG, "isSuccessful state raised.")
-        assertTrue { createWorkoutState.any { it.isSuccessful } }
+        logger.i(TAG, "Mocked workout: $workout")
 
-        val successState = createWorkoutState.find { it.isSuccessful }
+        //Insert
+        val id = workoutDao.insertWorkout(workout.toWorkout())
+        logger.i(TAG, "Mocked workout inserted successfully. Workout id: $id")
 
-        logger.i(TAG, "Workout created: ${successState?.workout}")
-        assertTrue { successState?.workout != null }
+        //Fetch
+        val getWorkoutState = workoutUseCases.getWorkoutUseCase(id.toInt()).toList()
+
+        logger.i(TAG, "Get workout -> isLoading state raised.")
+        assertTrue { getWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Get workout -> isSuccessful state raised.")
+        assertTrue { getWorkoutState[1].isSuccessful }
+
+        val fetchedWorkout = getWorkoutState[1].workoutList.first()
+        logger.i(TAG, "Fetched workout: $fetchedWorkout")
+
+        logger.i(TAG, "Assert fetched workout is the same as inserted one.")
+        assertTrue(fetchedWorkout == workout)
     }
+
+    @Test
+    @RepeatedTest(50)
+    fun `get workout from WorkoutDao test`() = runTest {
+        //TODO: mocks don't have the same behaviour as real objects. Example: toString() doesn't work on them.
+
+        //Generate mock workout
+        val workout = mockk<WorkoutDto>(relaxed = true)
+        every {workout.workoutId} returns Random.nextInt(1, 100) //Not important...
+        every {workout.name} returns "Workout ${workout.workoutId}"
+        every {workout.muscleGroup} returns MuscleGroup.fromId(Random.nextInt(1, 14))
+        every {workout.totalExercises} returns Random.nextInt(4, 12)
+        every {workout.isSelected} returns Random.nextBoolean()
+
+        val entity = workout.toWorkout()
+        logger.i(TAG, "Mocked workout mapped to entity: $entity")
+
+        //Insert
+        val id = workoutDao.insertWorkout(entity)
+        logger.i(TAG, "Mocked workout inserted successfully. Workout id: $id")
+
+        //Fetch
+        val fetchedWorkout = workoutDao.getWorkoutById(id.toInt()) //id - 1 works?
+        logger.i(TAG, "Fetched workout: $fetchedWorkout")
+
+        assertTrue(fetchedWorkout == workout.toWorkout())
+    }
+
+
 }
