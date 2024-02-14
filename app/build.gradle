@@ -28,6 +28,8 @@ android {
             unitTests.all {
                 useJUnitPlatform()
             }
+
+            unitTests.returnDefaultValues = true
         }
 
         vectorDrawables {
