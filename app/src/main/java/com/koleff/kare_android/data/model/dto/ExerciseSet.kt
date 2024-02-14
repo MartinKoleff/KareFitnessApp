@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
 @Parcelize
-data class ExerciseSet(
+data class ExerciseSetDto(
     var setId: UUID? = null,
     val number: Int,
     var reps: Int,

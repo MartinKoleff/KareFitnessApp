@@ -57,7 +57,7 @@ class ExerciseDBManager @Inject constructor(
         val exerciseSets: MutableList<SetEntity> = mutableListOf()
         var counter: Int = 0
         for (exercise in allExercises) {
-            exerciseSets.addAll(loadExerciseSets()) //Generate new setId with same ExerciseSet data...
+            exerciseSets.addAll(loadExerciseSets()) //Generate new setId with same ExerciseSetDto data...
 
             crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 0].setId))
             crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[counter + 1].setId))
@@ -66,7 +66,7 @@ class ExerciseDBManager @Inject constructor(
             counter += 3
         }
 
-        exerciseSetDao.insertAllExerciseSets(exerciseSets) //Insert ExerciseSet
+        exerciseSetDao.insertAllExerciseSets(exerciseSets) //Insert ExerciseSetDto
         return crossRefs
     }
 

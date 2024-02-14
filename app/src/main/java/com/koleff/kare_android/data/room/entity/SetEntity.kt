@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseSet
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import java.util.UUID
@@ -19,8 +19,8 @@ data class SetEntity(
     val reps: Int,
     val weight: Float,
 ) {
-    fun toExerciseSet(): ExerciseSet {
-        return ExerciseSet(
+    fun toExerciseSet(): ExerciseSetDto {
+        return ExerciseSetDto(
             setId = setId,
             number = number,
             reps = reps,
