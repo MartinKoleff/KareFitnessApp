@@ -7,6 +7,7 @@ import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
+import com.koleff.kare_android.data.model.response.GetSelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
 import retrofit2.http.Body
@@ -21,7 +22,7 @@ interface WorkoutApi {
     ): BaseResponse
 
     @GET("api/v1/workout/getselectedworkout")
-    suspend fun getSelectedWorkout(): GetWorkoutResponse
+    suspend fun getSelectedWorkout(): GetSelectedWorkoutResponse
 
     @GET("api/v1/workout/getworkout")
     suspend fun getWorkout(

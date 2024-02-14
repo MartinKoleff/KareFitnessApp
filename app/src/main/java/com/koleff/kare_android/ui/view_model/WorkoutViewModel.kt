@@ -184,7 +184,7 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update selected workout
                 if (getSelectedWorkoutState.isSuccessful) {
-                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout
+                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout ?: return@collect
 
                     val updatedList =
                         state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList

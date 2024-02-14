@@ -11,12 +11,13 @@ import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutDataSource {
     suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>>
 
     suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>>
 

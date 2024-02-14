@@ -15,6 +15,7 @@ import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.remote.WorkoutApi
+import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -29,8 +30,8 @@ class WorkoutRemoteDataSource @Inject constructor(
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.selectWorkout(body)) })
     }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> {
-        return Network.executeApiCall(dispatcher, { GetWorkoutWrapper(workoutApi.getSelectedWorkout()) })
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>> {
+        return Network.executeApiCall(dispatcher, { GetSelectedWorkoutWrapper(workoutApi.getSelectedWorkout()) })
     }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>> {

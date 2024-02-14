@@ -8,12 +8,13 @@ import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutRepository {
     suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>  //Used for loading list view and refresh
 

@@ -11,6 +11,7 @@ import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.selectWorkout(workoutId)
     }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> {
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>> {
         return workoutDataSource.getSelectedWorkout()
     }
 

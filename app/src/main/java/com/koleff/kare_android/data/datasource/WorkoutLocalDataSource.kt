@@ -8,6 +8,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
+import com.koleff.kare_android.data.model.response.GetSelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
 import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
@@ -24,6 +25,7 @@ import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
+import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -50,14 +52,14 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> = flow {
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
         val data = workoutDao.getWorkoutByIsSelected()
 
-        val result = GetWorkoutWrapper(
-            GetWorkoutResponse(data?.toWorkoutDto())
+        val result = GetSelectedWorkoutWrapper(
+            GetSelectedWorkoutResponse(data?.toWorkoutDto())
         )
 
         emit(ResultWrapper.Success(result))
