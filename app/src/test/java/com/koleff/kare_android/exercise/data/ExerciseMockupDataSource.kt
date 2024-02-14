@@ -1,7 +1,8 @@
-package com.koleff.kare_android.data.datasource
+package com.koleff.kare_android.exercise.data
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
