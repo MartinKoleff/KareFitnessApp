@@ -14,7 +14,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class ExerciseMockupDataSource() : ExerciseDataSource {
+class ExerciseMockupDataSource(private val isError: Boolean = false) : ExerciseDataSource {
 
     override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<GetExercisesWrapper>> =
         flow {
@@ -29,7 +29,11 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
                 )
             )
 
-            emit(ResultWrapper.Success(mockupResult))
+            if (isError) {
+                emit(ResultWrapper.ApiError())
+            } else {
+                emit(ResultWrapper.Success(mockupResult))
+            }
         }
 
     override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<GetExerciseWrapper>> =
@@ -45,7 +49,11 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
                 )
             )
 
-            emit(ResultWrapper.Success(mockupResult))
+            if (isError) {
+                emit(ResultWrapper.ApiError())
+            } else {
+                emit(ResultWrapper.Success(mockupResult))
+            }
         }
 
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> =
@@ -61,6 +69,10 @@ class ExerciseMockupDataSource() : ExerciseDataSource {
                 )
             )
 
-            emit(ResultWrapper.Success(mockupResult))
+            if (isError) {
+                emit(ResultWrapper.ApiError())
+            } else {
+                emit(ResultWrapper.Success(mockupResult))
+            }
         }
 }
