@@ -3,7 +3,6 @@ package com.koleff.kare_android.data.datasource
 import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
@@ -195,26 +194,26 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
                 workout.exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
-                        val setEntity = set.toExerciseSet()
+                        val exerciseSet = set.toExerciseSet()
 
                         if (set.setId == null) {
                             //New set -> insert it
                             val newSetId = UUID.randomUUID()
-                            setEntity.setId = newSetId
+                            exerciseSet.setId = newSetId
 
-                            exerciseSetDao.saveSet(setEntity)
+                            exerciseSetDao.saveSet(exerciseSet)
                         } else {
                             //Existing set -> update it
                             Log.d(
                                 "SaveWorkout-LocalDatasource",
-                                "Exercise set with setId ${setEntity.setId} updated. Data: $setEntity"
+                                "Exercise set with setId ${exerciseSet.setId} updated. Data: $exerciseSet"
                             )
-                            exerciseSetDao.updateSet(setEntity)
+                            exerciseSetDao.updateSet(exerciseSet)
                         }
 
                         ExerciseSetCrossRef(
                             exerciseId = exercise.exerciseId,
-                            setId = setEntity.setId
+                            setId = exerciseSet.setId
                         )
                     }
                 }

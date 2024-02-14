@@ -23,14 +23,14 @@ interface ExerciseSetDao {
     fun getSetById(setId: UUID): ExerciseSet
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveSet(setEntity: ExerciseSet)
+    suspend fun saveSet(exerciseSet: ExerciseSet)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllExerciseSets(sets: List<ExerciseSet>)
 
     @Update
-    suspend fun updateSet(setEntity: ExerciseSet)
+    suspend fun updateSet(exerciseSet: ExerciseSet)
 
     @Delete
-    suspend fun deleteSet(setEntity: ExerciseSet)
+    suspend fun deleteSet(exerciseSet: ExerciseSet)
 }
