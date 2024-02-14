@@ -44,6 +44,12 @@ class WorkoutUseCasesUnitTest {
     private val useMockupDataSource = false
     private val isErrorTesting = false
 
+    private lateinit var logger: TestLogger
+
+    companion object{
+        private const val TAG = "WorkoutUseCasesUnitTest"
+    }
+
     @BeforeEach
     fun setup() {
         workoutDao = WorkoutDaoFake()
@@ -73,5 +79,15 @@ class WorkoutUseCasesUnitTest {
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
             createWorkoutUseCase = CreateWorkoutUseCase(workoutRepository)
         )
+
+        //Log
+//        mockkStatic(Log::class)
+//        every { Log.v(any(), any()) } returns 0
+//        every { Log.d(any(), any()) } returns 0
+//        every { Log.i(any(), any()) } returns 0
+//        every { Log.e(any(), any()) } returns 0
+
+        logger = TestLogger()
+    }
     }
 }
