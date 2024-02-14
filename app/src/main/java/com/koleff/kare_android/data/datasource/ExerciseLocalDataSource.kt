@@ -12,9 +12,7 @@ import com.koleff.kare_android.domain.wrapper.GetExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
-import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -22,8 +20,7 @@ import javax.inject.Inject
 
 class ExerciseLocalDataSource @Inject constructor(
     private val exerciseDao: ExerciseDao,
-    private val exerciseDetailsDao: ExerciseDetailsDao,
-    private val exerciseDBManager: ExerciseDBManager
+    private val exerciseDetailsDao: ExerciseDetailsDao
 ) : ExerciseDataSource {
 
     override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<GetExercisesWrapper>> =
