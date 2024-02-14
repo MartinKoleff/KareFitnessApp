@@ -63,6 +63,7 @@ class WorkoutDetailsDaoFake : WorkoutDetailsDao {
             it.workoutDetails
         }.indexOfFirst { it.workoutDetailsId == workout.workoutDetailsId }
 
+        //WorkoutDetails found
         if (index != -1) {
             val exercises = workoutDetailsDB[index].exercises
 

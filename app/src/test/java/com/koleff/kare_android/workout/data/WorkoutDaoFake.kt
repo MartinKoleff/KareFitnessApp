@@ -44,6 +44,8 @@ class WorkoutDaoFake : WorkoutDao {
 
         //Find workout
         val index = workoutsDB.indexOfFirst { it.workoutId == workout.workoutId }
+
+        //Workout found
         if (index != -1) {
 
             //Replace workout

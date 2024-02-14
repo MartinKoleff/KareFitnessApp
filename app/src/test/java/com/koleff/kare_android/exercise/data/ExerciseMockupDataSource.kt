@@ -21,7 +21,7 @@ class ExerciseMockupDataSource(private val isError: Boolean = false) : ExerciseD
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupExercisesList = MockupDataGenerator.generateExerciseList()
+            val mockupExercisesList = MockupDataGenerator.generateExerciseList(muscleGroupId)
 
             val mockupResult = GetExercisesWrapper(
                 GetExercisesResponse(
@@ -41,7 +41,9 @@ class ExerciseMockupDataSource(private val isError: Boolean = false) : ExerciseD
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupExercise = MockupDataGenerator.generateExercise()
+            val mockupExercise = MockupDataGenerator.generateExercise().copy(
+                exerciseId = exerciseId
+            )
 
             val mockupResult = GetExerciseWrapper(
                 GetExerciseResponse(
@@ -61,7 +63,9 @@ class ExerciseMockupDataSource(private val isError: Boolean = false) : ExerciseD
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupExercise = MockupDataGenerator.generateExerciseDetails()
+            val mockupExercise = MockupDataGenerator.generateExerciseDetails().copy(
+                id = exerciseId
+            )
 
             val mockupResult = GetExerciseDetailsWrapper(
                 GetExerciseDetailsResponse(

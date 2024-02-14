@@ -7,7 +7,7 @@ import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExercis
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 
-class ExerciseDaoFake : ExerciseDao {
+class ExerciseDaoFake : ExerciseDao { //TODO: wire cross refs with other DAOs...
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSet>()
     private val exerciseDetailsExerciseCrossRefs = mutableListOf<ExerciseDetailsExerciseCrossRef>()
     private val exerciseSetCrossRefs = mutableListOf<ExerciseSetCrossRef>()
