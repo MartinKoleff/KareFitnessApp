@@ -3,140 +3,161 @@ package com.koleff.kare_android.common
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
-import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import java.util.UUID
+import javax.inject.Inject
+import kotlin.random.Random
 
-//TODO: integrate with mockk() to be random...
-object MockupDataGenerator { //TODO: move to unit test directory...
-    fun generateExercise(): ExerciseDto {
-        val exerciseId = 1
+//TODO: move to unit test directory...
+object MockupDataGenerator{
 
-        return ExerciseDto(
-            exerciseId,
-            "BARBELL BENCH PRESS $exerciseId",
-            MuscleGroup.CHEST,
-            MachineType.BARBELL,
-            "",
+    private val exercises = ExerciseGenerator.getAllExercises()
+    private val exerciseDetails = ExerciseGenerator.getAllExerciseDetails()
+    val workoutNames = listOf(
+        "Epic workout",
+        "Koleff destroy your back workout",
+        "Emil Krustev full body workout",
+        "Blow your arms workout",
+        "Upper body gods workout",
+        "Leg day = taxi day",
+        "Calisthenics workout",
+        "Powerlifters workout",
+        "Military workout",
+        "Strongman workout",
+        "Push workout",
+        "Pull workout",
+        "Arms workout",
+        "Chest and shoulders workout",
+        "Chest, shoulders and triceps workout",
+        "Legs workout",
+        "Back workout",
+        "Musclemania workout"
+    )
+
+    fun generateExercise(muscleGroup: MuscleGroup = MuscleGroup.NONE): ExerciseDto {
+        val exerciseId = if (muscleGroup != MuscleGroup.NONE) Random.nextInt(
+            1,
+            ExerciseGenerator.TOTAL_EXERCISES
+        ) else {
+            Random.nextInt(
+                ExerciseGenerator.getMuscleGroupRange(muscleGroup).first,
+                ExerciseGenerator.getMuscleGroupRange(muscleGroup).second
+            )
+        }
+
+        val generatedExercise = exercises[exerciseId - 1]
+
+        val generatedExerciseWithSets = generatedExercise.copy(
             sets = generateExerciseSetsList()
         )
+
+        return generatedExerciseWithSets
     }
 
-    fun generateExerciseList(): List<ExerciseDto> {
-        val n = 5
+    fun generateExerciseList(
+        n: Int = 5,
+        muscleGroup: MuscleGroup = MuscleGroup.NONE
+    ): List<ExerciseDto> {
         val exercisesList: MutableList<ExerciseDto> = mutableListOf()
 
-        repeat(n) { index ->
-            val currentExercise =
-                ExerciseDto(
-                    index,
-                    "BARBELL BENCH PRESS $index",
-                    MuscleGroup.fromId(index + 1),
-                    MachineType.BARBELL,
-                    ""
-                )
-            exercisesList.add(currentExercise)
-            exercisesList.add(currentExercise)
+        repeat(n) {
+            exercisesList.add(generateExercise(muscleGroup))
         }
 
         return exercisesList
     }
 
-    fun generateExerciseList(muscleGroupId: Int = 0): List<ExerciseDto>{
-        val n = 5
-        val exercisesList: MutableList<ExerciseDto> = mutableListOf()
-
-        repeat(n) { index ->
-            val currentExercise =
-                ExerciseDto(
-                    index,
-                    "BARBELL BENCH PRESS $index",
-                    MuscleGroup.fromId(muscleGroupId),
-                    MachineType.BARBELL,
-                    ""
-                )
-            exercisesList.add(currentExercise)
+    fun generateExerciseDetails(muscleGroup: MuscleGroup = MuscleGroup.NONE): ExerciseDetailsDto {
+        val exerciseId = if (muscleGroup != MuscleGroup.NONE) Random.nextInt(
+            1,
+            ExerciseGenerator.TOTAL_EXERCISES
+        ) else {
+            Random.nextInt(
+                ExerciseGenerator.getMuscleGroupRange(muscleGroup).first,
+                ExerciseGenerator.getMuscleGroupRange(muscleGroup).second
+            )
         }
 
-        return exercisesList
+        val generatedExercise = exerciseDetails[exerciseId - 1]
+        return generatedExercise
     }
 
-    fun generateExerciseDetails(): ExerciseDetailsDto {
-        return ExerciseDetailsDto(
-            id = 1,
-            name = "BARBELL BENCH PRESS",
-            description = "",
-            muscleGroup = MuscleGroup.CHEST,
-            machineType = MachineType.BARBELL,
-            videoUrl = ""
-        )
+    fun generateExerciseDetailsList(
+        n: Int = 5,
+        muscleGroup: MuscleGroup = MuscleGroup.NONE
+    ): List<ExerciseDetailsDto> {
+        val exerciseDetailsList: MutableList<ExerciseDetailsDto> = mutableListOf()
+
+        repeat(n) {
+            exerciseDetailsList.add(generateExerciseDetails(muscleGroup))
+        }
+
+        return exerciseDetailsList
     }
 
-    fun generateWorkoutList(): List<WorkoutDto> {
-        val n = 5
+    fun generateWorkoutList(n: Int = 5): List<WorkoutDto> {
         val workoutList: MutableList<WorkoutDto> = mutableListOf()
 
-        repeat(n) { index ->
-            val currentWorkout =
-                WorkoutDto(
-                    workoutId = index,
-                    name = "Epic workout $index",
-                    muscleGroup = MuscleGroup.fromId(index + 1),
-                    snapshot = "",
-                    totalExercises = index,
-                    isSelected = false
-                )
-            workoutList.add(currentWorkout)
-            workoutList.add(currentWorkout)
+        repeat(n) {
+            val workout = generateWorkout()
+            workoutList.add(workout)
         }
 
         return workoutList
     }
 
-    fun generateExerciseSetsList(): List<ExerciseSetDto> {
+    fun generateExerciseSetsList(n: Int = 3): List<ExerciseSetDto> {
         val exerciseSetList = listOf(
-            ExerciseSetDto(UUID.randomUUID(),1, 12, 50f),
-            ExerciseSetDto(UUID.randomUUID(),2, 10, 55.5f),
-            ExerciseSetDto(UUID.randomUUID(),3, 8, 60f)
+            ExerciseSetDto(UUID.randomUUID(), 1, 12, 50f),
+            ExerciseSetDto(UUID.randomUUID(), 2, 10, 55.5f),
+            ExerciseSetDto(UUID.randomUUID(), 3, 8, 60f)
         )
 
         return exerciseSetList
     }
 
     fun generateExerciseSet(): ExerciseSetDto {
-        return ExerciseSetDto(UUID.randomUUID(),1, 12, 50f)
+        return ExerciseSetDto(UUID.randomUUID(), 1, 12, 50f)
     }
 
     fun generateWorkout(): WorkoutDto {
-        val workoutId = 1
-        val totalExercises = 5
+        val workoutId = Random.nextInt(1, 100)
+        val totalExercises = Random.nextInt(4, 12)
+        val muscleGroupId = Random.nextInt(1, 14)
+        val isSelected = Random.nextBoolean()
+        val name = workoutNames.random()
+
         val workout =
             WorkoutDto(
                 workoutId = workoutId,
-                name = "Epic workout $workoutId",
-                muscleGroup = MuscleGroup.fromId(workoutId),
-                snapshot = "",
+                name = "$name $workoutId",
+                muscleGroup = MuscleGroup.fromId(muscleGroupId),
+                snapshot = "snapshot$workoutId.png",
                 totalExercises = totalExercises,
-                isSelected = false
+                isSelected = isSelected
             )
 
         return workout
     }
 
     fun generateWorkoutDetails(): WorkoutDetailsDto {
-        val workoutId = 1
+        val workoutId = Random.nextInt(1, 100)
+        val muscleGroupId = Random.nextInt(1, 14)
+        val isSelected = Random.nextBoolean()
         val exercises = generateExerciseList() as MutableList<ExerciseDto>
+        val name = workoutNames.random()
 
         val workoutDetails =
             WorkoutDetailsDto(
                 workoutId = workoutId,
-                name = "Epic workout $workoutId",
+                name = "$name $workoutId",
                 description = "Description",
-                muscleGroup = MuscleGroup.fromId(workoutId),
+                muscleGroup = MuscleGroup.fromId(muscleGroupId),
                 exercises = exercises,
-                isSelected = false
+                isSelected = isSelected
             )
 
         return workoutDetails
