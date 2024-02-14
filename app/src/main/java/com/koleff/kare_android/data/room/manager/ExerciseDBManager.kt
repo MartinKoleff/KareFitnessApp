@@ -8,7 +8,7 @@ import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
-import com.koleff.kare_android.data.room.entity.SetEntity
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import kotlinx.coroutines.Dispatchers
@@ -43,18 +43,18 @@ class ExerciseDBManager @Inject constructor(
         preferences.initializeExerciseTableRoomDB()
     }
 
-    private fun loadExerciseSets(): List<SetEntity> {
+    private fun loadExerciseSets(): List<ExerciseSet> {
         return listOf(
-            SetEntity(UUID.randomUUID(),1, 12, 25f),
-            SetEntity(UUID.randomUUID(),2, 10, 30f),
-            SetEntity(UUID.randomUUID(),3, 8, 35f)
+            ExerciseSet(UUID.randomUUID(),1, 12, 25f),
+            ExerciseSet(UUID.randomUUID(),2, 10, 30f),
+            ExerciseSet(UUID.randomUUID(),3, 8, 35f)
         )
     }
 
     private suspend fun loadExerciseSetsCrossRefs(allExercises: List<Exercise>): List<ExerciseSetCrossRef> {
         val crossRefs: MutableList<ExerciseSetCrossRef> = mutableListOf()
 
-        val exerciseSets: MutableList<SetEntity> = mutableListOf()
+        val exerciseSets: MutableList<ExerciseSet> = mutableListOf()
         var counter: Int = 0
         for (exercise in allExercises) {
             exerciseSets.addAll(loadExerciseSets()) //Generate new setId with same ExerciseSetDto data...

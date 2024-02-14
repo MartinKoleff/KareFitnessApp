@@ -1,18 +1,14 @@
 package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
-import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import java.util.UUID
 
 @Entity(
     tableName = "exercise_set_table"
 )
-data class SetEntity(
+data class ExerciseSet(
     @PrimaryKey(autoGenerate = false)
     var setId: UUID,
     val number: Int,

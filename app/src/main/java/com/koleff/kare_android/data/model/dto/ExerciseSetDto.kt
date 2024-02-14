@@ -1,9 +1,7 @@
 package com.koleff.kare_android.data.model.dto
 
 import android.os.Parcelable
-import androidx.compose.ui.Modifier
-import com.koleff.kare_android.data.room.entity.Exercise
-import com.koleff.kare_android.data.room.entity.SetEntity
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
@@ -14,8 +12,8 @@ data class ExerciseSetDto(
     var reps: Int,
     var weight: Float
 ) : Parcelable{
-    fun toSetEntity(): SetEntity {
-        return SetEntity(
+    fun toExerciseSet(): ExerciseSet {
+        return ExerciseSet(
             setId = setId ?: UUID.randomUUID(), // Generate new UUID if null
             number = number,
             reps = reps,

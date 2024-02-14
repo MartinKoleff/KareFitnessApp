@@ -195,7 +195,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
                 workout.exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
-                        val setEntity = set.toSetEntity()
+                        val setEntity = set.toExerciseSet()
 
                         if (set.setId == null) {
                             //New set -> insert it
