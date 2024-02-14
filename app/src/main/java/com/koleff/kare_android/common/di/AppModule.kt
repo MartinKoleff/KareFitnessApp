@@ -197,13 +197,11 @@ object AppModule {
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseDBManager: ExerciseDBManager
+        exerciseDetailsDao: ExerciseDetailsDao
     ): ExerciseDataSource {
         return if (useLocalDataSource) ExerciseLocalDataSource(
             exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseDBManager = exerciseDBManager
+            exerciseDetailsDao = exerciseDetailsDao
         )
         else ExerciseRemoteDataSource(exerciseApi)
     }
