@@ -19,8 +19,21 @@ import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import io.mockk.coEvery
+import io.mockk.mockk
 
-class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDataSource {
+class WorkoutMockupDataSource(private val isError: Boolean = false) :
+    WorkoutDataSource {
+
+    private val mockWorkout = mockk<WorkoutDto>(relaxed = true)
+    private val mockWorkoutDetails = mockk<WorkoutDetailsDto>(relaxed = true)
+
+    private val mockWorkoutsList = mockk<MutableList<WorkoutDto>>(relaxed = true) //listOf(mockWorkout, mockWorkout) // Example with two mocked workouts
+
+    init {
+        //Setup your mocks here
+        //For example, to always return a specific workout ID when accessing mockWorkout.workoutId
+    }
 
     override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
@@ -45,12 +58,10 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDat
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupSelectedWorkout = MockupDataGenerator.generateWorkout().copy(
-                isSelected = true
-            )
+            coEvery { mockWorkout.isSelected } returns true
 
             val mockupResult = GetSelectedWorkoutWrapper(
-                GetSelectedWorkoutResponse(mockupSelectedWorkout)
+                GetSelectedWorkoutResponse(mockWorkout)
             )
 
             if (isError) {
@@ -65,12 +76,10 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDat
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupWorkout = MockupDataGenerator.generateWorkout().copy(
-                workoutId = workoutId
-            )
+            coEvery { mockWorkout.workoutId } returns workoutId
 
             val mockupResult = GetWorkoutWrapper(
-                GetWorkoutResponse(mockupWorkout)
+                GetWorkoutResponse(mockWorkout)
             )
 
             if (isError) {
@@ -85,10 +94,8 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDat
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupWorkouts = MockupDataGenerator.generateWorkoutList()
-
             val mockupResult = GetAllWorkoutsWrapper(
-                GetAllWorkoutsResponse(mockupWorkouts)
+                GetAllWorkoutsResponse(mockWorkoutsList)
             )
 
             if (isError) {
@@ -103,12 +110,11 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDat
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupWorkoutDetails = MockupDataGenerator.generateWorkoutDetails().copy(
-                workoutId = workoutId
-            )
+            coEvery { mockWorkoutDetails.workoutId } returns workoutId
+
 
             val mockupResult = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(mockupWorkoutDetails)
+                GetWorkoutDetailsResponse(mockWorkoutDetails)
             )
 
             if (isError) {
@@ -162,13 +168,13 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDat
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupWorkoutDetails = MockupDataGenerator.generateWorkoutDetails().copy(
-                workoutId = workoutId,
-            )
-            mockupWorkoutDetails.exercises.removeAll { it.exerciseId == exerciseId }
+            coEvery { mockWorkoutDetails.workoutId } returns workoutId
+            coEvery { mockWorkoutDetails.exercises } returns mockWorkoutDetails.exercises
+                .filter { it.exerciseId == exerciseId }
+                .toMutableList()
 
             val mockupResult = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(mockupWorkoutDetails)
+                GetWorkoutDetailsResponse(mockWorkoutDetails)
             )
 
             if (isError) {
@@ -201,10 +207,10 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) : WorkoutDat
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mockupWorkout = MockupDataGenerator.generateWorkout()
+//            mockWorkoutsList.add(mockWorkout)
 
             val mockupResult = GetWorkoutWrapper(
-                GetWorkoutResponse(mockupWorkout)
+                GetWorkoutResponse(mockWorkout)
             )
 
             if (isError) {
