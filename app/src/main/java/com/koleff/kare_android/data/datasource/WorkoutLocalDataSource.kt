@@ -92,7 +92,6 @@ class WorkoutLocalDataSource @Inject constructor(
         emit(ResultWrapper.Success(result))
     }
 
-    //TODO: not returning exercises...
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -202,12 +201,14 @@ class WorkoutLocalDataSource @Inject constructor(
                         val exerciseSet = set.toExerciseSet()
 
                         if (set.setId == null) {
+
                             //New set -> insert it
                             val newSetId = UUID.randomUUID()
                             exerciseSet.setId = newSetId
 
                             exerciseSetDao.saveSet(exerciseSet)
                         } else {
+
                             //Existing set -> update it
                             Log.d(
                                 "SaveWorkoutDetails-LocalDatasource",

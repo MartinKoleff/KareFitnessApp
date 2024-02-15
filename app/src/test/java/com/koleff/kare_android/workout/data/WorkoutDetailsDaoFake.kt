@@ -8,6 +8,7 @@ import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
+import com.koleff.kare_android.utils.TestLogger
 
 //ExerciseDao is needed for fetching exercises from cross refs
 class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutDetailsDao {
@@ -15,7 +16,9 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutD
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
     private val workoutDetailsExerciseCrossRefs = mutableListOf<WorkoutDetailsExerciseCrossRef>()
     private fun getAllExercises() =
-        exerciseDao.getExercisesOrderedById() //TODO: wire with sets too...
+        exerciseDao.getExercisesOrderedById()
+
+    private val logger: TestLogger = TestLogger()
 
 
     //Assuming there is already a workout in the workoutDB -> no need for autoincrement -> id is verified
@@ -118,6 +121,8 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutD
         val exerciseWithSets = exercises
             .map { exerciseDao.getExerciseById(it.exerciseId) }
             .map(ExerciseWithSet::toExerciseDto)
+
+        logger.i("WorkoutDetailsDaoFake", exerciseWithSets.toString())
         return exerciseWithSets
     }
 
@@ -139,5 +144,10 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutD
         }?.copy(
             exercises = workoutExercises
         )
+    }
+
+    fun clearDB() {
+        workoutDetailsDB.clear()
+        workoutDetailsExerciseCrossRefs.clear()
     }
 }

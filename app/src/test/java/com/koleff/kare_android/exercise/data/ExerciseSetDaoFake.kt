@@ -37,4 +37,8 @@ class ExerciseSetDaoFake : ExerciseSetDao {
     override suspend fun deleteSet(exerciseSet: ExerciseSet) {
         exerciseSetDB.removeAll { it.setId == exerciseSet.setId }
     }
+
+    fun clearDB(){
+        exerciseSetDB.clear()
+    }
 }

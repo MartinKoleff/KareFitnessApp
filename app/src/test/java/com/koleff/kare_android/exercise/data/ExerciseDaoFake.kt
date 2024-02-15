@@ -7,6 +7,7 @@ import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.utils.TestLogger
 
 class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : ExerciseDao {
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSet>()
@@ -16,12 +17,16 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
     private val exerciseSetCrossRefs =
         mutableListOf<ExerciseSetCrossRef>()
 
+    private val logger: TestLogger = TestLogger()
+
     override suspend fun insertExercise(exercise: Exercise) {
         val sets = getExerciseSets(exercise)
 
         exerciseWithSetDB.add(
             ExerciseWithSet(exercise = exercise, sets = sets)
         )
+
+        logger.i("ExerciseDaoFake-insertExercise", sets.toString())
     }
 
     private fun getExerciseSets(exercise: Exercise): List<ExerciseSet> {
@@ -35,6 +40,8 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
 
             sets.add(set)
         }
+
+        logger.i("ExerciseDaoFake-getExerciseSets", sets.toString())
 
         return sets
             .distinct()
@@ -76,6 +83,8 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
 
         exerciseWithSetDB.remove(exerciseWithNoSets)
         exerciseWithSetDB.add(exerciseWithSets)
+
+        logger.i("ExerciseDaoFake-updateExerciseWithSets", exerciseWithSets.toString())
     }
 
     override suspend fun deleteExercise(exercise: Exercise) {
@@ -111,5 +120,11 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
 
     override fun getAllExercises(): List<ExerciseWithSet> {
         return exerciseWithSetDB
+    }
+
+    fun clearDB() {
+        exerciseWithSetDB.clear()
+        exerciseDetailsExerciseCrossRefs.clear()
+        exerciseDetailsExerciseCrossRefs.clear()
     }
 }

@@ -34,6 +34,7 @@ import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.RepeatedTest
@@ -110,6 +111,18 @@ class WorkoutUseCasesUnitTest {
             val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
             exerciseDao.insertAll(exercisesList)
         }
+    }
+
+    @AfterEach
+    fun tearDown() {
+        exerciseDao.clearDB()
+        exerciseSetDao.clearDB()
+        workoutDetailsDao.clearDB()
+
+        logger.i("tearDown", "DB cleared!")
+        logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
+        logger.i("tearDown", "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}")
+        logger.i("tearDown", "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}")
     }
 
     /**Tested functions inside:
@@ -252,7 +265,7 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             //Generate workout details
-            val data = MockupDataGenerator.generateWorkoutAndWorkoutDetails()
+            val data = MockupDataGenerator.generateWorkoutAndWorkoutDetails(isGenerateSetId = true)
 
             val workout = data.first
             logger.i(TAG, "Mocked workout: $workout")
@@ -294,6 +307,6 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Fetched workout details with exercises with sets: $fetchedWorkoutDetailsWithExercisesWithSets")
 
             logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
-            assert(fetchedWorkoutDetailsWithExercisesWithSets == workoutDetails)
+            assertTrue(fetchedWorkoutDetailsWithExercisesWithSets == workoutDetails)
         }
 }

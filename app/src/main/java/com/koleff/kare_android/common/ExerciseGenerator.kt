@@ -93,7 +93,7 @@ object ExerciseGenerator {
         }
     }
 
-    fun loadExerciseSets(): List<ExerciseSet> {
+    fun loadExerciseSets(generateId: Boolean = true): List<ExerciseSet> {
         return listOf(
             ExerciseSet(UUID.randomUUID(), 1, 12, 25f),
             ExerciseSet(UUID.randomUUID(), 2, 10, 30f),
