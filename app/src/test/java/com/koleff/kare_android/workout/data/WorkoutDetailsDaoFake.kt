@@ -1,14 +1,21 @@
 package com.koleff.kare_android.workout.data
 
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
+import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
+import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 
-class WorkoutDetailsDaoFake : WorkoutDetailsDao {
+//ExerciseDao is needed for fetching exercises from cross refs
+class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutDetailsDao {
 
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
     private val workoutDetailsExerciseCrossRefs = mutableListOf<WorkoutDetailsExerciseCrossRef>()
+    private fun getAllExercises() =
+        exerciseDao.getExercisesOrderedById() //TODO: wire with sets too...
 
 
     //Assuming there is already a workout in the workoutDB -> no need for autoincrement -> id is verified
@@ -87,20 +94,50 @@ class WorkoutDetailsDaoFake : WorkoutDetailsDao {
     }
 
     override fun getWorkoutDetailsOrderedById(): List<WorkoutDetailsWithExercises> {
+        val workoutExercises = getWorkoutExercises()
+
         return workoutDetailsDB.sortedBy { it.workoutDetails.workoutDetailsId }.map {
-            WorkoutDetailsWithExercises(it.workoutDetails, it.exercises)
+            WorkoutDetailsWithExercises(it.workoutDetails, workoutExercises)
         }
+    }
+
+    private fun getWorkoutExercises(): List<Exercise> {
+        val workoutExercisesIndexes = workoutDetailsExerciseCrossRefs
+            .map { it.exerciseId }
+
+        val workoutExercises = getAllExercises()
+            .filter { workoutExercisesIndexes.contains(it.exercise.exerciseId) }
+            .map { it.exercise }
+
+        return workoutExercises
+    }
+
+    fun getWorkoutExercisesWithSets(): List<ExerciseDto> {
+        val exercises = getWorkoutExercises()
+
+        val exerciseWithSets = exercises
+            .map { exerciseDao.getExerciseById(it.exerciseId) }
+            .map(ExerciseWithSet::toExerciseDto)
+        return exerciseWithSets
     }
 
     override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
+        val workoutExercises = getWorkoutExercises()
+
         return workoutDetailsDB.firstOrNull {
             it.workoutDetails.isSelected
-        }
+        }?.copy(
+            exercises = workoutExercises
+        )
     }
 
     override fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises? {
+        val workoutExercises = getWorkoutExercises()
+
         return workoutDetailsDB.firstOrNull {
             it.workoutDetails.workoutDetailsId == workoutId
-        }
+        }?.copy(
+            exercises = workoutExercises
+        )
     }
 }
