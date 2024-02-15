@@ -227,36 +227,70 @@ class WorkoutUseCasesUnitTest {
 
     /**Tested functions inside:
      * GetWorkoutDetailsUseCase()
-     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDetailsDao.getWorkoutDetailsById()
      * ExerciseDao.getExerciseById()
-     * WorkoutDao.getWorkoutById()
+     * ----------------------
+     * UpdateWorkoutUseCase()
+     * WorkoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef()
+     * ExerciseSetDao.saveSet()
+     * ExerciseSetDao.updateSet()
+     * ExerciseDao.insertAllExerciseSetCrossRef()
+     * WorkoutDao.updateWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
      */
     @RepeatedTest(50)
-    fun `get workout details from GetWorkoutsDetailsUseCase test`() = runTest {
+    fun `get workout details from GetWorkoutsDetailsUseCase test`() =
+        runTest {
 
-        //Generate workout details
-        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
-        logger.i(TAG, "Mocked workout details: $workoutDetails")
+            //Generate workout details
+            val data = MockupDataGenerator.generateWorkoutAndWorkoutDetails()
 
-        //Insert //TODO: fix save...
-        val id = workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails())
-        logger.i(TAG, "Mocked workout details inserted successfully. Workout details id: $id")
+            val workout = data.first
+            logger.i(TAG, "Mocked workout: $workout")
 
-        //Fetch
-        val getWorkoutDetailsState = workoutUseCases.getWorkoutDetailsUseCase(id.toInt()).toList()
+            val workoutDetails = data.second
+            logger.i(TAG, "Mocked workout details: $workoutDetails")
 
-        logger.i(TAG, "Get workout details -> isLoading state raised.")
-        assertTrue { getWorkoutDetailsState[0].isLoading }
+            //Insert workout to generate WorkoutDetails in DB
+            val saveWorkoutState = workoutUseCases.updateWorkoutUseCase(workout).toList()
 
-        logger.i(TAG, "Get workout details -> isSuccessful state raised.")
-        assertTrue { getWorkoutDetailsState[1].isSuccessful }
+            logger.i(TAG, "Save workout -> isLoading state raised.")
+            assertTrue { saveWorkoutState[0].isLoading }
 
-        val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
-        logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
+            logger.i(TAG, "Save workout -> isSuccessful state raised.")
+            assertTrue { saveWorkoutState[1].isSuccessful }
 
-        logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
-        assertTrue(fetchedWorkoutDetails == workoutDetails)
-    }
+            //Update WorkoutDetails entry in DB with exercises and exercise sets
+            val saveWorkoutDetailsState =
+                workoutUseCases.updateWorkoutDetailsUseCase(workoutDetails).toList()
 
+            logger.i(TAG, "Save workout details -> isLoading state raised.")
+            assertTrue { saveWorkoutDetailsState[0].isLoading }
+
+            logger.i(TAG, "Save workout details -> isSuccessful state raised.")
+            assertTrue { saveWorkoutDetailsState[1].isSuccessful }
+
+            val savedWorkoutDetails = saveWorkoutDetailsState[1].workout
+            logger.i(
+                TAG,
+                "Mocked workout details inserted successfully. Saved workout details: $savedWorkoutDetails"
+            )
+
+            //Fetch
+            val getWorkoutDetailsState =
+                workoutUseCases.getWorkoutDetailsUseCase(savedWorkoutDetails.workoutId).toList()
+
+            logger.i(TAG, "Get workout details -> isLoading state raised.")
+            assertTrue { getWorkoutDetailsState[0].isLoading }
+
+            logger.i(TAG, "Get workout details -> isSuccessful state raised.")
+            assertTrue { getWorkoutDetailsState[1].isSuccessful }
+
+            val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
+            logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
+
+            logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
+            assertTrue(fetchedWorkoutDetails == workoutDetails)
+        }
 
 }
