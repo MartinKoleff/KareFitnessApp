@@ -160,4 +160,19 @@ object MockupDataGenerator{
 
         return workoutDetails
     }
+
+    fun generateWorkoutAndWorkoutDetails(): Pair<WorkoutDto, WorkoutDetailsDto> {
+        val workoutDetails = generateWorkoutDetails()
+
+        val workout = WorkoutDto(
+            workoutId = workoutDetails.workoutId,
+            name = workoutDetails.name,
+            muscleGroup = workoutDetails.muscleGroup,
+            snapshot = "snapshot ${workoutDetails.workoutId}.png",
+            totalExercises = workoutDetails.exercises.size,
+            isSelected = workoutDetails.isSelected
+        )
+
+        return Pair(workout, workoutDetails)
+    }
 }
