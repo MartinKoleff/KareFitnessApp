@@ -6,9 +6,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import java.util.UUID
-import javax.inject.Inject
 import kotlin.random.Random
 
 //TODO: move to unit test directory...
@@ -145,9 +143,9 @@ object MockupDataGenerator{
 
     fun generateWorkoutDetails(): WorkoutDetailsDto {
         val workoutId = Random.nextInt(1, 100)
-        val muscleGroupId = Random.nextInt(1, 14)
+        val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
         val isSelected = Random.nextBoolean()
-        val exercises = generateExerciseList() as MutableList<ExerciseDto>
+        val exercises = generateExerciseList(muscleGroup = muscleGroup) as MutableList<ExerciseDto>
         val name = workoutNames.random()
 
         val workoutDetails =
@@ -155,7 +153,7 @@ object MockupDataGenerator{
                 workoutId = workoutId,
                 name = "$name $workoutId",
                 description = "Description",
-                muscleGroup = MuscleGroup.fromId(muscleGroupId),
+                muscleGroup = muscleGroup,
                 exercises = exercises,
                 isSelected = isSelected
             )

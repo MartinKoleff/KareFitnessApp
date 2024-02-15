@@ -13,6 +13,18 @@ object ExerciseGenerator {
 
     const val TOTAL_EXERCISES = 60
 
+    //List of all muscle groups with exercises ranges setup in getMuscleGroupRange()
+    val SUPPORTED_MUSCLE_GROUPS = listOf<MuscleGroup>(
+        MuscleGroup.CHEST,
+        MuscleGroup.BACK,
+        MuscleGroup.TRICEPS,
+        MuscleGroup.BICEPS,
+        MuscleGroup.ARMS,
+        MuscleGroup.SHOULDERS,
+        MuscleGroup.LEGS,
+        MuscleGroup.FULL_BODY,
+    )
+
     fun loadExercises(muscleGroup: MuscleGroup): List<Exercise> {
         return when (muscleGroup) {
             MuscleGroup.CHEST -> getChestExercises()
