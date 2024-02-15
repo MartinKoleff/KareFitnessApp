@@ -30,5 +30,5 @@ interface WorkoutRepository {
 
     suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun createWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
 }

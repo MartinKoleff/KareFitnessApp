@@ -58,5 +58,5 @@ interface WorkoutApi {
     ): BaseResponse
 
     @GET("api/v1/workout/createworkout")
-    suspend fun createWorkout(): GetWorkoutResponse
+    suspend fun createNewWorkout(): GetWorkoutResponse
 }

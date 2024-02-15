@@ -99,7 +99,7 @@ class WorkoutUseCasesUnitTest {
 
     /**Tested functions inside:
      * CreateWorkoutUseCase()
-     * WorkoutLocalDataSource.createWorkout()
+     * WorkoutLocalDataSource.createNewWorkout()
      * WorkoutDao.insertWorkout()
      * WorkoutDao.updateWorkout()
      * WorkoutDetailsDao.insertWorkoutDetails()

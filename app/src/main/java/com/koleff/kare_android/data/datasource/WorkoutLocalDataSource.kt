@@ -164,6 +164,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val workoutId = workout.workoutId
             val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
+            //If no WorkoutDetails found -> return error
             data ?: run {
                 emit(ResultWrapper.ApiError())
                 return@flow
@@ -247,6 +248,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.updateWorkout(workout.toWorkout())
 
             //Update duplicate data between Workout and WorkoutDetails...
+            //If no WorkoutDetails found -> return error
             val workoutDetailsWithExercises =
                 workoutDetailsDao.getWorkoutDetailsById(workout.workoutId)
             workoutDetailsWithExercises ?: emit(ResultWrapper.ApiError())
@@ -278,7 +280,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun createWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
+    override suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)

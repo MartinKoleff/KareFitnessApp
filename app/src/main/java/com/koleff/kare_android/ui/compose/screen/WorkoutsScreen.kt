@@ -298,7 +298,7 @@ fun WorkoutsScreen(
                                     }
                                 } else {
                                     AddWorkoutBanner {
-                                        workoutListViewModel.createWorkout()
+                                        workoutListViewModel.createNewWorkout()
                                     }
                                 }
                             }
