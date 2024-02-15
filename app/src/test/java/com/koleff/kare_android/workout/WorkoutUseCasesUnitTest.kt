@@ -43,10 +43,10 @@ typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 //TODO: add inner classes for each use case...
 //TODO: add naming to each assertion...
 class WorkoutUseCasesUnitTest {
-    private lateinit var workoutDao: WorkoutDao
-    private lateinit var workoutDetailsDao: WorkoutDetailsDao
-    private lateinit var exerciseDao: ExerciseDao
-    private lateinit var exerciseSetDao: ExerciseSetDao
+    private lateinit var workoutDao: WorkoutDaoFake
+    private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
+    private lateinit var exerciseDao: ExerciseDaoFake
+    private lateinit var exerciseSetDao: ExerciseSetDaoFake
 
     private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
     private lateinit var workoutMockupDataSource: WorkoutMockupDataSource
@@ -66,11 +66,12 @@ class WorkoutUseCasesUnitTest {
     }
 
     @BeforeEach
-    fun setup() {
-        workoutDao = WorkoutDaoFake()
-        workoutDetailsDao = WorkoutDetailsDaoFake()
-        exerciseDao = ExerciseDaoFake()
+    fun setup() = runBlocking {
         exerciseSetDao = ExerciseSetDaoFake()
+        exerciseDao = ExerciseDaoFake(exerciseSetDao = exerciseSetDao)
+
+        workoutDao = WorkoutDaoFake()
+        workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao)
 
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
@@ -101,6 +102,12 @@ class WorkoutUseCasesUnitTest {
         )
 
         logger = TestLogger()
+
+        //Load ExerciseDao with all exercises
+        for (muscleGroup in MuscleGroup.entries) {
+            val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
+            exerciseDao.insertAll(exercisesList)
+        }
     }
 
     /**Tested functions inside:
