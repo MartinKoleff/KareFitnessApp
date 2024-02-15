@@ -219,6 +219,38 @@ class WorkoutUseCasesUnitTest {
         assertTrue(fetchedWorkout == workout)
     }
 
+    /**Tested functions inside:
+     * GetWorkoutDetailsUseCase()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * ExerciseDao.getExerciseById()
+     * WorkoutDao.getWorkoutById()
+     */
+    @RepeatedTest(50)
+    fun `get workout details from GetWorkoutsDetailsUseCase test`() = runTest {
+
+        //Generate workout details
+        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+        logger.i(TAG, "Mocked workout details: $workoutDetails")
+
+        //Insert //TODO: fix save...
+        val id = workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails())
+        logger.i(TAG, "Mocked workout details inserted successfully. Workout details id: $id")
+
+        //Fetch
+        val getWorkoutDetailsState = workoutUseCases.getWorkoutDetailsUseCase(id.toInt()).toList()
+
+        logger.i(TAG, "Get workout details -> isLoading state raised.")
+        assertTrue { getWorkoutDetailsState[0].isLoading }
+
+        logger.i(TAG, "Get workout details -> isSuccessful state raised.")
+        assertTrue { getWorkoutDetailsState[1].isSuccessful }
+
+        val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
+        logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
+
+        logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
+        assertTrue(fetchedWorkoutDetails == workoutDetails)
+    }
 
 
 }
