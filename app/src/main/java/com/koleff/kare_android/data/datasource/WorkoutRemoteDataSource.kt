@@ -56,10 +56,10 @@ class WorkoutRemoteDataSource @Inject constructor(
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.deleteWorkout(body)) })
     }
 
-    override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun saveWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
         val body = SaveWorkoutRequest(workout)
 
-        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.saveWorkout(body)) })
+        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.saveWorkoutDetails(body)) })
     }
 
     override suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>> {

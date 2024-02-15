@@ -142,7 +142,7 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) :
             }
         }
 
-    override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun saveWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)

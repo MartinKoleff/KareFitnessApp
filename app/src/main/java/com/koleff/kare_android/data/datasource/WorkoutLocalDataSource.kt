@@ -156,7 +156,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun saveWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -177,7 +177,7 @@ class WorkoutLocalDataSource @Inject constructor(
             if (currentEntryInDB.size <= workout.exercises.size) {
                 val newExercises =
                     workout.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
-                Log.d("SaveWorkout-LocalDataSource", "New exercises: $newExercises")
+                Log.d("SaveWorkoutDetails-LocalDataSource", "New exercises: $newExercises")
 
                 val exerciseIds = newExercises.map { it.exerciseId }
 
@@ -208,7 +208,7 @@ class WorkoutLocalDataSource @Inject constructor(
                         } else {
                             //Existing set -> update it
                             Log.d(
-                                "SaveWorkout-LocalDatasource",
+                                "SaveWorkoutDetails-LocalDatasource",
                                 "Exercise set with setId ${exerciseSet.setId} updated. Data: $exerciseSet"
                             )
                             exerciseSetDao.updateSet(exerciseSet)
