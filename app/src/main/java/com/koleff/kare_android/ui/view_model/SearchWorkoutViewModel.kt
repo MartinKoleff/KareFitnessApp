@@ -115,9 +115,9 @@ class SearchWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun updateWorkout(workout: WorkoutDetailsDto) {
+    fun updateWorkoutDetails(workout: WorkoutDetailsDto) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.updateWorkoutUseCase.invoke(workout).collect { updateWorkoutState ->
+            workoutUseCases.updateWorkoutDetailsUseCase.invoke(workout).collect { updateWorkoutState ->
                 _updateWorkoutState.value = updateWorkoutState
             }
         }

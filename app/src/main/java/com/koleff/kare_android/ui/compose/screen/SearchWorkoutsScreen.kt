@@ -64,7 +64,7 @@ fun SearchWorkoutsScreen(
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
             workoutDetailsState.workout.exercises.add(exerciseState.exercise)
 
-            searchWorkoutViewModel.updateWorkout(workoutDetailsState.workout)
+            searchWorkoutViewModel.updateWorkoutDetails(workoutDetailsState.workout)
         }
     }
 

@@ -99,7 +99,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         }
 
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.updateWorkoutUseCase.invoke(selectedWorkout)
+            workoutUseCases.updateWorkoutDetailsUseCase.invoke(selectedWorkout)
                 .collect { updateWorkoutState ->
                     _updateWorkoutState.value = updateWorkoutState
                 }
