@@ -3,19 +3,42 @@ package com.koleff.kare_android.exercise.data
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 
-class ExerciseDaoFake : ExerciseDao { //TODO: wire cross refs with other DAOs...
+class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : ExerciseDao {
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSet>()
-    private val exerciseDetailsExerciseCrossRefs = mutableListOf<ExerciseDetailsExerciseCrossRef>()
-    private val exerciseSetCrossRefs = mutableListOf<ExerciseSetCrossRef>()
+
+    private val exerciseDetailsExerciseCrossRefs =
+        mutableListOf<ExerciseDetailsExerciseCrossRef>() //TODO: wire cross refs with other DAOs...
+    private val exerciseSetCrossRefs =
+        mutableListOf<ExerciseSetCrossRef>()
 
     override suspend fun insertExercise(exercise: Exercise) {
+        val sets = getExerciseSets(exercise)
+
         exerciseWithSetDB.add(
-            ExerciseWithSet(exercise = exercise, sets = emptyList())
+            ExerciseWithSet(exercise = exercise, sets = sets)
         )
+    }
+
+    private fun getExerciseSets(exercise: Exercise): List<ExerciseSet> {
+        val setIndexes = exerciseSetCrossRefs
+            .filter { it.exerciseId == exercise.exerciseId }
+            .map { it.setId }
+
+        val sets = mutableListOf<ExerciseSet>()
+        for (setIndex in setIndexes) {
+            val set = exerciseSetDao.getSetById(setIndex)
+
+            sets.add(set)
+        }
+
+        return sets
+            .distinct()
+            .sortedBy { it.number }
     }
 
     override suspend fun insertAll(exercises: List<Exercise>) {
@@ -38,6 +61,21 @@ class ExerciseDaoFake : ExerciseDao { //TODO: wire cross refs with other DAOs...
 
     override suspend fun insertAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>) {
         exerciseSetCrossRefs.addAll(crossRefs)
+
+        //Update DB after new cross ref is added...
+        val exerciseIndexesToUpdate = crossRefs.map { it.exerciseId }
+        exerciseIndexesToUpdate.forEach { updateExerciseWithSets(it) }
+    }
+
+    private fun updateExerciseWithSets(exerciseId: Int) {
+        val exerciseWithNoSets = getExerciseById(exerciseId)
+        val exerciseSets = getExerciseSets(exerciseWithNoSets.exercise)
+        val exerciseWithSets = exerciseWithNoSets.copy(
+            sets = exerciseSets
+        )
+
+        exerciseWithSetDB.remove(exerciseWithNoSets)
+        exerciseWithSetDB.add(exerciseWithSets)
     }
 
     override suspend fun deleteExercise(exercise: Exercise) {
