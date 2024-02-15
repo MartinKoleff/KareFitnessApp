@@ -10,7 +10,7 @@ import java.util.UUID
 import kotlin.random.Random
 
 //TODO: move to unit test directory...
-object MockupDataGenerator{
+object MockupDataGenerator {
 
     private val exercises = ExerciseGenerator.getAllExercises()
     private val exerciseDetails = ExerciseGenerator.getAllExerciseDetails()
@@ -32,7 +32,7 @@ object MockupDataGenerator{
         "Chest, shoulders and triceps workout",
         "Legs workout",
         "Back workout",
-        "Musclemania workout"
+        "MuscleMania workout"
     )
 
     fun generateExercise(muscleGroup: MuscleGroup = MuscleGroup.NONE): ExerciseDto {
@@ -47,6 +47,9 @@ object MockupDataGenerator{
         }
 
         val generatedExercise = exercises[exerciseId - 1]
+//            .copy(
+//            snapshot = "exercise $exerciseId.png"
+//        ) //Ruins assertion
 
         val generatedExerciseWithSets = generatedExercise.copy(
             sets = generateExerciseSetsList()
@@ -57,7 +60,8 @@ object MockupDataGenerator{
 
     fun generateExerciseList(
         n: Int = 5,
-        muscleGroup: MuscleGroup = MuscleGroup.NONE
+        muscleGroup: MuscleGroup = MuscleGroup.NONE,
+        isDistinct: Boolean = false
     ): List<ExerciseDto> {
         val exercisesList: MutableList<ExerciseDto> = mutableListOf()
 
@@ -65,7 +69,8 @@ object MockupDataGenerator{
             exercisesList.add(generateExercise(muscleGroup))
         }
 
-        return exercisesList
+        return if (isDistinct) exercisesList.distinct()
+        else exercisesList
     }
 
     fun generateExerciseDetails(muscleGroup: MuscleGroup = MuscleGroup.NONE): ExerciseDetailsDto {
@@ -145,7 +150,10 @@ object MockupDataGenerator{
         val workoutId = Random.nextInt(1, 100)
         val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
         val isSelected = Random.nextBoolean()
-        val exercises = generateExerciseList(muscleGroup = muscleGroup) as MutableList<ExerciseDto>
+        val exercises = generateExerciseList(
+            muscleGroup = muscleGroup,
+            isDistinct = true
+        ).sortedBy { it.exerciseId } as MutableList<ExerciseDto>
         val name = workoutNames.random()
 
         val workoutDetails =
@@ -155,7 +163,7 @@ object MockupDataGenerator{
                 description = "Description",
                 muscleGroup = muscleGroup,
                 exercises = exercises,
-                isSelected = isSelected
+                isSelected = isSelected,
             )
 
         return workoutDetails
