@@ -2,7 +2,6 @@ package com.koleff.kare_android.workout
 
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
@@ -27,7 +26,6 @@ import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
-import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -35,12 +33,13 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
-import kotlin.random.Random
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
+//TODO: remove mockup data sources? (how to integrate isError in local datasource?)
+//TODO: add inner classes for each use case...
+//TODO: add naming to each assertion...
 class WorkoutUseCasesUnitTest {
-
     private lateinit var workoutDao: WorkoutDao
     private lateinit var workoutDetailsDao: WorkoutDetailsDao
     private lateinit var exerciseDao: ExerciseDao
@@ -56,6 +55,8 @@ class WorkoutUseCasesUnitTest {
     private val isErrorTesting = false
 
     private lateinit var logger: TestLogger
+
+    private val invalidWorkout = mockk<WorkoutDto>(relaxed = true)
 
     companion object {
         private const val TAG = "WorkoutUseCasesUnitTest"
@@ -96,57 +97,102 @@ class WorkoutUseCasesUnitTest {
         logger = TestLogger()
     }
 
+    /**Tested functions inside:
+     * CreateWorkoutUseCase()
+     * WorkoutLocalDataSource.createWorkout()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.updateWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.getWorkoutsOrderedById()
+     */
     @Test
-    fun `create workout from CreateWorkoutUseCase test`() = runTest {
-        val workouts = workoutDao.getWorkoutsOrderedById()
-        val workoutsInDB = workouts.size
+    fun `create workout from CreateWorkoutUseCase test`() =
+        runTest { //TODO: create workout when there is already workout in DB...
+            val workouts = workoutDao.getWorkoutsOrderedById()
+            val workoutsInDB = workouts.size
 
-        val createWorkoutState =
-            workoutUseCases.createWorkoutUseCase().toList() //invoke() doesn't work
+            val createWorkoutState =
+                workoutUseCases.createWorkoutUseCase().toList()
 
-        logger.i(TAG, "Create workout -> isLoading state raised.")
-        assertTrue { createWorkoutState[0].isLoading }
+            logger.i(TAG, "Create workout -> isLoading state raised.")
+            assertTrue { createWorkoutState[0].isLoading }
 
-        logger.i(TAG, "Create workout -> isSuccessful state raised.")
-        assertTrue { createWorkoutState[1].isSuccessful }
+            logger.i(TAG, "Create workout -> isSuccessful state raised.")
+            assertTrue { createWorkoutState[1].isSuccessful }
 
-        val workoutsAfterCreate = workoutDao.getWorkoutsOrderedById()
-        val workoutsInDBAfterCreate = workoutsAfterCreate.size
+            val workoutsAfterCreate = workoutDao.getWorkoutsOrderedById()
+            val workoutsInDBAfterCreate = workoutsAfterCreate.size
 
-        logger.i(TAG, "Assert new workout is created")
-        assert(workoutsInDB + 1 == workoutsInDBAfterCreate)
+            logger.i(TAG, "Assert new workout is created")
+            assert(workoutsInDB + 1 == workoutsInDBAfterCreate)
 
-        val createdWorkout = workoutsAfterCreate.stream()
-            .filter {
-                !workouts.contains(it)
-            }
-            .findFirst()
-            .orElseThrow()
+            val createdWorkout = workoutsAfterCreate.stream()
+                .filter {
+                    !workouts.contains(it)
+                }
+                .findFirst()
+                .orElseThrow()
 
-        logger.i(TAG, "Assert Workout is not selected")
-        assert(!createdWorkout.isSelected)
+            logger.i(TAG, "Assert Workout is not selected")
+            assert(!createdWorkout.isSelected)
 
-        logger.i(TAG, "Assert workoutId is the size of all workouts list")
-        assert(createdWorkout.workoutId == workoutsInDBAfterCreate)
+            logger.i(TAG, "Assert workoutId is the size of all workouts list")
+            assert(createdWorkout.workoutId == workoutsInDBAfterCreate)
 
-        logger.i(TAG, "Assert name is Workout $workoutsInDBAfterCreate -> all workouts in DB index")
-        assert(createdWorkout.name == "Workout $workoutsInDBAfterCreate")
+            logger.i(
+                TAG,
+                "Assert name is Workout $workoutsInDBAfterCreate -> all workouts in DB index"
+            )
+            assert(createdWorkout.name == "Workout $workoutsInDBAfterCreate")
 
-        logger.i(TAG, "Assert no exercises are in Workout")
-        assert(createdWorkout.totalExercises == 0)
+            logger.i(TAG, "Assert no exercises are in Workout")
+            assert(createdWorkout.totalExercises == 0)
 
-        val createdWorkoutDetails =
-            workoutDetailsDao.getWorkoutDetailsById(createdWorkout.workoutId)
+            val createdWorkoutDetails =
+                workoutDetailsDao.getWorkoutDetailsById(createdWorkout.workoutId)
 
-        logger.i(TAG, "Assert no exercises are in WorkoutDetails")
-        assert(createdWorkoutDetails?.exercises?.isEmpty() == true)
+            logger.i(TAG, "Assert no exercises are in WorkoutDetails")
+            assert(createdWorkoutDetails?.exercises?.isEmpty() == true)
 
-        logger.i(TAG, "Assert name is Workout $workoutsInDBAfterCreate -> all workouts in DB index")
-        assert(createdWorkoutDetails?.workoutDetails?.name == "Workout $workoutsInDBAfterCreate")
+            logger.i(
+                TAG,
+                "Assert name is Workout $workoutsInDBAfterCreate -> all workouts in DB index"
+            )
+            assert(createdWorkoutDetails?.workoutDetails?.name == "Workout $workoutsInDBAfterCreate")
+        }
+
+    /**Tested functions inside:
+     * GetWorkoutsUseCase()
+     * WorkoutLocalDataSource.getAllWorkouts()
+     * WorkoutDao.getWorkoutsOrderedById()
+     * WorkoutDao.insertWorkout()
+     */
+    @Test
+    fun `get workouts from GetWorkoutsUseCase test`() = runTest {
+        //Fetch
+        val getWorkoutsState = workoutUseCases.getWorkoutsUseCase().toList()
+
+        logger.i(TAG, "Get workouts -> isLoading state raised.")
+        assertTrue { getWorkoutsState[0].isLoading }
+
+        logger.i(TAG, "Get workouts -> isSuccessful state raised.")
+        assertTrue { getWorkoutsState[1].isSuccessful }
+
+        logger.i(TAG, "Assert workout DB is initially empty.")
+        assertTrue(getWorkoutsState[1].workoutList.isEmpty())
+
+        //TODO: insert 2 workouts and fetch again...
     }
 
+    /**Tested functions inside:
+     * GetWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.getWorkoutById()
+     */
     @RepeatedTest(50)
-    fun `get workout from GetWorkoutUseCase test`() = runTest {
+    fun `get workout from GetWorkoutUseCase test`() = runTest { //TODO: Throw error for invalid ID
 
         //Generate workout
         val workout = MockupDataGenerator.generateWorkout()
@@ -157,7 +203,8 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Mocked workout inserted successfully. Workout id: $id")
 
         //Fetch
-        val getWorkoutState = workoutUseCases.getWorkoutUseCase(id.toInt()).toList()
+        val getWorkoutState = workoutUseCases.getWorkoutUseCase(id.toInt())
+            .toList() //Calls getWorkoutById internally...
 
         logger.i(TAG, "Get workout -> isLoading state raised.")
         assertTrue { getWorkoutState[0].isLoading }
@@ -172,23 +219,6 @@ class WorkoutUseCasesUnitTest {
         assertTrue(fetchedWorkout == workout)
     }
 
-    @RepeatedTest(50)
-    fun `get workout from WorkoutDao test`() = runTest {
 
-        //Generate workout
-        val workout = MockupDataGenerator.generateWorkout()
 
-        val entity = workout.toWorkout()
-        logger.i(TAG, "Mocked workout mapped to entity: $entity")
-
-        //Insert
-        val id = workoutDao.insertWorkout(entity)
-        logger.i(TAG, "Mocked workout inserted successfully. Workout id: $id")
-
-        //Fetch
-        val fetchedWorkout = workoutDao.getWorkoutById(id.toInt()) //id - 1 works?
-        logger.i(TAG, "Fetched workout: $fetchedWorkout")
-
-        assertTrue(fetchedWorkout == workout.toWorkout())
-    }
 }
