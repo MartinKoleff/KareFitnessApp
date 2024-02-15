@@ -34,4 +34,6 @@ interface WorkoutDataSource {
     suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 }

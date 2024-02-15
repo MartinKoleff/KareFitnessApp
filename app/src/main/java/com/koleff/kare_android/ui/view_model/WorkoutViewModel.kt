@@ -221,7 +221,7 @@ class WorkoutViewModel @Inject constructor(
 
     fun createNewWorkout() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.createWorkoutUseCase().collect { createWorkoutState ->
+            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
                 _createWorkoutState.value = createWorkoutState
 
                 //Update workout list

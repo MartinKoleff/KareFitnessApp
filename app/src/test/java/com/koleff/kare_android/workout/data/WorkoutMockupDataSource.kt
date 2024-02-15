@@ -1,7 +1,6 @@
 package com.koleff.kare_android.workout.data
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
@@ -202,7 +201,7 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) :
             }
         }
 
-    override suspend fun createWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
+    override suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -211,6 +210,42 @@ class WorkoutMockupDataSource(private val isError: Boolean = false) :
 
             val mockupResult = GetWorkoutWrapper(
                 GetWorkoutResponse(mockWorkout)
+            )
+
+            if (isError) {
+                emit(ResultWrapper.ApiError())
+            } else {
+                emit(ResultWrapper.Success(mockupResult))
+            }
+        }
+
+    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+//            mockWorkoutsList.add(mockWorkout)
+
+            val mockupResult = GetWorkoutWrapper(
+                GetWorkoutResponse(workoutDto)
+            )
+
+            if (isError) {
+                emit(ResultWrapper.ApiError())
+            } else {
+                emit(ResultWrapper.Success(mockupResult))
+            }
+    }
+
+    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+//            mockWorkoutsDetailsList.add(mockWorkout)
+
+            val mockupResult = GetWorkoutDetailsWrapper(
+                GetWorkoutDetailsResponse(workoutDetailsDto)
             )
 
             if (isError) {

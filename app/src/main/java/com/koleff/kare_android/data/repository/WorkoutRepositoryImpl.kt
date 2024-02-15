@@ -60,4 +60,12 @@ class WorkoutRepositoryImpl @Inject constructor(
     override suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> {
         return workoutDataSource.createNewWorkout()
     }
+
+    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>> {
+        return workoutDataSource.createCustomWorkout(workoutDto)
+    }
+
+    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
+        return workoutDataSource.createCustomWorkoutDetails(workoutDetailsDto)
+    }
 }

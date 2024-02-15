@@ -52,18 +52,19 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>> = flow {
-        emit(ResultWrapper.Loading())
-        delay(Constants.fakeDelay)
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
 
-        val data = workoutDao.getWorkoutByIsSelected()
+            val data = workoutDao.getWorkoutByIsSelected()
 
-        val result = GetSelectedWorkoutWrapper(
-            GetSelectedWorkoutResponse(data?.toWorkoutDto())
-        )
+            val result = GetSelectedWorkoutWrapper(
+                GetSelectedWorkoutResponse(data?.toWorkoutDto())
+            )
 
-        emit(ResultWrapper.Success(result))
-    }
+            emit(ResultWrapper.Success(result))
+        }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>> = flow {
         emit(ResultWrapper.Loading())
@@ -313,6 +314,84 @@ class WorkoutLocalDataSource @Inject constructor(
             val result = GetWorkoutWrapper(
                 GetWorkoutResponse(
                     workout.copy(workoutId = workoutId.toInt(), name = workoutName)
+                )
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //Get workout id
+
+            //Create duplicate WorkoutDetails with no exercises and sets...
+            val workoutDetailsDto =
+                WorkoutDetailsDto().copy(
+                    workoutId = workoutId.toInt(),
+                    name = workoutDto.name,
+                    muscleGroup = workoutDto.muscleGroup,
+                    isSelected = workoutDto.isSelected
+                )
+            val workoutDetailsId =
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toWorkoutDetails()) //returns 0
+
+            //Setup cross refs
+            Log.d(
+                "WorkoutLocalDataSource-CreateCustomWorkout",
+                "WorkoutId: $workoutId, WorkoutDetailsId: $workoutDetailsId"
+            )
+            val crossRef = WorkoutDetailsWorkoutCrossRef(
+                workoutDetailsId = workoutId.toInt(),
+                workoutId = workoutDetailsId.toInt()
+            )
+            workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+
+            val result = GetWorkoutWrapper(
+                GetWorkoutResponse(
+                    workoutDto.copy(workoutId = workoutId.toInt())
+                )
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val workoutDetailsId =
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toWorkoutDetails()) //Get workout details id
+
+            //Create Workout for the WorkoutDetails...
+            val workoutDto =
+                WorkoutDto().copy(
+                    workoutId = workoutDetailsId.toInt(),
+                    name = workoutDetailsDto.name,
+                    muscleGroup = workoutDetailsDto.muscleGroup,
+                    isSelected = workoutDetailsDto.isSelected,
+                    totalExercises = workoutDetailsDto.exercises.size,
+                    snapshot = "snapshot $workoutDetailsId.png"
+                )
+            val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //returns 0
+
+            //Setup cross refs
+            Log.d(
+                "WorkoutLocalDataSource-CreateCustomWorkoutDetails",
+                "WorkoutId: $workoutId, WorkoutDetailsId: $workoutDetailsId"
+            )
+            val crossRef = WorkoutDetailsWorkoutCrossRef(
+                workoutDetailsId = workoutId.toInt(),
+                workoutId = workoutDetailsId.toInt()
+            )
+            workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+
+            val result = GetWorkoutDetailsWrapper(
+                GetWorkoutDetailsResponse(
+                    workoutDetailsDto.copy(workoutId = workoutDetailsId.toInt())
                 )
             )
 

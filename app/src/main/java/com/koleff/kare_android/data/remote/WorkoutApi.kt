@@ -9,7 +9,6 @@ import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
 import com.koleff.kare_android.data.model.response.GetSelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
-import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -59,4 +58,10 @@ interface WorkoutApi {
 
     @GET("api/v1/workout/createworkout")
     suspend fun createNewWorkout(): GetWorkoutResponse
+
+    @GET("api/v1/workout/createcustomworkout")
+    suspend fun createCustomWorkout(body: UpdateWorkoutRequest): GetWorkoutResponse
+
+    @GET("api/v1/workout/createcustomworkoutdetails")
+    suspend fun createCustomWorkoutDetails(body: SaveWorkoutRequest): GetWorkoutDetailsResponse
 }

@@ -9,7 +9,9 @@ import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.domain.usecases.CreateWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
+import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
@@ -18,6 +20,7 @@ import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
@@ -86,19 +89,22 @@ class WorkoutUseCasesUnitTest {
             getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+            updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
-            createWorkoutUseCase = CreateWorkoutUseCase(workoutRepository)
+            createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
+            createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
+            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
         )
 
         logger = TestLogger()
     }
 
     /**Tested functions inside:
-     * CreateWorkoutUseCase()
+     * CreateNewWorkoutUseCase()
      * WorkoutLocalDataSource.createNewWorkout()
      * WorkoutDao.insertWorkout()
      * WorkoutDao.updateWorkout()
@@ -108,13 +114,13 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.getWorkoutsOrderedById()
      */
     @Test
-    fun `create workout from CreateWorkoutUseCase test`() =
+    fun `create workout from CreateNewWorkoutUseCase test`() =
         runTest { //TODO: create workout when there is already workout in DB...
             val workouts = workoutDao.getWorkoutsOrderedById()
             val workoutsInDB = workouts.size
 
             val createWorkoutState =
-                workoutUseCases.createWorkoutUseCase().toList()
+                workoutUseCases.createNewWorkoutUseCase().toList()
 
             logger.i(TAG, "Create workout -> isLoading state raised.")
             assertTrue { createWorkoutState[0].isLoading }
