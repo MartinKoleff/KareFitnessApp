@@ -1,13 +1,14 @@
 package com.koleff.kare_android.workout
 
+import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
+import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.dao.ExerciseDao
-import com.koleff.kare_android.data.room.dao.ExerciseSetDao
-import com.koleff.kare_android.data.room.dao.WorkoutDao
-import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
@@ -31,6 +32,7 @@ import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
 import io.mockk.mockk
 import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -259,29 +261,16 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Mocked workout details: $workoutDetails")
 
             //Insert workout to generate WorkoutDetails in DB
-            val saveWorkoutState = workoutUseCases.updateWorkoutUseCase(workout).toList()
+            val createCustomWorkoutDetailsState =
+                workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
 
-            logger.i(TAG, "Save workout -> isLoading state raised.")
-            assertTrue { saveWorkoutState[0].isLoading }
+            logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+            assertTrue { createCustomWorkoutDetailsState[0].isLoading }
 
-            logger.i(TAG, "Save workout -> isSuccessful state raised.")
-            assertTrue { saveWorkoutState[1].isSuccessful }
+            logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
+            assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
 
-            //Update WorkoutDetails entry in DB with exercises and exercise sets
-            val saveWorkoutDetailsState =
-                workoutUseCases.updateWorkoutDetailsUseCase(workoutDetails).toList()
-
-            logger.i(TAG, "Save workout details -> isLoading state raised.")
-            assertTrue { saveWorkoutDetailsState[0].isLoading }
-
-            logger.i(TAG, "Save workout details -> isSuccessful state raised.")
-            assertTrue { saveWorkoutDetailsState[1].isSuccessful }
-
-            val savedWorkoutDetails = saveWorkoutDetailsState[1].workout
-            logger.i(
-                TAG,
-                "Mocked workout details inserted successfully. Saved workout details: $savedWorkoutDetails"
-            )
+            val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workout
 
             //Fetch
             val getWorkoutDetailsState =
@@ -296,8 +285,15 @@ class WorkoutUseCasesUnitTest {
             val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
             logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
-            logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
-            assertTrue(fetchedWorkoutDetails == workoutDetails)
-        }
+            val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets()
+            logger.i(TAG, "Fetched exercise with sets for the fetched workout: $exercisesWithSets")
 
+            val fetchedWorkoutDetailsWithExercisesWithSets = fetchedWorkoutDetails.copy(
+                exercises = exercisesWithSets as MutableList<ExerciseDto>
+            )
+            logger.i(TAG, "Fetched workout details with exercises with sets: $fetchedWorkoutDetailsWithExercisesWithSets")
+
+            logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
+            assert(fetchedWorkoutDetailsWithExercisesWithSets == workoutDetails)
+        }
 }
