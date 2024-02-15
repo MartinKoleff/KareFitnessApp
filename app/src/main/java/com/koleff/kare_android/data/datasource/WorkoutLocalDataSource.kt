@@ -92,6 +92,7 @@ class WorkoutLocalDataSource @Inject constructor(
         emit(ResultWrapper.Success(result))
     }
 
+    //TODO: not returning exercises...
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -157,12 +158,12 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun saveWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val workoutId = workout.workoutId
+            val workoutId = workoutDetails.workoutId
             val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
             //If no WorkoutDetails found -> return error
@@ -175,14 +176,14 @@ class WorkoutLocalDataSource @Inject constructor(
             val currentEntryInDB: List<ExerciseDto> =
                 data.safeExercises.map { it.toExerciseDto() }
 
-            if (currentEntryInDB.size <= workout.exercises.size) {
+            if (currentEntryInDB.size <= workoutDetails.exercises.size) {
                 val newExercises =
-                    workout.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
+                    workoutDetails.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
                 Log.d("SaveWorkoutDetails-LocalDataSource", "New exercises: $newExercises")
 
                 val exerciseIds = newExercises.map { it.exerciseId }
 
-                //Wire new exercises ids to workout id -> setup cross refs
+                //Wire new exercises ids to workoutDetails id -> setup cross refs
                 val crossRefs: List<WorkoutDetailsExerciseCrossRef> =
                     exerciseIds.map { exerciseId ->
                         WorkoutDetailsExerciseCrossRef(
@@ -196,7 +197,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             // Exercise sets -> setup cross refs
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
-                workout.exercises.flatMap { exercise ->
+                workoutDetails.exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
                         val exerciseSet = set.toExerciseSet()
 
@@ -227,10 +228,10 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Update total exercises
             val workoutEntry = workoutDao.getWorkoutById(workoutId)
-            workoutEntry.totalExercises = workout.exercises.size
+            workoutEntry.totalExercises = workoutDetails.exercises.size
             workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
-            workoutDetailsDao.insertWorkoutDetails(workout.toWorkoutDetails())
+            workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails())
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -378,7 +379,7 @@ class WorkoutLocalDataSource @Inject constructor(
                 )
             val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //returns 0
 
-            //Setup cross refs
+            //Workout - Workout Details cross ref
             Log.d(
                 "WorkoutLocalDataSource-CreateCustomWorkoutDetails",
                 "WorkoutId: $workoutId, WorkoutDetailsId: $workoutDetailsId"
@@ -388,6 +389,56 @@ class WorkoutLocalDataSource @Inject constructor(
                 workoutId = workoutDetailsId.toInt()
             )
             workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+
+            //Exercise - WorkoutDetails cross refs
+            val exercises =
+                workoutDetailsDto.exercises.distinct()
+            Log.d("WorkoutLocalDataSource-CreateCustomWorkoutDetails", "Exercises: $exercises")
+
+            val exerciseIds = exercises.map { it.exerciseId }
+
+            //Wire exercises ids to workoutDetails id -> setup cross refs
+            val crossRefs: List<WorkoutDetailsExerciseCrossRef> =
+                exerciseIds.map { exerciseId ->
+                    WorkoutDetailsExerciseCrossRef(
+                        workoutDetailsId = workoutDetailsId.toInt(),
+                        exerciseId = exerciseId
+                    )
+                }
+
+            workoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef(crossRefs)
+
+            //Exercise - ExerciseSet cross refs
+            val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
+                exercises.flatMap { exercise ->
+                    exercise.sets.map { set ->
+                        val exerciseSet = set.toExerciseSet()
+
+                        if (set.setId == null) {
+
+                            //New set -> insert it
+                            val newSetId = UUID.randomUUID()
+                            exerciseSet.setId = newSetId
+
+                            exerciseSetDao.saveSet(exerciseSet)
+                        } else {
+
+                            //Existing set -> update it
+                            Log.d(
+                                "WorkoutLocalDataSource-CreateCustomWorkoutDetails",
+                                "Exercise set with setId ${exerciseSet.setId} added. Data: $exerciseSet"
+                            )
+                            exerciseSetDao.saveSet(exerciseSet) //set not updated because it is not in DB... (use saveSet and if in DB -> replace)
+                        }
+
+                        ExerciseSetCrossRef(
+                            exerciseId = exercise.exerciseId,
+                            setId = exerciseSet.setId
+                        )
+                    }
+                }
+
+            exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
 
             val result = GetWorkoutDetailsWrapper(
                 GetWorkoutDetailsResponse(
