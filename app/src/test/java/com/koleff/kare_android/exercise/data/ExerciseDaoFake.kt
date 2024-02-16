@@ -9,16 +9,13 @@ import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.utils.TestLogger
 
-class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : ExerciseDao {
+class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private val logger: TestLogger) : ExerciseDao {
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSet>()
 
     private val exerciseDetailsExerciseCrossRefs =
         mutableListOf<ExerciseDetailsExerciseCrossRef>() //TODO: wire cross refs with other DAOs...
     private val exerciseSetCrossRefs =
         mutableListOf<ExerciseSetCrossRef>()
-
-    private val isLogging = false
-    private val logger: TestLogger = TestLogger()
 
     override suspend fun insertExercise(exercise: Exercise) {
         val sets = getExerciseSets(exercise)
@@ -27,7 +24,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
             ExerciseWithSet(exercise = exercise, sets = sets)
         )
 
-        if(isLogging) logger.i("ExerciseDaoFake-insertExercise", sets.toString())
+        logger.i("ExerciseDaoFake-insertExercise", sets.toString())
     }
 
     private fun getExerciseSets(exercise: Exercise): List<ExerciseSet> {
@@ -42,7 +39,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
             sets.add(set)
         }
 
-        if(isLogging) logger.i("ExerciseDaoFake-getExerciseSets", sets.toString())
+        logger.i("ExerciseDaoFake-getExerciseSets", sets.toString())
 
         return sets
             .distinct()
@@ -85,7 +82,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
         exerciseWithSetDB.remove(exerciseWithNoSets)
         exerciseWithSetDB.add(exerciseWithSets)
 
-        if(isLogging) logger.i("ExerciseDaoFake-updateExerciseWithSets", exerciseWithSets.toString())
+        logger.i("ExerciseDaoFake-updateExerciseWithSets", exerciseWithSets.toString())
     }
 
     override suspend fun deleteExercise(exercise: Exercise) {
