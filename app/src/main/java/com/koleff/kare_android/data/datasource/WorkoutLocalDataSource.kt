@@ -143,12 +143,14 @@ class WorkoutLocalDataSource @Inject constructor(
         return exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto)
     }
 
+    //No need for separate deleteWorkoutDetails functionality. When workout is deleted the workout details should be deleted also.
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             workoutDao.deleteWorkout(workoutId)
+            workoutDetailsDao.deleteWorkoutDetails(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -157,7 +159,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun updateWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -178,7 +180,7 @@ class WorkoutLocalDataSource @Inject constructor(
             if (currentEntryInDB.size <= workoutDetails.exercises.size) {
                 val newExercises =
                     workoutDetails.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
-                Log.d("SaveWorkoutDetails-LocalDataSource", "New exercises: $newExercises")
+                Log.d("UpdateWorkoutDetails-LocalDataSource", "New exercises: $newExercises")
 
                 val exerciseIds = newExercises.map { it.exerciseId }
 
@@ -211,10 +213,12 @@ class WorkoutLocalDataSource @Inject constructor(
 
                             //Existing set -> update it
                             Log.d(
-                                "SaveWorkoutDetails-LocalDatasource",
-                                "Exercise set with setId ${exerciseSet.setId} updated. Data: $exerciseSet"
+                                "UpdateWorkoutDetails-LocalDatasource",
+                                "Exercise set with setId ${exerciseSet.setId} added. Data: $exerciseSet"
                             )
-                            exerciseSetDao.updateSet(exerciseSet)
+
+                            //Trying to add set with already generated id that is not in the DB...
+                            exerciseSetDao.saveSet(exerciseSet) //TODO: migrate to updateSet...
                         }
 
                         ExerciseSetCrossRef(
@@ -232,7 +236,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutEntry.totalExercises = workoutDetails.exercises.size
             workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
-            workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails())
+            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -251,9 +255,10 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.updateWorkout(workout.toWorkout())
 
             //Update duplicate data between Workout and WorkoutDetails...
-            //If no WorkoutDetails found -> return error
             val workoutDetailsWithExercises =
                 workoutDetailsDao.getWorkoutDetailsById(workout.workoutId)
+
+            //If no WorkoutDetails found -> return error
             workoutDetailsWithExercises ?: emit(ResultWrapper.ApiError())
 
             val updatedWorkoutDetails = workoutDetailsWithExercises!!.workoutDetails.copy(

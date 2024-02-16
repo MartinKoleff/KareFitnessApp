@@ -47,7 +47,7 @@ interface WorkoutApi {
     ): GetWorkoutDetailsResponse
 
     @PUT("api/v1/workout/saveworkout")
-    suspend fun saveWorkoutDetails(
+    suspend fun updateWorkoutDetails(
         @Body body: SaveWorkoutRequest
     ): BaseResponse
 

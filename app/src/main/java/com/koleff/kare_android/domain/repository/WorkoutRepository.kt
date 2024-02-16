@@ -29,11 +29,13 @@ interface WorkoutRepository {
         exerciseId: Int
     ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 
-    suspend fun saveWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+
     suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>>
+
     suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 }
