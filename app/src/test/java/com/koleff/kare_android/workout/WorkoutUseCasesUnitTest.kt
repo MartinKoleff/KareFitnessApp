@@ -446,4 +446,92 @@ class WorkoutUseCasesUnitTest {
             )
             assertTrue { updateWorkoutDetails.name == fetchedWorkout.name }
         }
+
+    /**
+     * Tested functions inside:
+     *
+     * CreateCustomWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * ----------------------------
+     * UpdateWorkoutUseCase()
+     * WorkoutDao.updateWorkout()
+     * WorkoutDetailsDao.getWorkoutDetailsById()
+     * WorkoutDetailsDao.updateWorkoutDetails()
+     * ----------------------------
+     * GetWorkoutDetailsUseCase()
+     * WorkoutDetailsDao.getWorkoutDetailsById()
+     * ExerciseDao.getExerciseById()
+     */
+    @RepeatedTest(50)
+    fun `update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase`() = runTest {
+
+        //Generate Workout
+        val workout = MockupDataGenerator.generateWorkout()
+        logger.i(TAG, "Mocked workout: $workout")
+
+        //Insert Workout in DB
+        val createCustomWorkoutState = workoutUseCases.createCustomWorkoutUseCase(workout).toList()
+
+        logger.i(TAG, "Create custom workout -> isLoading state raised.")
+        assertTrue { createCustomWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Create custom workout -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutState[1].isSuccessful }
+
+        val savedWorkout = createCustomWorkoutState[1].workout
+
+        //Modify workout
+        val modifiedWorkout = savedWorkout.copy(
+            name = "Test Workout ${savedWorkout.workoutId}",
+            totalExercises = savedWorkout.totalExercises + 7
+        )
+
+        //Update Workout entry in DB with modified data
+        val updateWorkoutState =
+            workoutUseCases.updateWorkoutUseCase(modifiedWorkout).toList()
+
+        logger.i(TAG, "Update workout -> isLoading state raised.")
+        assertTrue { updateWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Update workout -> isSuccessful state raised.")
+        assertTrue { updateWorkoutState[1].isSuccessful }
+
+        val updatedWorkout = updateWorkoutState[1].workout
+        logger.i(
+            TAG,
+            "Mocked workout inserted successfully. Updated workout details: $updatedWorkout"
+        )
+
+        logger.i(
+            TAG,
+            "Assert modified workout is the same as DB entry:"
+        )
+        assertTrue { modifiedWorkout == updatedWorkout }
+
+        //Check the WorkoutDetails for the modified Workout if updated
+        val getWorkoutDetailsState =
+            workoutUseCases.getWorkoutDetailsUseCase(updatedWorkout.workoutId).toList()
+
+        logger.i(TAG, "Get workout details -> isLoading state raised.")
+        assertTrue { getWorkoutDetailsState[0].isLoading }
+
+        logger.i(TAG, "Get workout details -> isSuccessful state raised.")
+        assertTrue { getWorkoutDetailsState[1].isSuccessful }
+
+        val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
+        logger.i(TAG, "Fetched workout details -> $fetchedWorkoutDetails")
+        logger.i(
+            TAG,
+            "Fetched workout details exercises -> ${fetchedWorkoutDetails.exercises.size}"
+        )
+        logger.i(TAG, "Updated workout total exercises -> ${updatedWorkout.totalExercises}")
+
+        logger.i(
+            TAG,
+            "Assert fetched updated workout from DB has the same name as the workout details DB entry name:"
+        )
+        assertTrue { updatedWorkout.name == fetchedWorkoutDetails.name }
+    }
 }
