@@ -231,9 +231,13 @@ class WorkoutLocalDataSource @Inject constructor(
             exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
 
 
-            //Update total exercises
-            val workoutEntry = workoutDao.getWorkoutById(workoutId)
-            workoutEntry.totalExercises = workoutDetails.exercises.size
+            //Update total exercises, name, muscle group and isSelected
+            val workoutEntry = workoutDao.getWorkoutById(workoutId).copy(
+                name = workoutDetails.name,
+                totalExercises = workoutDetails.exercises.size,
+                muscleGroup = workoutDetails.muscleGroup,
+                isSelected = workoutDetails.isSelected,
+            )
             workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
             workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
@@ -434,7 +438,9 @@ class WorkoutLocalDataSource @Inject constructor(
                                 "WorkoutLocalDataSource-CreateCustomWorkoutDetails",
                                 "Exercise set with setId ${exerciseSet.setId} added. Data: $exerciseSet"
                             )
-                            exerciseSetDao.saveSet(exerciseSet) //set not updated because it is not in DB... (use saveSet and if in DB -> replace)
+
+                            //Trying to add set with already generated id that is not in the DB...
+                            exerciseSetDao.saveSet(exerciseSet) //TODO: migrate to updateSet...
                         }
 
                         ExerciseSetCrossRef(
