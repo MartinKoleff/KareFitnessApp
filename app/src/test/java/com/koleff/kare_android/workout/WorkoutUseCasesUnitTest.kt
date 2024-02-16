@@ -45,6 +45,9 @@ typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 //TODO: remove mockup data sources? (how to integrate isError in local datasource?)
 //TODO: add inner classes for each use case...
 //TODO: add naming to each assertion...
+//---------------------------------------------
+//TODO: refactor ExerciseSet creation -> if set has setId -> it is assumed it exists in the DB and will try to update non existent entry...
+//TODO: replace all DAOs with use case calling...
 class WorkoutUseCasesUnitTest {
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
@@ -60,7 +63,7 @@ class WorkoutUseCasesUnitTest {
     private val useMockupDataSource = false
     private val isErrorTesting = false
 
-    private lateinit var logger: TestLogger
+    private lateinit var logger: TestLogger //TODO: insert same logger for all DAOs so it can be controlled from here (isLogging flag)...
 
     private val invalidWorkout = mockk<WorkoutDto>(relaxed = true)
 
@@ -121,11 +124,19 @@ class WorkoutUseCasesUnitTest {
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
-        logger.i("tearDown", "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}")
-        logger.i("tearDown", "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}")
+        logger.i(
+            "tearDown",
+            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}"
+        )
     }
 
-    /**Tested functions inside:
+    /**
+     * Tested functions inside:
+     *
      * CreateNewWorkoutUseCase()
      * WorkoutLocalDataSource.createNewWorkout()
      * WorkoutDao.insertWorkout()
@@ -136,7 +147,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.getWorkoutsOrderedById()
      */
     @Test
-    fun `create workout from CreateNewWorkoutUseCase test`() =
+    fun `create workout using CreateNewWorkoutUseCase test`() =
         runTest { //TODO: create workout when there is already workout in DB...
             val workouts = workoutDao.getWorkoutsOrderedById()
             val workoutsInDB = workouts.size
@@ -191,14 +202,16 @@ class WorkoutUseCasesUnitTest {
             assert(createdWorkoutDetails?.workoutDetails?.name == "Workout $workoutsInDBAfterCreate")
         }
 
-    /**Tested functions inside:
+    /**
+     * Tested functions inside:
+     *
      * GetWorkoutsUseCase()
      * WorkoutLocalDataSource.getAllWorkouts()
      * WorkoutDao.getWorkoutsOrderedById()
      * WorkoutDao.insertWorkout()
      */
     @Test
-    fun `get workouts from GetWorkoutsUseCase test`() = runTest {
+    fun `get workouts using GetWorkoutsUseCase test`() = runTest {
         //Fetch
         val getWorkoutsState = workoutUseCases.getWorkoutsUseCase().toList()
 
@@ -214,13 +227,15 @@ class WorkoutUseCasesUnitTest {
         //TODO: insert 2 workouts and fetch again...
     }
 
-    /**Tested functions inside:
+    /**
+     * Tested functions inside:
+     *
      * GetWorkoutUseCase()
      * WorkoutDao.insertWorkout()
      * WorkoutDao.getWorkoutById()
      */
     @RepeatedTest(50)
-    fun `get workout from GetWorkoutUseCase test`() = runTest { //TODO: Throw error for invalid ID
+    fun `get workout using GetWorkoutUseCase test`() = runTest { //TODO: Throw error for invalid ID
 
         //Generate workout
         val workout = MockupDataGenerator.generateWorkout()
@@ -247,24 +262,27 @@ class WorkoutUseCasesUnitTest {
         assertTrue(fetchedWorkout == workout)
     }
 
-    /**Tested functions inside:
+    /**
+     * Tested functions inside:
+     *
      * GetWorkoutDetailsUseCase()
      * WorkoutDetailsDao.getWorkoutDetailsById()
      * ExerciseDao.getExerciseById()
-     * ----------------------
-     * UpdateWorkoutUseCase()
+     * ---------------------
+     * CreateCustomWorkoutDetailsUseCase()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
      * WorkoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef()
      * ExerciseSetDao.saveSet()
-     * ExerciseSetDao.updateSet()
+     * ExerciseSetDao.updateSet() -> replaced by saveSet()
      * ExerciseDao.insertAllExerciseSetCrossRef()
-     * WorkoutDao.updateWorkout()
-     * WorkoutDetailsDao.insertWorkoutDetails()
      */
     @RepeatedTest(50)
-    fun `get workout details from GetWorkoutsDetailsUseCase test`() =
+    fun `get workout details using GetWorkoutsDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test`() =
         runTest {
 
-            //Generate workout details
+            //Generate workout details and workout
             val data = MockupDataGenerator.generateWorkoutAndWorkoutDetails(isGenerateSetId = true)
 
             val workout = data.first
@@ -304,9 +322,128 @@ class WorkoutUseCasesUnitTest {
             val fetchedWorkoutDetailsWithExercisesWithSets = fetchedWorkoutDetails.copy(
                 exercises = exercisesWithSets as MutableList<ExerciseDto>
             )
-            logger.i(TAG, "Fetched workout details with exercises with sets: $fetchedWorkoutDetailsWithExercisesWithSets")
+            logger.i(
+                TAG,
+                "Fetched workout details with exercises with sets: $fetchedWorkoutDetailsWithExercisesWithSets"
+            )
 
             logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
             assertTrue(fetchedWorkoutDetailsWithExercisesWithSets == workoutDetails)
+        }
+
+
+    /**
+     * Tested functions inside:
+     *
+     * CreateCustomWorkoutDetailsUseCase()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * WorkoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef()
+     * ExerciseSetDao.saveSet()
+     * ExerciseSetDao.updateSet() -> replaced by saveSet()
+     * ExerciseDao.insertAllExerciseSetCrossRef()
+     * ---------------------
+     * UpdateWorkoutDetailsUseCase()
+     * WorkoutDetailsDao.getWorkoutDetailsById(workoutId)
+     * WorkoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef(crossRefs)
+     * ExerciseSetDao.saveSet(exerciseSet)
+     * ExerciseSetDao.updateSet(exerciseSet) -> replaced by saveSet()
+     * ExerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
+     * WorkoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
+     * ---------------------
+     * GetWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.getWorkoutById()
+     */
+    @RepeatedTest(50)
+    fun `update workout details using UpdateWorkoutDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test`() =
+        runTest {
+
+            //Generate WorkoutDetails
+            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+            logger.i(TAG, "Mocked workout details: $workoutDetails")
+
+            //Insert WorkoutDetails in DB
+            val createCustomWorkoutDetailsState =
+                workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+            logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+            assertTrue { createCustomWorkoutDetailsState[0].isLoading }
+
+            logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
+            assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
+
+            val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workout
+
+            //Modify workoutDetails
+            val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
+            val newExercise =
+                MockupDataGenerator.generateExercise(muscleGroup = muscleGroup)
+                    .copy(name = "Test Exercise")
+            val modifiedExercises = ArrayList(savedWorkoutDetails.exercises).apply {
+                add(newExercise)
+            }
+
+            val modifiedWorkoutDetails = savedWorkoutDetails.copy(
+                name = "Test Workout ${savedWorkoutDetails.workoutId}",
+                exercises = modifiedExercises
+            )
+
+            //Update WorkoutDetails entry in DB with modified data
+            val updateWorkoutDetailsState =
+                workoutUseCases.updateWorkoutDetailsUseCase(modifiedWorkoutDetails).toList()
+
+            logger.i(TAG, "Update workout details -> isLoading state raised.")
+            assertTrue { updateWorkoutDetailsState[0].isLoading }
+
+            logger.i(TAG, "Update workout details -> isSuccessful state raised.")
+            assertTrue { updateWorkoutDetailsState[1].isSuccessful }
+
+            val updateWorkoutDetails = updateWorkoutDetailsState[1].workout
+            logger.i(
+                TAG,
+                "Mocked workout details inserted successfully. Updated workout details: $updateWorkoutDetails"
+            )
+
+            logger.i(
+                TAG,
+                "Assert modified workout details is the same as DB entry:"
+            )
+            assertTrue { modifiedWorkoutDetails == updateWorkoutDetails }
+
+            //Check the Workout for the modified WorkoutDetails if updated
+            val getWorkoutState =
+                workoutUseCases.getWorkoutUseCase(updateWorkoutDetails.workoutId).toList()
+
+            logger.i(TAG, "Get workout -> isLoading state raised.")
+            assertTrue { getWorkoutState[0].isLoading }
+
+            logger.i(TAG, "Get workout -> isSuccessful state raised.")
+            assertTrue { getWorkoutState[1].isSuccessful }
+
+            val fetchedWorkout = getWorkoutState[1].workoutList.first()
+            logger.i(TAG, "Fetched workout -> $fetchedWorkout")
+            logger.i(TAG, "Fetched workout total exercises -> ${fetchedWorkout.totalExercises}")
+            logger.i(
+                TAG,
+                "Updated workout details exercises -> ${updateWorkoutDetails.exercises.size}"
+            )
+            logger.i(
+                TAG,
+                "Workout details before update exercises -> ${workoutDetails.exercises.size}"
+            )
+
+            logger.i(
+                TAG,
+                "Assert fetched updated workout details from DB has the same exercises size as the workout DB entry totalExercises:"
+            )
+            assertTrue { updateWorkoutDetails.exercises.size == fetchedWorkout.totalExercises }
+
+            logger.i(
+                TAG,
+                "Assert fetched updated workout details from DB has the same name as the workout DB entry name:"
+            )
+            assertTrue { updateWorkoutDetails.name == fetchedWorkout.name }
         }
 }
