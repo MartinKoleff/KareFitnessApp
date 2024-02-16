@@ -534,4 +534,59 @@ class WorkoutUseCasesUnitTest {
         )
         assertTrue { updatedWorkout.name == fetchedWorkoutDetails.name }
     }
+
+    /**
+     * Tested functions inside:
+     *
+     * CreateCustomWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * ------------------------------
+     * DeleteWorkoutUseCase()
+     * WorkoutDao.deleteWorkout(workoutId)
+     * ------------------------
+     * workoutDao.getWorkoutsOrderedById() //TODO: migrate to use case...
+     * workoutDetailsDao.getWorkoutDetailsOrderedById() //TODO: migrate to use case...
+     * */
+    @RepeatedTest(50)
+    fun `delete workout using DeleteWorkoutUseCase test`() = runTest {
+        //Generate Workout
+        val workout = MockupDataGenerator.generateWorkout()
+        logger.i(TAG, "Mocked workout: $workout")
+
+        //Insert Workout in DB
+        val createCustomWorkoutState = workoutUseCases.createCustomWorkoutUseCase(workout).toList()
+
+        logger.i(TAG, "Create custom workout -> isLoading state raised.")
+        assertTrue { createCustomWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Create custom workout -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutState[1].isSuccessful }
+
+        val savedWorkout = createCustomWorkoutState[1].workout
+
+        val deleteWorkoutState =
+            workoutUseCases.deleteWorkoutUseCase(savedWorkout.workoutId).toList()
+
+        logger.i(TAG, "Delete workout -> isLoading state raised.")
+        assertTrue { deleteWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Delete workout -> isSuccessful state raised.")
+        assertTrue { deleteWorkoutState[1].isSuccessful }
+
+        val workoutDB = workoutDao.getWorkoutsOrderedById()
+        logger.i(TAG, "Workout DB: $workoutDB")
+
+        logger.i(TAG, "Assert workout DB is empty.")
+        assertTrue { workoutDB.isEmpty() }
+
+        val workoutDetailsDB = workoutDetailsDao.getWorkoutDetailsOrderedById()
+        logger.i(TAG, "WorkoutDetails DB: $workoutDetailsDB")
+
+        logger.i(TAG, "Assert workout details DB is empty.")
+        assertTrue { workoutDetailsDB.isEmpty() }
+
+        //TODO: test when 2 entries are added and 1 deleted if 1 stays in DB...
+    }
 }
