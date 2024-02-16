@@ -63,7 +63,8 @@ class WorkoutUseCasesUnitTest {
     private val useMockupDataSource = false
     private val isErrorTesting = false
 
-    private lateinit var logger: TestLogger //TODO: insert same logger for all DAOs so it can be controlled from here (isLogging flag)...
+    private val isLogging = false
+    private lateinit var logger: TestLogger
 
     private val invalidWorkout = mockk<WorkoutDto>(relaxed = true)
 
@@ -73,11 +74,13 @@ class WorkoutUseCasesUnitTest {
 
     @BeforeEach
     fun setup() = runBlocking {
+        logger = TestLogger(isLogging)
+
         exerciseSetDao = ExerciseSetDaoFake()
-        exerciseDao = ExerciseDaoFake(exerciseSetDao = exerciseSetDao)
+        exerciseDao = ExerciseDaoFake(exerciseSetDao = exerciseSetDao, logger = logger)
 
         workoutDao = WorkoutDaoFake()
-        workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao)
+        workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
 
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
@@ -107,7 +110,6 @@ class WorkoutUseCasesUnitTest {
             createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
         )
 
-        logger = TestLogger()
 
         //Load ExerciseDao with all exercises
         for (muscleGroup in MuscleGroup.entries) {
