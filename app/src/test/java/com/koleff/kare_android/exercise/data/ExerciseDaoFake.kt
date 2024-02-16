@@ -17,6 +17,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
     private val exerciseSetCrossRefs =
         mutableListOf<ExerciseSetCrossRef>()
 
+    private val isLogging = false
     private val logger: TestLogger = TestLogger()
 
     override suspend fun insertExercise(exercise: Exercise) {
@@ -26,7 +27,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
             ExerciseWithSet(exercise = exercise, sets = sets)
         )
 
-        logger.i("ExerciseDaoFake-insertExercise", sets.toString())
+        if(isLogging) logger.i("ExerciseDaoFake-insertExercise", sets.toString())
     }
 
     private fun getExerciseSets(exercise: Exercise): List<ExerciseSet> {
@@ -41,7 +42,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
             sets.add(set)
         }
 
-        logger.i("ExerciseDaoFake-getExerciseSets", sets.toString())
+        if(isLogging) logger.i("ExerciseDaoFake-getExerciseSets", sets.toString())
 
         return sets
             .distinct()
@@ -84,7 +85,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake) : Exercise
         exerciseWithSetDB.remove(exerciseWithNoSets)
         exerciseWithSetDB.add(exerciseWithSets)
 
-        logger.i("ExerciseDaoFake-updateExerciseWithSets", exerciseWithSets.toString())
+        if(isLogging) logger.i("ExerciseDaoFake-updateExerciseWithSets", exerciseWithSets.toString())
     }
 
     override suspend fun deleteExercise(exercise: Exercise) {

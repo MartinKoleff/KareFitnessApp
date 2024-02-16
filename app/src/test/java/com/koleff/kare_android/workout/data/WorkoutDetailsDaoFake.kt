@@ -18,6 +18,7 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutD
     private fun getAllExercises() =
         exerciseDao.getExercisesOrderedById()
 
+    private val isLogging = false
     private val logger: TestLogger = TestLogger()
 
 
@@ -122,7 +123,7 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake) : WorkoutD
             .map { exerciseDao.getExerciseById(it.exerciseId) }
             .map(ExerciseWithSet::toExerciseDto)
 
-        logger.i("WorkoutDetailsDaoFake", exerciseWithSets.toString())
+        if(isLogging) logger.i("WorkoutDetailsDaoFake", exerciseWithSets.toString())
         return exerciseWithSets
     }
 
