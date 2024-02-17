@@ -26,7 +26,7 @@ data class ExerciseWithSet(
             muscleGroup = this.exercise.muscleGroup,
             machineType = this.exercise.machineType,
             snapshot = this.exercise.snapshot,
-            sets = this.sets.map { it.toExerciseSet() }.sortedBy { it.number }
+            sets = this.sets.map { it.toExerciseSetDto() }.sortedBy { it.number }
         )
     }
 }

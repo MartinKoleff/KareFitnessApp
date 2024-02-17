@@ -17,13 +17,16 @@ data class Exercise(
     val machineType: MachineType,
     val snapshot: String,
 ) {
-    fun toExerciseDto(): ExerciseDto {
+    fun toExerciseDto(): ExerciseDto { //sets: List<ExerciseSet>
         return ExerciseDto(
             exerciseId = this.exerciseId,
             name = this.name,
             muscleGroup = this.muscleGroup,
             machineType = this.machineType,
-            snapshot = this.snapshot
+            snapshot = this.snapshot,
+//            sets = sets
+//                .map { it.toExerciseSetDto() }
+//                .toList()
         )
     }
 }

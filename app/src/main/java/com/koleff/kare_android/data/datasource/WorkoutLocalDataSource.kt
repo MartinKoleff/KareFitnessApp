@@ -5,6 +5,7 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.response.GetAllWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -227,7 +228,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
                 workoutDetails.exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
-                        val exerciseSet = set.toExerciseSet()
+                        val exerciseSet = set.toExerciseSetDto()
 
                         if (set.setId == null) {
 
@@ -449,7 +450,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
                 exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
-                        val exerciseSet = set.toExerciseSet()
+                        val exerciseSet = set.toExerciseSetDto()
 
                         if (set.setId == null) {
 
@@ -509,7 +510,8 @@ class WorkoutLocalDataSource @Inject constructor(
                 filteredExercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
 
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
-            val updatedWorkoutDto = updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
+            val updatedWorkoutDto =
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)  //TODO: test for ExerciseSets if lost...
 
             //Delete workout details - exercise cross ref
             val workoutDetailsExerciseCrossRef =

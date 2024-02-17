@@ -15,7 +15,7 @@ data class ExerciseSet(
     val reps: Int,
     val weight: Float,
 ) {
-    fun toExerciseSet(): ExerciseSetDto {
+    fun toExerciseSetDto(): ExerciseSetDto {
         return ExerciseSetDto(
             setId = setId,
             number = number,

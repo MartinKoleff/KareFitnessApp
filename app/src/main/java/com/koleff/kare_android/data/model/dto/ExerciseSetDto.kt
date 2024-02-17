@@ -12,7 +12,7 @@ data class ExerciseSetDto(
     var reps: Int,
     var weight: Float
 ) : Parcelable{
-    fun toExerciseSet(): ExerciseSet {
+    fun toExerciseSetDto(): ExerciseSet {
         return ExerciseSet(
             setId = setId ?: UUID.randomUUID(), // Generate new UUID if null
             number = number,
