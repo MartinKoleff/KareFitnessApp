@@ -11,9 +11,9 @@ import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
 import com.koleff.kare_android.data.model.response.GetSelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
-import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
-import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.ExerciseDao
@@ -27,8 +27,8 @@ import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
-import com.koleff.kare_android.domain.wrapper.GetAllWorkoutDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
+import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -55,40 +55,40 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>> =
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val data = workoutDao.getWorkoutByIsSelected()
 
-            val result = GetSelectedWorkoutWrapper(
+            val result = SelectedWorkoutWrapper(
                 GetSelectedWorkoutResponse(data?.toWorkoutDto())
             )
 
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>> = flow {
+    override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
         val data = workoutDao.getWorkoutById(workoutId)
 
-        val result = GetWorkoutWrapper(
+        val result = WorkoutWrapper(
             GetWorkoutResponse(data.toWorkoutDto())
         )
 
         emit(ResultWrapper.Success(result))
     }
 
-    override suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>> = flow {
+    override suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
         val data = workoutDao.getWorkoutsOrderedById()
 
-        val result = GetAllWorkoutsWrapper(
+        val result = WorkoutListWrapper(
             GetAllWorkoutsResponse(data.map(Workout::toWorkoutDto))
         )
 
@@ -96,14 +96,14 @@ class WorkoutLocalDataSource @Inject constructor(
     }
 
     //Exercises don't return ExerciseSets
-    override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<GetAllWorkoutDetailsWrapper>> =
+    override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<WorkoutDetailsListWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val data = workoutDetailsDao.getWorkoutDetailsOrderedById()
 
-            val result = GetAllWorkoutDetailsWrapper(
+            val result = WorkoutDetailsListWrapper(
                 GetAllWorkoutDetailsResponse(data.map { workoutDetailsWitExercises ->
 
                     //Null safety
@@ -120,7 +120,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -144,7 +144,7 @@ class WorkoutLocalDataSource @Inject constructor(
                 exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto) as MutableList<ExerciseDto>
             val workout = data.workoutDetails.toWorkoutDetailsDto(exercisesWithSetsDto)
 
-            val result = GetWorkoutDetailsWrapper(
+            val result = WorkoutDetailsWrapper(
                 GetWorkoutDetailsResponse(workout)
             )
 
@@ -320,7 +320,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun createNewWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
+    override suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -350,7 +350,7 @@ class WorkoutLocalDataSource @Inject constructor(
             )
             workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
 
-            val result = GetWorkoutWrapper(
+            val result = WorkoutWrapper(
                 GetWorkoutResponse(
                     workout.copy(workoutId = workoutId.toInt(), name = workoutName)
                 )
@@ -359,7 +359,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>> =
+    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -388,7 +388,7 @@ class WorkoutLocalDataSource @Inject constructor(
             )
             workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
 
-            val result = GetWorkoutWrapper(
+            val result = WorkoutWrapper(
                 GetWorkoutResponse(
                     workoutDto.copy(workoutId = workoutId.toInt())
                 )
@@ -397,7 +397,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -480,7 +480,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
 
-            val result = GetWorkoutDetailsWrapper(
+            val result = WorkoutDetailsWrapper(
                 GetWorkoutDetailsResponse(
                     workoutDetailsDto.copy(workoutId = workoutDetailsId.toInt())
                 )
@@ -492,7 +492,7 @@ class WorkoutLocalDataSource @Inject constructor(
     override suspend fun deleteExercise(
         workoutId: Int,
         exerciseId: Int
-    ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -540,7 +540,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workout.totalExercises = updatedWorkout.safeExercises.size
             workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
 
-            val result = GetWorkoutDetailsWrapper(
+            val result = WorkoutDetailsWrapper(
                 GetWorkoutDetailsResponse(updatedWorkoutDto)
             )
 
@@ -550,7 +550,7 @@ class WorkoutLocalDataSource @Inject constructor(
     override suspend fun addExercise(
         workoutId: Int,
         exerciseId: Int
-    ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -597,7 +597,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workout.totalExercises = updatedWorkout.safeExercises.size
             workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
 
-            val result = GetWorkoutDetailsWrapper(
+            val result = WorkoutDetailsWrapper(
                 GetWorkoutDetailsResponse(updatedWorkoutDto)
             )
 

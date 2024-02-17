@@ -6,9 +6,9 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.GetExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
-import com.koleff.kare_android.domain.wrapper.GetExerciseDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.GetExerciseWrapper
-import com.koleff.kare_android.domain.wrapper.GetExercisesWrapper
+import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
+import com.koleff.kare_android.domain.wrapper.ExerciseListWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
@@ -23,7 +23,7 @@ class ExerciseLocalDataSource @Inject constructor(
     private val exerciseDetailsDao: ExerciseDetailsDao
 ) : ExerciseDataSource {
 
-    override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<GetExercisesWrapper>> =
+    override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -37,21 +37,21 @@ class ExerciseLocalDataSource @Inject constructor(
                 )
             }
 
-            val result = GetExercisesWrapper(
+            val result = ExerciseListWrapper(
                 GetExercisesResponse(data.map(ExerciseWithSet::toExerciseDto))
             )
 
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<GetExerciseWrapper>> =
+    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val data = exerciseDao.getExerciseById(exerciseId)
 
-            val result = GetExerciseWrapper(
+            val result = ExerciseWrapper(
                 GetExerciseResponse(data.toExerciseDto())
             )
 
@@ -59,7 +59,7 @@ class ExerciseLocalDataSource @Inject constructor(
         }
 
 
-    override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<GetExerciseDetailsWrapper>> =
+    override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -70,7 +70,7 @@ class ExerciseLocalDataSource @Inject constructor(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
             val videoUrl = "dQw4w9WgXcQ" //https://www.youtube.com/watch?v=
 
-            val result = GetExerciseDetailsWrapper(
+            val result = ExerciseDetailsWrapper(
                 GetExerciseDetailsResponse(
                     ExerciseDetailsDto(
                         id = data.exerciseDetailsId,
