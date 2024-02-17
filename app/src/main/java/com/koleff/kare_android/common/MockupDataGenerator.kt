@@ -35,7 +35,10 @@ object MockupDataGenerator {
         "MuscleMania workout"
     )
 
-    fun generateExercise(muscleGroup: MuscleGroup = MuscleGroup.NONE, isGenerateSetId: Boolean = true): ExerciseDto {
+    fun generateExercise(
+        muscleGroup: MuscleGroup = MuscleGroup.NONE,
+        isGenerateSetId: Boolean = true,
+    ): ExerciseDto {
         val exerciseId = if (muscleGroup != MuscleGroup.NONE) Random.nextInt(
             1,
             ExerciseGenerator.TOTAL_EXERCISES
@@ -70,7 +73,7 @@ object MockupDataGenerator {
             var exercise = generateExercise(muscleGroup, isGenerateSetId)
 
             //Generate until unique
-            if(isDistinct) {
+            if (isDistinct) {
                 while (exercisesList.map { it.exerciseId }.contains(exercise.exerciseId)) {
                     exercise = generateExercise(muscleGroup, isGenerateSetId)
                 }
@@ -120,11 +123,14 @@ object MockupDataGenerator {
         return workoutList
     }
 
-    fun generateExerciseSetsList(n: Int = 3, isGenerateSetId: Boolean = true): List<ExerciseSetDto> {
+    fun generateExerciseSetsList(
+        n: Int = 3,
+        isGenerateSetId: Boolean = true
+    ): List<ExerciseSetDto> {
         val exerciseSetList = listOf(
-            ExerciseSetDto(if(isGenerateSetId) UUID.randomUUID() else null, 1, 12, 50f),
-            ExerciseSetDto(if(isGenerateSetId) UUID.randomUUID() else null, 2, 10, 55.5f),
-            ExerciseSetDto(if(isGenerateSetId) UUID.randomUUID() else null, 3, 8, 60f)
+            ExerciseSetDto(if (isGenerateSetId) UUID.randomUUID() else null, 1, 12, 50f),
+            ExerciseSetDto(if (isGenerateSetId) UUID.randomUUID() else null, 2, 10, 55.5f),
+            ExerciseSetDto(if (isGenerateSetId) UUID.randomUUID() else null, 3, 8, 60f)
         )
 
         return exerciseSetList
@@ -137,7 +143,7 @@ object MockupDataGenerator {
     fun generateWorkout(): WorkoutDto {
         val workoutId = Random.nextInt(1, 100)
         val totalExercises = Random.nextInt(4, 12)
-        val muscleGroupId = Random.nextInt(1, 14)
+        val muscleGroup = MuscleGroup.getSupportedMuscleGroups().random()
         val isSelected = Random.nextBoolean()
         val name = workoutNames.random()
 
@@ -145,7 +151,7 @@ object MockupDataGenerator {
             WorkoutDto(
                 workoutId = workoutId,
                 name = "$name $workoutId",
-                muscleGroup = MuscleGroup.fromId(muscleGroupId),
+                muscleGroup = muscleGroup,
                 snapshot = "snapshot$workoutId.png",
                 totalExercises = totalExercises,
                 isSelected = isSelected

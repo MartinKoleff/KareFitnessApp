@@ -89,7 +89,7 @@ object ExerciseGenerator {
             MuscleGroup.SHOULDERS -> Pair(41, 50)
             MuscleGroup.LEGS -> Pair(51, 60)
             MuscleGroup.FULL_BODY -> Pair(1, 60)
-            else -> throw NoSuchElementException("Muscle Group doesn't have exercises")
+            else -> throw NoSuchElementException("Muscle Group $muscleGroup doesn't have exercises")
         }
     }
 
