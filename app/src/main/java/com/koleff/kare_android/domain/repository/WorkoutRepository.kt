@@ -3,6 +3,7 @@ package com.koleff.kare_android.domain.repository
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.domain.wrapper.GetAllWorkoutDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
 import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
@@ -17,6 +18,8 @@ interface WorkoutRepository {
     suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetSelectedWorkoutWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>  //Used for loading list view and refresh
+
+    suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<GetAllWorkoutDetailsWrapper>>
 
     suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>>  //Used for loading single view
 
@@ -40,4 +43,5 @@ interface WorkoutRepository {
     suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<GetWorkoutWrapper>>
 
     suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
+
 }

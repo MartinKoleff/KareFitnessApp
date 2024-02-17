@@ -11,6 +11,7 @@ import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.wrapper.GetAllWorkoutDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -32,6 +33,10 @@ class WorkoutRepositoryImpl @Inject constructor(
 
     override suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>> {
         return workoutDataSource.getAllWorkouts()
+    }
+
+    override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<GetAllWorkoutDetailsWrapper>> {
+        return workoutDataSource.getAllWorkoutDetails()
     }
 
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {

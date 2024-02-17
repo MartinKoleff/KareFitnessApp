@@ -21,10 +21,12 @@ import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
+import com.koleff.kare_android.domain.wrapper.GetAllWorkoutDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.GetSelectedWorkoutWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -91,6 +93,31 @@ class WorkoutLocalDataSource @Inject constructor(
 
         emit(ResultWrapper.Success(result))
     }
+
+    //Exercises don't return ExerciseSets
+    override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<GetAllWorkoutDetailsWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val data = workoutDetailsDao.getWorkoutDetailsOrderedById()
+
+            val result = GetAllWorkoutDetailsWrapper(
+                GetAllWorkoutDetailsResponse(data.map { workoutDetailsWitExercises ->
+
+                    //Null safety
+                    workoutDetailsWitExercises.exercises ?: return@flow
+
+                    workoutDetailsWitExercises.workoutDetails.toWorkoutDetailsDto(
+                        workoutDetailsWitExercises.exercises.map { exercise ->
+                            exercise.toExerciseDto()
+                        }.toMutableList()
+                    )
+                })
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
 
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
         flow {
