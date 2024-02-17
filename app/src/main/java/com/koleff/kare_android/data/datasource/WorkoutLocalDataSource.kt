@@ -5,11 +5,11 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.response.GetAllWorkoutDetailsResponse
-import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
-import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
-import com.koleff.kare_android.data.model.response.GetWorkoutResponse
-import com.koleff.kare_android.data.model.response.GetSelectedWorkoutResponse
+import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
+import com.koleff.kare_android.data.model.response.WorkoutsListResponse
+import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
+import com.koleff.kare_android.data.model.response.WorkoutResponse
+import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
@@ -63,7 +63,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val data = workoutDao.getWorkoutByIsSelected()
 
             val result = SelectedWorkoutWrapper(
-                GetSelectedWorkoutResponse(data?.toWorkoutDto())
+                SelectedWorkoutResponse(data?.toWorkoutDto())
             )
 
             emit(ResultWrapper.Success(result))
@@ -76,7 +76,7 @@ class WorkoutLocalDataSource @Inject constructor(
         val data = workoutDao.getWorkoutById(workoutId)
 
         val result = WorkoutWrapper(
-            GetWorkoutResponse(data.toWorkoutDto())
+            WorkoutResponse(data.toWorkoutDto())
         )
 
         emit(ResultWrapper.Success(result))
@@ -89,7 +89,7 @@ class WorkoutLocalDataSource @Inject constructor(
         val data = workoutDao.getWorkoutsOrderedById()
 
         val result = WorkoutListWrapper(
-            GetAllWorkoutsResponse(data.map(Workout::toWorkoutDto))
+            WorkoutsListResponse(data.map(Workout::toWorkoutDto))
         )
 
         emit(ResultWrapper.Success(result))
@@ -104,7 +104,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val data = workoutDetailsDao.getWorkoutDetailsOrderedById()
 
             val result = WorkoutDetailsListWrapper(
-                GetAllWorkoutDetailsResponse(data.map { workoutDetailsWitExercises ->
+                WorkoutDetailsListResponse(data.map { workoutDetailsWitExercises ->
 
                     //Null safety
                     workoutDetailsWitExercises.exercises ?: return@flow
@@ -145,7 +145,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val workout = data.workoutDetails.toWorkoutDetailsDto(exercisesWithSetsDto)
 
             val result = WorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(workout)
+                WorkoutDetailsResponse(workout)
             )
 
             emit(ResultWrapper.Success(result))
@@ -351,7 +351,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
 
             val result = WorkoutWrapper(
-                GetWorkoutResponse(
+                WorkoutResponse(
                     workout.copy(workoutId = workoutId.toInt(), name = workoutName)
                 )
             )
@@ -389,7 +389,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
 
             val result = WorkoutWrapper(
-                GetWorkoutResponse(
+                WorkoutResponse(
                     workoutDto.copy(workoutId = workoutId.toInt())
                 )
             )
@@ -481,7 +481,7 @@ class WorkoutLocalDataSource @Inject constructor(
             exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
 
             val result = WorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(
+                WorkoutDetailsResponse(
                     workoutDetailsDto.copy(workoutId = workoutDetailsId.toInt())
                 )
             )
@@ -541,7 +541,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
 
             val result = WorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(updatedWorkoutDto)
+                WorkoutDetailsResponse(updatedWorkoutDto)
             )
 
             emit(ResultWrapper.Success(result))
@@ -598,7 +598,7 @@ class WorkoutLocalDataSource @Inject constructor(
             workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
 
             val result = WorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(updatedWorkoutDto)
+                WorkoutDetailsResponse(updatedWorkoutDto)
             )
 
             emit(ResultWrapper.Success(result))

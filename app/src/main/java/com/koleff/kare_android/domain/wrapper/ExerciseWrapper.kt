@@ -1,8 +1,8 @@
 package com.koleff.kare_android.domain.wrapper
 
-import com.koleff.kare_android.data.model.response.GetExerciseResponse
+import com.koleff.kare_android.data.model.response.ExerciseResponse
 
-class ExerciseWrapper(getExerciseResponse: GetExerciseResponse) :
+class ExerciseWrapper(getExerciseResponse: ExerciseResponse) :
     ServerResponseData(getExerciseResponse) {
     val exercise = getExerciseResponse.exercise
 }

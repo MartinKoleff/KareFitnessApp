@@ -1,14 +1,14 @@
 package com.koleff.kare_android.data.remote
 
-import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
-import com.koleff.kare_android.data.model.request.DeleteExerciseRequest
-import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
+import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
+import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
+import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
-import com.koleff.kare_android.data.model.response.GetAllWorkoutDetailsResponse
-import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
-import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
-import com.koleff.kare_android.data.model.response.GetWorkoutResponse
-import com.koleff.kare_android.data.model.response.GetSelectedWorkoutResponse
+import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
+import com.koleff.kare_android.data.model.response.WorkoutsListResponse
+import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
+import com.koleff.kare_android.data.model.response.WorkoutResponse
+import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -19,45 +19,45 @@ import retrofit2.http.PUT
 interface WorkoutApi {
     @PUT("api/v1/workout/selectworkout")
     suspend fun selectWorkout(
-        @Body body: BaseWorkoutRequest
+        @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
     @GET("api/v1/workout/getselectedworkout")
-    suspend fun getSelectedWorkout(): GetSelectedWorkoutResponse
+    suspend fun getSelectedWorkout(): SelectedWorkoutResponse
 
     @GET("api/v1/workout/getworkout")
     suspend fun getWorkout(
-        @Body body: BaseWorkoutRequest
-    ): GetWorkoutResponse
+        @Body body: FetchWorkoutByIdRequest
+    ): WorkoutResponse
 
     @GET("api/v1/workout/getallworkouts")
-    suspend fun getAllWorkouts(): GetAllWorkoutsResponse
+    suspend fun getAllWorkouts(): WorkoutsListResponse
 
     @GET("api/v1/workout/getallworkoutdetails")
-    suspend fun getAllWorkoutDetails(): GetAllWorkoutDetailsResponse
+    suspend fun getAllWorkoutDetails(): WorkoutDetailsListResponse
 
     @GET("api/v1/workout/getworkoutdetails")
     suspend fun getWorkoutDetails(
-        @Body body: BaseWorkoutRequest
-    ): GetWorkoutDetailsResponse
+        @Body body: FetchWorkoutByIdRequest
+    ): WorkoutDetailsResponse
 
     @DELETE("api/v1/workout/deleteworkout")
     suspend fun deleteWorkout(
-        @Body body: BaseWorkoutRequest
+        @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
 
     @DELETE("api/v1/workout/deleteexercise")
     suspend fun deleteExercise(
-        @Body body: DeleteExerciseRequest
-    ): GetWorkoutDetailsResponse
+        @Body body: ExerciseDeletionRequest
+    ): WorkoutDetailsResponse
 
     @POST("api/v1/workout/addexercise")
-    fun addExercise(body: DeleteExerciseRequest): GetWorkoutDetailsResponse
+    fun addExercise(body: ExerciseDeletionRequest): WorkoutDetailsResponse
 
-    @PUT("api/v1/workout/saveworkout")
+    @PUT("api/v1/workout/updateworkoutdetails")
     suspend fun updateWorkoutDetails(
-        @Body body: SaveWorkoutRequest
+        @Body body: UpdateWorkoutDetailsRequest
     ): BaseResponse
 
     @PUT("api/v1/workout/updateworkout")
@@ -66,11 +66,11 @@ interface WorkoutApi {
     ): BaseResponse
 
     @GET("api/v1/workout/createworkout")
-    suspend fun createNewWorkout(): GetWorkoutResponse
+    suspend fun createNewWorkout(): WorkoutResponse
 
     @GET("api/v1/workout/createcustomworkout")
-    suspend fun createCustomWorkout(body: UpdateWorkoutRequest): GetWorkoutResponse
+    suspend fun createCustomWorkout(body: UpdateWorkoutRequest): WorkoutResponse
 
     @GET("api/v1/workout/createcustomworkoutdetails")
-    suspend fun createCustomWorkoutDetails(body: SaveWorkoutRequest): GetWorkoutDetailsResponse
+    suspend fun createCustomWorkoutDetails(body: UpdateWorkoutDetailsRequest): WorkoutDetailsResponse
 }

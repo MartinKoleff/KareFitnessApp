@@ -5,9 +5,9 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
-import com.koleff.kare_android.data.model.request.DeleteExerciseRequest
-import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
+import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
+import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
+import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
@@ -26,7 +26,7 @@ class WorkoutRemoteDataSource @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : WorkoutDataSource {
     override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
-        val body = BaseWorkoutRequest(workoutId)
+        val body = FetchWorkoutByIdRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.selectWorkout(body)) })
     }
@@ -36,7 +36,7 @@ class WorkoutRemoteDataSource @Inject constructor(
     }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> {
-        val body = BaseWorkoutRequest(workoutId)
+        val body = FetchWorkoutByIdRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { WorkoutWrapper(workoutApi.getWorkout(body)) })
     }
@@ -50,19 +50,19 @@ class WorkoutRemoteDataSource @Inject constructor(
     }
 
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        val body = BaseWorkoutRequest(workoutId)
+        val body = FetchWorkoutByIdRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.getWorkoutDetails(body)) })
     }
 
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
-        val body = BaseWorkoutRequest(workoutId)
+        val body = FetchWorkoutByIdRequest(workoutId)
 
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.deleteWorkout(body)) })
     }
 
     override suspend fun updateWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
-        val body = SaveWorkoutRequest(workoutDetails)
+        val body = UpdateWorkoutDetailsRequest(workoutDetails)
 
         return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.updateWorkoutDetails(body)) })
     }
@@ -77,7 +77,7 @@ class WorkoutRemoteDataSource @Inject constructor(
         workoutId: Int,
         exerciseId: Int
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        val body = DeleteExerciseRequest(workoutId, exerciseId)
+        val body = ExerciseDeletionRequest(workoutId, exerciseId)
 
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.deleteExercise(body)) })
     }
@@ -86,7 +86,7 @@ class WorkoutRemoteDataSource @Inject constructor(
         workoutId: Int,
         exerciseId: Int
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        val body = DeleteExerciseRequest(workoutId, exerciseId)
+        val body = ExerciseDeletionRequest(workoutId, exerciseId)
 
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.addExercise(body)) })
     }
@@ -102,7 +102,7 @@ class WorkoutRemoteDataSource @Inject constructor(
     }
 
     override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        val body = SaveWorkoutRequest(workoutDetailsDto)
+        val body = UpdateWorkoutDetailsRequest(workoutDetailsDto)
 
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.createCustomWorkoutDetails(body)) })
     }

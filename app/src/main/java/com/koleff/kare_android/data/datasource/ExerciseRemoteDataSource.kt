@@ -3,9 +3,8 @@ package com.koleff.kare_android.data.datasource
 import com.koleff.kare_android.common.Network
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.domain.wrapper.ExerciseListWrapper
-import com.koleff.kare_android.data.model.request.GetExerciseDetailsRequest
-import com.koleff.kare_android.data.model.request.GetExerciseRequest
-import com.koleff.kare_android.data.model.request.GetExercisesRequest
+import com.koleff.kare_android.data.model.request.FetchExerciseRequest
+import com.koleff.kare_android.data.model.request.FetchExercisesByMuscleGroupRequest
 import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
@@ -21,19 +20,19 @@ class ExerciseRemoteDataSource @Inject constructor(
 ) : ExerciseDataSource {
 
     override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
-        val body = GetExercisesRequest(muscleGroupId)
+        val body = FetchExercisesByMuscleGroupRequest(muscleGroupId)
 
         return Network.executeApiCall(dispatcher, { ExerciseListWrapper(exerciseApi.getExercises(body)) })
     }
 
     override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = GetExerciseRequest(exerciseId)
+        val body = FetchExerciseRequest(exerciseId)
 
         return Network.executeApiCall(dispatcher, { ExerciseWrapper(exerciseApi.getExercise(body)) })
     }
 
     override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> {
-        val body = GetExerciseDetailsRequest(exerciseId)
+        val body = FetchExerciseRequest(exerciseId)
 
         return Network.executeApiCall(dispatcher, { ExerciseDetailsWrapper(exerciseApi.getExerciseDetails(body)) })
     }

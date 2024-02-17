@@ -3,8 +3,8 @@ package com.koleff.kare_android.data.datasource
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.response.GetExerciseDetailsResponse
-import com.koleff.kare_android.data.model.response.GetExerciseResponse
+import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
@@ -52,7 +52,7 @@ class ExerciseLocalDataSource @Inject constructor(
             val data = exerciseDao.getExerciseById(exerciseId)
 
             val result = ExerciseWrapper(
-                GetExerciseResponse(data.toExerciseDto())
+                ExerciseResponse(data.toExerciseDto())
             )
 
             emit(ResultWrapper.Success(result))
@@ -71,7 +71,7 @@ class ExerciseLocalDataSource @Inject constructor(
             val videoUrl = "dQw4w9WgXcQ" //https://www.youtube.com/watch?v=
 
             val result = ExerciseDetailsWrapper(
-                GetExerciseDetailsResponse(
+                ExerciseDetailsResponse(
                     ExerciseDetailsDto(
                         id = data.exerciseDetailsId,
                         name = data.name,

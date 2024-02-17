@@ -1,10 +1,10 @@
 package com.koleff.kare_android.data.model.response
 
-import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.squareup.moshi.Json
 
-data class GetWorkoutResponse(
+data class WorkoutDetailsListResponse(
     @Json(name = "data")
-    val workout: WorkoutDto
+    val workoutDetailsList: List<WorkoutDetailsDto>
 ) : BaseResponse()
