@@ -16,7 +16,7 @@ import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
-import com.koleff.kare_android.ui.state.UpdateWorkoutState
+import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

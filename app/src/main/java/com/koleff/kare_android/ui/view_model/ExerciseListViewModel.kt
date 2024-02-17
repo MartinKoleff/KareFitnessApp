@@ -13,7 +13,7 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.state.ExercisesState
+import com.koleff.kare_android.ui.state.ExerciseListState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
@@ -39,8 +39,8 @@ class ExerciseListViewModel @Inject constructor(
         ?: -1
     val muscleGroup = MuscleGroup.fromId(muscleGroupId)
 
-    private val _state: MutableStateFlow<ExercisesState> = MutableStateFlow(ExercisesState())
-    val state: StateFlow<ExercisesState>
+    private val _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
+    val state: StateFlow<ExerciseListState>
         get() = _state
 
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
