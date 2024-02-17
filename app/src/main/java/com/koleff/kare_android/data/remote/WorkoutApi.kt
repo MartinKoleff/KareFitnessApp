@@ -12,6 +12,7 @@ import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface WorkoutApi {
@@ -41,10 +42,14 @@ interface WorkoutApi {
         @Body body: BaseWorkoutRequest
     ): BaseResponse
 
+
     @DELETE("api/v1/workout/deleteexercise")
     suspend fun deleteExercise(
         @Body body: DeleteExerciseRequest
     ): GetWorkoutDetailsResponse
+
+    @POST("api/v1/workout/addexercise")
+    fun addExercise(body: DeleteExerciseRequest): GetWorkoutDetailsResponse
 
     @PUT("api/v1/workout/saveworkout")
     suspend fun updateWorkoutDetails(

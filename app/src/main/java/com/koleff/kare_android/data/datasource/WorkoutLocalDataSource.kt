@@ -517,4 +517,61 @@ class WorkoutLocalDataSource @Inject constructor(
 
             emit(ResultWrapper.Success(result))
         }
+
+    override suspend fun addExercise(
+        workoutId: Int,
+        exerciseId: Int
+    ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val selectedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+
+            selectedWorkout ?: run {
+                emit(ResultWrapper.ApiError())
+                return@flow
+            }
+            val addedExerciseWithSets = exerciseDao.getExerciseById(exerciseId)
+
+            val filteredExercises =
+                ArrayList(selectedWorkout.safeExercises).apply {
+                    add(addedExerciseWithSets.exercise)
+                }
+            val exercisesDto: MutableList<ExerciseDto> =
+                filteredExercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
+
+            val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
+            val updatedWorkoutDto =
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto) //TODO: test for ExerciseSets if lost...
+
+            //Create workout details - exercise cross ref
+            val workoutDetailsExerciseCrossRef =
+                WorkoutDetailsExerciseCrossRef(
+                    workoutDetailsId = workoutId,
+                    exerciseId = exerciseId
+                )
+            workoutDetailsDao.insertWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
+
+            //Create exercise - set cross ref
+            for (set in addedExerciseWithSets.sets) {
+                val exerciseSetCrossRef =
+                    ExerciseSetCrossRef(
+                        exerciseId = exerciseId,
+                        setId = set.setId
+                    )
+                exerciseDao.insertExerciseSetCrossRef(exerciseSetCrossRef)
+            }
+
+            //Update total exercises
+            val workout = workoutDao.getWorkoutById(workoutId)
+            workout.totalExercises = updatedWorkout.safeExercises.size
+            workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
+
+            val result = GetWorkoutDetailsWrapper(
+                GetWorkoutDetailsResponse(updatedWorkoutDto)
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
 }

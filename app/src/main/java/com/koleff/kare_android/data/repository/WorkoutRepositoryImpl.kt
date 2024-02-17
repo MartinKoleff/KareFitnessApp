@@ -49,6 +49,13 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.deleteExercise(workoutId, exerciseId)
     }
 
+    override suspend fun addExercise(
+        workoutId: Int,
+        exerciseId: Int
+    ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> {
+        return workoutDataSource.addExercise(workoutId, exerciseId)
+    }
+
     override suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
         return workoutDataSource.updateWorkoutDetails(workout)
     }

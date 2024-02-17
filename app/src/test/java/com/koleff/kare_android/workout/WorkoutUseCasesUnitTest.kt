@@ -102,6 +102,7 @@ class WorkoutUseCasesUnitTest {
             updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+            addExerciseUseCase = AddExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),

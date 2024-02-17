@@ -29,6 +29,8 @@ interface WorkoutRepository {
         exerciseId: Int
     ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
 
+    suspend fun addExercise(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
+
     suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>>
