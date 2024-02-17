@@ -1,6 +1,7 @@
 package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
@@ -13,8 +14,8 @@ import kotlinx.coroutines.flow.map
 
 class AddExerciseUseCase(private val workoutRepository: WorkoutRepository) {
 
-    suspend operator fun invoke(workoutId: Int, exerciseId: Int): Flow<WorkoutDetailsState> =
-        workoutRepository.addExercise(workoutId, exerciseId).map { apiResult ->
+    suspend operator fun invoke(workoutId: Int, exercise: ExerciseDto): Flow<WorkoutDetailsState> =
+        workoutRepository.addExercise(workoutId, exercise).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {
                     WorkoutDetailsState(
@@ -28,11 +29,11 @@ class AddExerciseUseCase(private val workoutRepository: WorkoutRepository) {
                 }
 
                 is ResultWrapper.Success -> {
-                    Log.d("AddExerciseUseCase", "Workout with id $workoutId updated. Exercise with id $exerciseId added.")
+                    Log.d("AddExerciseUseCase", "Workout with id $workoutId updated\n. Exercise added. $exercise")
 
                     WorkoutDetailsState(
                         isSuccessful = true,
-                        workout = apiResult.data.workoutDetails
+                        workoutDetails = apiResult.data.workoutDetails
                     )
                 }
             }

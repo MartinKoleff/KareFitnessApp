@@ -105,7 +105,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 viewModelScope.launch(dispatcher) {
                     workoutUseCases.addExerciseUseCase(
                         workoutId = selectedWorkout.workoutId,
-                        exerciseId = exercise.exerciseId
+                        exercise = exercise
                     ).collect { updateWorkoutState ->
                         _updateWorkoutState.value = updateWorkoutState
                     }

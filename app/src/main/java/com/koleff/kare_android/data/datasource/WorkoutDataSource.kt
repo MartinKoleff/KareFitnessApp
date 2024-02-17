@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
@@ -30,7 +31,7 @@ interface WorkoutDataSource {
 
     suspend fun deleteExercise(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 
-    suspend fun addExercise(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>>
+    suspend fun addExercise(workoutId: Int, exercise: ExerciseDto): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 
     suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>>
 

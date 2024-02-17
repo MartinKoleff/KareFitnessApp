@@ -1,7 +1,6 @@
 package com.koleff.kare_android.data.remote
 
 import com.koleff.kare_android.data.model.request.FetchExerciseRequest
-import com.koleff.kare_android.data.model.request.FetchExerciseRequest
 import com.koleff.kare_android.data.model.request.FetchExercisesByMuscleGroupRequest
 import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.ExerciseResponse

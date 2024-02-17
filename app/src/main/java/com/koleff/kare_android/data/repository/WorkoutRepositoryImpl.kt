@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
@@ -54,9 +55,9 @@ class WorkoutRepositoryImpl @Inject constructor(
 
     override suspend fun addExercise(
         workoutId: Int,
-        exerciseId: Int
+        exercise: ExerciseDto
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        return workoutDataSource.addExercise(workoutId, exerciseId)
+        return workoutDataSource.addExercise(workoutId, exercise)
     }
 
     override suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
