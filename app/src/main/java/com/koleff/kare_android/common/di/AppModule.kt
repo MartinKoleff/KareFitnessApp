@@ -48,7 +48,7 @@ import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
@@ -259,7 +259,7 @@ object AppModule {
     fun provideWorkoutUseCases(workoutRepository: WorkoutRepository): WorkoutUseCases {
         return WorkoutUseCases(
             getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
+            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
             getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),

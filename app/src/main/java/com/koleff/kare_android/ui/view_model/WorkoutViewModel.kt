@@ -247,7 +247,7 @@ class WorkoutViewModel @Inject constructor(
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getAllWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
 
 //                isRefreshing = workoutState.isLoading

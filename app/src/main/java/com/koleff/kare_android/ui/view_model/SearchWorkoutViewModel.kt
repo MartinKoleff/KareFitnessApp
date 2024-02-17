@@ -97,7 +97,7 @@ class SearchWorkoutViewModel @Inject constructor(
 
     private fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getAllWorkoutsUseCase().collect { workoutState ->
                 _workoutsState.value = workoutState
 
                 if (workoutState.isSuccessful) {

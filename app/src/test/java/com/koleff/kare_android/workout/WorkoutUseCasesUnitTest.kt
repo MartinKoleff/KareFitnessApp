@@ -10,15 +10,17 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
@@ -96,7 +98,8 @@ class WorkoutUseCasesUnitTest {
 
         workoutUseCases = WorkoutUseCases(
             getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
+            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
+            getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
             updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
@@ -208,15 +211,15 @@ class WorkoutUseCasesUnitTest {
     /**
      * Tested functions inside:
      *
-     * GetWorkoutsUseCase()
+     * GetAllWorkoutsUseCase()
      * WorkoutLocalDataSource.getAllWorkouts()
      * WorkoutDao.getWorkoutsOrderedById()
      * WorkoutDao.insertWorkout()
      */
     @Test
-    fun `get workouts using GetWorkoutsUseCase test`() = runTest {
+    fun `get workouts using GetAllWorkoutsUseCase test`() = runTest {
         //Fetch
-        val getWorkoutsState = workoutUseCases.getWorkoutsUseCase().toList()
+        val getWorkoutsState = workoutUseCases.getAllWorkoutsUseCase().toList()
 
         logger.i(TAG, "Get workouts -> isLoading state raised.")
         assertTrue { getWorkoutsState[0].isLoading }
