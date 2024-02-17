@@ -319,7 +319,7 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Get workout details -> isSuccessful state raised.")
             assertTrue { getWorkoutDetailsState[1].isSuccessful }
 
-            val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
+            val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
             val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets()
@@ -380,7 +380,7 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
             assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
 
-            val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workout
+            val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
 
             //Modify workoutDetails
             val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
@@ -406,7 +406,7 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Update workout details -> isSuccessful state raised.")
             assertTrue { updateWorkoutDetailsState[1].isSuccessful }
 
-            val updateWorkoutDetails = updateWorkoutDetailsState[1].workout
+            val updateWorkoutDetails = updateWorkoutDetailsState[1].workoutDetails
             logger.i(
                 TAG,
                 "Mocked workout details inserted successfully. Updated workout details: $updateWorkoutDetails"
@@ -528,7 +528,7 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Get workout details -> isSuccessful state raised.")
             assertTrue { getWorkoutDetailsState[1].isSuccessful }
 
-            val fetchedWorkoutDetails = getWorkoutDetailsState[1].workout
+            val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Fetched workout details -> $fetchedWorkoutDetails")
             logger.i(
                 TAG,

@@ -85,7 +85,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
 
         when (event) {
             is OnExerciseUpdateEvent.OnExerciseDelete -> {
-                selectedWorkout = selectedWorkoutState.value.workout
+                selectedWorkout = selectedWorkoutState.value.workoutDetails
                 val exercise = event.exercise
 
                 viewModelScope.launch(dispatcher) {
@@ -99,7 +99,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
             }
 
             is OnExerciseUpdateEvent.OnExerciseSubmit -> {
-                selectedWorkout = selectedWorkoutState.value.workout
+                selectedWorkout = selectedWorkoutState.value.workoutDetails
                 val exercise = event.exercise
 
                 viewModelScope.launch(dispatcher) {

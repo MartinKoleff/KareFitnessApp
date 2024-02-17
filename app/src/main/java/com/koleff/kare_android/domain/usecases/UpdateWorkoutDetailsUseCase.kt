@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.map
 
 class UpdateWorkoutDetailsUseCase(private val workoutRepository: WorkoutRepository) {
 
-    suspend operator fun invoke(workout: WorkoutDetailsDto): Flow<WorkoutDetailsState> =
-        workoutRepository.updateWorkoutDetails(workout).map { apiResult ->
+    suspend operator fun invoke(workoutDetails: WorkoutDetailsDto): Flow<WorkoutDetailsState> =
+        workoutRepository.updateWorkoutDetails(workoutDetails).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {
                     WorkoutDetailsState(
@@ -32,12 +32,12 @@ class UpdateWorkoutDetailsUseCase(private val workoutRepository: WorkoutReposito
                 is ResultWrapper.Success -> {
                     Log.d(
                         "UpdateWorkoutUseCase",
-                        "Workout details with id ${workout.workoutId} updated."
+                        "Workout details with id ${workoutDetails.workoutId} updated."
                     )
 
                     WorkoutDetailsState(
                         isSuccessful = true,
-                        workout = workout
+                        workoutDetails = workoutDetails
                     )
                 }
             }

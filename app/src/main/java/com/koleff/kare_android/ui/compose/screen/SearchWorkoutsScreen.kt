@@ -61,10 +61,10 @@ fun SearchWorkoutsScreen(
     LaunchedEffect(key1 = workoutDetailsState) {
 
         //Await workout details
-        if (workoutDetailsState.isSuccessful && workoutDetailsState.workout.workoutId != -1) {
-            workoutDetailsState.workout.exercises.add(exerciseState.exercise)
+        if (workoutDetailsState.isSuccessful && workoutDetailsState.workoutDetails.workoutId != -1) {
+            workoutDetailsState.workoutDetails.exercises.add(exerciseState.exercise)
 
-            searchWorkoutViewModel.updateWorkoutDetails(workoutDetailsState.workout)
+            searchWorkoutViewModel.updateWorkoutDetails(workoutDetailsState.workoutDetails)
         }
     }
 
@@ -77,7 +77,7 @@ fun SearchWorkoutsScreen(
                 targetValue = 0f,
                 animationSpec = TweenSpec(durationMillis = 500)
             ) {
-                searchWorkoutViewModel.openWorkoutDetailsScreen(updateWorkoutState.workout.workoutId)
+                searchWorkoutViewModel.openWorkoutDetailsScreen(updateWorkoutState.workoutDetails.workoutId)
             }
 
             //Reset state

@@ -40,7 +40,7 @@ class CreateCustomWorkoutDetailsUseCase(private val workoutRepository: WorkoutRe
 
                     WorkoutDetailsState(
                         isSuccessful = true,
-                        workout = workoutDetails
+                        workoutDetails = workoutDetails
                     )
                 }
             }

@@ -32,7 +32,7 @@ class DeleteExerciseUseCase(private val workoutRepository: WorkoutRepository) {
 
                     WorkoutDetailsState(
                         isSuccessful = true,
-                        workout = apiResult.data.workoutDetails
+                        workoutDetails = apiResult.data.workoutDetails
                     )
                 }
             }
