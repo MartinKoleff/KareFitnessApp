@@ -1,6 +1,5 @@
 package com.koleff.kare_android.domain.repository
 
-import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
