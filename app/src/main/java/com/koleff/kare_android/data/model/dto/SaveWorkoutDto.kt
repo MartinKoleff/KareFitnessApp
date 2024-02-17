@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.model.dto
 import androidx.room.PrimaryKey
 import com.squareup.moshi.Json
 
+@Deprecated("Repository refactoring. Unused.")
 data class SaveWorkoutDto(
     @field:Json(name = "name")
     val name: String,

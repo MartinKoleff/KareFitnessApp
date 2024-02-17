@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.navigation.NavType
 import com.google.gson.Gson
 
+@Deprecated("Navigation overhaul")
 class ExerciseType : NavType<ExerciseDto>(isNullableAllowed = false) {
     override fun get(bundle: Bundle, key: String): ExerciseDto? {
         return bundle.getParcelable(key)
