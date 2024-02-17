@@ -4,6 +4,7 @@ import com.koleff.kare_android.data.model.request.BaseWorkoutRequest
 import com.koleff.kare_android.data.model.request.DeleteExerciseRequest
 import com.koleff.kare_android.data.model.request.SaveWorkoutRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
+import com.koleff.kare_android.data.model.response.GetAllWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.GetWorkoutResponse
@@ -31,6 +32,9 @@ interface WorkoutApi {
 
     @GET("api/v1/workout/getallworkouts")
     suspend fun getAllWorkouts(): GetAllWorkoutsResponse
+
+    @GET("api/v1/workout/getallworkoutdetails")
+    suspend fun getAllWorkoutDetails(): GetAllWorkoutDetailsResponse
 
     @GET("api/v1/workout/getworkoutdetails")
     suspend fun getWorkoutDetails(
