@@ -1,14 +1,13 @@
 package com.koleff.kare_android.common.preferences
 
-import com.koleff.kare_android.data.model.dto.MuscleGroupUI
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.view_model.MuscleGroupUIList
 
 interface Preferences {
-    fun saveDashboardMuscleGroupList(muscleGroupList: MuscleGroupUIList)
+    fun saveDashboardMuscleGroupList(muscleGroupList: List<MuscleGroup>)
     fun saveSelectedWorkout(selectedWorkout: WorkoutDto)
     fun loadSelectedWorkout(): WorkoutDto?
-    fun loadDashboardMuscleGroupList(): List<MuscleGroupUI>
+    fun loadDashboardMuscleGroupList(): List<MuscleGroup>
     fun hasInitializedExerciseTableRoomDB(): Boolean
     fun hasInitializedWorkoutTableRoomDB(): Boolean
     fun initializeExerciseTableRoomDB()

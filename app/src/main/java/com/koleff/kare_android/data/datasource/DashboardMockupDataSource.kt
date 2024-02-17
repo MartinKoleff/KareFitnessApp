@@ -2,7 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.MuscleGroupUI
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.GetDashboardResponse
 import com.koleff.kare_android.domain.wrapper.DashboardWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
@@ -26,13 +26,6 @@ class DashboardMockupDataSource : DashboardDataSource {
             emit(ResultWrapper.Success(mockupResult))
         }
 
-    private fun generateDashboardList(): List<MuscleGroupUI> = listOf(
-        MuscleGroupUI("Chest", "", R.drawable.ic_chest),
-        MuscleGroupUI("Back", "", R.drawable.ic_back),
-        MuscleGroupUI("Triceps", "", R.drawable.ic_triceps),
-        MuscleGroupUI("Biceps", "", R.drawable.ic_biceps),
-        MuscleGroupUI("Shoulders", "", R.drawable.ic_shoulder),
-        MuscleGroupUI("Legs", "", R.drawable.ic_legs),
-//            MuscleGroup("Cardio", "", R.drawable.ic_faceid),
-    )
+    private fun generateDashboardList(): List<MuscleGroup> = MuscleGroup.getSupportedMuscleGroups()
+
 }
