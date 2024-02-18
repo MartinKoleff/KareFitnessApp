@@ -632,86 +632,97 @@ class WorkoutUseCasesUnitTest {
     }
 
     @RepeatedTest(50)
-    fun `add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test`() = runTest {
+    fun `add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test`() =
+        runTest {
 
-        //Generate workout
-        val workout = MockupDataGenerator.generateWorkout() //TODO: change to workoutDetails so exercises can be generated initially and tested...
-        logger.i(TAG, "Generated workout: $workout.")
+            //Generate workout details
+            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+            logger.i(
+                TAG,
+                "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
+            )
+            logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
 
-        //Save workout to DB
-        val createCustomWorkoutState = workoutUseCases.createCustomWorkoutUseCase(workout).toList()
+            //Save workout details to DB
+            val createCustomWorkoutDetailsState =
+                workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
 
-        logger.i(TAG, "Create custom workout -> isLoading state raised.")
-        assertTrue { createCustomWorkoutState[0].isLoading }
+            logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+            assertTrue { createCustomWorkoutDetailsState[0].isLoading }
 
-        logger.i(TAG, "Create custom workout -> isSuccessful state raised.")
-        assertTrue { createCustomWorkoutState[1].isSuccessful }
+            logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
+            assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
 
-        val savedWorkout = createCustomWorkoutState[1].workout
-        logger.i(TAG, "Saved workout: $savedWorkout")
-
-        //Get workout details
-        val getWorkoutDetailsState =
-            workoutUseCases.getWorkoutDetailsUseCase(savedWorkout.workoutId).toList()
-
-        logger.i(TAG, "Get workout details -> isLoading state raised.")
-        assertTrue { getWorkoutDetailsState[0].isLoading }
+            val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+            logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
 
         logger.i(TAG, "Get workout details -> isSuccessful state raised.")
         assertTrue { getWorkoutDetailsState[1].isSuccessful }
 
-        val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
-        logger.i(TAG, "Fetched workout details -> $fetchedWorkoutDetails")
-        logger.i(
-            TAG,
-            "Fetched workout details exercises -> ${fetchedWorkoutDetails.exercises.size}"
-        )
 
         //Generate exercise
         val exercise = MockupDataGenerator.generateExercise()
         logger.i(TAG, "Generated exercise: $exercise.")
+            //Insert in DB
+            val addExerciseState = workoutUseCases.addExerciseUseCase(
+                workoutId = savedWorkoutDetails.workoutId,
+                exercise = exercise
+            ).toList()
 
-        //Insert in DB
-        val addExerciseState = workoutUseCases.addExerciseUseCase(
-            workoutId = savedWorkout.workoutId,
-            exercise = exercise
-        ).toList()
+            logger.i(
+                TAG,
+                "Add exercise to workout details ${workoutDetails.name} -> isLoading state raised."
+            )
+            assertTrue { addExerciseState[0].isLoading }
 
-        logger.i(TAG, "Add exercise to workout ${workout.name} -> isLoading state raised.")
-        assertTrue { addExerciseState[0].isLoading }
+            logger.i(
+                TAG,
+                "Add exercise to workout details ${workoutDetails.name} -> isSuccessful state raised."
+            )
+            assertTrue { addExerciseState[1].isSuccessful }
 
-        logger.i(TAG, "Add exercise to workout ${workout.name} -> isSuccessful state raised.")
-        assertTrue { addExerciseState[1].isSuccessful }
+            val workoutDetailsAfterAdd = addExerciseState[1].workoutDetails
+            logger.i(
+                TAG,
+                "Workout details after new exercise was added: $workoutDetailsAfterAdd\n. Exercises list: ${workoutDetailsAfterAdd.exercises}"
+            )
 
-        val workoutDetailsAfterAdd = addExerciseState[1].workoutDetails
-        logger.i(
-            TAG,
-            "Workout details after new exercise was added: $workoutDetailsAfterAdd\n. Exercises list: ${workoutDetailsAfterAdd.exercises}"
-        )
+            logger.i(TAG, "Assert the exercise is added in workout details")
+            assertTrue { workoutDetailsAfterAdd.exercises.size == workoutDetails.exercises.size + 1 }
 
-        logger.i(TAG, "Assert the exercise is added in workout details")
-        assertTrue { workoutDetailsAfterAdd.exercises.size == fetchedWorkoutDetails.exercises.size + 1 }
+            //Delete from DB
+            val deleteExerciseState = workoutUseCases.deleteExerciseUseCase(
+                workoutId = savedWorkoutDetails.workoutId,
+                exerciseId = exercise.exerciseId
+            ).toList()
 
-        //Delete from DB
-        val deleteExerciseState = workoutUseCases.deleteExerciseUseCase(
-            workoutId = savedWorkout.workoutId,
-            exerciseId = exercise.exerciseId
-        ).toList()
+            logger.i(
+                TAG,
+                "Delete exercise from workout details ${workoutDetails.name} -> isLoading state raised."
+            )
+            assertTrue { deleteExerciseState[0].isLoading }
 
-        logger.i(TAG, "Delete exercise from workout ${workout.name} -> isLoading state raised.")
-        assertTrue { deleteExerciseState[0].isLoading }
+            logger.i(
+                TAG,
+                "Delete exercise from workout details ${workoutDetails.name} -> isSuccessful state raised."
+            )
+            assertTrue { deleteExerciseState[1].isSuccessful }
 
-        logger.i(TAG, "Delete exercise from workout ${workout.name} -> isSuccessful state raised.")
-        assertTrue { deleteExerciseState[1].isSuccessful }
+            val workoutDetailsAfterDelete = deleteExerciseState[1].workoutDetails
+            logger.i(
+                TAG,
+                "Workout details after deleted exercise: $workoutDetailsAfterDelete.\nExercises: ${workoutDetails.exercises}"
+            )
+            logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
 
-        val workoutDetailsAfterDelete = deleteExerciseState[1].workoutDetails
-        logger.i(TAG, "Workout details after deleted exercise: $workoutDetailsAfterDelete")
+            logger.i(
+                TAG,
+                "Assert initial workout details before added exercise is the same as the workout after deleted the added exercise."
+            )
+            assertTrue { workoutDetailsAfterDelete == workoutDetails }
 
-        logger.i(TAG, "Assert initial workout details before added exercise is the same as the workout after deleted the added exercise.")
-        assertTrue { workoutDetailsAfterDelete == fetchedWorkoutDetails }
+            //TODO: check ExerciseSetDao if sets from new generated exercise are deleted.
+        }
 
-        //TODO: check ExerciseSetDao if sets from new generated exercise are deleted.
-    }
 
-    }
 }

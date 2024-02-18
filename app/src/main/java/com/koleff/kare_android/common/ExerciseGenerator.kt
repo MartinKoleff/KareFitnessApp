@@ -53,9 +53,12 @@ object ExerciseGenerator {
         val exercisesList = mutableListOf<ExerciseDto>()
 
         for (muscleGroup in MuscleGroup.values()) {
+            val exerciseSets = loadExerciseSets()
             val generatedExercises =
                 loadExercises(muscleGroup)
-                    .map(Exercise::toExerciseDto)
+                    .map { exercise ->
+                        exercise.toExerciseDto(exerciseSets)
+                    }
                     .toList()
 
             exercisesList.addAll(generatedExercises)

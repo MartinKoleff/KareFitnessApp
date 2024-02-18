@@ -109,10 +109,15 @@ class WorkoutLocalDataSource @Inject constructor(
                     //Null safety
                     workoutDetailsWitExercises.exercises ?: return@flow
 
+                    val exercises =
+                        workoutDetailsWitExercises.exercises.map { exercise -> //TODO: test...
+                            val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                            exercise.toExerciseDto(sets)
+                        } as MutableList
+
                     workoutDetailsWitExercises.workoutDetails.toWorkoutDetailsDto(
-                        workoutDetailsWitExercises.exercises.map { exercise ->
-                            exercise.toExerciseDto()
-                        }.toMutableList()
+                        exercises
                     )
                 })
             )
@@ -203,7 +208,11 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Contains different exercises
             val currentEntryInDB: List<ExerciseDto> =
-                data.safeExercises.map { it.toExerciseDto() }
+                data.safeExercises.map { exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                    exercise.toExerciseDto(sets)
+                }
 
             if (currentEntryInDB.size <= workoutDetails.exercises.size) {
                 val newExercises =
@@ -246,6 +255,7 @@ class WorkoutLocalDataSource @Inject constructor(
                             )
 
                             //Trying to add set with already generated id that is not in the DB...
+                            //TODO: try if exerciseSetDao contains the set -> if -> update else -> save
                             exerciseSetDao.saveSet(exerciseSet) //TODO: migrate to updateSet...
                         }
 
@@ -468,6 +478,7 @@ class WorkoutLocalDataSource @Inject constructor(
                             )
 
                             //Trying to add set with already generated id that is not in the DB...
+                            //TODO: try if exerciseSetDao contains the set -> if -> update else -> save
                             exerciseSetDao.saveSet(exerciseSet) //TODO: migrate to updateSet...
                         }
 
@@ -506,8 +517,13 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val filteredExercises =
                 selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
+
             val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
+                filteredExercises.map{exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                    exercise.toExerciseDto(sets)
+                } as MutableList //TODO: test for ExerciseSets if lost...
 
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
             val updatedWorkoutDto =
@@ -532,9 +548,6 @@ class WorkoutLocalDataSource @Inject constructor(
                 exerciseDao.deleteExerciseSetCrossRef(exerciseSetCrossRef)
                 exerciseSetDao.deleteSet(set)
             }
-
-            //Update workout and workout details DAOs
-//            workoutDetailsDao.insertWorkoutDetails(updatedWorkoutDto)
 
             //Update total exercises
             val workout = workoutDao.getWorkoutById(workoutId)
@@ -567,8 +580,13 @@ class WorkoutLocalDataSource @Inject constructor(
                 ArrayList(selectedWorkout.safeExercises).apply {
                     add(exercise.toExercise())
                 }
+
             val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
+                filteredExercises.map{exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                    exercise.toExerciseDto(sets)
+                } as MutableList //TODO: test for ExerciseSets if lost...
 
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
             val updatedWorkoutDto =
