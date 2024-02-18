@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import android.util.Log
+import androidx.room.EmptyResultSetException
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
@@ -110,7 +111,7 @@ class WorkoutLocalDataSource @Inject constructor(
                     workoutDetailsWitExercises.exercises ?: return@flow
 
                     val exercises =
-                        workoutDetailsWitExercises.exercises.map { exercise -> //TODO: test...
+                        workoutDetailsWitExercises.exercises.map { exercise ->
                             val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
 
                             exercise.toExerciseDto(sets)
@@ -254,9 +255,14 @@ class WorkoutLocalDataSource @Inject constructor(
                                 "Exercise set with setId ${exerciseSet.setId} added. Data: $exerciseSet"
                             )
 
-                            //Trying to add set with already generated id that is not in the DB...
-                            //TODO: try if exerciseSetDao contains the set -> if -> update else -> save
-                            exerciseSetDao.saveSet(exerciseSet) //TODO: migrate to updateSet...
+                            //Trying to add set with already generated id
+                            try{
+                                exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
+
+                                exerciseSetDao.updateSet(exerciseSet)
+                            }catch (e: EmptyResultSetException){
+                                exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
+                            }
                         }
 
                         ExerciseSetCrossRef(
@@ -477,9 +483,14 @@ class WorkoutLocalDataSource @Inject constructor(
                                 "Exercise set with setId ${exerciseSet.setId} added. Data: $exerciseSet"
                             )
 
-                            //Trying to add set with already generated id that is not in the DB...
-                            //TODO: try if exerciseSetDao contains the set -> if -> update else -> save
-                            exerciseSetDao.saveSet(exerciseSet) //TODO: migrate to updateSet...
+                            //Trying to add set with already generated id
+                            try{
+                                exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
+
+                                exerciseSetDao.updateSet(exerciseSet)
+                            }catch (e: EmptyResultSetException){
+                                exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
+                            }
                         }
 
                         ExerciseSetCrossRef(
@@ -519,11 +530,11 @@ class WorkoutLocalDataSource @Inject constructor(
                 selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
 
             val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map{exercise ->
+                filteredExercises.map { exercise ->
                     val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
 
                     exercise.toExerciseDto(sets)
-                } as MutableList //TODO: test for ExerciseSets if lost...
+                } as MutableList
 
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
             val updatedWorkoutDto =
@@ -582,15 +593,15 @@ class WorkoutLocalDataSource @Inject constructor(
                 }
 
             val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map{exercise ->
+                filteredExercises.map { exercise ->
                     val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
 
                     exercise.toExerciseDto(sets)
-                } as MutableList //TODO: test for ExerciseSets if lost...
+                } as MutableList
 
             val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
             val updatedWorkoutDto =
-                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto) //TODO: test for ExerciseSets if lost...
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
 
             //Create workout details - exercise cross ref
             val workoutDetailsExerciseCrossRef =
