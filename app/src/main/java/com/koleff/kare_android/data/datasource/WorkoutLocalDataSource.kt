@@ -50,10 +50,20 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
             //Deselect current selected workout
             val selectedWorkoutInDB = workoutDao.getWorkoutByIsSelected()?.copy(
                 isSelected = false
             )
+
+            //If you are trying to select the current selected workout
+            if(selectedWorkoutInDB?.workoutId == workoutId) {
+                emit(ResultWrapper.Success(result))
+                return@flow
+            }
 
             //Update DB
             selectedWorkoutInDB?.let {
@@ -61,10 +71,6 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             workoutDao.selectWorkoutById(workoutId)
-
-            val result = ServerResponseData(
-                BaseResponse()
-            )
 
             emit(ResultWrapper.Success(result))
         }
