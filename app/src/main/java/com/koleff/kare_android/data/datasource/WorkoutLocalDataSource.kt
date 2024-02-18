@@ -260,7 +260,7 @@ class WorkoutLocalDataSource @Inject constructor(
                                 exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
 
                                 exerciseSetDao.updateSet(exerciseSet)
-                            }catch (e: EmptyResultSetException){
+                            }catch (e: NoSuchElementException){
                                 exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
                             }
                         }
@@ -488,7 +488,7 @@ class WorkoutLocalDataSource @Inject constructor(
                                 exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
 
                                 exerciseSetDao.updateSet(exerciseSet)
-                            }catch (e: EmptyResultSetException){
+                            }catch (e: NoSuchElementException){
                                 exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
                             }
                         }
