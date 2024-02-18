@@ -238,7 +238,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
                 workoutDetails.exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
-                        val exerciseSet = set.toExerciseSetDto()
+                        val exerciseSet = set.toExerciseSet()
 
                         if (set.setId == null) {
 
@@ -256,11 +256,11 @@ class WorkoutLocalDataSource @Inject constructor(
                             )
 
                             //Trying to add set with already generated id
-                            try{
+                            try {
                                 exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
 
                                 exerciseSetDao.updateSet(exerciseSet)
-                            }catch (e: NoSuchElementException){
+                            } catch (e: NoSuchElementException) {
                                 exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
                             }
                         }
@@ -316,16 +316,6 @@ class WorkoutLocalDataSource @Inject constructor(
                 muscleGroup = workout.muscleGroup,
                 isSelected = workout.isSelected
             )
-
-//            val updatedWorkoutDetailsWithExercises =
-//                workoutDetailsWithExercises.copy(workoutDetails = updatedWorkoutDetails)
-//            val exercises: MutableList<ExerciseDto> =
-//                updatedWorkoutDetailsWithExercises.exercises.map { Exercise::toExerciseDto } as MutableList<ExerciseDto>
-//
-//            val workoutDetails = updatedWorkoutDetailsWithExercises.workoutDetails
-//                .toWorkoutDetailsDto(exercises)
-
-//            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
 
             workoutDetailsDao.updateWorkoutDetails(updatedWorkoutDetails)
 
@@ -466,7 +456,7 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
                 exercises.flatMap { exercise ->
                     exercise.sets.map { set ->
-                        val exerciseSet = set.toExerciseSetDto()
+                        val exerciseSet = set.toExerciseSet()
 
                         if (set.setId == null) {
 
@@ -484,11 +474,11 @@ class WorkoutLocalDataSource @Inject constructor(
                             )
 
                             //Trying to add set with already generated id
-                            try{
+                            try {
                                 exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
 
                                 exerciseSetDao.updateSet(exerciseSet)
-                            }catch (e: NoSuchElementException){
+                            } catch (e: NoSuchElementException) {
                                 exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
                             }
                         }
@@ -526,28 +516,6 @@ class WorkoutLocalDataSource @Inject constructor(
                 return@flow
             }
 
-            val filteredExercises =
-                selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
-
-            val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map { exercise ->
-                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
-
-                    exercise.toExerciseDto(sets)
-                } as MutableList
-
-            val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
-            val updatedWorkoutDto =
-                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
-
-            //Delete workout details - exercise cross ref
-            val workoutDetailsExerciseCrossRef =
-                WorkoutDetailsExerciseCrossRef(
-                    workoutDetailsId = workoutId,
-                    exerciseId = exerciseId
-                )
-            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
-
             //Delete exercise - set cross ref
             val deletedExercise = exerciseDao.getExerciseById(exerciseId)
             for (set in deletedExercise.sets) {
@@ -559,6 +527,29 @@ class WorkoutLocalDataSource @Inject constructor(
                 exerciseDao.deleteExerciseSetCrossRef(exerciseSetCrossRef)
                 exerciseSetDao.deleteSet(set)
             }
+
+            //Delete workout details - exercise cross ref
+            val workoutDetailsExerciseCrossRef =
+                WorkoutDetailsExerciseCrossRef(
+                    workoutDetailsId = workoutId,
+                    exerciseId = exerciseId
+                )
+            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
+
+            //Update exercise list
+            val exerciseEntityList =
+                selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
+
+            val exercisesDtoList: MutableList<ExerciseDto> =
+                exerciseEntityList.map { exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                    exercise.toExerciseDto(sets)
+                } as MutableList
+
+            val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
+            val updatedWorkoutDto =
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDtoList)
 
             //Update total exercises
             val workout = workoutDao.getWorkoutById(workoutId)
@@ -587,21 +578,22 @@ class WorkoutLocalDataSource @Inject constructor(
                 return@flow
             }
 
-            val filteredExercises =
-                ArrayList(selectedWorkout.safeExercises).apply {
-                    add(exercise.toExercise())
-                }
-
-            val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map { exercise ->
+            //Add new exercise to workout exercise list
+            val exerciseDtoList = ArrayList(selectedWorkout.safeExercises
+                .map { exercise ->
                     val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
 
                     exercise.toExerciseDto(sets)
-                } as MutableList
+                }
+            ).apply {
+                add(exercise)
+            }
 
-            val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
+            val exerciseEntityList = exerciseDtoList.map { it.toExercise() }
+
+            val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
             val updatedWorkoutDto =
-                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exerciseDtoList)
 
             //Create workout details - exercise cross ref
             val workoutDetailsExerciseCrossRef =
@@ -613,13 +605,15 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Create exercise - set cross ref
             for (set in exercise.sets) {
+                val exerciseSet = set.toExerciseSet()
+                exerciseSetDao.saveSet(exerciseSet)
+
                 val exerciseSetCrossRef =
                     ExerciseSetCrossRef(
                         exerciseId = exercise.exerciseId,
-                        setId = set.setId ?: UUID.randomUUID()
+                        setId = exerciseSet.setId
                     )
                 exerciseDao.insertExerciseSetCrossRef(exerciseSetCrossRef)
-                exerciseSetDao.saveSet(set.toExerciseSetDto())
             }
 
             //Update total exercises

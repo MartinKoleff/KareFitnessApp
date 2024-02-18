@@ -37,18 +37,20 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
 //TODO: remove mockup data sources? (how to integrate isError in local datasource?)
 //TODO: add inner classes for each use case...
 //TODO: add naming to each assertion...
-//---------------------------------------------
-//TODO: refactor ExerciseSet creation -> if set has setId -> it is assumed it exists in the DB and will try to update non existent entry...
 class WorkoutUseCasesUnitTest {
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
@@ -681,6 +683,12 @@ class WorkoutUseCasesUnitTest {
             )
             assertTrue { addExerciseState[1].isSuccessful }
 
+            logger.i(
+                TAG,
+                "Assert exercise sets data is not lost."
+            )
+            assertTrue { addExerciseState[1].workoutDetails.exercises.map { it.sets }.isNotEmpty() }
+
             val workoutDetailsAfterAdd = addExerciseState[1].workoutDetails
             logger.i(
                 TAG,
@@ -721,7 +729,30 @@ class WorkoutUseCasesUnitTest {
             )
             assertTrue { workoutDetailsAfterDelete == workoutDetails }
 
-            //TODO: check ExerciseSetDao if sets from new generated exercise are deleted.
+            logger.i(
+                TAG,
+                "Assert sets from new generated exercise are deleted and not in DB."
+            )
+
+            val exception = try {
+                exercise.sets.forEach { set ->
+                    set.setId ?: throw NoSuchElementException()
+
+                    exerciseSetDao.getSetById(set.setId!!)
+                }
+
+                null
+            } catch (exception: NoSuchElementException) {
+                exception
+            }
+
+            assertThrows(NoSuchElementException::class.java) {
+                exercise.sets.forEach { set ->
+                    set.setId ?: throw NoSuchElementException()
+
+                    exerciseSetDao.getSetById(set.setId!!)
+                }
+            }
         }
 
 

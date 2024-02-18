@@ -62,6 +62,10 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private va
 
     override suspend fun insertExerciseSetCrossRef(crossRef: ExerciseSetCrossRef) {
         exerciseSetCrossRefs.add(crossRef)
+
+        //Update DB after new cross ref is added...
+        val exerciseIndexesToUpdate = crossRef.exerciseId
+        updateExerciseWithSets(exerciseIndexesToUpdate)
     }
 
     override suspend fun insertAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>) {
