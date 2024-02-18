@@ -27,11 +27,14 @@ import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
@@ -47,7 +50,37 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
+            //Deselect current selected workout
+            val selectedWorkoutInDB = workoutDao.getWorkoutByIsSelected()?.copy(
+                isSelected = false
+            )
+
+            //Update DB
+            selectedWorkoutInDB?.let {
+                updateWorkout(it.toWorkoutDto()).collect()
+            }
+
             workoutDao.selectWorkoutById(workoutId)
+
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            //Deselect workout
+            val workout = workoutDao.getWorkoutById(workoutId).copy(
+                isSelected = false
+            )
+
+            //Update DB
+            updateWorkout(workout.toWorkoutDto()).collect()
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -96,7 +129,6 @@ class WorkoutLocalDataSource @Inject constructor(
         emit(ResultWrapper.Success(result))
     }
 
-    //Exercises don't return ExerciseSets
     override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<WorkoutDetailsListWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -393,6 +425,10 @@ class WorkoutLocalDataSource @Inject constructor(
                 workoutId = workoutDetailsId.toInt()
             )
             workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+            //Select
+            if (workoutDto.isSelected) {
+                selectWorkout(workoutDto.workoutId).collect()
+            }
 
             val result = WorkoutWrapper(
                 WorkoutResponse(
@@ -491,6 +527,10 @@ class WorkoutLocalDataSource @Inject constructor(
                 }
 
             exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
+            //Select
+            if (workoutDetailsDto.isSelected) {
+                selectWorkout(workoutDetailsDto.workoutId).collect()
+            }
 
             val result = WorkoutDetailsWrapper(
                 WorkoutDetailsResponse(

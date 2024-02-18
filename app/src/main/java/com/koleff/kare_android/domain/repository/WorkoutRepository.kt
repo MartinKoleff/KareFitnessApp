@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.Flow
 interface WorkoutRepository {
     suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
+    suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+
     suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>  //Used for loading list view and refresh
@@ -43,5 +45,4 @@ interface WorkoutRepository {
     suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>>
 
     suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>>
-
 }

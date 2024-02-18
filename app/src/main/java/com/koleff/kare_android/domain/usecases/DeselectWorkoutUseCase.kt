@@ -11,10 +11,10 @@ import com.koleff.kare_android.ui.state.SelectedWorkoutState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class SelectWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
+class DeselectWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
 
     suspend operator fun invoke(workoutId: Int): Flow<BaseState> =
-        workoutRepository.selectWorkout(workoutId).map { apiResult ->
+        workoutRepository.deselectWorkout(workoutId).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {
                     BaseState(
@@ -28,7 +28,7 @@ class SelectWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
                 }
 
                 is ResultWrapper.Success -> {
-                    Log.d("SelectWorkoutUseCase", "Workout with id $workoutId is selected: ")
+                    Log.d("DeselectWorkoutUseCase", "Workout with id $workoutId is deselected: ")
 
                     BaseState(
                         isSuccessful = true,

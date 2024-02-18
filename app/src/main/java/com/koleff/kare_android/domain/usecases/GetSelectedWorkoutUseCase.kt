@@ -27,7 +27,7 @@ class GetSelectedWorkoutUseCase(private val workoutRepository: WorkoutRepository
                 }
 
                 is ResultWrapper.Success -> {
-                    Log.d("GetSelectedWorkoutUseCase", "Selected workout fetched: ${apiResult.data.workout}") //TODO: if workout is selected -> deselect
+                    Log.d("GetSelectedWorkoutUseCase", "Selected workout fetched: ${apiResult.data.workout}")
 
                     SelectedWorkoutState(
                         isSuccessful = true,

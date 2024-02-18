@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.Flow
 interface WorkoutDataSource {
     suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
+    suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+
     suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>>
 
     suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>>

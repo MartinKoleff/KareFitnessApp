@@ -22,6 +22,10 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.selectWorkout(workoutId)
     }
 
+    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.deselectWorkout(workoutId)
+    }
+
     override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> {
         return workoutDataSource.getSelectedWorkout()
     }

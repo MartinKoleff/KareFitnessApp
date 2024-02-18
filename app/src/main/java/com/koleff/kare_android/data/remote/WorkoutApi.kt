@@ -23,6 +23,11 @@ interface WorkoutApi {
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
+    @PUT("api/v1/workout/deselectworkout")
+    suspend fun deselectWorkout(
+        @Body body: FetchWorkoutByIdRequest
+    ): BaseResponse
+
     @GET("api/v1/workout/getselectedworkout")
     suspend fun getSelectedWorkout(): SelectedWorkoutResponse
 
