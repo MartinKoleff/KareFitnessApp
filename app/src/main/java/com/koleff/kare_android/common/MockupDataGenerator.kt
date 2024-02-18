@@ -37,12 +37,25 @@ object MockupDataGenerator {
 
     fun generateExercise(
         muscleGroup: MuscleGroup = MuscleGroup.getSupportedMuscleGroups().random(),
+        excludedIds: List<Int> = emptyList(),
         isGenerateSetId: Boolean = true,
     ): ExerciseDto {
+
+        var exerciseId =
             Random.nextInt(
                 ExerciseGenerator.getMuscleGroupRange(muscleGroup).first,
                 ExerciseGenerator.getMuscleGroupRange(muscleGroup).second
             )
+
+        //Generate unique exercise that its id is not contained in the excludedIds list
+        if (excludedIds.isNotEmpty()) {
+            while (excludedIds.contains(exerciseId)) {
+                exerciseId =
+                    Random.nextInt(
+                        ExerciseGenerator.getMuscleGroupRange(muscleGroup).first,
+                        ExerciseGenerator.getMuscleGroupRange(muscleGroup).second
+                    )
+            }
         }
 
         val generatedExercise = exercises[exerciseId - 1]

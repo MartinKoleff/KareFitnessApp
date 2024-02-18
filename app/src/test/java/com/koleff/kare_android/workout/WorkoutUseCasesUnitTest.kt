@@ -64,7 +64,7 @@ class WorkoutUseCasesUnitTest {
     private val useMockupDataSource = false
     private val isErrorTesting = false
 
-    private val isLogging = false
+    private val isLogging = true
     private lateinit var logger: TestLogger
 
     private val invalidWorkout = mockk<WorkoutDto>(relaxed = true)
@@ -656,13 +656,13 @@ class WorkoutUseCasesUnitTest {
             val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
 
-        logger.i(TAG, "Get workout details -> isSuccessful state raised.")
-        assertTrue { getWorkoutDetailsState[1].isSuccessful }
+            //Generate exercise that is not already in the workoutDetails.exercise list
+            val excludedIds = workoutDetails.exercises.map { it.exerciseId }
 
+            val exercise =
+                MockupDataGenerator.generateExercise(excludedIds = excludedIds)
+            logger.i(TAG, "Generated exercise: $exercise.")
 
-        //Generate exercise
-        val exercise = MockupDataGenerator.generateExercise()
-        logger.i(TAG, "Generated exercise: $exercise.")
             //Insert in DB
             val addExerciseState = workoutUseCases.addExerciseUseCase(
                 workoutId = savedWorkoutDetails.workoutId,
