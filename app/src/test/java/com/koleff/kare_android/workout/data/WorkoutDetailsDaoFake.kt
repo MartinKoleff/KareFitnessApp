@@ -18,6 +18,11 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake, private va
     private fun getAllExercises() =
         exerciseDao.getExercisesOrderedById()
 
+    companion object {
+        private const val TAG = "WorkoutDetailsDaoFake"
+    }
+
+
     //Assuming there is already a workout in the workoutDB -> no need for autoincrement -> id is verified
     override suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): Long {
         workoutDetailsDB.add(
@@ -119,7 +124,7 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake, private va
             .map { exerciseDao.getExerciseById(it.exerciseId) }
             .map(ExerciseWithSet::toExerciseDto)
 
-        logger.i("WorkoutDetailsDaoFake", exerciseWithSets.toString())
+        logger.i(TAG, "Get workout exercises with sets -> $exerciseWithSets")
         return exerciseWithSets
     }
 

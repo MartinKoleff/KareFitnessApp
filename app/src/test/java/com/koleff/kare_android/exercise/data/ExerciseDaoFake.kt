@@ -3,19 +3,31 @@ package com.koleff.kare_android.exercise.data
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsWithExercise
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.utils.TestLogger
 
-class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private val logger: TestLogger) : ExerciseDao {
+class ExerciseDaoFake(
+    private val exerciseSetDao: ExerciseSetDaoFake,
+    private val exerciseDetailsDao: ExerciseDetailsDaoFake,
+    private val logger: TestLogger
+) : ExerciseDao {
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSet>()
+    private val exerciseDetailsWithExerciseDB = mutableListOf<ExerciseDetailsWithExercise>()
 
     private val exerciseDetailsExerciseCrossRefs =
-        mutableListOf<ExerciseDetailsExerciseCrossRef>() //TODO: wire cross refs with other DAOs...
+        mutableListOf<ExerciseDetailsExerciseCrossRef>()
     private val exerciseSetCrossRefs =
         mutableListOf<ExerciseSetCrossRef>()
+
+    companion object {
+        private const val TAG = "ExerciseDaoFake"
+    }
+
 
     override suspend fun insertExercise(exercise: Exercise) {
         val sets = getExerciseSets(exercise)
@@ -24,7 +36,18 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private va
             ExerciseWithSet(exercise = exercise, sets = sets)
         )
 
-        logger.i("ExerciseDaoFake-insertExercise", sets.toString())
+        logger.i(TAG, "Inserted exercise sets in DB for exercise ${exercise.exerciseId}: $sets")
+    }
+
+    private fun updateExerciseDetailsDB(exerciseDetailsId: Int) {
+        val exercise = getExerciseById(exerciseDetailsId).exercise
+        val exerciseDetails = exerciseDetailsDao.getExerciseDetailsById(exerciseDetailsId)
+
+        exerciseDetailsWithExerciseDB.add(
+            ExerciseDetailsWithExercise(exerciseDetails = exerciseDetails, exercise = exercise)
+        )
+
+        logger.i(TAG, "Update exercise details - exercise cross ref in DB: $exercise\n$exerciseDetails")
     }
 
     private fun getExerciseSets(exercise: Exercise): List<ExerciseSet> {
@@ -39,7 +62,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private va
             sets.add(set)
         }
 
-        logger.i("ExerciseDaoFake-getExerciseSets", sets.toString())
+        logger.i(TAG, "Get exercise sets for exercise with id ${exercise.exerciseId}: $sets")
 
         return sets
             .distinct()
@@ -54,10 +77,21 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private va
 
     override suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef) {
         exerciseDetailsExerciseCrossRefs.add(crossRef)
+
+        //Update DB after new cross ref is added...
+        updateExerciseDetailsDB(exerciseDetailsId = crossRef.exerciseDetailsId)
     }
 
     override suspend fun insertAllExerciseDetailsExerciseCrossRefs(crossRefs: List<ExerciseDetailsExerciseCrossRef>) {
         exerciseDetailsExerciseCrossRefs.addAll(crossRefs)
+
+
+        //Update DB after new cross ref is added...
+        crossRefs.map {
+            it.exerciseDetailsId
+        }.forEach { exerciseDetailsId ->
+            updateExerciseDetailsDB(exerciseDetailsId = exerciseDetailsId)
+        }
     }
 
     override suspend fun insertExerciseSetCrossRef(crossRef: ExerciseSetCrossRef) {
@@ -86,7 +120,7 @@ class ExerciseDaoFake(private val exerciseSetDao: ExerciseSetDaoFake, private va
         exerciseWithSetDB.remove(exerciseWithNoSets)
         exerciseWithSetDB.add(exerciseWithSets)
 
-        logger.i("ExerciseDaoFake-updateExerciseWithSets", exerciseWithSets.toString())
+        logger.i(TAG, "Exercise $exerciseId with sets updated: $exerciseWithSets")
     }
 
     override suspend fun deleteExercise(exercise: Exercise) {
