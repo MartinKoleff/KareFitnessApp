@@ -28,6 +28,7 @@ import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
+import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
@@ -57,6 +58,7 @@ class WorkoutUseCasesUnitTest {
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
     private lateinit var exerciseDao: ExerciseDaoFake
+    private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
 
     private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
@@ -82,7 +84,12 @@ class WorkoutUseCasesUnitTest {
         logger = TestLogger(isLogging)
 
         exerciseSetDao = ExerciseSetDaoFake()
-        exerciseDao = ExerciseDaoFake(exerciseSetDao = exerciseSetDao, logger = logger)
+        exerciseDetailsDao = ExerciseDetailsDaoFake()
+        exerciseDao = ExerciseDaoFake(
+            exerciseSetDao = exerciseSetDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            logger = logger
+        )
 
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
@@ -117,7 +124,6 @@ class WorkoutUseCasesUnitTest {
             createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
             createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
         )
-
 
         //Load ExerciseDao with all exercises
         for (muscleGroup in MuscleGroup.entries) {
@@ -803,7 +809,7 @@ class WorkoutUseCasesUnitTest {
      * ----------------------------
      * DeselectWorkoutUseCase()
      * WorkoutDao.getWorkoutById()
-     * 
+     *
      * updateWorkoutUseCase()
      * WorkoutDao.updateWorkout()
      * WorkoutDetailsDao.getWorkoutDetailsById()
@@ -868,7 +874,10 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Assert workout 1 is currently selected.")
             assertTrue { selectedWorkout2 == workout }
 
-            logger.i(TAG, "Test 3 -> get selected workout after created a new one and DB contains selected workout.")
+            logger.i(
+                TAG,
+                "Test 3 -> get selected workout after created a new one and DB contains selected workout."
+            )
 
             val workout2 = MockupDataGenerator.generateWorkout(isSelected = true)
             logger.i(TAG, "Mocked workout 2: $workout2")
@@ -945,7 +954,8 @@ class WorkoutUseCasesUnitTest {
 
             //Select workout 1
             logger.i(TAG, "Workout 1 is now selected.")
-            val selectWorkoutState = workoutUseCases.selectWorkoutUseCase(workout.workoutId).toList()
+            val selectWorkoutState =
+                workoutUseCases.selectWorkoutUseCase(workout.workoutId).toList()
             logger.i(TAG, "Select workout 1 -> isLoading state raised.")
             assertTrue { selectWorkoutState[0].isLoading }
 
