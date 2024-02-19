@@ -67,4 +67,9 @@ class WorkoutDaoFake : WorkoutDao {
     override fun getWorkoutByIsSelected(): Workout? = workoutsDB.firstOrNull { it.isSelected }
     override fun getWorkoutById(workoutId: Int): Workout =
         workoutsDB.first { it.workoutId == workoutId }
+
+    fun clearDB() {
+        workoutsDB.clear()
+        workoutDetailsWorkoutCrossRefs.clear()
+    }
 }

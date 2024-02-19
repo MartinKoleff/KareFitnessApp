@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -130,6 +131,7 @@ class WorkoutUseCasesUnitTest {
         exerciseDao.clearDB()
         exerciseSetDao.clearDB()
         workoutDetailsDao.clearDB()
+        workoutDao.clearDB()
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
@@ -140,6 +142,10 @@ class WorkoutUseCasesUnitTest {
         logger.i(
             "tearDown",
             "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutDao: ${workoutDao.getWorkoutsOrderedById()}"
         )
     }
 
@@ -784,9 +790,34 @@ class WorkoutUseCasesUnitTest {
             }
         }
 
+    /**
+     * Tested functions inside:
+     *
+     * GetSelectedWorkoutUseCase()
+     * WorkoutDao.getWorkoutByIsSelected()
+     * ----------------------------
+     * CreateCustomWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * ----------------------------
+     * DeselectWorkoutUseCase()
+     * WorkoutDao.getWorkoutById()
+     * 
+     * updateWorkoutUseCase()
+     * WorkoutDao.updateWorkout()
+     * WorkoutDetailsDao.getWorkoutDetailsById()
+     * WorkoutDetailsDao.updateWorkoutDetails()
+     * ----------------------------
+     * SelectWorkoutUseCase()
+     * WorkoutDao.getWorkoutByIsSelected()
+     * WorkoutDao.selectWorkoutById()
+     */
     @RepeatedTest(10)
     fun `select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test`() =
         runTest {
+
+            logger.i(TAG, "Test 1 -> get selected workout on empty DB.")
 
             //Fetch with empty DB -> no selected workout
             val getSelectedWorkoutState = workoutUseCases.getSelectedWorkoutUseCase().toList()
@@ -820,6 +851,8 @@ class WorkoutUseCasesUnitTest {
             val savedWorkout = createCustomWorkoutState[1].workout
             logger.i(TAG, "Saved workout: $savedWorkout")
 
+            logger.i(TAG, "Test 2 -> get selected workout after created a new one.")
+
             //Check which workout is currently selected
             val getSelectedWorkoutState2 = workoutUseCases.getSelectedWorkoutUseCase().toList()
 
@@ -834,6 +867,8 @@ class WorkoutUseCasesUnitTest {
 
             logger.i(TAG, "Assert workout 1 is currently selected.")
             assertTrue { selectedWorkout2 == workout }
+
+            logger.i(TAG, "Test 3 -> get selected workout after created a new one and DB contains selected workout.")
 
             val workout2 = MockupDataGenerator.generateWorkout(isSelected = true)
             logger.i(TAG, "Mocked workout 2: $workout2")
@@ -866,8 +901,11 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Assert workout 2 is currently selected.")
             assertTrue { selectedWorkout3 == workout2 }
 
+            logger.i(TAG, "Test 4 -> deselect workout 2.")
+
             //Deselect workout
-            val deselectWorkoutState = workoutUseCases.deselectWorkoutUseCase(workout2.workoutId).toList()
+            val deselectWorkoutState =
+                workoutUseCases.deselectWorkoutUseCase(workout2.workoutId).toList()
             logger.i(TAG, "Deselected workout 2 -> isLoading state raised.")
             assertTrue { deselectWorkoutState[0].isLoading }
 
@@ -888,5 +926,53 @@ class WorkoutUseCasesUnitTest {
 
             logger.i(TAG, "Assert no workout is currently selected.")
             assertNull(selectedWorkout4)
+
+            logger.i(TAG, "Test 5 -> select workout 1.")
+
+            //Fetch workout 1 from DB
+            val getWorkoutState = workoutUseCases.getWorkoutUseCase(workout.workoutId)
+                .toList()
+
+            logger.i(TAG, "Get workout 1 -> isLoading state raised.")
+            assertTrue { getWorkoutState[0].isLoading }
+
+            logger.i(TAG, "Get workout 1 -> isSuccessful state raised.")
+            assertTrue { getWorkoutState[1].isSuccessful }
+
+            val fetchedWorkout = getWorkoutState[1].workoutList.first()
+            logger.i(TAG, "Assert workout 1 is not selected in the DB.")
+            assertFalse { fetchedWorkout.isSelected }
+
+            //Select workout 1
+            logger.i(TAG, "Workout 1 is now selected.")
+            val selectWorkoutState = workoutUseCases.selectWorkoutUseCase(workout.workoutId).toList()
+            logger.i(TAG, "Select workout 1 -> isLoading state raised.")
+            assertTrue { selectWorkoutState[0].isLoading }
+
+            logger.i(TAG, "Select workout 1 -> isSuccessful state raised.")
+            assertTrue { selectWorkoutState[1].isSuccessful }
+
+            //Fetch current selected workout
+            val getSelectedWorkoutState5 = workoutUseCases.getSelectedWorkoutUseCase().toList()
+
+            logger.i(TAG, "Get selected workout 5 -> isLoading state raised.")
+            assertTrue { getSelectedWorkoutState5[0].isLoading }
+
+            logger.i(TAG, "Get selected workout 5 -> isSuccessful state raised.")
+            assertTrue { getSelectedWorkoutState5[1].isSuccessful }
+
+            val selectedWorkout5 = getSelectedWorkoutState5[1].selectedWorkout
+            logger.i(TAG, "Selected workout 5: $selectedWorkout5")
+
+            logger.i(TAG, "Assert workout 1 is currently selected.")
+            assertTrue { selectedWorkout5 == workout }
+
+            //TODO: [Test] select workout with workoutID not in DB and fetch...
+            //TODO: [Test] select current selected workout and fetch...
         }
+
+    @Test
+    fun `search workout using OnSearchWorkoutUseCase test`() = runTest {
+
+    }
 }
