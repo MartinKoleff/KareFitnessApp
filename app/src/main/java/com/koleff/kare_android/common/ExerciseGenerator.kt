@@ -12,7 +12,13 @@ import java.util.UUID
 object ExerciseGenerator {
 
     const val TOTAL_EXERCISES = 60
-
+    
+    //Used for testing
+    private const val description = 
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
+    private const val videoUrl = "dQw4w9WgXcQ" //https://www.youtube.com/watch?v=
+    
+    
     //List of all muscle groups with exercises ranges setup in getMuscleGroupRange()
     val SUPPORTED_MUSCLE_GROUPS = listOf<MuscleGroup>(
         MuscleGroup.CHEST,
@@ -109,82 +115,82 @@ object ExerciseGenerator {
             ExerciseDetails(
                 exerciseDetailsId = 51,
                 name = "Squat",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.BARBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 52,
                 name = "Bulgarian split squad",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.DUMBBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 53,
                 name = "Smith machine squad",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 54,
                 name = "Leg extension",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 55,
                 name = "Kettlebell walking lunges",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.DUMBBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 56,
                 name = "Leg press",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 57,
                 name = "Prone leg curl",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 58,
                 name = "Seated calf raises",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 59,
                 name = "Standing calf raises",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.CALISTHENICS,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 60,
                 name = "Barbell standing calf raises",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.LEGS,
                 machineType = MachineType.BARBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
         )
     }
@@ -269,82 +275,82 @@ object ExerciseGenerator {
             ExerciseDetails(
                 exerciseDetailsId = 41,
                 name = "Barbell upright row",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.BARBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 42,
                 name = "Dumbbell front raises",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.DUMBBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 43,
                 name = "Dumbbell lateral raises",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.DUMBBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 44,
                 name = "Seated dumbbell shoulder press",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.DUMBBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 45,
                 name = "Barbell shoulder press",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.BARBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 46,
                 name = "Face pull",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 47,
                 name = "Front plate raise",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.CALISTHENICS,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 48,
                 name = "One arm lateral raises at the low pulley cable",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 49,
                 name = "Reverse pec deck",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.MACHINE,
-                videoUrl = ""
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 exerciseDetailsId = 50,
                 name = "Dumbbell behind the back press",
-                description = "",
+                description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
                 machineType = MachineType.DUMBBELL,
-                videoUrl = ""
+                videoUrl = videoUrl
             )
         )
     }
@@ -429,7 +435,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 32,
                 "Standing dumbbell biceps curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -437,7 +443,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 33,
                 "Sitting dumbbell biceps curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -445,7 +451,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 34,
                 "Barbell biceps curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.BARBELL,
                 ""
@@ -453,7 +459,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 35,
                 "Dumbbell concentrated curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -461,7 +467,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 36,
                 "Dumbbell hammer curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -469,7 +475,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 37,
                 "Dumbbell hammer curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -477,7 +483,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 38,
                 "One arm dumbbell preacher curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -485,7 +491,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 39,
                 "Barbell preacher curl",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.BARBELL,
                 ""
@@ -493,7 +499,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 40,
                 "Reverse grip biceps curl at the low pulley cable",
-                description = "",
+                description = description,
                 MuscleGroup.BICEPS,
                 MachineType.MACHINE,
                 ""
@@ -574,7 +580,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 22,
                 "Triceps cable pushdown",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
@@ -582,7 +588,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 23,
                 "Dumbbell triceps kickback",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -590,7 +596,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 24,
                 "Skull crushers",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.BARBELL,
                 ""
@@ -598,7 +604,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 25,
                 "Dips",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.CALISTHENICS,
                 ""
@@ -606,7 +612,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 26,
                 "Machine triceps dips",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
@@ -614,7 +620,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 27,
                 "Dumbbell triceps extension",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.DUMBBELL,
                 ""
@@ -622,7 +628,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 28,
                 "Cable rope triceps pushdown",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
@@ -630,7 +636,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 29,
                 "Bench dip",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.CALISTHENICS,
                 ""
@@ -638,7 +644,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 30,
                 "Barbell standing french press",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.BARBELL,
                 ""
@@ -646,7 +652,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 31,
                 "Triceps cable rope extension",
-                description = "",
+                description = description,
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
                 ""
@@ -734,7 +740,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 11,
                 "Seated cable rows",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
                 ""
@@ -742,7 +748,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 12,
                 "Lat pulldown (Wide grip)",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
                 ""
@@ -750,7 +756,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 13,
                 "Pull ups",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.CALISTHENICS,
                 ""
@@ -758,7 +764,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 14,
                 "Bent over barbell row",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
@@ -766,7 +772,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 15,
                 "Deadlift",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
@@ -774,7 +780,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 16,
                 "Bent over dumbbell row",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
                 ""
@@ -782,7 +788,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 17,
                 "Standing lat pulldown",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
                 ""
@@ -790,7 +796,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 18,
                 "T-bar row", //Mechkata
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
@@ -798,7 +804,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 19,
                 "Dumbbell Shrugs",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
                 ""
@@ -806,7 +812,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 20,
                 "Behind the neck lat pulldown",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
                 ""
@@ -814,7 +820,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 21,
                 "Romanian deadlift",
-                description = "",
+                description = description,
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
                 ""
@@ -909,7 +915,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 1,
                 "Flat barbell bench press",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
                 ""
@@ -917,7 +923,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 2,
                 "Incline barbell bench press",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
                 ""
@@ -925,7 +931,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 3,
                 "Incline barbell bench press",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
                 ""
@@ -933,7 +939,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 4,
                 "Incline dumbbell bench press",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.DUMBBELL,
                 ""
@@ -941,7 +947,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 5,
                 "Flat dumbbell bench press",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.DUMBBELL,
                 ""
@@ -949,7 +955,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 6,
                 "Pec deck fly",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
                 ""
@@ -957,7 +963,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 7,
                 "Cable chest fly",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
                 ""
@@ -965,7 +971,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 8,
                 "Hammer strength",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
                 ""
@@ -973,7 +979,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 9,
                 "Dips",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.CALISTHENICS,
                 ""
@@ -981,7 +987,7 @@ object ExerciseGenerator {
             ExerciseDetails(
                 10,
                 "Push ups",
-                description = "",
+                description = description,
                 MuscleGroup.CHEST,
                 MachineType.CALISTHENICS,
                 ""
