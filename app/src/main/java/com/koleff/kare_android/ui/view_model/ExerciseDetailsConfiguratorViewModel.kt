@@ -16,7 +16,7 @@ import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
-import com.koleff.kare_android.ui.state.UpdateWorkoutState
+import com.koleff.kare_android.ui.state.WorkoutState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -25,6 +25,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Qualifier
@@ -84,25 +85,32 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
 
         when (event) {
             is OnExerciseUpdateEvent.OnExerciseDelete -> {
-                selectedWorkout = selectedWorkoutState.value.workout
-                selectedWorkout.exercises.remove(event.exercise)
+                selectedWorkout = selectedWorkoutState.value.workoutDetails
+                val exercise = event.exercise
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.deleteExerciseUseCase(
+                        workoutId = selectedWorkout.workoutId,
+                        exerciseId = exercise.exerciseId
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+                    }
+                }
             }
 
             is OnExerciseUpdateEvent.OnExerciseSubmit -> {
-                val newExercises: MutableList<ExerciseDto> =
-                    selectedWorkoutState.value.workout.exercises.filterNot { it.exerciseId == exerciseId } as MutableList<ExerciseDto>
-                newExercises.add(event.exercise)
-                newExercises.sortBy { it.exerciseId }
+                selectedWorkout = selectedWorkoutState.value.workoutDetails
+                val exercise = event.exercise
 
-                selectedWorkout = selectedWorkoutState.value.workout.copy(exercises = newExercises)
-            }
-        }
-
-        viewModelScope.launch(dispatcher) {
-            workoutUseCases.updateWorkoutUseCase.invoke(selectedWorkout)
-                .collect { updateWorkoutState ->
-                    _updateWorkoutState.value = updateWorkoutState
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.addExerciseUseCase(
+                        workoutId = selectedWorkout.workoutId,
+                        exercise = exercise
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+                    }
                 }
+            }
         }
     }
 

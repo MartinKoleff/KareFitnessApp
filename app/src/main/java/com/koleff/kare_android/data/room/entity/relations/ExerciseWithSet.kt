@@ -6,7 +6,7 @@ import androidx.room.Relation
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
-import com.koleff.kare_android.data.room.entity.SetEntity
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 
 data class ExerciseWithSet(
     @Embedded
@@ -17,7 +17,7 @@ data class ExerciseWithSet(
         entityColumn = "setId",
         associateBy = Junction(ExerciseSetCrossRef::class)
     )
-    val sets: List<SetEntity>
+    val sets: List<ExerciseSet>
 ) {
     fun toExerciseDto(): ExerciseDto {
         return ExerciseDto(
@@ -26,7 +26,7 @@ data class ExerciseWithSet(
             muscleGroup = this.exercise.muscleGroup,
             machineType = this.exercise.machineType,
             snapshot = this.exercise.snapshot,
-            sets = this.sets.map { it.toExerciseSet() }.sortedBy { it.number }
+            sets = this.sets.map { it.toExerciseSetDto() }.sortedBy { it.number }
         )
     }
 }

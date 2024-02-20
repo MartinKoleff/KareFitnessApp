@@ -12,7 +12,7 @@ import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
-import com.koleff.kare_android.data.room.entity.SetEntity
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
@@ -26,7 +26,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         Workout::class,
         WorkoutDetails::class,
         ExerciseDetails::class,
-        SetEntity::class,
+        ExerciseSet::class,
         WorkoutDetailsExerciseCrossRef::class,
         WorkoutDetailsWorkoutCrossRef::class,
         ExerciseDetailsExerciseCrossRef::class,

@@ -40,7 +40,7 @@ interface WorkoutDao {
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE isSelected = 1") //true = 1, false = 0
-    fun getWorkoutByIsSelected(): Workout
+    fun getWorkoutByIsSelected(): Workout?
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE workoutId = :workoutId") //true = 1, false = 0

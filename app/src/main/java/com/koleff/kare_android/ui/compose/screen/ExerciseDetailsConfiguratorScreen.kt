@@ -16,8 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -33,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -72,7 +69,7 @@ fun ExerciseDetailsConfiguratorScreen(
 
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
-            exerciseDetailsConfiguratorViewModel.openWorkoutDetailsScreen(selectedWorkoutState.workout.workoutId)
+            exerciseDetailsConfiguratorViewModel.openWorkoutDetailsScreen(selectedWorkoutState.workoutDetails.workoutId)
         }
     }
 

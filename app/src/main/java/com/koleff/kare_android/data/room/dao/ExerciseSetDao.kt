@@ -10,7 +10,7 @@ import androidx.room.Update
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
-import com.koleff.kare_android.data.room.entity.SetEntity
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
@@ -20,17 +20,17 @@ import java.util.UUID
 interface ExerciseSetDao {
 
     @Query("SELECT * FROM exercise_set_table WHERE setId = :setId")
-    fun getSetById(setId: UUID): SetEntity
+    fun getSetById(setId: UUID): ExerciseSet
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveSet(setEntity: SetEntity)
+    suspend fun saveSet(exerciseSet: ExerciseSet)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllExerciseSets(sets: List<SetEntity>)
+    suspend fun insertAllExerciseSets(sets: List<ExerciseSet>)
 
     @Update
-    suspend fun updateSet(setEntity: SetEntity)
+    suspend fun updateSet(exerciseSet: ExerciseSet)
 
     @Delete
-    suspend fun deleteSet(setEntity: SetEntity)
+    suspend fun deleteSet(exerciseSet: ExerciseSet)
 }

@@ -1,0 +1,157 @@
+package com.koleff.kare_android.workout.data
+
+import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
+import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.WorkoutDetails
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
+import com.koleff.kare_android.exercise.data.ExerciseDaoFake
+import com.koleff.kare_android.utils.TestLogger
+
+//ExerciseDao is needed for fetching exercises from cross refs
+class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake, private val logger: TestLogger) : WorkoutDetailsDao {
+
+    private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
+    private val workoutDetailsExerciseCrossRefs = mutableListOf<WorkoutDetailsExerciseCrossRef>()
+    private fun getAllExercises() =
+        exerciseDao.getExercisesOrderedById()
+
+    private val isInternalLogging = false
+
+    companion object {
+        private const val TAG = "WorkoutDetailsDaoFake"
+    }
+
+
+    //Assuming there is already a workout in the workoutDB -> no need for autoincrement -> id is verified
+    override suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): Long {
+        workoutDetailsDB.add(
+            WorkoutDetailsWithExercises(
+                workoutDetails = workoutDetails,
+                exercises = emptyList()
+            )
+        )
+
+        return workoutDetails.workoutDetailsId.toLong()
+    }
+
+    override suspend fun insertAllDetails(workoutDetailsList: List<WorkoutDetails>) {
+        workoutDetailsList.forEach { workoutDetails ->
+            insertWorkoutDetails(workoutDetails)
+        }
+    }
+
+    override suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef) {
+        workoutDetailsExerciseCrossRefs.add(crossRef)
+    }
+
+    override suspend fun insertAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>) {
+        workoutDetailsExerciseCrossRefs.addAll(crossRefs)
+    }
+
+    override suspend fun deleteWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef) {
+        workoutDetailsExerciseCrossRefs.remove(crossRef)
+    }
+
+    override suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>) {
+        workoutDetailsExerciseCrossRefs.removeAll(crossRefs)
+    }
+
+    override suspend fun deleteWorkoutDetails(workoutId: Int) {
+        val entries = workoutDetailsDB.map {
+            it.workoutDetails
+        }.filter { it.workoutDetailsId == workoutId }
+
+        workoutDetailsDB.removeAll {
+            entries.contains(it.workoutDetails)
+        }
+    }
+
+    //Only update WorkoutDetails and keep the same exercises
+    override suspend fun updateWorkoutDetails(workout: WorkoutDetails) {
+
+        //Find workout
+        val index = workoutDetailsDB.map {
+            it.workoutDetails
+        }.indexOfFirst { it.workoutDetailsId == workout.workoutDetailsId }
+
+        //WorkoutDetails found
+        if (index != -1) {
+            val exercises = workoutDetailsDB[index].exercises
+
+            //Replace workout
+            workoutDetailsDB[index] = WorkoutDetailsWithExercises(
+                workoutDetails = workout,
+                exercises = exercises
+            )
+        } else {
+
+            //Delete invalid workout?
+        }
+    }
+
+    override suspend fun selectWorkoutDetailsById(workoutId: Int) {
+        workoutDetailsDB.map {
+            it.workoutDetails
+        }.forEach {
+            it.isSelected = it.workoutDetailsId == workoutId
+        }
+    }
+
+    override fun getWorkoutDetailsOrderedById(): List<WorkoutDetailsWithExercises> {
+        val workoutExercises = getWorkoutExercises()
+
+        return workoutDetailsDB.sortedBy { it.workoutDetails.workoutDetailsId }.map {
+            WorkoutDetailsWithExercises(it.workoutDetails, workoutExercises)
+        }
+    }
+
+    private fun getWorkoutExercises(): List<Exercise> {
+        val workoutExercisesIndexes = workoutDetailsExerciseCrossRefs
+            .map { it.exerciseId }
+
+        val workoutExercises = getAllExercises()
+            .filter { workoutExercisesIndexes.contains(it.exercise.exerciseId) }
+            .map { it.exercise }
+
+        return workoutExercises
+    }
+
+    fun getWorkoutExercisesWithSets(): List<ExerciseDto> {
+        val exercises = getWorkoutExercises()
+
+        val exerciseWithSets = exercises
+            .map { exerciseDao.getExerciseById(it.exerciseId) }
+            .map(ExerciseWithSet::toExerciseDto)
+
+        if(isInternalLogging) logger.i(TAG, "Get workout exercises with sets -> $exerciseWithSets")
+        return exerciseWithSets
+    }
+
+    override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
+        val workoutExercises = getWorkoutExercises()
+
+        return workoutDetailsDB.firstOrNull {
+            it.workoutDetails.isSelected
+        }?.copy(
+            exercises = workoutExercises
+        )
+    }
+
+    override fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises? {
+        val workoutExercises = getWorkoutExercises()
+
+        return workoutDetailsDB.firstOrNull {
+            it.workoutDetails.workoutDetailsId == workoutId
+        }?.copy(
+            exercises = workoutExercises
+        )
+    }
+
+    fun clearDB() {
+        workoutDetailsDB.clear()
+        workoutDetailsExerciseCrossRefs.clear()
+    }
+}

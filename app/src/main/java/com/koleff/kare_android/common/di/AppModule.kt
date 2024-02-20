@@ -5,18 +5,15 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
-import androidx.navigation.Navigation
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
-import com.koleff.kare_android.common.Constants.useMockupDataSource
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
-import com.koleff.kare_android.data.datasource.ExerciseMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
@@ -37,26 +34,29 @@ import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.domain.usecases.CreateWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
+import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.common.navigation.NavigationController
-import com.koleff.kare_android.common.navigation.NavigationControllerImpl
-import com.koleff.kare_android.common.navigation.NavigationNotifier
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -167,7 +167,14 @@ object AppModule {
         exerciseDetailsDao: ExerciseDetailsDao,
         exerciseSetDao: ExerciseSetDao
     ): ExerciseDBManager {
-        return ExerciseDBManager(preferences, exerciseDao, exerciseDetailsDao, exerciseSetDao)
+        val hasInitializedDB = preferences.hasInitializedExerciseTableRoomDB()
+
+        return ExerciseDBManager(
+            exerciseDao = exerciseDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao,
+            hasInitializedDB = hasInitializedDB
+        )
     }
 
     @Provides
@@ -195,7 +202,13 @@ object AppModule {
         workoutDao: WorkoutDao,
         workoutDetailsDao: WorkoutDetailsDao
     ): WorkoutDBManager {
-        return WorkoutDBManager(preferences, workoutDao, workoutDetailsDao)
+        val hasInitializedDB = preferences.hasInitializedWorkoutTableRoomDB()
+
+        return WorkoutDBManager(
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
+            hasInitializedDB = hasInitializedDB
+        )
     }
 
     @Provides
@@ -203,15 +216,12 @@ object AppModule {
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseDBManager: ExerciseDBManager
+        exerciseDetailsDao: ExerciseDetailsDao
     ): ExerciseDataSource {
         return if (useLocalDataSource) ExerciseLocalDataSource(
             exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseDBManager = exerciseDBManager
+            exerciseDetailsDao = exerciseDetailsDao
         )
-        else if (useMockupDataSource) ExerciseMockupDataSource()
         else ExerciseRemoteDataSource(exerciseApi)
     }
 
@@ -237,7 +247,6 @@ object AppModule {
             workoutDetailsDao = workoutDetailsDao,
             exerciseSetDao = exerciseSetDao
         )
-//        else if (useMockupDataSource) WorkoutMockupDataSource()
         else WorkoutRemoteDataSource(workoutApi, dispatcher)
     }
 
@@ -264,15 +273,21 @@ object AppModule {
     fun provideWorkoutUseCases(workoutRepository: WorkoutRepository): WorkoutUseCases {
         return WorkoutUseCases(
             getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
+            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
+            getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+            updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+            addExerciseUseCase = AddExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
+            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
-            createWorkoutUseCase = CreateWorkoutUseCase(workoutRepository)
+            createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
+            createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
+            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
         )
     }
 
@@ -280,7 +295,7 @@ object AppModule {
     @Singleton
     fun provideExerciseUseCases(exerciseRepository: ExerciseRepository): ExerciseUseCases {
         return ExerciseUseCases(
-           onSearchExerciseUseCase = OnSearchExerciseUseCase(),
+            onSearchExerciseUseCase = OnSearchExerciseUseCase(),
             onFilterExercisesUseCase = OnFilterExercisesUseCase(),
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
             getExercisesUseCase = GetExercisesUseCase(exerciseRepository),

@@ -11,9 +11,9 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
-import com.koleff.kare_android.ui.state.WorkoutState
+import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.ui.state.UpdateWorkoutState
+import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,10 +37,10 @@ class SearchWorkoutViewModel @Inject constructor(
     val selectedWorkoutState: StateFlow<WorkoutDetailsState>
         get() = _selectedWorkoutState
 
-    private val _workoutsState: MutableStateFlow<WorkoutState> =
-        MutableStateFlow(WorkoutState())
+    private val _workoutsState: MutableStateFlow<WorkoutListState> =
+        MutableStateFlow(WorkoutListState())
 
-    val workoutsState: StateFlow<WorkoutState>
+    val workoutsState: StateFlow<WorkoutListState>
         get() = _workoutsState
 
     private val _updateWorkoutState: MutableStateFlow<WorkoutDetailsState> =
@@ -97,7 +97,7 @@ class SearchWorkoutViewModel @Inject constructor(
 
     private fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getAllWorkoutsUseCase().collect { workoutState ->
                 _workoutsState.value = workoutState
 
                 if (workoutState.isSuccessful) {
@@ -115,9 +115,9 @@ class SearchWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun updateWorkout(workout: WorkoutDetailsDto) {
+    fun updateWorkoutDetails(workout: WorkoutDetailsDto) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.updateWorkoutUseCase.invoke(workout).collect { updateWorkoutState ->
+            workoutUseCases.updateWorkoutDetailsUseCase.invoke(workout).collect { updateWorkoutState ->
                 _updateWorkoutState.value = updateWorkoutState
             }
         }

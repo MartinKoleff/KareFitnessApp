@@ -18,11 +18,11 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
-import com.koleff.kare_android.ui.state.WorkoutState
+import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.SelectedWorkoutState
-import com.koleff.kare_android.ui.state.UpdateWorkoutState
+import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -41,8 +41,8 @@ class WorkoutViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController = navigationController) {
 
-    private val _state: MutableStateFlow<WorkoutState> = MutableStateFlow(WorkoutState())
-    val state: StateFlow<WorkoutState>
+    private val _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
+    val state: StateFlow<WorkoutListState>
         get() = _state
 
     private val _deleteWorkoutState: MutableStateFlow<BaseState> =
@@ -60,14 +60,14 @@ class WorkoutViewModel @Inject constructor(
     val getSelectedWorkoutState: StateFlow<SelectedWorkoutState>
         get() = _getSelectedWorkoutState
 
-    private val _updateWorkoutState: MutableStateFlow<UpdateWorkoutState> =
-        MutableStateFlow(UpdateWorkoutState())
-    val updateWorkoutState: StateFlow<UpdateWorkoutState>
+    private val _updateWorkoutState: MutableStateFlow<WorkoutState> =
+        MutableStateFlow(WorkoutState())
+    val updateWorkoutState: StateFlow<WorkoutState>
         get() = _updateWorkoutState
 
-    private val _createWorkoutState: MutableStateFlow<UpdateWorkoutState> =
-        MutableStateFlow(UpdateWorkoutState())
-    val createWorkoutState: StateFlow<UpdateWorkoutState>
+    private val _createWorkoutState: MutableStateFlow<WorkoutState> =
+        MutableStateFlow(WorkoutState())
+    val createWorkoutState: StateFlow<WorkoutState>
         get() = _createWorkoutState
 
 
@@ -84,7 +84,7 @@ class WorkoutViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             preferences.loadSelectedWorkout()?.let { selectedWorkout ->
-                _state.value = WorkoutState(
+                _state.value = WorkoutListState(
                     isSuccessful = true,
                     workoutList = listOf(selectedWorkout)
                 )
@@ -99,7 +99,7 @@ class WorkoutViewModel @Inject constructor(
 
     fun onWorkoutFilterEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {
-            _state.value = WorkoutState(
+            _state.value = WorkoutListState(
                 isLoading = true
             )
             delay(Constants.fakeSmallDelay)
@@ -184,7 +184,7 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update selected workout
                 if (getSelectedWorkoutState.isSuccessful) {
-                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout
+                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout ?: return@collect
 
                     val updatedList =
                         state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
@@ -219,9 +219,9 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun createWorkout() {
+    fun createNewWorkout() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.createWorkoutUseCase().collect { createWorkoutState ->
+            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
                 _createWorkoutState.value = createWorkoutState
 
                 //Update workout list
@@ -241,13 +241,13 @@ class WorkoutViewModel @Inject constructor(
 
     private fun resetCreateWorkoutState() {
         _createWorkoutState.value =
-            UpdateWorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
     }
 
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getAllWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
 
 //                isRefreshing = workoutState.isLoading

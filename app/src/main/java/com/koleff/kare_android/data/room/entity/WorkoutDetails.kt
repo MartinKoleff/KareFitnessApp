@@ -14,7 +14,7 @@ data class WorkoutDetails(
     val name: String,
     val description: String,
     val muscleGroup: MuscleGroup,
-    val isSelected: Boolean
+    var isSelected: Boolean
 ){
     fun toWorkoutDetailsDto(exercises: MutableList<ExerciseDto>): WorkoutDetailsDto {
         return WorkoutDetailsDto(
