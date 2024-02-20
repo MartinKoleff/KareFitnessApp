@@ -186,10 +186,35 @@ class ExerciseUseCasesUnitTest {
                 assertTrue(exercises.isEmpty())
             }
         }
+
+    @ParameterizedTest(name = "Fetches exercise with id {0}")
+    @ValueSource(ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60])
+    fun `get exercise using GetExerciseUseCase test`(exerciseId: Int) = runTest {
+        val getExerciseState = exerciseUseCases.getExerciseUseCase(exerciseId).toList()
+
+        logger.i(TAG, "Get exercise for exerciseId $exerciseId -> isLoading state raised.")
+        assertTrue { getExerciseState[0].isLoading }
+
+        logger.i(TAG, "Get exercise for exerciseId $exerciseId -> isSuccessful state raised.")
+        assertTrue { getExerciseState[1].isSuccessful }
+
+        val fetchedExercise = getExerciseState[1].exercise
+        logger.i(TAG, "Fetched exercise: $fetchedExercise")
+
+        val muscleGroupRange = ExerciseGenerator.getMuscleGroupRange(fetchedExercise.muscleGroup)
+
+        logger.i(
+            TAG,
+            "Assert fetched exercise is from muscle group  ${fetchedExercise.muscleGroup} range: $muscleGroupRange"
+        )
+        assertTrue(fetchedExercise.exerciseId >= muscleGroupRange.first && fetchedExercise.exerciseId <= muscleGroupRange.second)
+
         val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
 
+        logger.i(TAG, "Assert fetched exercise is from supported muscle groups.")
+        assertTrue { supportedMuscleGroups.contains(fetchedExercise.muscleGroup) }
+    }
 
-        val getExercisesState = exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
 
         logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
         assertTrue { getExercisesState[0].isLoading }
