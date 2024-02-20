@@ -997,8 +997,51 @@ class WorkoutUseCasesUnitTest {
             //TODO: [Test] select current selected workout and fetch...
         }
 
-    @Test
-    fun `search workout using OnSearchWorkoutUseCase test`() = runTest {
+    @ParameterizedTest(name = "OnSearchWorkouts for search text {0}")
+    @CsvSource(
+        value = [
+            "Bench",
+            "Squat",
+            "Curl",
+            "Press",
+            "Dumbbell",
+            "Bulgarian",
+            "Push down",
+            "Lateral",
+            "Push up",
+            "",
+            " "
+        ]
+    )
+    @DisplayName("Search workout using OnSearchWorkoutUseCase test")
+    fun `search workout using OnSearchWorkoutUseCase test`(searchText: String) = runTest {
 
+        //Generate workout list
+        val workoutList = MockupDataGenerator.generateWorkoutList(5)
+
+        val event = OnSearchWorkoutEvent.OnSearchTextChange(searchText, workoutList)
+        val onSearchState = workoutUseCases.onSearchWorkoutUseCase(event).last()
+
+//            logger.i(TAG, "On search filter workouts -> isLoading state raised.")
+//            assertTrue { onSearchState[0].isLoading }
+//
+//            logger.i(TAG, "On search filter workouts -> isSuccessful state raised.")
+//            assertTrue { onSearchState[1].isSuccessful }
+
+        val filteredWorkoutList = onSearchState.workoutList
+        logger.i(TAG, "Filtered workouts list by search text $searchText: filteredWorkoutList")
+
+        logger.i(
+            TAG,
+            "Assert all workouts contain the search text {$searchText} in their names or the workout list is empty: ${workoutList.isEmpty()}."
+        )
+        assertTrue(filteredWorkoutList.any {
+            it.name.contains(
+                searchText,
+                ignoreCase = true
+            )
+        } || filteredWorkoutList.isEmpty())
+
+        //TODO: [TEST] OnToggleSearch...
     }
 }
