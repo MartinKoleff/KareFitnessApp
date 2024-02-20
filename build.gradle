@@ -70,6 +70,7 @@ buildscript {
     ext.firebase_bom_version = "32.7.2"
     ext.firebase_cloud_messaging_version = "23.4.1"
     ext.firebase_analytics_version = "21.5.1"
+    ext.firebase_crashlytics_version = "2.9.9"
 
     //https://github.com/google/gson
     ext.gson_version = "2.10.1"
@@ -144,4 +145,5 @@ plugins {
     id 'com.google.dagger.hilt.android' version "$dagger_hilt_version" apply false
     id 'com.google.gms.google-services' version "$google_services_version" apply false
     id 'com.google.devtools.ksp' version "$ksp_version" apply false
+    id("com.google.firebase.crashlytics") version "$firebase_crashlytics_version" apply false
 }

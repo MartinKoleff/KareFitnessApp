@@ -7,6 +7,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'com.google.gms.google-services'
     id 'com.google.devtools.ksp'
+    id("com.google.firebase.crashlytics")
 }
 
 android {
@@ -49,6 +50,16 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            firebaseCrashlytics {
+                //Enable processing and uploading of native symbols to Firebase servers.
+                //By default, this is disabled to improve build speeds.
+                //This flag must be enabled to see properly-symbolicated native
+                //stack traces in the Crashlytics dashboard.
+                nativeSymbolUploadEnabled true
+                strippedNativeLibsDir 'build/intermediates/stripped_native_libs/release/out/lib'
+                unstrippedNativeLibsDir 'build/intermediates/merged_native_libs/release/out/lib'
+            }
         }
     }
 
@@ -135,7 +146,7 @@ dependencies {
     //Gson (Json converter)
     implementation "com.google.code.gson:gson:$gson_version"
 
-    // Jackson
+    //Jackson
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
 
@@ -157,6 +168,9 @@ dependencies {
     //GMS
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics_version"
     implementation "com.google.firebase:firebase-messaging-ktx:$firebase_cloud_messaging_version"
+
+    //Firebase Crashlytics
+    implementation("com.google.firebase:firebase-crashlytics-ndk:$firebase_crashlytics_version")
 
     //JUnit 4
 //    testImplementation "junit:junit:$robolectric_junit_version"
