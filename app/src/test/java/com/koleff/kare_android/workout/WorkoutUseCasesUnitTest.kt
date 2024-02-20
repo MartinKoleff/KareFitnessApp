@@ -2,13 +2,14 @@ package com.koleff.kare_android.workout
 
 import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
@@ -18,10 +19,10 @@ import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
@@ -31,7 +32,6 @@ import com.koleff.kare_android.exercise.ExerciseUseCasesUnitTest
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
-import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
@@ -44,7 +44,6 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -52,18 +51,16 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
-import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
-//TODO: remove mockup data sources? (how to integrate isError in local datasource?)
-//TODO: add inner classes for each use case...
 class WorkoutUseCasesUnitTest {
+    private lateinit var exerciseDBManager: ExerciseDBManager
+
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
     private lateinit var exerciseDao: ExerciseDaoFake
@@ -81,8 +78,6 @@ class WorkoutUseCasesUnitTest {
 
     private val isLogging = true
     private lateinit var logger: TestLogger
-
-    private val invalidWorkout = mockk<WorkoutDto>(relaxed = true)
 
     companion object {
         @JvmStatic
@@ -154,10 +149,16 @@ class WorkoutUseCasesUnitTest {
             createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
         )
 
-        //Load ExerciseDao with all exercises
-        for (muscleGroup in MuscleGroup.entries) {
-            val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
-            exerciseDao.insertAll(exercisesList)
+        //Initialize DB
+        exerciseDBManager = ExerciseDBManager(
+            exerciseSetDao = exerciseSetDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseDao = exerciseDao,
+            hasInitializedDB = false
+        )
+
+        exerciseDBManager.initializeExerciseTableRoomDB{
+            logger.i(TAG, "DB initialized successfully!")
         }
     }
 

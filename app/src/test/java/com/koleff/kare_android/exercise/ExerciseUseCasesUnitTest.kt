@@ -10,6 +10,7 @@ import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
+import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
@@ -47,6 +48,7 @@ import java.util.stream.Stream
 typealias ExerciseFakeDataSource = ExerciseLocalDataSource
 
 class ExerciseUseCasesUnitTest {
+    private lateinit var exerciseDBManager: ExerciseDBManager
 
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
     private lateinit var exerciseDao: ExerciseDaoFake
@@ -121,20 +123,16 @@ class ExerciseUseCasesUnitTest {
             getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
         )
 
-        //Load DB -> Load ExerciseDao and ExerciseDetailsDao with all exercises
-        for (muscleGroup in MuscleGroup.entries) {
+        //Initialize DB
+        exerciseDBManager = ExerciseDBManager(
+            exerciseSetDao = exerciseSetDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseDao = exerciseDao,
+            hasInitializedDB = false
+        )
 
-            //load exercise
-            val exerciseList = ExerciseGenerator.loadExercises(muscleGroup)
-            exerciseDao.insertAll(exerciseList)
-
-            //load exercise details
-            val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup)
-            exerciseDetailsDao.insertAll(exerciseDetailsList)
-
-            //load exercise details - exercise cross refs //TODO: fix crash...
-//            val exerciseDetailsExerciseCrossRefs = ExerciseGenerator.loadAllCrossRefs()
-//            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRefs)
+        exerciseDBManager.initializeExerciseTableRoomDB{
+            logger.i(TAG, "DB initialized successfully!")
         }
     }
 
