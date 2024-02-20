@@ -118,24 +118,74 @@ class ExerciseUseCasesUnitTest {
     }
 
     @ParameterizedTest(name = "Fetches all exercises for muscle group {0}")
-    @CsvSource(value = [
-        "CHEST",
-        "BACK",
-        "TRICEPS",
-        "BICEPS",
-        "SHOULDERS",
-        "LEGS",
-        "ABS",
-        "CARDIO",
-        "FULL_BODY",
-        "PUSH_PULL_LEGS",
-        "UPPER_LOWER_BODY",
-        "ARMS",
-        "OTHER",
-        "ALL"
-    ])
-    fun `get exercises for each muscle group using GetExercisesUseCase test`(muscleGroupName: String) = runTest {
-        val muscleGroup = MuscleGroup.valueOf(muscleGroupName)
+    @CsvSource(
+        value = [
+            "CHEST",
+            "BACK",
+            "TRICEPS",
+            "BICEPS",
+            "SHOULDERS",
+            "LEGS",
+            "ABS",
+            "CARDIO",
+            "FULL_BODY",
+            "PUSH_PULL_LEGS",
+            "UPPER_LOWER_BODY",
+            "ARMS",
+            "OTHER",
+            "ALL"
+        ]
+    )
+    fun `get exercises for each muscle group using GetExercisesUseCase test`(muscleGroupName: String) =
+        runTest {
+            val muscleGroup = MuscleGroup.valueOf(muscleGroupName)
+            val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
+
+            val getExercisesState =
+                exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
+
+            logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
+            assertTrue { getExercisesState[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Get exercises for muscle group $muscleGroup -> isSuccessful state raised."
+            )
+            assertTrue { getExercisesState[1].isSuccessful }
+
+            val exercises = getExercisesState[1].exerciseList
+            logger.i(TAG, "Fetched exercises for muscle group $muscleGroup:\n$exercises")
+
+            //Supported muscle group
+            if (supportedMuscleGroups.contains(muscleGroup) || muscleGroup == MuscleGroup.ALL) {
+
+                logger.i(TAG, "Assert exercises were fetched")
+                assertTrue(exercises.isNotEmpty())
+
+                //Fetched all exercises
+                if (muscleGroup == MuscleGroup.ALL) {
+
+                    logger.i(TAG, "Assert all exercises are fetched -> $muscleGroup")
+                    logger.i(TAG, "Total exercises in DB: ${ExerciseGenerator.TOTAL_EXERCISES}")
+                    logger.i(TAG, "Fetched exercises: ${exercises.size}")
+
+                    assertTrue(exercises.size == ExerciseGenerator.TOTAL_EXERCISES)
+                } else {
+                    val exerciseIdRange = ExerciseGenerator.getMuscleGroupRange(muscleGroup)
+
+                    logger.i(TAG, "Assert all exercises are from muscle group: $muscleGroup")
+                    assertTrue(exercises.all { it.muscleGroup == muscleGroup })
+
+                    logger.i(TAG, "Assert all exercises are in exercise id range: $exerciseIdRange")
+                    assertTrue(exercises.all { it.exerciseId >= exerciseIdRange.first && it.exerciseId <= exerciseIdRange.second })
+                }
+            } else {
+                logger.i(TAG, "Muscle group $muscleGroup currently not supported. No exercises for the muscle group.")
+
+                logger.i(TAG, "Assert no exercises were fetched")
+                assertTrue(exercises.isEmpty())
+            }
+        }
         val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
 
 
