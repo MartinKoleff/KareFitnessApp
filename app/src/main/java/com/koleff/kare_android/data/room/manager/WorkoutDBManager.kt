@@ -9,13 +9,14 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class WorkoutDBManager @Inject constructor(
-    private val preferences: Preferences,
     private val workoutDao: WorkoutDao,
     private val workoutDetailsDao: WorkoutDetailsDao,
+    private val hasInitializedDB: Boolean
 ) {
 
-    suspend fun initializeWorkoutTableRoomDB() = withContext(Dispatchers.IO) {
-        if(hasInitializedWorkoutTableRoomDB) return@withContext
+    suspend fun initializeWorkoutTableRoomDB(onDBInitialized: () -> Unit) =
+        withContext(Dispatchers.IO) {
+            if (hasInitializedDB) return@withContext
 
             val workoutList = WorkoutGenerator.getAllWorkouts()
             val workoutDetailsList = WorkoutGenerator.getAllWorkoutDetails()
@@ -32,5 +33,6 @@ class WorkoutDBManager @Inject constructor(
             )
             workoutDao.insertAllWorkoutDetailsWorkoutCrossRef(workoutDetailsWorkoutCrossRefs)
 
+            onDBInitialized()
         }
 }

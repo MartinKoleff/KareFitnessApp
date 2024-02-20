@@ -167,7 +167,14 @@ object AppModule {
         exerciseDetailsDao: ExerciseDetailsDao,
         exerciseSetDao: ExerciseSetDao
     ): ExerciseDBManager {
-        return ExerciseDBManager(preferences, exerciseDao, exerciseDetailsDao, exerciseSetDao)
+        val hasInitializedDB = preferences.hasInitializedExerciseTableRoomDB()
+
+        return ExerciseDBManager(
+            exerciseDao = exerciseDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao,
+            hasInitializedDB = hasInitializedDB
+        )
     }
 
     @Provides
@@ -195,7 +202,13 @@ object AppModule {
         workoutDao: WorkoutDao,
         workoutDetailsDao: WorkoutDetailsDao
     ): WorkoutDBManager {
-        return WorkoutDBManager(preferences, workoutDao, workoutDetailsDao)
+        val hasInitializedDB = preferences.hasInitializedWorkoutTableRoomDB()
+
+        return WorkoutDBManager(
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
+            hasInitializedDB = hasInitializedDB
+        )
     }
 
     @Provides
@@ -282,7 +295,7 @@ object AppModule {
     @Singleton
     fun provideExerciseUseCases(exerciseRepository: ExerciseRepository): ExerciseUseCases {
         return ExerciseUseCases(
-           onSearchExerciseUseCase = OnSearchExerciseUseCase(),
+            onSearchExerciseUseCase = OnSearchExerciseUseCase(),
             onFilterExercisesUseCase = OnFilterExercisesUseCase(),
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
             getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
