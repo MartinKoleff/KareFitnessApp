@@ -474,8 +474,8 @@ class ExerciseUseCasesUnitTest {
         val muscleGroup = MuscleGroup.valueOf(muscleGroupName)
         val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
 
-        logger.i(TAG, "Muscle group for this test: $muscleGroup.")
-        logger.i(TAG, "Search text for this test: $searchText.")
+        logger.i(TAG, "Muscle group for this test: {$muscleGroup}.")
+        logger.i(TAG, "Search text for this test: {$searchText}.")
 
         val getExercisesState =
             exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
@@ -507,7 +507,7 @@ class ExerciseUseCasesUnitTest {
             val filteredExerciseList = onSearchState.exerciseList
             logger.i(
                 TAG,
-                "Filtered exercise list by search text $searchText: $filteredExerciseList"
+                "Filtered exercise list by search text {$searchText}: $filteredExerciseList"
             )
 
             logger.i(

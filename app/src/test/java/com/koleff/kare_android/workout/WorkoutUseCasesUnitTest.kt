@@ -54,7 +54,10 @@ import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
+import java.util.stream.Stream
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
@@ -83,6 +86,26 @@ class WorkoutUseCasesUnitTest {
     private val invalidWorkout = mockk<WorkoutDto>(relaxed = true)
 
     companion object {
+        @JvmStatic
+        fun provideSearchTexts(): Stream<Arguments> {
+            val searchTexts = listOf(
+                "Bench",
+                "Squat",
+                "Curl",
+                "Press",
+                "Dumbbell",
+                "Bulgarian",
+                "Push down",
+                "Lateral",
+                "Push up",
+                "",
+                " "
+            )
+           return searchTexts.map { text ->
+                Arguments.of(text)
+            }.stream()
+        }
+
         private const val TAG = "WorkoutUseCasesUnitTest"
     }
 
@@ -998,23 +1021,10 @@ class WorkoutUseCasesUnitTest {
         }
 
     @ParameterizedTest(name = "OnSearchWorkouts for search text {0}")
-    @CsvSource(
-        value = [
-            "Bench",
-            "Squat",
-            "Curl",
-            "Press",
-            "Dumbbell",
-            "Bulgarian",
-            "Push down",
-            "Lateral",
-            "Push up",
-            "",
-            " "
-        ]
-    )
+    @MethodSource("provideSearchTexts")
     @DisplayName("Search workout using OnSearchWorkoutUseCase test")
     fun `search workout using OnSearchWorkoutUseCase test`(searchText: String) = runTest {
+        logger.i(TAG, "Search text for this test: {$searchText}.")
 
         //Generate workout list
         val workoutList = MockupDataGenerator.generateWorkoutList(5)
@@ -1029,7 +1039,7 @@ class WorkoutUseCasesUnitTest {
 //            assertTrue { onSearchState[1].isSuccessful }
 
         val filteredWorkoutList = onSearchState.workoutList
-        logger.i(TAG, "Filtered workouts list by search text $searchText: filteredWorkoutList")
+        logger.i(TAG, "Filtered workouts list by search text {$searchText}: $filteredWorkoutList")
 
         logger.i(
             TAG,
