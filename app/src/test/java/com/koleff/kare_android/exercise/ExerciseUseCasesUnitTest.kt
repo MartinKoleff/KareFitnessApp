@@ -34,7 +34,11 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
+import org.junit.jupiter.params.provider.ValueSource
+import java.util.stream.Stream
 
 typealias ExerciseFakeDataSource = ExerciseLocalDataSource
 
@@ -58,6 +62,17 @@ class ExerciseUseCasesUnitTest {
 
     companion object {
         private const val TAG = "ExerciseUseCasesUnitTest"
+
+        @JvmStatic
+        fun provideMuscleGroupsAndSearchTexts(): Stream<Arguments> {
+            val searchTexts = listOf("Bench", "Squat", "Curl", "Press", "Dumbbell", "Bulgarian", "", "Push down", "Lateral", "Push up")
+            val muscleGroups = MuscleGroup.entries.toTypedArray()
+            return muscleGroups.flatMap { muscleGroup ->
+                searchTexts.map { text ->
+                    Arguments.of(muscleGroup.name, text) //Passing enum as string
+                }
+            }.stream()
+        }
     }
 
     @BeforeEach
@@ -248,42 +263,134 @@ class ExerciseUseCasesUnitTest {
         assertTrue { supportedMuscleGroups.contains(fetchedExerciseDetails.muscleGroup) }
     }
 
+    @ParameterizedTest(name = "OnFilterExercises for muscle group {0}")
+    @CsvSource(
+        value = [
+            "CHEST",
+            "BACK",
+            "TRICEPS",
+            "BICEPS",
+            "SHOULDERS",
+            "LEGS",
+            "ABS",
+            "CARDIO",
+            "FULL_BODY",
+            "PUSH_PULL_LEGS",
+            "UPPER_LOWER_BODY",
+            "ARMS",
+            "OTHER",
+            "ALL"
+        ]
+    )
+    fun `OnFilterExercisesUseCase test`(muscleGroupName: String) = runTest {
+        val muscleGroup = MuscleGroup.valueOf(muscleGroupName)
+        val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
+
+        val getExercisesState =
+            exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
+
         logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
         assertTrue { getExercisesState[0].isLoading }
 
-        logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isSuccessful state raised.")
+        logger.i(
+            TAG,
+            "Get exercises for muscle group $muscleGroup -> isSuccessful state raised."
+        )
         assertTrue { getExercisesState[1].isSuccessful }
 
         val exercises = getExercisesState[1].exerciseList
         logger.i(TAG, "Fetched exercises for muscle group $muscleGroup:\n$exercises")
 
         //Supported muscle group
-        if(supportedMuscleGroups.contains(muscleGroup) || muscleGroup == MuscleGroup.ALL) {
+        if (supportedMuscleGroups.contains(muscleGroup) || muscleGroup == MuscleGroup.ALL) {
 
-            logger.i(TAG, "Assert exercises were fetched")
-            assertTrue(exercises.isNotEmpty())
+            //Barbell
+            val event = OnFilterExercisesEvent.BarbellFilter(exercises)
+            val onFilterEventState = exerciseUseCases.onFilterExercisesUseCase(event).toList()
 
-            //Fetched all exercises
-            if(muscleGroup == MuscleGroup.ALL) {
+            logger.i(TAG, "On barbell filter exercise -> isLoading state raised.")
+            assertTrue { onFilterEventState[0].isLoading }
 
-                logger.i(TAG, "Assert all exercises are fetched -> $muscleGroup")
-                logger.i(TAG, "Total exercises in DB: ${ExerciseGenerator.TOTAL_EXERCISES}")
-                logger.i(TAG, "Fetched exercises: ${exercises.size}")
+            logger.i(TAG, "On barbell filter exercise -> isSuccessful state raised.")
+            assertTrue { onFilterEventState[1].isSuccessful }
 
-                assertTrue(exercises.size == ExerciseGenerator.TOTAL_EXERCISES)
-            }else{
-                val exerciseIdRange = ExerciseGenerator.getMuscleGroupRange(muscleGroup)
+            val filteredExerciseList = onFilterEventState[1].exerciseList
+            logger.i(TAG, "Filtered exercise list by barbell: $filteredExerciseList")
 
-                logger.i(TAG, "Assert all exercises are from muscle group: $muscleGroup")
-                assertTrue(exercises.all { it.muscleGroup == muscleGroup })
+            logger.i(TAG, "Assert only barbell exercises are filtered.")
+            assertTrue { filteredExerciseList.map { it.machineType }.all { it == MachineType.BARBELL } }
 
-                logger.i(TAG, "Assert all exercises are in exercise id range: $exerciseIdRange")
-                assertTrue(exercises.all { it.exerciseId >= exerciseIdRange.first && it.exerciseId <= exerciseIdRange.second })
-            }
+            //Calisthenics
+            val event2 = OnFilterExercisesEvent.CalisthenicsFilter(exercises)
+            val onFilterEventState2 = exerciseUseCases.onFilterExercisesUseCase(event2).toList()
+
+            logger.i(TAG, "On calisthenics filter exercise -> isLoading state raised.")
+            assertTrue { onFilterEventState2[0].isLoading }
+
+            logger.i(TAG, "On calisthenics filter exercise -> isSuccessful state raised.")
+            assertTrue { onFilterEventState2[1].isSuccessful }
+
+            val filteredExerciseList2 = onFilterEventState2[1].exerciseList
+            logger.i(TAG, "Filtered exercise list by calisthenics: $filteredExerciseList2")
+
+            logger.i(TAG, "Assert only calisthenics exercises are filtered.")
+            assertTrue { filteredExerciseList2.map { it.machineType }.all { it == MachineType.CALISTHENICS } }
+
+            //Dumbbell
+            val event3 = OnFilterExercisesEvent.DumbbellFilter(exercises)
+            val onFilterEventState3 = exerciseUseCases.onFilterExercisesUseCase(event3).toList()
+
+            logger.i(TAG, "On dumbbell filter exercise -> isLoading state raised.")
+            assertTrue { onFilterEventState3[0].isLoading }
+
+            logger.i(TAG, "On dumbbell filter exercise -> isSuccessful state raised.")
+            assertTrue { onFilterEventState3[1].isSuccessful }
+
+            val filteredExerciseList3 = onFilterEventState3[1].exerciseList
+            logger.i(TAG, "Filtered exercise list by dumbbell: $filteredExerciseList3")
+
+            logger.i(TAG, "Assert only dumbbell exercises are filtered.")
+            assertTrue { filteredExerciseList3.map { it.machineType }.all { it == MachineType.DUMBBELL } }
+
+            //Machine
+            val event4 = OnFilterExercisesEvent.MachineFilter(exercises)
+            val onFilterEventState4 = exerciseUseCases.onFilterExercisesUseCase(event4).toList()
+
+            logger.i(TAG, "On machine filter exercise -> isLoading state raised.")
+            assertTrue { onFilterEventState4[0].isLoading }
+
+            logger.i(TAG, "On machine filter exercise -> isSuccessful state raised.")
+            assertTrue { onFilterEventState4[1].isSuccessful }
+
+            val filteredExerciseList4 = onFilterEventState4[1].exerciseList
+            logger.i(TAG, "Filtered exercise list by machine: $filteredExerciseList4")
+
+            logger.i(TAG, "Assert only machine exercises are filtered.")
+            assertTrue { filteredExerciseList4.map { it.machineType }.all { it == MachineType.MACHINE } }
+
+            //No filter -> all exercises
+            val event5 = OnFilterExercisesEvent.NoFilter(exercises)
+            val onFilterEventState5 = exerciseUseCases.onFilterExercisesUseCase(event5).toList()
+
+            logger.i(TAG, "On no filter exercise -> isLoading state raised.")
+            assertTrue { onFilterEventState5[0].isLoading }
+
+            logger.i(TAG, "On no filter exercise -> isSuccessful state raised.")
+            assertTrue { onFilterEventState5[1].isSuccessful }
+
+            val filteredExerciseList5 = onFilterEventState5[1].exerciseList
+            logger.i(TAG, "Filtered exercise list by no filter: $filteredExerciseList5")
+
+            logger.i(TAG, "Assert all exercises are fetched.")
+            val totalExercisesForMuscleGroup = if(muscleGroup == MuscleGroup.ALL) ExerciseGenerator.TOTAL_EXERCISES else MuscleGroup.getTotalExercises(muscleGroup)
+
+            logger.i(TAG, "Total exercises for muscle group $muscleGroup: $totalExercisesForMuscleGroup ")
+            logger.i(TAG, "Filtered exercises: ${filteredExerciseList5.size}")
+            assertTrue { filteredExerciseList5.size == totalExercisesForMuscleGroup}
+
+            //Valio beshe tuk
         }else{
-
-            logger.i(TAG, "Assert no exercises were fetched")
-            assertTrue(exercises.isEmpty())
+            logger.i(TAG, "Muscle group $muscleGroup currently not supported. No exercises for the muscle group.")
         }
     }
 
