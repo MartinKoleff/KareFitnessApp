@@ -24,4 +24,8 @@ class ExerciseDetailsDaoFake : ExerciseDetailsDao {
     override fun getExerciseDetailsById(exerciseId: Int): ExerciseDetails {
         return exerciseDetailsDB.first { it.exerciseDetailsId == exerciseId }
     }
+
+    fun clearDB(){
+        exerciseDetailsDB.clear()
+    }
 }

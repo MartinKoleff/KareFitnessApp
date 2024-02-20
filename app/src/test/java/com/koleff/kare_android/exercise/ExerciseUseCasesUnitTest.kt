@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -89,11 +90,31 @@ class ExerciseUseCasesUnitTest {
             getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
         )
 
-        //Load ExerciseDao with all exercises
+        //Load DB -> Load ExerciseDao and ExerciseDetailsDao with all exercises
         for (muscleGroup in MuscleGroup.entries) {
-            val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
-            exerciseDao.insertAll(exercisesList)
+
+            //load exercise
+            val exerciseList = ExerciseGenerator.loadExercises(muscleGroup)
+            exerciseDao.insertAll(exerciseList)
+
+            //load exercise details
+            val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup)
+            exerciseDetailsDao.insertAll(exerciseDetailsList)
+
+            //load exercise details - exercise cross refs //TODO: fix crash...
+//            val exerciseDetailsExerciseCrossRefs = ExerciseGenerator.loadAllCrossRefs()
+//            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRefs)
         }
+    }
+
+    @AfterEach
+    fun tearDown() {
+        exerciseDao.clearDB()
+        exerciseDetailsDao.clearDB()
+        exerciseSetDao.clearDB()
+
+        logger.i("tearDown", "DB cleared!")
+        logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
     }
 
     @ParameterizedTest(name = "Fetches all exercises for muscle group {0}")
