@@ -28,7 +28,8 @@ class OnFilterExercisesUseCase() {
                         exerciseList = event.exercises.filter {
                             it.machineType == MachineType.DUMBBELL
                         },
-                        isLoading = false
+                        isLoading = false,
+                        isSuccessful = true
                     )
                 )
             }
@@ -39,7 +40,8 @@ class OnFilterExercisesUseCase() {
                         exerciseList = event.exercises.filter {
                             it.machineType == MachineType.BARBELL
                         },
-                        isLoading = false
+                        isLoading = false,
+                        isSuccessful = true
                     )
                 )
             }
@@ -50,7 +52,8 @@ class OnFilterExercisesUseCase() {
                         exerciseList = event.exercises.filter {
                             it.machineType == MachineType.MACHINE
                         },
-                        isLoading = false
+                        isLoading = false,
+                        isSuccessful = true
                     )
                 )
             }
@@ -61,7 +64,8 @@ class OnFilterExercisesUseCase() {
                         exerciseList = event.exercises.filter {
                             it.machineType == MachineType.CALISTHENICS
                         },
-                        isLoading = false
+                        isLoading = false,
+                        isSuccessful = true
                     )
                 )
             }
@@ -70,7 +74,8 @@ class OnFilterExercisesUseCase() {
                 emit(
                     ExerciseListState(
                         exerciseList = event.exercises,
-                        isLoading = false
+                        isLoading = false,
+                        isSuccessful = true
                     )
                 )
             }

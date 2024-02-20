@@ -21,7 +21,7 @@ class OnSearchExerciseUseCase() {
                         invoke(
                             OnSearchExerciseEvent.OnSearchTextChange(
                                 searchText = "",
-                                exercises = event.exercises
+                                exercises = event.exercises,
                             )
                         )
                     }
@@ -36,7 +36,8 @@ class OnSearchExerciseUseCase() {
 
                                 //Custom search filter...
                                 it.name.contains(event.searchText, ignoreCase = true)
-                            }
+                            },
+                            isSuccessful = true
                         )
                     )
                 }

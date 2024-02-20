@@ -33,7 +33,8 @@ class OnSearchWorkoutUseCase() {
 
                                 //Custom search filter...
                                 it.name.contains(event.searchText, ignoreCase = true)
-                            }
+                            },
+                            isSuccessful = true
                         )
                     )
                 }
