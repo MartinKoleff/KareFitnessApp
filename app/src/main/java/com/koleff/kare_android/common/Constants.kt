@@ -27,5 +27,5 @@ object Constants {
     const val isTestingNotifications = false
     const val UNIVERSAL_NOTIFICATION_TOPIC = "KARE"
 
-    const val isTestingFirebaseCrashlytics = true
+    const val isTestingFirebaseCrashlytics = false
 }
