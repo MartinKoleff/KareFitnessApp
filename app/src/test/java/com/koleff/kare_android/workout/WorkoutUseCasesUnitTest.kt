@@ -27,14 +27,18 @@ import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.exercise.ExerciseUseCasesUnitTest
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
+import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
+import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
 import io.mockk.mockk
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -45,9 +49,12 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
@@ -168,6 +175,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.getWorkoutsOrderedById()
      */
     @Test
+    @DisplayName("Create workout using CreateNewWorkoutUseCase test")
     fun `create workout using CreateNewWorkoutUseCase test`() =
         runTest {
             val workouts = workoutDao.getWorkoutsOrderedById()
@@ -233,6 +241,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.insertWorkout()
      */
     @Test
+    @DisplayName("Get workouts using GetAllWorkoutsUseCase test")
     fun `get workouts using GetAllWorkoutsUseCase test`() = runTest {
 
         //Fetch
@@ -258,6 +267,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.getWorkoutById()
      */
     @RepeatedTest(50)
+    @DisplayName("Get workout using GetWorkoutUseCase test")
     fun `get workout using GetWorkoutUseCase test`() = runTest {
 
         //Generate workout
@@ -285,7 +295,7 @@ class WorkoutUseCasesUnitTest {
         assertTrue(fetchedWorkout == workout)
     }
 
-    //TODO: [get workout using GetWorkoutUseCase test] -> Throw error for invalid ID test
+    //TODO: [Test] get workout using GetWorkoutUseCase -> Throw error for invalid ID test
 
     /**
      * Tested functions inside:
@@ -304,6 +314,7 @@ class WorkoutUseCasesUnitTest {
      * ExerciseDao.insertAllExerciseSetCrossRef()
      */
     @RepeatedTest(50)
+    @DisplayName("Get workout details using GetWorkoutsDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test")
     fun `get workout details using GetWorkoutsDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test`() =
         runTest {
 
@@ -383,6 +394,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.getWorkoutById()
      */
     @RepeatedTest(50)
+    @DisplayName("Update workout details using UpdateWorkoutDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test")
     fun `update workout details using UpdateWorkoutDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test`() =
         runTest {
 
@@ -492,7 +504,8 @@ class WorkoutUseCasesUnitTest {
      * ExerciseDao.getExerciseById()
      */
     @RepeatedTest(50)
-    fun `update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase`() =
+    @DisplayName("Update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase test")
+    fun `update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase test`() =
         runTest {
 
             //Generate Workout
@@ -585,6 +598,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDetailsDao.getWorkoutDetailsOrderedById()
      * */
     @RepeatedTest(50)
+    @DisplayName("Delete workout using DeleteWorkoutUseCase test")
     fun `delete workout using DeleteWorkoutUseCase test`() = runTest {
 
         //Generate Workout
@@ -643,7 +657,7 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Assert workout details DB is empty.")
         assertTrue { workoutDetailsDB.isEmpty() }
 
-        //TODO: test when 2 entries are added and 1 deleted if 1 stays in DB...
+        //TODO: [Test] when 2 entries are added and 1 deleted if 1 stays in DB...
     }
 
     /**
@@ -679,6 +693,7 @@ class WorkoutUseCasesUnitTest {
      * ExerciseSetDao.getSetById()
      */
     @RepeatedTest(50)
+    @DisplayName("Add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test")
     fun `add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test`() =
         runTest {
 
@@ -820,6 +835,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.selectWorkoutById()
      */
     @RepeatedTest(10)
+    @DisplayName("Select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test")
     fun `select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test`() =
         runTest {
 
