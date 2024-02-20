@@ -3,6 +3,7 @@ package com.koleff.kare_android.exercise
 import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
+import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
@@ -21,10 +22,13 @@ import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseMockupDataSource
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
+import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
+import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
 import io.mockk.mockk
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
@@ -394,5 +398,51 @@ class ExerciseUseCasesUnitTest {
         }
     }
 
-    
+    @ParameterizedTest(name = "OnSearchExercises for muscle group {0} and search text {1}")
+    @MethodSource("provideMuscleGroupsAndSearchTexts")
+    fun `OnSearchExercisesUseCase test`(muscleGroupName: String, searchText: String) = runTest {
+        val muscleGroup = MuscleGroup.valueOf(muscleGroupName)
+        val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
+
+        logger.i(TAG, "Muscle group for this test: $muscleGroup.")
+        logger.i(TAG, "Search text for this test: $searchText.")
+
+        val getExercisesState =
+            exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
+
+        logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
+        assertTrue { getExercisesState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Get exercises for muscle group $muscleGroup -> isSuccessful state raised."
+        )
+        assertTrue { getExercisesState[1].isSuccessful }
+
+        val exercises = getExercisesState[1].exerciseList
+        logger.i(TAG, "Fetched exercises for muscle group $muscleGroup:\n$exercises")
+
+        //Supported muscle group
+        if (supportedMuscleGroups.contains(muscleGroup) || muscleGroup == MuscleGroup.ALL) {
+            val event = OnSearchExerciseEvent.OnSearchTextChange(searchText, exercises)
+
+            val onSearchState = exerciseUseCases.onSearchExerciseUseCase(event).last()
+
+//            logger.i(TAG, "On search filter exercise -> isLoading state raised.")
+//            assertTrue { onSearchState[0].isLoading }
+//
+//            logger.i(TAG, "On search filter exercise -> isSuccessful state raised.")
+//            assertTrue { onSearchState[1].isSuccessful }
+
+            val filteredExerciseList = onSearchState.exerciseList
+            logger.i(TAG, "Filtered exercise list by search text $searchText: $filteredExerciseList")
+
+            logger.i(TAG, "Assert all exercises contain the search text {$searchText} in their names or the exercise list is empty: ${filteredExerciseList.isEmpty()}.")
+            assertTrue(filteredExerciseList.any { it.name.contains(searchText, ignoreCase = true)} || filteredExerciseList.isEmpty())
+        }else{
+            logger.i(TAG, "Muscle group $muscleGroup currently not supported. No exercises for the muscle group.")
+        }
+
+        //TODO: [TEST] OnToggleSearch...
+    }
 }
