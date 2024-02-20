@@ -24,6 +24,7 @@ class ExerciseDaoFake(
     private val exerciseSetCrossRefs =
         mutableListOf<ExerciseSetCrossRef>()
 
+    private val isInternalLogging = false
     companion object {
         private const val TAG = "ExerciseDaoFake"
     }
@@ -36,7 +37,7 @@ class ExerciseDaoFake(
             ExerciseWithSet(exercise = exercise, sets = sets)
         )
 
-        logger.i(TAG, "Inserted exercise sets in DB for exercise ${exercise.exerciseId}: $sets")
+        if(isInternalLogging) logger.i(TAG, "Inserted exercise sets in DB for exercise ${exercise.exerciseId}: $sets")
     }
 
     private fun updateExerciseDetailsDB(exerciseDetailsId: Int) {
@@ -47,7 +48,7 @@ class ExerciseDaoFake(
             ExerciseDetailsWithExercise(exerciseDetails = exerciseDetails, exercise = exercise)
         )
 
-        logger.i(TAG, "Update exercise details - exercise cross ref in DB: $exercise\n$exerciseDetails")
+        if(isInternalLogging) logger.i(TAG, "Update exercise details - exercise cross ref in DB: $exercise\n$exerciseDetails")
     }
 
     private fun getExerciseSets(exercise: Exercise): List<ExerciseSet> {
@@ -62,7 +63,7 @@ class ExerciseDaoFake(
             sets.add(set)
         }
 
-        logger.i(TAG, "Get exercise sets for exercise with id ${exercise.exerciseId}: $sets")
+        if(isInternalLogging) logger.i(TAG, "Get exercise sets for exercise with id ${exercise.exerciseId}: $sets")
 
         return sets
             .distinct()
@@ -120,7 +121,7 @@ class ExerciseDaoFake(
         exerciseWithSetDB.remove(exerciseWithNoSets)
         exerciseWithSetDB.add(exerciseWithSets)
 
-        logger.i(TAG, "Exercise $exerciseId with sets updated: $exerciseWithSets")
+        if(isInternalLogging) logger.i(TAG, "Exercise $exerciseId with sets updated: $exerciseWithSets")
     }
 
     override suspend fun deleteExercise(exercise: Exercise) {

@@ -18,6 +18,8 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake, private va
     private fun getAllExercises() =
         exerciseDao.getExercisesOrderedById()
 
+    private val isInternalLogging = false
+
     companion object {
         private const val TAG = "WorkoutDetailsDaoFake"
     }
@@ -124,7 +126,7 @@ class WorkoutDetailsDaoFake(private val exerciseDao: ExerciseDaoFake, private va
             .map { exerciseDao.getExerciseById(it.exerciseId) }
             .map(ExerciseWithSet::toExerciseDto)
 
-        logger.i(TAG, "Get workout exercises with sets -> $exerciseWithSets")
+        if(isInternalLogging) logger.i(TAG, "Get workout exercises with sets -> $exerciseWithSets")
         return exerciseWithSets
     }
 
