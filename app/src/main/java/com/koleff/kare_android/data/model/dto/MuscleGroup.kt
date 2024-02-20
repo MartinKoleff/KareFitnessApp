@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.model.dto
 
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.ExerciseGenerator
 
 enum class MuscleGroup(
     val muscleGroupId: Int,
@@ -39,6 +40,10 @@ enum class MuscleGroup(
 
         fun getImage(muscleGroup: MuscleGroup): Int {
             return if (muscleGroup.imageId != -1) muscleGroup.imageId else R.drawable.ic_default
+        }
+
+        fun getTotalExercises(muscleGroup: MuscleGroup): Int {
+            return ExerciseGenerator.getTotalExercisesForMuscleGroup(muscleGroup)
         }
     }
 }
