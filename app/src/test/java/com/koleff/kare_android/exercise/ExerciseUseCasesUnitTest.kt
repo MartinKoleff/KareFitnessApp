@@ -69,7 +69,19 @@ class ExerciseUseCasesUnitTest {
 
         @JvmStatic
         fun provideMuscleGroupsAndSearchTexts(): Stream<Arguments> {
-            val searchTexts = listOf("Bench", "Squat", "Curl", "Press", "Dumbbell", "Bulgarian", "", "Push down", "Lateral", "Push up")
+            val searchTexts = listOf(
+                "Bench",
+                "Squat",
+                "Curl",
+                "Press",
+                "Dumbbell",
+                "Bulgarian",
+                "Push down",
+                "Lateral",
+                "Push up",
+                "",
+                " "
+            )
             val muscleGroups = MuscleGroup.entries.toTypedArray()
             return muscleGroups.flatMap { muscleGroup ->
                 searchTexts.map { text ->
@@ -136,6 +148,13 @@ class ExerciseUseCasesUnitTest {
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
     }
 
+    /**
+     * Tested functions inside:
+     *
+     * GetExercisesUseCase()
+     * exerciseDao.getAllExercises()
+     * exerciseDao.getExercisesOrderedById()
+     */
     @ParameterizedTest(name = "Fetches all exercises for muscle group {0}")
     @CsvSource(
         value = [
@@ -199,13 +218,22 @@ class ExerciseUseCasesUnitTest {
                     assertTrue(exercises.all { it.exerciseId >= exerciseIdRange.first && it.exerciseId <= exerciseIdRange.second })
                 }
             } else {
-                logger.i(TAG, "Muscle group $muscleGroup currently not supported. No exercises for the muscle group.")
+                logger.i(
+                    TAG,
+                    "Muscle group $muscleGroup currently not supported. No exercises for the muscle group."
+                )
 
                 logger.i(TAG, "Assert no exercises were fetched")
                 assertTrue(exercises.isEmpty())
             }
         }
 
+    /**
+     * Tested functions inside:
+     *
+     * GetExerciseUseCase()
+     * exerciseDao.getExerciseById()
+     */
     @ParameterizedTest(name = "Fetches exercise with id {0}")
     @ValueSource(ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60])
     fun `get exercise using GetExerciseUseCase test`(exerciseId: Int) = runTest {
@@ -234,6 +262,12 @@ class ExerciseUseCasesUnitTest {
         assertTrue { supportedMuscleGroups.contains(fetchedExercise.muscleGroup) }
     }
 
+    /**
+     * Tested functions inside:
+     *
+     * GetExerciseDetailsUseCase()
+     * exerciseDetailsDao.getExerciseDetailsById()
+     */
     @ParameterizedTest(name = "Fetches exercise details with id {0}")
     @ValueSource(ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60])
     fun `get exercise details using GetExerciseDetailsUseCase test`(exerciseId: Int) = runTest {
@@ -267,6 +301,15 @@ class ExerciseUseCasesUnitTest {
         assertTrue { supportedMuscleGroups.contains(fetchedExerciseDetails.muscleGroup) }
     }
 
+    /**
+     * Tested functions inside:
+     *
+     * GetExercisesUseCase()
+     * exerciseDao.getAllExercises()
+     * exerciseDao.getExercisesOrderedById()
+     * ------------------------
+     * OnFilterExercisesUseCase()
+     */
     @ParameterizedTest(name = "OnFilterExercises for muscle group {0}")
     @CsvSource(
         value = [
@@ -322,7 +365,9 @@ class ExerciseUseCasesUnitTest {
             logger.i(TAG, "Filtered exercise list by barbell: $filteredExerciseList")
 
             logger.i(TAG, "Assert only barbell exercises are filtered.")
-            assertTrue { filteredExerciseList.map { it.machineType }.all { it == MachineType.BARBELL } }
+            assertTrue {
+                filteredExerciseList.map { it.machineType }.all { it == MachineType.BARBELL }
+            }
 
             //Calisthenics
             val event2 = OnFilterExercisesEvent.CalisthenicsFilter(exercises)
@@ -338,7 +383,9 @@ class ExerciseUseCasesUnitTest {
             logger.i(TAG, "Filtered exercise list by calisthenics: $filteredExerciseList2")
 
             logger.i(TAG, "Assert only calisthenics exercises are filtered.")
-            assertTrue { filteredExerciseList2.map { it.machineType }.all { it == MachineType.CALISTHENICS } }
+            assertTrue {
+                filteredExerciseList2.map { it.machineType }.all { it == MachineType.CALISTHENICS }
+            }
 
             //Dumbbell
             val event3 = OnFilterExercisesEvent.DumbbellFilter(exercises)
@@ -354,7 +401,9 @@ class ExerciseUseCasesUnitTest {
             logger.i(TAG, "Filtered exercise list by dumbbell: $filteredExerciseList3")
 
             logger.i(TAG, "Assert only dumbbell exercises are filtered.")
-            assertTrue { filteredExerciseList3.map { it.machineType }.all { it == MachineType.DUMBBELL } }
+            assertTrue {
+                filteredExerciseList3.map { it.machineType }.all { it == MachineType.DUMBBELL }
+            }
 
             //Machine
             val event4 = OnFilterExercisesEvent.MachineFilter(exercises)
@@ -370,7 +419,9 @@ class ExerciseUseCasesUnitTest {
             logger.i(TAG, "Filtered exercise list by machine: $filteredExerciseList4")
 
             logger.i(TAG, "Assert only machine exercises are filtered.")
-            assertTrue { filteredExerciseList4.map { it.machineType }.all { it == MachineType.MACHINE } }
+            assertTrue {
+                filteredExerciseList4.map { it.machineType }.all { it == MachineType.MACHINE }
+            }
 
             //No filter -> all exercises
             val event5 = OnFilterExercisesEvent.NoFilter(exercises)
@@ -386,17 +437,36 @@ class ExerciseUseCasesUnitTest {
             logger.i(TAG, "Filtered exercise list by no filter: $filteredExerciseList5")
 
             logger.i(TAG, "Assert all exercises are fetched.")
-            val totalExercisesForMuscleGroup = if(muscleGroup == MuscleGroup.ALL) ExerciseGenerator.TOTAL_EXERCISES else MuscleGroup.getTotalExercises(muscleGroup)
+            val totalExercisesForMuscleGroup =
+                if (muscleGroup == MuscleGroup.ALL) ExerciseGenerator.TOTAL_EXERCISES else MuscleGroup.getTotalExercises(
+                    muscleGroup
+                )
 
-            logger.i(TAG, "Total exercises for muscle group $muscleGroup: $totalExercisesForMuscleGroup ")
+            logger.i(
+                TAG,
+                "Total exercises for muscle group $muscleGroup: $totalExercisesForMuscleGroup "
+            )
             logger.i(TAG, "Filtered exercises: ${filteredExerciseList5.size}")
-            assertTrue { filteredExerciseList5.size == totalExercisesForMuscleGroup}
+            assertTrue { filteredExerciseList5.size == totalExercisesForMuscleGroup }
 
             //Valio beshe tuk
-        }else{
-            logger.i(TAG, "Muscle group $muscleGroup currently not supported. No exercises for the muscle group.")
+        } else {
+            logger.i(
+                TAG,
+                "Muscle group $muscleGroup currently not supported. No exercises for the muscle group."
+            )
         }
     }
+
+    /**
+     * Tested functions inside:
+     *
+     * GetExercisesUseCase()
+     * exerciseDao.getAllExercises()
+     * exerciseDao.getExercisesOrderedById()
+     * ------------------------
+     * OnSearchExerciseUseCase()
+     */
 
     @ParameterizedTest(name = "OnSearchExercises for muscle group {0} and search text {1}")
     @MethodSource("provideMuscleGroupsAndSearchTexts")
@@ -435,12 +505,26 @@ class ExerciseUseCasesUnitTest {
 //            assertTrue { onSearchState[1].isSuccessful }
 
             val filteredExerciseList = onSearchState.exerciseList
-            logger.i(TAG, "Filtered exercise list by search text $searchText: $filteredExerciseList")
+            logger.i(
+                TAG,
+                "Filtered exercise list by search text $searchText: $filteredExerciseList"
+            )
 
-            logger.i(TAG, "Assert all exercises contain the search text {$searchText} in their names or the exercise list is empty: ${filteredExerciseList.isEmpty()}.")
-            assertTrue(filteredExerciseList.any { it.name.contains(searchText, ignoreCase = true)} || filteredExerciseList.isEmpty())
-        }else{
-            logger.i(TAG, "Muscle group $muscleGroup currently not supported. No exercises for the muscle group.")
+            logger.i(
+                TAG,
+                "Assert all exercises contain the search text {$searchText} in their names or the exercise list is empty: ${filteredExerciseList.isEmpty()}."
+            )
+            assertTrue(filteredExerciseList.any {
+                it.name.contains(
+                    searchText,
+                    ignoreCase = true
+                )
+            } || filteredExerciseList.isEmpty())
+        } else {
+            logger.i(
+                TAG,
+                "Muscle group $muscleGroup currently not supported. No exercises for the muscle group."
+            )
         }
 
         //TODO: [TEST] OnToggleSearch...
