@@ -63,7 +63,6 @@ typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
 //TODO: remove mockup data sources? (how to integrate isError in local datasource?)
 //TODO: add inner classes for each use case...
-//TODO: add naming to each assertion...
 class WorkoutUseCasesUnitTest {
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
@@ -857,7 +856,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.getWorkoutByIsSelected()
      * WorkoutDao.selectWorkoutById()
      */
-    @RepeatedTest(10)
+    @RepeatedTest(50)
     @DisplayName("Select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test")
     fun `select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test`() =
         runTest {
@@ -918,7 +917,7 @@ class WorkoutUseCasesUnitTest {
                 "Test 3 -> get selected workout after created a new one and DB contains selected workout."
             )
 
-            val workout2 = MockupDataGenerator.generateWorkout(isSelected = true)
+            val workout2 = MockupDataGenerator.generateWorkout(isSelected = true, excludedIds = listOf(workout.workoutId))
             logger.i(TAG, "Mocked workout 2: $workout2")
 
             //Insert another selected workout in DB

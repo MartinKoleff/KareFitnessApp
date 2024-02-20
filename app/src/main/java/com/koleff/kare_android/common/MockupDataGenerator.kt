@@ -138,9 +138,9 @@ object MockupDataGenerator {
         isGenerateSetId: Boolean = true
     ): List<ExerciseSetDto> {
         val exerciseSetList = listOf(
-           generateExerciseSet(isGenerateSetId, 1, 12, 50f),
-           generateExerciseSet(isGenerateSetId, 2, 10, 55.5f),
-           generateExerciseSet(isGenerateSetId, 3, 8, 60f),
+            generateExerciseSet(isGenerateSetId, 1, 12, 50f),
+            generateExerciseSet(isGenerateSetId, 2, 10, 55.5f),
+            generateExerciseSet(isGenerateSetId, 3, 8, 60f),
         )
 
         return exerciseSetList
@@ -152,11 +152,26 @@ object MockupDataGenerator {
         reps: Int = 12,
         weight: Float = 50f
     ): ExerciseSetDto {
-        return ExerciseSetDto(if (isGenerateSetId) UUID.randomUUID() else null, number, reps, weight)
+        return ExerciseSetDto(
+            if (isGenerateSetId) UUID.randomUUID() else null,
+            number,
+            reps,
+            weight
+        )
     }
 
-    fun generateWorkout(isSelected: Boolean = Random.nextBoolean()): WorkoutDto {
-        val workoutId = Random.nextInt(1, 100)
+    fun generateWorkout(
+        isSelected: Boolean = Random.nextBoolean(),
+        excludedIds: List<Int> = emptyList()
+    ): WorkoutDto {
+        var workoutId = Random.nextInt(1, 100)
+
+        //No duplicate IDs
+        if(excludedIds.isNotEmpty()){
+            while (excludedIds.contains(workoutId)){
+                workoutId = Random.nextInt(1, 100)
+            }
+        }
         val totalExercises = Random.nextInt(4, 12)
         val muscleGroup = MuscleGroup.getSupportedMuscleGroups().random()
         val name = workoutNames.random()
