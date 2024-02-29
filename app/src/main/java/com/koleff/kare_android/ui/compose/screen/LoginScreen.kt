@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -49,20 +50,21 @@ fun LoginScreen() {
     val onLogin = {}
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                color = Color.Red
-            ),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Bottom,
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
 
-        //Video player 
+        //Video player
         LoginVideoPlayer()
+    }
 
-        //Footer
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.BottomCenter
+    ) {
+
+        //Login and sign in footer
         LoginFooter(onLogin = onLogin)
     }
 }
@@ -97,14 +99,12 @@ fun LoginVideoPlayer() {
     }
 
     AndroidView(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(screenHeight * 3/4),
+        modifier = Modifier.fillMaxSize(),
         factory = { ctx ->
             PlayerView(ctx).apply {
                 player = exoPlayer
                 useController = false //Hide player controls for background playback
-                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
             }
         }
     )
@@ -123,9 +123,11 @@ fun LoginFooter(onLogin: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight / 3)
+            .alpha(0.85f)
             .background(
                 brush = Brush.verticalGradient(
                     listOf(
+                        Color.Transparent,
                         Color.Transparent,
                         Color.Gray,
                         Color.Gray,
@@ -157,7 +159,7 @@ fun LoginFooter(onLogin: () -> Unit) {
         )
 
         //Margin for all components
-        Spacer(Modifier.height(75.dp))
+        Spacer(Modifier.height(50.dp))
     }
 }
 
