@@ -35,6 +35,7 @@ import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
@@ -50,9 +51,11 @@ import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
@@ -300,6 +303,15 @@ object AppModule {
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
             getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
             getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationUseCases(authenticationRepository: AuthenticationRepository): AuthenticationUseCases {
+        return AuthenticationUseCases(
+            loginUseCase = LoginUseCase(authenticationRepository),
+            registerUseCase = RegisterUseCase(authenticationRepository)
         )
     }
 
