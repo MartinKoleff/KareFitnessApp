@@ -10,6 +10,8 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.data.datasource.AuthenticationDataSource
+import com.koleff.kare_android.data.datasource.AuthenticationRemoteDataSource
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
@@ -18,8 +20,10 @@ import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
+import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.remote.ExerciseApi
 import com.koleff.kare_android.data.remote.WorkoutApi
+import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
@@ -31,6 +35,7 @@ import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
+import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -146,6 +151,19 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAuthenticationApi(okHttpClient: OkHttpClient, moshi: Moshi): AuthenticationApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_FULL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+//            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(AuthenticationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideKareDatabase(@ApplicationContext appContext: Context): KareDatabase {
         return KareDatabase.buildDatabase(appContext)
     }
@@ -230,6 +248,12 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAuthenticationDataSource(authenticationApi: AuthenticationApi): AuthenticationDataSource { //TODO: add local datasource for testing...
+        return AuthenticationRemoteDataSource(authenticationApi)
+    }
+
+    @Provides
+    @Singleton
     fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
         return ExerciseRepositoryImpl(exerciseDataSource)
     }
@@ -269,6 +293,12 @@ object AppModule {
     @Singleton
     fun provideDashboardRepository(dashboardDataSource: DashboardDataSource): DashboardRepository {
         return DashboardRepositoryImpl(dashboardDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationRepository(authenticationDataSource: AuthenticationDataSource): AuthenticationRepository {
+        return AuthenticationRepositoryImpl(authenticationDataSource)
     }
 
     @Provides
