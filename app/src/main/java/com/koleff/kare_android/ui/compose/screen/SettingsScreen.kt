@@ -3,14 +3,17 @@ package com.koleff.kare_android.ui.compose.screen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.PermissionManager
 import com.koleff.kare_android.common.navigation.Destination
@@ -18,7 +21,6 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.components.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
-import com.koleff.kare_android.ui.compose.observeLifecycleEvent
 import com.koleff.kare_android.ui.view_model.BaseViewModel
 
 typealias SettingsViewModel = BaseViewModel
@@ -109,5 +111,24 @@ fun SettingsScreen(
                 biometricsCallback()
             }
         )
+    }
+}
+
+@Composable
+fun observeLifecycleEvent(
+    onEvent: (Lifecycle.Event) -> Unit
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            onEvent(event)
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
     }
 }
