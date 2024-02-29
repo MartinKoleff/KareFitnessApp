@@ -173,8 +173,10 @@ dependencies {
     //Firebase Crashlytics
     implementation("com.google.firebase:firebase-crashlytics-ndk:$firebase_crashlytics_version")
 
-    //Video player
-    implementation "com.google.android.exoplayer:exoplayer:$exoplayer_version"
+    //Media3 Video player
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation "androidx.media3:media3-exoplayer-dash:$media3_version"
+    implementation "androidx.media3:media3-ui:$media3_version"
 
     //JUnit 4
 //    testImplementation "junit:junit:$robolectric_junit_version"

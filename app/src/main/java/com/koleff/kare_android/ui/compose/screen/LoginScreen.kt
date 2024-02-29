@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose.screen
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,10 +16,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,11 +37,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.StyledPlayerView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
+import com.koleff.kare_android.R
 
 @Composable
 fun LoginScreen() {
@@ -55,22 +59,28 @@ fun LoginScreen() {
         verticalArrangement = Arrangement.Bottom,
     ) {
 
-        LoginVideoPlayer(
-            context = context,
-            videoUri = ""
-
-        )
+        //Video player 
+        LoginVideoPlayer()
 
         //Footer
         LoginFooter(onLogin = onLogin)
     }
 }
 
+@OptIn(UnstableApi::class)
 @Composable
-fun LoginVideoPlayer(context: Context, videoUri: String) {
+fun LoginVideoPlayer() {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    val context = LocalContext.current
+    val videoUri = "android.resource://${context.packageName}/${R.raw.login_video_compressed}"
     val exoPlayer = remember {
+
+        //Prepare the player with the source.
         ExoPlayer.Builder(context).build().apply {
-            //Prepare the player with the source.
             val mediaItem = MediaItem.fromUri(Uri.parse(videoUri))
             setMediaItem(mediaItem)
             prepare()
@@ -79,7 +89,7 @@ fun LoginVideoPlayer(context: Context, videoUri: String) {
         }
     }
 
-    //Dispose the player when it's no longer needed
+    //Clear the exo player on dispose
     DisposableEffect(exoPlayer) {
         onDispose {
             exoPlayer.release()
@@ -87,15 +97,19 @@ fun LoginVideoPlayer(context: Context, videoUri: String) {
     }
 
     AndroidView(
-        factory = { videoContext ->
-            StyledPlayerView(videoContext).apply {
-                player = exoPlayer as Player
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(screenHeight * 3/4),
+        factory = { ctx ->
+            PlayerView(ctx).apply {
+                player = exoPlayer
                 useController = false //Hide player controls for background playback
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
             }
-        },
-        modifier = Modifier.fillMaxSize()
+        }
     )
 }
+
 
 @Composable
 fun LoginFooter(onLogin: () -> Unit) {

@@ -128,7 +128,7 @@ buildscript {
     ext.youtube_video_player_version = "12.1.0"
 
     //https://developer.android.com/media/media3/exoplayer
-    ext.exoplayer_version = "2.19.1"
+    ext.media3_version = "1.2.1"
 
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$compose_navigation_version"
