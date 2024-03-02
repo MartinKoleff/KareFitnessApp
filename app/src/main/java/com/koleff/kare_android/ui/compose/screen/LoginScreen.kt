@@ -78,7 +78,7 @@ fun LoginVideoPlayer() {
     val screenWidth = configuration.screenWidthDp.dp
 
     val context = LocalContext.current
-    val videoUri = "android.resource://${context.packageName}/${R.raw.login_video_compressed}"
+    val videoUri = "android.resource://${context.packageName}/${R.raw.login_video_no_watermark}"
     val exoPlayer = remember {
 
         //Prepare the player with the source.
@@ -98,6 +98,7 @@ fun LoginVideoPlayer() {
         }
     }
 
+    //Video player UI
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { ctx ->
