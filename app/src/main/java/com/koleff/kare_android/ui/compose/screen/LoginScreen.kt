@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -30,9 +32,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.HorizontalAlignmentLine
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -124,23 +130,44 @@ fun LoginFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(screenHeight / 2)
-            .alpha(0.85f)
-            .background(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Gray,
-                        Color.Gray,
-                        Color.Gray
-                    )
+
+    val sizeModifier = Modifier
+        .fillMaxWidth()
+        .height(screenHeight / 2)
+
+    //Background
+    Box(modifier = sizeModifier){
+
+        //Texture background
+        Image(
+            painter = painterResource(id = R.drawable.metal_texture_2),
+            contentDescription = "Metal texture background",
+            modifier = Modifier
+                .alpha(0.75f)
+                .drawWithContent {
+
+                val colors = listOf(
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Gray,
+                    Color.Gray,
+                    Color.Gray
                 )
-            ),
+                drawContent()
+                drawRect(
+                    brush = Brush.verticalGradient(colors),
+                    blendMode = BlendMode.DstIn
+                )
+            },
+            contentScale = ContentScale.Crop
+        )
+    }
+
+    //Footer
+    Column(
+        modifier = sizeModifier
+            .alpha(0.75f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
     ) {
@@ -163,11 +190,45 @@ fun LoginFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
 }
 
 @Composable
-fun SignInButton(onRegister: () -> Unit){
+fun LogoRow() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+
+        //Welcome to
+        Text( //TODO: and cooler font...
+            modifier = Modifier.padding(
+                PaddingValues(8.dp)
+            ),
+            text = "Welcome to",
+            style = TextStyle(
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        //Logo
+        Image(
+            modifier = Modifier
+                .size(175.dp),
+            painter = painterResource(R.drawable.logo),
+            contentDescription = "Logo image",
+            contentScale = ContentScale.Crop
+        )
+    }
+}
+
+@Composable
+fun SignInButton(onRegister: () -> Unit) {
     LoginRoundButton("Sign in", onRegister, hasBottomPadding = true)
 }
+
 @Composable
-fun LoginButton(onLogin: () -> Unit){
+fun LoginButton(onLogin: () -> Unit) {
     LoginRoundButton("Login", onLogin, hasTopPadding = false)
 }
 
@@ -183,8 +244,8 @@ fun LoginRoundButton(
     val paddingValues = PaddingValues(
         start = 16.dp,
         end = 16.dp,
-        top = if(hasTopPadding) 8.dp else 0.dp,
-        bottom = if(hasBottomPadding) 24.dp else 8.dp
+        top = if (hasTopPadding) 8.dp else 0.dp,
+        bottom = if (hasBottomPadding) 24.dp else 8.dp
     )
 
     Box(
@@ -204,6 +265,14 @@ fun LoginRoundButton(
             .clickable(onClick = callback),
         contentAlignment = Alignment.Center
     ) {
+
+        //Texture background
+        Image(
+            painter = painterResource(id = R.drawable.metal_texture_3),
+            contentDescription = "Metal texture background",
+            modifier = Modifier.alpha(0.85f),
+            contentScale = ContentScale.Crop
+        )
 
         //Login text
         Text( //TODO: and cooler font...
