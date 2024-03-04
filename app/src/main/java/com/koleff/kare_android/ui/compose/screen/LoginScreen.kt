@@ -83,14 +83,19 @@ fun HorizontalLineWithText(
     text: String,
     color: Color = Color.White
 ) {
+    val paddingValues = PaddingValues(
+        horizontal = 32.dp,
+        vertical = 8.dp
+    )
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(paddingValues)
     ) {
 
         //Left divider
         Box(modifier = Modifier.weight(1f)) {
-            Divider(color = color)
+            HorizontalDivider(color = color)
         }
 
         //Login text
@@ -101,7 +106,7 @@ fun HorizontalLineWithText(
             text = text,
             style = TextStyle(
                 color = color,
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Thin
             ),
             maxLines = 1,
@@ -110,15 +115,11 @@ fun HorizontalLineWithText(
 
         //Right divider
         Box(modifier = Modifier.weight(1f)) {
-            Divider(color = color)
+            HorizontalDivider(color = color)
         }
     }
 }
 
-//TODO: title with subtitle...
-//TODO: SignUpFooter...
-//TODO: background image (space theme?)
-//TODO: textFieldBox... (strong password meter?)
 @Preview
 @Composable
 fun HorizontalLineWithTextPreview() {
@@ -126,22 +127,113 @@ fun HorizontalLineWithTextPreview() {
 }
 
 @Composable
-fun GoogleBox() {
+fun SignInButton(
+    onSignIn: () -> Unit
+) {
+    val cornerSize = 24.dp
+    val paddingValues = PaddingValues(
+        horizontal = 32.dp,
+        vertical = 8.dp
+    )
+    val textColor = Color.White
+
     Box(
         modifier = Modifier
-            .width(150.dp)
-            .height(75.dp)
-            .background(color = Color.Black)
+            .fillMaxWidth()
+            .padding(paddingValues)
+            .height(50.dp)
+            .clip(RoundedCornerShape(cornerSize))
             .border(
                 border = BorderStroke(2.dp, color = Color.White),
-                shape = RoundedCornerShape(16.dp)
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                brush = Brush.linearGradient(
+                    colors = listOf(
+                        Color.Yellow,
+                        Color.Red,
+                        Color.Red,
+                        Color.Red,
+                        Color.Yellow,
+                    )
+                ),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .clickable(onClick = onSignIn),
+        contentAlignment = Alignment.Center
+    ) {
+
+        //Sign in text
+        Text( //TODO: and cooler font...
+            modifier = Modifier.padding(
+                PaddingValues(8.dp)
             ),
+            text = "Sign in",
+            style = TextStyle(
+                color = textColor,
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SignInButtonPreview() {
+    SignInButton(onSignIn = {})
+}
+
+@Composable
+fun SignInFooter(onGoogleSign: () -> Unit) {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        HorizontalLineWithText("Or continue with")
+
+        GoogleSignInBox(onGoogleSign = onGoogleSign)
+    }
+}
+
+@Preview
+@Composable
+fun SignInFooterPreview() {
+    SignInFooter(onGoogleSign = {})
+}
+
+
+@Composable
+fun GoogleSignInBox(onGoogleSign: () -> Unit) {
+    val cornerSize = 16.dp
+
+    Box(
+        modifier = Modifier
+            .width(75.dp)
+            .height(50.dp)
+            .background(color = Color.Transparent)
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .clickable {
+
+            },
         contentAlignment = Alignment.Center
     ) {
 
         //Google logo
         Image(
-            modifier = Modifier.size(50.dp),
+            modifier = Modifier.size(36.dp),
             painter = painterResource(R.drawable.ic_google_logo),
             contentDescription = "Google logo image",
             contentScale = ContentScale.Crop
@@ -151,12 +243,6 @@ fun GoogleBox() {
 
 @Preview
 @Composable
-fun GoogleBoxPreview() {
-    GoogleBox()
-}
-
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
+fun GoogleSignInBoxPreview() {
+    GoogleSignInBox(onGoogleSign = {})
 }
