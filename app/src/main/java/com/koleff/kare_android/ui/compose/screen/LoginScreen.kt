@@ -64,9 +64,6 @@ fun LoginScreen() {
     val gymImageModifier = Modifier
         .fillMaxWidth()
         .height(screenHeight * 1 / 4)
-    val screenContentModifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight * 3 / 4)
 
     val onSignIn: () -> Unit = {}
     val onGoogleSign: () -> Unit = {}
@@ -78,66 +75,55 @@ fun LoginScreen() {
         mutableStateOf("")
     }
 
-    //Needed to position background on the bottom part
-    Box(modifier = Modifier
-        .fillMaxSize()
-//        .background(Color.Black)
+    //Background image
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
     ) {
 
-        //Background image
-        Box(
-            modifier = screenContentModifier //fill max size?
+        //Texture background
+        Image(
+            painter = painterResource(id = R.drawable.ic_login_background_4),
+            contentDescription = "Background",
+            contentScale = ContentScale.Inside
+        )
+    }
+
+    //Screen
+    Column(
+        modifier = Modifier.fillMaxSize(), //screenContentModifier
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
+    ) {
+
+        //Gym image
+        Image(
+            modifier = gymImageModifier
                 .clip(RoundedCornerShape(cornerSize))
-                .align(Alignment.BottomCenter)
-        ) {
+                .padding(bottom = 6.dp),
+            painter = painterResource(id = R.drawable.ic_default),
+            contentDescription = "Top Image",
+            contentScale = ContentScale.Crop
+        )
 
-            //Texture background
-            Image(
-                painter = painterResource(id = R.drawable.ic_login_background_3),
-                contentDescription = "Background",
-                contentScale = ContentScale.Crop
-            )
+        CustomTitleAndSubtitle(
+            title = "Welcome back!",
+            subtitle = "We missed you!"
+        )
+
+        //User text box
+        CustomTextField(label = "Username") {
+            username = it
         }
 
-        //Screen
-        Column(
-            modifier = Modifier.fillMaxSize(), //screenContentModifier
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
-        ) {
-
-            //Gym image
-            Image(
-                modifier = gymImageModifier,
-//                .clip(RoundedCornerShape(cornerSize))
-//                .border(
-//                    border = BorderStroke(2.dp, color = Color.White),
-//                    shape = RoundedCornerShape(cornerSize)
-//                ),
-                painter = painterResource(id = R.drawable.ic_default),
-                contentDescription = "Top Image",
-                contentScale = ContentScale.Crop
-            )
-
-            CustomTitleAndSubtitle(
-                title = "Welcome back!",
-                subtitle = "We missed you!"
-            )
-
-            //User text box
-            CustomTextField(label = "Username") {
-                username = it
-            }
-
-            //Password text box
-            PasswordTextField(label = "Password") {
-                password = it
-            }
-
-
-            SignInButton(onSignIn = onSignIn)
-            SignInFooter(onGoogleSign = onGoogleSign)
+        //Password text box
+        PasswordTextField(label = "Password") {
+            password = it
         }
+
+
+        SignInButton(onSignIn = onSignIn)
+        SignInFooter(onGoogleSign = onGoogleSign)
     }
 }
 
