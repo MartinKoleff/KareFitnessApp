@@ -79,13 +79,26 @@ fun LoginScreen() {
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .drawWithContent {
+                val colors = listOf(
+                    Color.Red,
+                    Color.Red,
+                    Color.Black,
+                    Color.Blue
+                )
+                drawContent()
+                drawRect(
+                    brush = Brush.linearGradient(colors),
+                    blendMode = BlendMode.Overlay //ColorBurn
+                )
+            }
     ) {
 
         //Texture background
         Image(
             painter = painterResource(id = R.drawable.ic_login_background_4),
             contentDescription = "Background",
-            contentScale = ContentScale.Inside
+            contentScale = ContentScale.Crop
         )
     }
 
