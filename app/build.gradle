@@ -122,6 +122,7 @@ dependencies {
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.compose.material3:material3:$compose_material3_version"
     implementation "androidx.compose.material:material:$compose_material_version"
+    implementation "androidx.compose.material:material-icons-extended:$compose_material_version"
 
     //Pull to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
