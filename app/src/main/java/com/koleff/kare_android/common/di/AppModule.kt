@@ -394,5 +394,18 @@ object AppModule {
         )
         else UserRemoteDataSource(userApi, dispatcher)
     }
+
+    @Provides
+    @Singleton
+    fun provideCredentialsValidator(userRepository: UserRepository): CredentialsValidator{
+        return CredentialsValidatorImpl(userRepository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCredentialsAuthenticator(credentialsValidator: CredentialsValidator, preferences: Preferences): CredentialsAuthenticator{
+        return CredentialsAuthenticatorImpl(credentialsValidator, preferences)
+    }
+
     //TODO: separate to multiple modules...
 }
