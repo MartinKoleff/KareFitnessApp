@@ -95,6 +95,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    /**
+     * Retrofit/OKHttp configurations
+     */
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
@@ -133,6 +137,10 @@ object AppModule {
             .add(KotlinJsonAdapterFactory())
             .build()
     }
+
+    /**
+     * APIs
+     */
 
     @Provides
     @Singleton
@@ -173,47 +181,20 @@ object AppModule {
             .create(AuthenticationApi::class.java)
     }
 
+    /**
+     * Room DB
+     */
+
     @Provides
     @Singleton
     fun provideKareDatabase(@ApplicationContext appContext: Context): KareDatabase {
         return KareDatabase.buildDatabase(appContext)
     }
 
-    @Provides
-    @Singleton
-    fun provideExerciseDao(kareDatabase: KareDatabase): ExerciseDao {
-        return kareDatabase.exerciseDao
-    }
 
-    @Provides
-    @Singleton
-    fun provideExerciseDetailsDao(kareDatabase: KareDatabase): ExerciseDetailsDao {
-        return kareDatabase.exerciseDetailsDao
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserDao(kareDatabase: KareDatabase): UserDao {
-        return kareDatabase.userDao
-    }
-
-    @Provides
-    @Singleton
-    fun provideExerciseDBManager(
-        preferences: Preferences,
-        exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseSetDao: ExerciseSetDao
-    ): ExerciseDBManager {
-        val hasInitializedDB = preferences.hasInitializedExerciseTableRoomDB()
-
-        return ExerciseDBManager(
-            exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseSetDao = exerciseSetDao,
-            hasInitializedDB = hasInitializedDB
-        )
-    }
+    /**
+     * DAOs
+     */
 
     @Provides
     @Singleton
@@ -235,6 +216,28 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideExerciseDao(kareDatabase: KareDatabase): ExerciseDao {
+        return kareDatabase.exerciseDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDetailsDao(kareDatabase: KareDatabase): ExerciseDetailsDao {
+        return kareDatabase.exerciseDetailsDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(kareDatabase: KareDatabase): UserDao {
+        return kareDatabase.userDao
+    }
+
+    /**
+     * DB Managers
+     */
+
+    @Provides
+    @Singleton
     fun provideWorkoutDBManager(
         preferences: Preferences,
         workoutDao: WorkoutDao,
@@ -251,6 +254,28 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideExerciseDBManager(
+        preferences: Preferences,
+        exerciseDao: ExerciseDao,
+        exerciseDetailsDao: ExerciseDetailsDao,
+        exerciseSetDao: ExerciseSetDao
+    ): ExerciseDBManager {
+        val hasInitializedDB = preferences.hasInitializedExerciseTableRoomDB()
+
+        return ExerciseDBManager(
+            exerciseDao = exerciseDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao,
+            hasInitializedDB = hasInitializedDB
+        )
+    }
+
+    /**
+     * Data sources
+     */
+
+    @Provides
+    @Singleton
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
@@ -263,17 +288,6 @@ object AppModule {
         else ExerciseRemoteDataSource(exerciseApi)
     }
 
-    @Provides
-    @Singleton
-    fun provideAuthenticationDataSource(authenticationApi: AuthenticationApi): AuthenticationDataSource { //TODO: add local datasource for testing...
-        return AuthenticationRemoteDataSource(authenticationApi)
-    }
-
-    @Provides
-    @Singleton
-    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
-        return ExerciseRepositoryImpl(exerciseDataSource)
-    }
 
     @Provides
     @Singleton
@@ -296,14 +310,31 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
-        return WorkoutRepositoryImpl(workoutDataSource)
+    fun provideDashboardDataSource(): DashboardDataSource {
+        return DashboardMockupDataSource()
     }
 
     @Provides
     @Singleton
-    fun provideDashboardDataSource(): DashboardDataSource {
-        return DashboardMockupDataSource()
+    fun provideUserDataSource(
+        userDao: UserDao,
+        userApi: UserApi,
+        @IoDispatcher dispatcher: CoroutineDispatcher
+    ): UserDataSource {
+        return if (useLocalDataSource) UserLocalDataSource(
+            userDao = userDao
+        )
+        else UserRemoteDataSource(userApi, dispatcher)
+    }
+
+    /**
+     * Repositories
+     */
+
+    @Provides
+    @Singleton
+    fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
+        return WorkoutRepositoryImpl(workoutDataSource)
     }
 
     @Provides
@@ -314,9 +345,19 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticationRepository(authenticationDataSource: AuthenticationDataSource): AuthenticationRepository {
-        return AuthenticationRepositoryImpl(authenticationDataSource)
+    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
+        return ExerciseRepositoryImpl(exerciseDataSource)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDataSource: UserDataSource): UserRepository {
+        return UserRepositoryImpl(userDataSource)
+    }
+
+    /**
+     * Usecases
+     */
 
     @Provides
     @Singleton
@@ -353,15 +394,9 @@ object AppModule {
         )
     }
 
-    @Provides
-    @Singleton
-    fun provideAuthenticationUseCases(authenticationRepository: AuthenticationRepository): AuthenticationUseCases {
-        return AuthenticationUseCases(
-            loginUseCase = LoginUseCase(authenticationRepository),
-            registerUseCase = RegisterUseCase(authenticationRepository)
-        )
-    }
-
+    /**
+     * Shared preferences
+     */
     @Provides
     @Singleton
     fun provideSharedPreferences(
@@ -375,37 +410,4 @@ object AppModule {
     fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
         return DefaultPreferences(sharedPreferences)
     }
-
-    @Provides
-    @Singleton
-    fun provideUserRepository(userDataSource: UserDataSource): UserRepository {
-        return UserRepositoryImpl(userDataSource)
-    }
-
-    @Provides
-    @Singleton
-    fun provideUserDataSource(
-        userDao: UserDao,
-        userApi: UserApi,
-        @IoDispatcher dispatcher: CoroutineDispatcher
-    ): UserDataSource {
-        return if (useLocalDataSource) UserLocalDataSource(
-            userDao = userDao
-        )
-        else UserRemoteDataSource(userApi, dispatcher)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCredentialsValidator(userRepository: UserRepository): CredentialsValidator{
-        return CredentialsValidatorImpl(userRepository)
-    }
-
-    @Provides
-    @Singleton
-    fun provideCredentialsAuthenticator(credentialsValidator: CredentialsValidator, preferences: Preferences): CredentialsAuthenticator{
-        return CredentialsAuthenticatorImpl(credentialsValidator, preferences)
-    }
-
-    //TODO: separate to multiple modules...
 }
