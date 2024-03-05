@@ -1,45 +1,39 @@
 package com.koleff.kare_android.common.credentials_validator
 
 import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.ui.state.BaseState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class CredentialsAuthenticatorImpl @Inject constructor(
     private val credentialsValidator: CredentialsValidator,
     private val preferences: Preferences
-) : CredentialsAuthenticator, AuthenticationNotifier {
-
-    private val _authenticationState = MutableStateFlow(BaseState()) //TODO: wire with view model...
-
-    override val authenticationState: StateFlow<BaseState> = _authenticationState.asStateFlow()
-
-    override suspend fun checkCredentials(credentials: Credentials) {
-        when (credentialsValidator.validate(credentials)){
-            is ResultWrapper.ApiError -> {
-                _authenticationState.update {
+) : CredentialsAuthenticator {
+    override suspend fun checkCredentials(credentials: Credentials): Flow<BaseState> = flow {
+        when (val data = credentialsValidator.validate(credentials)) {
+            is ResultWrapper.ApiError ->
+                emit(
                     BaseState(
                         isError = true,
-                        error = it.error
+                        error = data.error ?: KareError.GENERIC
                     )
-                }
-            }
+                )
 
-            is ResultWrapper.Loading -> {
-                _authenticationState.update {
+            is ResultWrapper.Loading ->
+                emit(
                     BaseState(
                         isLoading = true
                     )
-                }
-            }
+                )
 
             is ResultWrapper.Success -> {
-                BaseState(
-                    isSuccessful = true
+                emit(
+                    BaseState(
+                        isSuccessful = true
+                    )
                 )
 
                 //save credentials and login...

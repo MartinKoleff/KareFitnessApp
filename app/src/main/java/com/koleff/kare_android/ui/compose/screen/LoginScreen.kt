@@ -53,10 +53,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.ui.view_model.LoginViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    loginViewModel: LoginViewModel = hiltViewModel()
+) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
@@ -66,7 +71,9 @@ fun LoginScreen() {
         .fillMaxWidth()
         .height(screenHeight * 0.33f)
 
-    val onSignIn: () -> Unit = {}
+    val onSignIn: (Credentials) -> Unit = { credentials ->
+        loginViewModel.login(credentials)
+    }
     val onGoogleSign: () -> Unit = {}
 
     var username by remember {
@@ -136,7 +143,14 @@ fun LoginScreen() {
         }
 
 
-        SignInButton(onSignIn = onSignIn)
+        SignInButton(
+            onSignIn = onSignIn,
+            credentials =
+            Credentials(
+                username = username,
+                password = password
+            )
+        )
         SignInFooter(onGoogleSign = onGoogleSign)
     }
 }
@@ -378,7 +392,8 @@ fun HorizontalLineWithTextPreview() {
 
 @Composable
 fun SignInButton(
-    onSignIn: () -> Unit
+    onSignIn: (Credentials) -> Unit,
+    credentials: Credentials
 ) {
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(
@@ -401,7 +416,7 @@ fun SignInButton(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(cornerSize)
             )
-            .clickable(onClick = onSignIn),
+            .clickable(onClick = { onSignIn(credentials) }),
         contentAlignment = Alignment.Center
     ) {
 
@@ -425,7 +440,12 @@ fun SignInButton(
 @Preview
 @Composable
 fun SignInButtonPreview() {
-    SignInButton(onSignIn = {})
+    SignInButton(
+        onSignIn = {
+
+        },
+        credentials = Credentials()
+    )
 }
 
 @Composable

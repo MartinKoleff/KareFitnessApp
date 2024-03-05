@@ -14,7 +14,7 @@ typealias Credentials = UserDto
 class CredentialsValidatorImpl @Inject constructor(
     private val userRepository: UserRepository
 ) : CredentialsValidator {
-    override suspend fun validate(credentials: Credentials): ResultWrapper<ServerResponseData> { //TODO: convert to flow and add loading...
+    override suspend fun validate(credentials: Credentials): ResultWrapper<ServerResponseData> {
         return try {
             validateUsername(credentials.username)
             validateEmail(credentials.email)
