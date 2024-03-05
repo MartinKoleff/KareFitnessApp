@@ -1,7 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
 import android.util.Log
-import androidx.room.EmptyResultSetException
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
@@ -21,20 +20,16 @@ import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
-import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
-import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
