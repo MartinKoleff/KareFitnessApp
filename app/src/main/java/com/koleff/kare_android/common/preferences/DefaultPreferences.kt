@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
+import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import java.lang.NullPointerException
@@ -100,5 +101,28 @@ class DefaultPreferences(
         sharedPref.edit()
             .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, true)
             .apply()
+    }
+
+    override fun saveCredentials(credentials: Credentials) {
+        sharedPref.edit()
+            .putString(Preferences.CREDENTIALS, credentials.toString())
+            .apply()
+    }
+
+    override fun getCredentials(): Credentials? {
+        val credentialsJson: String =
+            sharedPref.getString(Preferences.CREDENTIALS, "") ?: ""
+
+        return try {
+            gson.fromJson(credentialsJson, Credentials::class.java)
+        } catch (ex: Exception) {
+            when (ex) {
+                is IllegalAccessException, is NullPointerException -> {
+                    null
+                }
+
+                else -> throw ex
+            }
+        }
     }
 }
