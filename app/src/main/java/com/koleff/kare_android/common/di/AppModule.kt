@@ -8,6 +8,10 @@ import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
+import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
+import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
+import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
@@ -17,19 +21,25 @@ import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
+import com.koleff.kare_android.data.datasource.UserDataSource
+import com.koleff.kare_android.data.datasource.UserLocalDataSource
+import com.koleff.kare_android.data.datasource.UserRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.remote.ExerciseApi
+import com.koleff.kare_android.data.remote.UserApi
 import com.koleff.kare_android.data.remote.WorkoutApi
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
+import com.koleff.kare_android.data.repository.UserRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
+import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
@@ -38,6 +48,7 @@ import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
+import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
@@ -178,6 +189,12 @@ object AppModule {
     @Singleton
     fun provideExerciseDetailsDao(kareDatabase: KareDatabase): ExerciseDetailsDao {
         return kareDatabase.exerciseDetailsDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(kareDatabase: KareDatabase): UserDao {
+        return kareDatabase.userDao
     }
 
     @Provides
@@ -358,4 +375,24 @@ object AppModule {
     fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
         return DefaultPreferences(sharedPreferences)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDataSource: UserDataSource): UserRepository {
+        return UserRepositoryImpl(userDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDataSource(
+        userDao: UserDao,
+        userApi: UserApi,
+        @IoDispatcher dispatcher: CoroutineDispatcher
+    ): UserDataSource {
+        return if (useLocalDataSource) UserLocalDataSource(
+            userDao = userDao
+        )
+        else UserRemoteDataSource(userApi, dispatcher)
+    }
+    //TODO: separate to multiple modules...
 }
