@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -63,7 +64,7 @@ fun LoginScreen() {
 
     val gymImageModifier = Modifier
         .fillMaxWidth()
-        .height(screenHeight * 1 / 4)
+        .height(screenHeight * 0.33f)
 
     val onSignIn: () -> Unit = {}
     val onGoogleSign: () -> Unit = {}
@@ -384,7 +385,7 @@ fun SignInButton(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val textColor = Color.White
+    val textColor = Color.Black
 
     Box(
         modifier = Modifier
@@ -397,15 +398,7 @@ fun SignInButton(
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        Color.Yellow,
-                        Color.Red,
-                        Color.Red,
-                        Color.Red,
-                        Color.Yellow,
-                    )
-                ),
+                color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onSignIn),
@@ -468,14 +461,14 @@ fun GoogleSignInBox(onGoogleSign: () -> Unit) {
         modifier = Modifier
             .width(75.dp)
             .height(50.dp)
-            .background(color = Color.Transparent)
             .clip(RoundedCornerShape(cornerSize))
+            .background(color = MaterialTheme.colorScheme.primaryContainer)
             .border(
                 border = BorderStroke(2.dp, color = Color.White),
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable {
-
+                onGoogleSign()
             },
         contentAlignment = Alignment.Center
     ) {
