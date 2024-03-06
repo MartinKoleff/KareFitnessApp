@@ -1,6 +1,6 @@
 package com.koleff.kare_android.common.credentials_validator
 
-import android.util.Patterns.EMAIL_ADDRESS
+import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.repository.UserRepository
@@ -32,7 +32,7 @@ class CredentialsValidatorImpl @Inject constructor(
         }
     }
 
-    private fun validatePassword(password: String) {
+    override fun validatePassword(password: String) {
         if (password.isEmpty()) {
             throw IllegalArgumentException("Password cannot be empty.")
         }
@@ -42,7 +42,7 @@ class CredentialsValidatorImpl @Inject constructor(
         }
     }
 
-    private suspend fun validateEmail(email: String) {
+    override suspend fun validateEmail(email: String) {
         if (email.isEmpty()) {
             throw IllegalArgumentException("Email cannot be empty.")
         }
@@ -63,7 +63,7 @@ class CredentialsValidatorImpl @Inject constructor(
         }
     }
 
-    private suspend fun validateUsername(username: String) {
+    override suspend fun validateUsername(username: String) {
         if (username.isEmpty()) {
             throw IllegalArgumentException("Username cannot be empty.")
         }
