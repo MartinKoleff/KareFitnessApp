@@ -21,7 +21,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val navigationController: NavigationController,
-    private val credentialsAuthenticator: CredentialsAuthenticator,
     private val authenticationUseCases: AuthenticationUseCases,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController) {
@@ -29,33 +28,19 @@ class LoginViewModel @Inject constructor(
     private var _state: MutableStateFlow<LoginState> = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state
 
-    private var _credentialsAuthenticationState: MutableStateFlow<BaseState> = MutableStateFlow(
-        BaseState()
-    )
-    private val credentialsAuthenticationState: StateFlow<BaseState> = _credentialsAuthenticationState
+    //TODO: loading dialog?
+    //TODO: error dialog...
+    //TODO: fix adapter issue with backend...
+    //TODO: cache tokens...
 
     fun login(credentials: Credentials) {
         viewModelScope.launch(dispatcher) {
-
-            //Validate credentials
-            credentialsAuthenticator.checkCredentials(credentials) //TODO: test if awaiting result...
-                .collect { credentialsAuthenticationState ->
-                    _credentialsAuthenticationState.value = credentialsAuthenticationState
-                }
-
-           if(credentialsAuthenticationState.value.isSuccessful){
                authenticationUseCases.loginUseCase.invoke(
                    credentials.username,
                    credentials.password
                ).collect { loginState ->
                    _state.value = loginState
                }
-           }else if(credentialsAuthenticationState.value.isError){
-               _state.value = LoginState(
-                   isError = true,
-                   error = KareError.INVALID_CREDENTIALS
-               )
-           }
         }
     }
 }
