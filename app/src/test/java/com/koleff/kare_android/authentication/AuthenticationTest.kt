@@ -1,5 +1,6 @@
 package com.koleff.kare_android.authentication
 
+import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake
 import com.koleff.kare_android.authentication.data.UserDaoFake
 import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
 import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
@@ -23,6 +24,7 @@ class AuthenticationTest {
 
     private lateinit var credentialsAuthenticator: CredentialsAuthenticator
     private lateinit var credentialsValidator: CredentialsValidator
+    private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
     private lateinit var authenticationUseCases: AuthenticationUseCases
     private lateinit var loginUseCase: LoginUseCase
     private lateinit var registerUseCase: RegisterUseCase
@@ -37,7 +39,8 @@ class AuthenticationTest {
         userDataSource = UserLocalDataSource(userDao)
 
         credentialsValidator = CredentialsValidatorImpl(userRepository)
-        credentialsAuthenticator = CredentialsAuthenticatorImpl(credentialsValidator, preferences)
+        credentialsDataStoreFake = CredentialsDataStoreFake() //No caching needed for testing
+        credentialsAuthenticator = CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
 
         authenticationDataSource = AuthenticationLocalDataSource(
             userDao,
