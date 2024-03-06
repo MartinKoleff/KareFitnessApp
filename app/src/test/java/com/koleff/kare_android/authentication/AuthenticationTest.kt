@@ -11,12 +11,17 @@ import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
+import com.koleff.kare_android.data.repository.UserRepositoryImpl
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
+import com.koleff.kare_android.utils.TestLogger
+import kotlinx.coroutines.test.runTest
+import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
@@ -33,14 +38,20 @@ class AuthenticationTest {
     private lateinit var userRepository: UserRepository
     private lateinit var userDataSource: UserDataSource
     private lateinit var userDao: UserDaoFake
+
+    private val isLogging = true
+    private lateinit var logger: TestLogger
+
     @BeforeEach
-    fun setup(){
+    fun setup() {
         userDao = UserDaoFake()
         userDataSource = UserLocalDataSource(userDao)
+        userRepository = UserRepositoryImpl(userDataSource)
 
         credentialsValidator = CredentialsValidatorImpl(userRepository)
         credentialsDataStoreFake = CredentialsDataStoreFake() //No caching needed for testing
-        credentialsAuthenticator = CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
+        credentialsAuthenticator =
+            CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
 
         authenticationDataSource = AuthenticationLocalDataSource(
             userDao,
@@ -54,24 +65,52 @@ class AuthenticationTest {
             loginUseCase,
             registerUseCase
         )
+
+        logger = TestLogger(isLogging)
     }
 
     @ParameterizedTest(name = "Validates email {0}")
     @CsvSource(
         value = [
-            "e@gmail.com",
             "@gmail.com",
             "test@gmail",
             "testgmail.com",
             "testgmail.com",
             "@gmail.com",
-            "",
-            "test@gmail.com.com",
+            " "
         ]
     )
-    fun `email validation test`(email: String) {
+    fun `email validation test with invalid emails`(email: String) = runTest {
+        val exception: Exception? = try {
+            credentialsValidator.validateEmail(email)
 
+            //Successfully validated
+            null
+        } catch (e: IllegalArgumentException) {
+            e
+        }
+
+        assertThrows(IllegalArgumentException::class.java) {
+            throw exception ?: return@assertThrows
+        }
     }
+
+    @ParameterizedTest(name = "Validates email {0}")
+    @CsvSource(
+        value = [
+            "ivan@gmail.com",
+            "valio@abv.bg",
+            "martin@amazon.co.uk",
+            "koleff@kare.com",
+            "test@gmail.com.com"
+        ]
+    )
+    fun `email validation test with valid emails`(email: String) = runTest {
+        assertDoesNotThrow {
+            credentialsValidator.validateEmail(email)
+        }
+    }
+
 
     //TODO: username validation test...
     //TODO: password validation test...
