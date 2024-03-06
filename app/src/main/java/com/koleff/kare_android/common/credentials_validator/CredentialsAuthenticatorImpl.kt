@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class CredentialsAuthenticatorImpl @Inject constructor(
     private val credentialsValidator: CredentialsValidator,
-    private val preferences: Preferences
+    private val preferences: Preferences //TODO: migrate to CredentialsDataStore to exclude from testing...
 ) : CredentialsAuthenticator {
     override suspend fun checkCredentials(credentials: Credentials): Flow<BaseState> = flow {
         when (val data = credentialsValidator.validate(credentials)) {

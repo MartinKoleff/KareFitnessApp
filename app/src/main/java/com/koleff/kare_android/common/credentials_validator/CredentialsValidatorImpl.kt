@@ -17,7 +17,7 @@ class CredentialsValidatorImpl @Inject constructor(
     override suspend fun validate(credentials: Credentials): ResultWrapper<ServerResponseData> {
         return try {
             validateUsername(credentials.username)
-            validateEmail(credentials.email)
+//            validateEmail(credentials.email) //no email on login...
             validatePassword(credentials.password)
 
             ResultWrapper.Success(
