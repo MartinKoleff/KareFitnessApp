@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
 import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.response.ExerciseResponse
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.flow
 
 class AuthenticationLocalDataSource(
     private val userDao: UserDao,
-    private val credentialsAuthenticatorImpl: CredentialsAuthenticatorImpl
+    private val credentialsAuthenticator: CredentialsAuthenticator
 ) : AuthenticationDataSource {
     override suspend fun login(
         username: String,
@@ -39,7 +40,7 @@ class AuthenticationLocalDataSource(
             )
 
             val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticatorImpl.checkCredentials(credentials).collect {
+            credentialsAuthenticator.checkCredentials(credentials).collect {
                 state.value = it
             }
 

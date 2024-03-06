@@ -1,14 +1,21 @@
 package com.koleff.kare_android.common.di
 
+import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
 import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.credentials_validator.CredentialsDataStore
+import com.koleff.kare_android.common.credentials_validator.CredentialsDataStoreImpl
 import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
 import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
+import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationRemoteDataSource
+import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
+import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
@@ -32,14 +39,30 @@ object AuthenticationModule {
 
     @Provides
     @Singleton
-    fun provideCredentialsAuthenticator(credentialsValidator: CredentialsValidator, preferences: Preferences): CredentialsAuthenticator {
-        return CredentialsAuthenticatorImpl(credentialsValidator, preferences)
+    fun provideCredentialsDataStore(preferences: Preferences): CredentialsDataStore {
+        return CredentialsDataStoreImpl(preferences)
     }
 
     @Provides
     @Singleton
-    fun provideAuthenticationDataSource(authenticationApi: AuthenticationApi): AuthenticationDataSource { //TODO: add local datasource for testing...
-        return AuthenticationRemoteDataSource(authenticationApi)
+    fun provideCredentialsAuthenticator(
+        credentialsValidator: CredentialsValidator,
+        credentialsDataStore: CredentialsDataStore
+    ): CredentialsAuthenticator {
+        return CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationDataSource(
+        authenticationApi: AuthenticationApi,
+        userDao: UserDao,
+        credentialsAuthenticator: CredentialsAuthenticator
+    ): AuthenticationDataSource {
+        return if (useLocalDataSource) AuthenticationLocalDataSource(
+            userDao = userDao,
+            credentialsAuthenticator = credentialsAuthenticator
+        ) else AuthenticationRemoteDataSource(authenticationApi) //TODO: add credentials authenticator check before calling server?
     }
 
     @Provides
@@ -50,9 +73,12 @@ object AuthenticationModule {
 
     @Provides
     @Singleton
-    fun provideAuthenticationUseCases(authenticationRepository: AuthenticationRepository): AuthenticationUseCases {
+    fun provideAuthenticationUseCases(
+        authenticationRepository: AuthenticationRepository,
+        credentialsAuthenticator: CredentialsAuthenticator
+    ): AuthenticationUseCases {
         return AuthenticationUseCases(
-            loginUseCase = LoginUseCase(authenticationRepository),
+            loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator),
             registerUseCase = RegisterUseCase(authenticationRepository)
         )
     }
