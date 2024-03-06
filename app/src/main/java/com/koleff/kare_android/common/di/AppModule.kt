@@ -134,7 +134,7 @@ object AppModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
+            .add(KotlinJsonAdapterFactory()) //TODO: fix uuid adapter issue...
             .build()
     }
 
@@ -149,7 +149,7 @@ object AppModule {
             .baseUrl(Constants.BASE_URL_FULL)
             .client(okHttpClient)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ExerciseApi::class.java)
@@ -162,7 +162,7 @@ object AppModule {
             .baseUrl(Constants.BASE_URL_FULL)
             .client(okHttpClient)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(WorkoutApi::class.java)
@@ -175,10 +175,23 @@ object AppModule {
             .baseUrl(Constants.BASE_URL_FULL)
             .client(okHttpClient)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(AuthenticationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(okHttpClient: OkHttpClient, moshi: Moshi): UserApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_FULL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+//            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(UserApi::class.java)
     }
 
     /**
