@@ -131,7 +131,7 @@ class ExerciseUseCasesUnitTest {
             hasInitializedDB = false
         )
 
-        exerciseDBManager.initializeExerciseTableRoomDB{
+        exerciseDBManager.initializeExerciseTable{
             logger.i(TAG, "DB initialized successfully!")
         }
     }

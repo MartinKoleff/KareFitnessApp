@@ -20,7 +20,7 @@ class ExerciseDBManager @Inject constructor(
     private val exerciseSetDao: ExerciseSetDao,
     private val hasInitializedDB: Boolean
 ) {
-    suspend fun initializeExerciseTableRoomDB(onDBInitialized: () -> Unit) = withContext(Dispatchers.IO) {
+    suspend fun initializeExerciseTable(onDBInitialized: () -> Unit) = withContext(Dispatchers.IO) {
         if (hasInitializedDB) return@withContext
 
         for (muscleGroup in MuscleGroup.getSupportedMuscleGroups()) {

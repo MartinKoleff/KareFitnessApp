@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,6 +58,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.ui.view_model.LoginViewModel
+import java.util.logging.Logger
 
 @Composable
 fun LoginScreen(
@@ -72,6 +74,7 @@ fun LoginScreen(
         .height(screenHeight * 0.33f)
 
     val onSignIn: (Credentials) -> Unit = { credentials ->
+        Log.d("LoginScreen", "Signing in with credentials: $credentials")
         loginViewModel.login(credentials)
     }
     val onGoogleSign: () -> Unit = {}

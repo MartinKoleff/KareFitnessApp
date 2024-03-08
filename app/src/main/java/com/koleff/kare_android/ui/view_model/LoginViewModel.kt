@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.credentials_validator.AuthenticationNotifier
 import com.koleff.kare_android.common.credentials_validator.Credentials
@@ -35,12 +36,14 @@ class LoginViewModel @Inject constructor(
 
     fun login(credentials: Credentials) {
         viewModelScope.launch(dispatcher) {
-               authenticationUseCases.loginUseCase.invoke(
-                   credentials.username,
-                   credentials.password
-               ).collect { loginState ->
-                   _state.value = loginState
-               }
+            authenticationUseCases.loginUseCase.invoke(
+                credentials.username,
+                credentials.password
+            ).collect { loginState ->
+
+                Log.d("LoginViewModel", "$loginState")
+                _state.value = loginState
+            }
         }
     }
 }

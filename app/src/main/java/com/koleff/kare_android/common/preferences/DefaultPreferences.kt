@@ -77,29 +77,42 @@ class DefaultPreferences(
         }
     }
 
-    override fun hasInitializedExerciseTableRoomDB(): Boolean {
+    override fun hasInitializedExerciseTable(): Boolean {
         val hasInitialized: Boolean =
-            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE_ROOM_DB, false)
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE, false)
 
         return hasInitialized
     }
 
-    override fun initializeExerciseTableRoomDB() {
+    override fun initializeExerciseTable() {
         sharedPref.edit()
-            .putBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE_ROOM_DB, true)
+            .putBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE, true)
             .apply()
     }
 
-    override fun hasInitializedWorkoutTableRoomDB(): Boolean {
+    override fun hasInitializedWorkoutTable(): Boolean {
         val hasInitialized: Boolean =
-            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, false)
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE, false)
 
         return hasInitialized
     }
 
-    override fun initializeWorkoutTableRoomDB() {
+    override fun initializeWorkoutTable() {
         sharedPref.edit()
-            .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, true)
+            .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE, true)
+            .apply()
+    }
+
+    override fun hasInitializedUserTable(): Boolean {
+        val hasInitialized: Boolean =
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_USER_TABLE, false)
+
+        return hasInitialized
+    }
+
+    override fun initializeUserTable() {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_INITIALIZED_USER_TABLE, true)
             .apply()
     }
 

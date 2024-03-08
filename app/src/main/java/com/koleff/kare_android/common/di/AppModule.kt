@@ -44,6 +44,7 @@ import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.DashboardRepository
@@ -256,7 +257,7 @@ object AppModule {
         workoutDao: WorkoutDao,
         workoutDetailsDao: WorkoutDetailsDao
     ): WorkoutDBManager {
-        val hasInitializedDB = preferences.hasInitializedWorkoutTableRoomDB()
+        val hasInitializedDB = preferences.hasInitializedWorkoutTable()
 
         return WorkoutDBManager(
             workoutDao = workoutDao,
@@ -273,12 +274,26 @@ object AppModule {
         exerciseDetailsDao: ExerciseDetailsDao,
         exerciseSetDao: ExerciseSetDao
     ): ExerciseDBManager {
-        val hasInitializedDB = preferences.hasInitializedExerciseTableRoomDB()
+        val hasInitializedDB = preferences.hasInitializedExerciseTable()
 
         return ExerciseDBManager(
             exerciseDao = exerciseDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseSetDao = exerciseSetDao,
+            hasInitializedDB = hasInitializedDB
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDBManager(
+        preferences: Preferences,
+        userDao: UserDao
+    ): UserDBManager {
+        val hasInitializedDB = preferences.hasInitializedUserTable()
+
+        return UserDBManager(
+            userDao = userDao,
             hasInitializedDB = hasInitializedDB
         )
     }
