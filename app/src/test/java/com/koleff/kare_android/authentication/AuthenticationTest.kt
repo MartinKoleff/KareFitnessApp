@@ -10,8 +10,10 @@ import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl
+import com.koleff.kare_android.data.room.entity.User
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
@@ -23,7 +25,10 @@ import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import java.util.UUID
+import java.util.stream.Stream
 
 class AuthenticationTest {
 
@@ -111,8 +116,72 @@ class AuthenticationTest {
         }
     }
 
+    @ParameterizedTest(name = "Validates username {0}")
+    @CsvSource( //TODO: add to test to DB save flag for all tests...
+        value = [
+            "koleff777",
+            "mkoleff",
+            "vankatadlg",
+            "starshinata",
+            "1234567",
+            "Sliv3nT0pa"
+        ]
+    )
+    fun `username validation test with valid usernames`(username: String) = runTest {
 
-    //TODO: username validation test...
+        //Save entry to db before test...
+        userDao.saveUser(
+            User(
+               UUID.randomUUID(),
+                username,
+                "password",
+                "email@gmail.com"
+            )
+        )
+
+        assertDoesNotThrow {
+            credentialsValidator.validateUsername(username)
+        }
+    }
+
+    @ParameterizedTest(name = "Validates username {0}")
+    @CsvSource( //TODO: add to test to DB save flag for all tests...
+        value = [
+            "a",
+            "123",
+            "ivo",
+            "a3c",
+            "mk",
+            " "
+        ]
+    )
+    fun `username validation test with invalid username`(username: String) = runTest {
+
+        //Save entry to db before test...
+        userDao.saveUser(
+            User(
+                UUID.randomUUID(),
+                username,
+                "password",
+                "email@gmail.com"
+            )
+        )
+
+        val exception: Exception? = try {
+            credentialsValidator.validateUsername(username)
+
+            //Successfully validated
+            null
+        } catch (e: IllegalArgumentException) {
+            e
+        }
+
+        assertThrows(IllegalArgumentException::class.java) {
+            throw exception ?: return@assertThrows
+        }
+    }
+
+
     //TODO: password validation test...
     //TODO: credentials validation test...
     //TODO: login use case test
