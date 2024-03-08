@@ -22,8 +22,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.components.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
 import com.koleff.kare_android.ui.view_model.BaseViewModel
-
-typealias SettingsViewModel = BaseViewModel
+import com.koleff.kare_android.ui.view_model.SettingsViewModel
 
 @Composable
 fun SettingsScreen(
