@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-open class BaseViewModel @Inject constructor(
+abstract class BaseViewModel @Inject constructor(
     private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
@@ -43,4 +43,6 @@ open class BaseViewModel @Inject constructor(
             }
         }
     }
+
+  abstract fun clearError()
 }

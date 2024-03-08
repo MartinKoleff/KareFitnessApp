@@ -39,7 +39,7 @@ class ExerciseListViewModel @Inject constructor(
         ?: -1
     val muscleGroup = MuscleGroup.fromId(muscleGroupId)
 
-    private val _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
+    private var _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
     val state: StateFlow<ExerciseListState>
         get() = _state
 
@@ -104,5 +104,11 @@ class ExerciseListViewModel @Inject constructor(
                 )
             )
         )
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state = MutableStateFlow(ExerciseListState())
+        }
     }
 }

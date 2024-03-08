@@ -31,7 +31,7 @@ class SearchExercisesViewModel @Inject constructor(
 ) : BaseViewModel(navigationController) {
     val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
-    private val _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
+    private var _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
     val state: StateFlow<ExerciseListState>
         get() = _state
 
@@ -122,5 +122,11 @@ class SearchExercisesViewModel @Inject constructor(
                 inclusive = false
             )
         )
+    }
+
+    override fun clearError() {
+        if(state.value.isError){
+            _state = MutableStateFlow(ExerciseListState())
+        }
     }
 }

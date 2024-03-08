@@ -35,13 +35,13 @@ class WorkoutDetailsViewModel @Inject constructor(
 ) : BaseViewModel(navigationController) {
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
-    private val _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
+    private var _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
 
     val getWorkoutDetailsState: StateFlow<WorkoutDetailsState>
         get() = _getWorkoutDetailsState
 
-    private val _deleteExerciseState: MutableStateFlow<DeleteExerciseState> =
+    private var _deleteExerciseState: MutableStateFlow<DeleteExerciseState> =
         MutableStateFlow(DeleteExerciseState())
 
     val deleteExerciseState: StateFlow<DeleteExerciseState>
@@ -97,5 +97,15 @@ class WorkoutDetailsViewModel @Inject constructor(
                 )
             )
         )
+    }
+
+    override fun clearError() {
+       if(getWorkoutDetailsState.value.isError){
+           _getWorkoutDetailsState = MutableStateFlow(WorkoutDetailsState())
+       }
+
+        if(deleteExerciseState.value.isError){
+            _deleteExerciseState = MutableStateFlow(DeleteExerciseState())
+        }
     }
 }

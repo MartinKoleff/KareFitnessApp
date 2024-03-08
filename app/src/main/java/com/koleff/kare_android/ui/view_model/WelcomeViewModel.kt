@@ -28,4 +28,8 @@ class WelcomeViewModel @Inject constructor(
             )
         )
     }
+
+    override fun clearError() {
+        TODO("Not yet implemented")
+    }
 }

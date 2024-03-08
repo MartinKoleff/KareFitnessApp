@@ -29,8 +29,6 @@ class LoginViewModel @Inject constructor(
     private var _state: MutableStateFlow<LoginState> = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state
 
-    //TODO: loading dialog?
-    //TODO: error dialog...
     //TODO: fix adapter issue with backend...
     //TODO: cache tokens...
 
@@ -44,6 +42,12 @@ class LoginViewModel @Inject constructor(
                 Log.d("LoginViewModel", "$loginState")
                 _state.value = loginState
             }
+        }
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state = MutableStateFlow(LoginState())
         }
     }
 }
