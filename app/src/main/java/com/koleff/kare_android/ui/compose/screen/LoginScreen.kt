@@ -29,6 +29,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,8 +59,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.LoginViewModel
-import java.util.logging.Logger
 
 @Composable
 fun LoginScreen(
@@ -73,11 +76,26 @@ fun LoginScreen(
         .fillMaxWidth()
         .height(screenHeight * 0.33f)
 
+    //State and callbacks
+    val loginState by loginViewModel.state.collectAsState()
+
     val onSignIn: (Credentials) -> Unit = { credentials ->
         Log.d("LoginScreen", "Signing in with credentials: $credentials")
         loginViewModel.login(credentials)
     }
     val onGoogleSign: () -> Unit = {}
+
+    var showErrorDialog by remember { mutableStateOf(false) }
+
+    //Update showErrorDialog based on loginState
+    LaunchedEffect(loginState.isError) {
+        showErrorDialog = loginState.isError
+    }
+
+    val onDismiss = {
+        loginViewModel.clearError()
+        showErrorDialog = false
+    }
 
     var username by remember {
         mutableStateOf("")
@@ -111,6 +129,15 @@ fun LoginScreen(
             contentDescription = "Background",
             contentScale = ContentScale.Crop
         )
+    }
+
+    //Loading screen
+    if (loginState.isLoading) {
+        LoadingWheel()
+    }
+
+    if (showErrorDialog) {
+        ErrorDialog(loginState.error, onDismiss)
     }
 
     //Screen
