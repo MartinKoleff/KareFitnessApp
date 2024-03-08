@@ -6,7 +6,9 @@ import com.koleff.kare_android.common.credentials_validator.AuthenticationNotifi
 import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.ui.state.BaseState
@@ -29,8 +31,6 @@ class LoginViewModel @Inject constructor(
     private var _state: MutableStateFlow<LoginState> = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state
 
-    //TODO: fix adapter issue with backend...
-    //TODO: cache tokens...
 
     fun login(credentials: Credentials) {
         viewModelScope.launch(dispatcher) {
@@ -49,5 +49,9 @@ class LoginViewModel @Inject constructor(
         if (state.value.isError) {
             _state.value = LoginState()
         }
+    }
+
+    fun navigateToDashboard() {
+        onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
     }
 }

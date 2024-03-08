@@ -56,10 +56,10 @@ import com.koleff.kare_android.ui.view_model.WelcomeViewModel
 @Composable
 fun WelcomeScreen(welcomeViewModel: WelcomeViewModel = hiltViewModel()) {
     val navigateToLogin = {
-        welcomeViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Login))
+        welcomeViewModel.navigateToLogin()
     }
     val navigateToRegister = {
-        welcomeViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Register))
+        welcomeViewModel.navigateToRegister()
     }
     val context = LocalContext.current
 

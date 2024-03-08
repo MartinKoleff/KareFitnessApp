@@ -262,7 +262,7 @@ class WorkoutViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openSearchWorkoutScreen(exerciseId: Int) {
+    fun navigateToSearchWorkout(exerciseId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchWorkoutsScreen(
@@ -272,7 +272,7 @@ class WorkoutViewModel @Inject constructor(
         )
     }
 
-    fun openWorkoutDetailsScreen(workout: WorkoutDto) {
+    fun navigateToWorkoutDetails(workout: WorkoutDto) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.WorkoutDetails(workoutId = workout.workoutId)
@@ -280,7 +280,7 @@ class WorkoutViewModel @Inject constructor(
         )
     }
 
-    fun openWorkoutDetailsScreen(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.WorkoutDetails(workoutId = workoutId)

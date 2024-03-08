@@ -59,6 +59,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.navigation.Destination
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.LoginViewModel
@@ -83,6 +85,17 @@ fun LoginScreen(
         Log.d("LoginScreen", "Signing in with credentials: $credentials")
         loginViewModel.login(credentials)
     }
+
+    LaunchedEffect(loginState) {
+
+        //Navigates to Dashboard on successful login
+        if(loginState.isSuccessful){
+            loginViewModel.navigateToDashboard()
+            //TODO: fix adapter issue with backend...
+            //TODO: cache tokens...
+        }
+    }
+
     val onGoogleSign: () -> Unit = {}
 
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -93,7 +106,7 @@ fun LoginScreen(
     }
 
     val onDismiss = {
-        loginViewModel.clearError() //enters launched effect to update showErrorDialog...
+        loginViewModel.clearError() //Enters launched effect to update showErrorDialog...
     }
 
     var username by remember {

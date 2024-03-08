@@ -69,7 +69,7 @@ fun ExerciseDetailsConfiguratorScreen(
 
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
-            exerciseDetailsConfiguratorViewModel.openWorkoutDetailsScreen(selectedWorkoutState.workoutDetails.workoutId)
+            exerciseDetailsConfiguratorViewModel.navigateToWorkoutDetails(selectedWorkoutState.workoutDetails.workoutId)
         }
     }
 

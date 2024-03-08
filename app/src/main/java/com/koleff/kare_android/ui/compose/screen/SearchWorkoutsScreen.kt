@@ -77,7 +77,7 @@ fun SearchWorkoutsScreen(
                 targetValue = 0f,
                 animationSpec = TweenSpec(durationMillis = 500)
             ) {
-                searchWorkoutViewModel.openWorkoutDetailsScreen(updateWorkoutState.workoutDetails.workoutId)
+                searchWorkoutViewModel.navigateToWorkoutDetails(updateWorkoutState.workoutDetails.workoutId)
             }
 
             //Reset state

@@ -120,7 +120,7 @@ fun WorkoutsScreen(
                     "WorkoutsScreen",
                     "Create workout with id ${createWorkoutState.workout.workoutId}"
                 )
-                workoutListViewModel.openWorkoutDetailsScreen(createWorkoutState.workout.workoutId)
+                workoutListViewModel.navigateToWorkoutDetails(createWorkoutState.workout.workoutId)
             }
         }
 
@@ -238,7 +238,7 @@ fun WorkoutsScreen(
                                 },
                                 onSelect = { showSelectDialog = true },
                                 onClick = {
-                                    workoutListViewModel.openWorkoutDetailsScreen(
+                                    workoutListViewModel.navigateToWorkoutDetails(
                                         workout = it
                                     )
                                 },
@@ -253,7 +253,7 @@ fun WorkoutsScreen(
                             NoWorkoutSelectedBanner {
 
                                 //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.openSearchWorkoutScreen(-1) //TODO: test
+                                workoutListViewModel.navigateToSearchWorkout(-1) //TODO: test
                             }
                         }
                     } else {
@@ -277,7 +277,7 @@ fun WorkoutsScreen(
                                         selectedWorkout = workout
                                     },
                                     onClick = {
-                                        workoutListViewModel.openWorkoutDetailsScreen(
+                                        workoutListViewModel.navigateToWorkoutDetails(
                                             workout = workout
                                         )
                                     },
@@ -294,7 +294,7 @@ fun WorkoutsScreen(
                                     NoWorkoutSelectedBanner {
 
                                         //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.openSearchWorkoutScreen(-1) //TODO: test
+                                        workoutListViewModel.navigateToSearchWorkout(-1) //TODO: test
                                     }
                                 } else {
                                     AddWorkoutBanner {

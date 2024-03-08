@@ -46,7 +46,7 @@ fun WorkoutDetailsScreen(
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
 
-        workoutDetailsViewModel.openExerciseDetailsConfiguratorScreen(
+        workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(
             exerciseId = selectedExercise.exerciseId,
             workoutId = workoutDetailsState.workoutDetails.workoutId,
             muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
@@ -176,7 +176,7 @@ fun WorkoutDetailsScreen(
                             AddExerciseToWorkoutBanner {
 
                                 //Open search exercise screen...
-                                workoutDetailsViewModel.openSearchExercisesScreen(
+                                workoutDetailsViewModel.navigateToSearchExcercises(
                                     workoutId = workoutDetailsState.workoutDetails.workoutId
                                 )
                             }

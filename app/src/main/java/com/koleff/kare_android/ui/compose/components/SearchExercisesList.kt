@@ -21,7 +21,7 @@ fun SearchExercisesList(
     modifier: Modifier,
     exerciseList: List<ExerciseDto>,
     workoutId: Int,
-    openExerciseDetailsConfiguratorScreen: (ExerciseDto, Int) -> Unit,
+    navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         val muscleGroups = exerciseList.map(ExerciseDto::muscleGroup).distinct()
@@ -46,7 +46,7 @@ fun SearchExercisesList(
                         .height(200.dp),
                     exercise = currentExercise,
                 ) { selectedExercise ->
-                    openExerciseDetailsConfiguratorScreen(selectedExercise, workoutId)
+                    navigateToExerciseDetailsConfigurator(selectedExercise, workoutId)
                 }
             }
         }
@@ -67,7 +67,7 @@ fun SearchExercisesListPreview() {
         modifier = modifier,
         exerciseList = exerciseList,
         workoutId = 1,
-        openExerciseDetailsConfiguratorScreen = { exercise, workoutId ->
+        navigateToExerciseDetailsConfigurator = { exercise, workoutId ->
 
         }
     )
