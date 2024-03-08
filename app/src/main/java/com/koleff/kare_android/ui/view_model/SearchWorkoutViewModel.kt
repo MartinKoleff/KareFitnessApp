@@ -143,13 +143,13 @@ class SearchWorkoutViewModel @Inject constructor(
 
     override fun clearError() {
         if (selectedWorkoutState.value.isError) {
-            _selectedWorkoutState = MutableStateFlow(WorkoutDetailsState())
+            _selectedWorkoutState.value = WorkoutDetailsState()
         }
         if (workoutsState.value.isError) {
-            _workoutsState = MutableStateFlow(WorkoutListState())
+            _workoutsState.value = WorkoutListState()
         }
         if (updateWorkoutState.value.isError) {
-            _updateWorkoutState = MutableStateFlow(WorkoutDetailsState())
+            _updateWorkoutState.value = WorkoutDetailsState()
         }
     }
 }

@@ -297,22 +297,22 @@ class WorkoutViewModel @Inject constructor(
 
     override fun clearError() {
         if (state.value.isError) {
-            _state = MutableStateFlow(WorkoutListState())
+            _state.value = WorkoutListState()
         }
         if (deleteWorkoutState.value.isError) {
-            _deleteWorkoutState = MutableStateFlow(BaseState())
+            _deleteWorkoutState.value = BaseState()
         }
         if (updateWorkoutState.value.isError) {
-            _updateWorkoutState = MutableStateFlow(WorkoutState())
+            _updateWorkoutState.value = WorkoutState()
         }
         if (selectWorkoutState.value.isError) {
-            _selectWorkoutState = MutableStateFlow(BaseState())
+            _selectWorkoutState.value = BaseState()
         }
         if (getSelectedWorkoutState.value.isError) {
-            _getSelectedWorkoutState = MutableStateFlow(SelectedWorkoutState())
+            _getSelectedWorkoutState.value = SelectedWorkoutState()
         }
         if (createWorkoutState.value.isError) {
-            _createWorkoutState = MutableStateFlow(WorkoutState())
+            _createWorkoutState.value = WorkoutState()
         }
     }
 }

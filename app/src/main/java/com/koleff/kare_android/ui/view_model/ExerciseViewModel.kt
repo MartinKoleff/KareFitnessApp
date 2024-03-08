@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
@@ -21,8 +22,9 @@ import javax.inject.Inject
 class ExerciseViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
     private val savedStateHandle: SavedStateHandle,
+    private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel(navigationController) {
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
 
     private val _state: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
@@ -38,6 +40,12 @@ class ExerciseViewModel @Inject constructor(
             exerciseUseCases.getExerciseUseCase(exerciseId).collect { exerciseState ->
               _state.value = exerciseState
             }
+        }
+    }
+
+    override fun clearError() {
+        if(state.value.isError){
+            _state.value = ExerciseState()
         }
     }
 }

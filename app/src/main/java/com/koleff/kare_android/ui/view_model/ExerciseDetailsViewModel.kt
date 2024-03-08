@@ -73,7 +73,7 @@ class ExerciseDetailsViewModel @Inject constructor(
 
     override fun clearError() {
         if (state.value.isError) {
-            _state = MutableStateFlow(ExerciseDetailsState())
+            _state.value = ExerciseDetailsState()
         }
     }
 }

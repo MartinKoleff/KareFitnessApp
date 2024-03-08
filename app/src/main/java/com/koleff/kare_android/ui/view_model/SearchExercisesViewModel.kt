@@ -126,7 +126,7 @@ class SearchExercisesViewModel @Inject constructor(
 
     override fun clearError() {
         if(state.value.isError){
-            _state = MutableStateFlow(ExerciseListState())
+            _state.value = ExerciseListState()
         }
     }
 }

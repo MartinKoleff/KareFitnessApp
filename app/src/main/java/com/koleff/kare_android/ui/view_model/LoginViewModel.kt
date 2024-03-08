@@ -47,7 +47,7 @@ class LoginViewModel @Inject constructor(
 
     override fun clearError() {
         if (state.value.isError) {
-            _state = MutableStateFlow(LoginState())
+            _state.value = LoginState()
         }
     }
 }

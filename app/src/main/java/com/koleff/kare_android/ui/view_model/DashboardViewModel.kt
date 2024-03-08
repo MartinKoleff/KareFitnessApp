@@ -82,8 +82,7 @@ class DashboardViewModel @Inject constructor(
 
     override fun clearError() {
         if (state.value.isError) {
-            _state =
-                MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))
+            _state.value = DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList())
         }
     }
 }

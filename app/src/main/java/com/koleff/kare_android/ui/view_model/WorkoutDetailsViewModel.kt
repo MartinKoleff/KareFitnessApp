@@ -101,11 +101,11 @@ class WorkoutDetailsViewModel @Inject constructor(
 
     override fun clearError() {
        if(getWorkoutDetailsState.value.isError){
-           _getWorkoutDetailsState = MutableStateFlow(WorkoutDetailsState())
+           _getWorkoutDetailsState.value = WorkoutDetailsState()
        }
 
         if(deleteExerciseState.value.isError){
-            _deleteExerciseState = MutableStateFlow(DeleteExerciseState())
+            _deleteExerciseState.value = DeleteExerciseState()
         }
     }
 }

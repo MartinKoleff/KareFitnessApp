@@ -93,8 +93,7 @@ fun LoginScreen(
     }
 
     val onDismiss = {
-        loginViewModel.clearError()
-        showErrorDialog = false
+        loginViewModel.clearError() //enters launched effect to update showErrorDialog...
     }
 
     var username by remember {
