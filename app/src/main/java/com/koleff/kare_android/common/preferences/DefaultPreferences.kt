@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import java.lang.NullPointerException
 import java.lang.reflect.Type
@@ -128,6 +129,29 @@ class DefaultPreferences(
 
         return try {
             gson.fromJson(credentialsJson, Credentials::class.java)
+        } catch (ex: Exception) {
+            when (ex) {
+                is IllegalAccessException, is NullPointerException -> {
+                    null
+                }
+
+                else -> throw ex
+            }
+        }
+    }
+
+    override fun saveTokens(tokens: Tokens) {
+        sharedPref.edit()
+            .putString(Preferences.TOKENS, tokens.toString())
+            .apply()
+    }
+
+    override fun getTokens(): Tokens? {
+        val tokensJson: String =
+            sharedPref.getString(Preferences.TOKENS, "") ?: ""
+
+        return try {
+            gson.fromJson(tokensJson, Tokens::class.java)
         } catch (ex: Exception) {
             when (ex) {
                 is IllegalAccessException, is NullPointerException -> {

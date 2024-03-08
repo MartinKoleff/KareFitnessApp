@@ -87,16 +87,15 @@ fun LoginScreen(
     }
 
     LaunchedEffect(loginState) {
-
-        //Navigates to Dashboard on successful login
         if(loginState.isSuccessful){
+
+            //Cache credentials and tokens
+            loginViewModel.saveCredentials()
+
+            //Navigates to Dashboard
             loginViewModel.navigateToDashboard()
-            //TODO: fix adapter issue with backend...
-            //TODO: cache tokens...
         }
     }
-
-    val onGoogleSign: () -> Unit = {}
 
     var showErrorDialog by remember { mutableStateOf(false) }
 
@@ -115,6 +114,8 @@ fun LoginScreen(
     var password by remember {
         mutableStateOf("")
     }
+
+    val onGoogleSign: () -> Unit = {} //TODO: wire with OAuth2...
 
     //Background image
     Box(
@@ -194,6 +195,7 @@ fun LoginScreen(
             )
         )
         SignInFooter(onGoogleSign = onGoogleSign)
+        //TODO: add don't have an account register redirect to registerScreen...
     }
 }
 

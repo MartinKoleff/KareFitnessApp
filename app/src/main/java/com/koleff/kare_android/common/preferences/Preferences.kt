@@ -2,6 +2,7 @@ package com.koleff.kare_android.common.preferences
 
 import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
 interface Preferences {
@@ -17,14 +18,17 @@ interface Preferences {
     fun initializeUserTable()
     fun saveCredentials(credentials: Credentials)
     fun getCredentials(): Credentials?
-
+    fun saveTokens(tokens: Tokens)
+    fun getTokens(): Tokens?
 
     companion object {
         const val DASHBOARD_MUSCLE_GROUP_LIST = "dashboard_muscle_group_list"
         const val HAS_INITIALIZED_EXERCISE_TABLE = "has_initialized_exercise_table"
         const val HAS_INITIALIZED_WORKOUT_TABLE = "has_initialized_workout_table"
         const val HAS_INITIALIZED_USER_TABLE = "has_initialized_user_table"
+        const val HAS_TOKENS = "has_tokens"
         const val SELECTED_WORKOUT = "selected_workout"
         const val CREDENTIALS = "credentials"
+        const val TOKENS = "tokens"
     }
 }
