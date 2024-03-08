@@ -27,7 +27,8 @@ class LoginUseCase(
     private val credentialsAuthenticationState: StateFlow<BaseState> =
         _credentialsAuthenticationState
 
-    suspend operator fun invoke(username: String, password: String): Flow<LoginState> = flow {
+
+    suspend operator fun invoke(username: String, password: String): Flow<LoginState> {
 
         //Validate credentials
         credentialsAuthenticator.checkLoginCredentials(username, password)
@@ -36,7 +37,7 @@ class LoginUseCase(
             }
 
         //Valid credentials -> proceed with login
-        if (credentialsAuthenticationState.value.isSuccessful) {
+        return if (credentialsAuthenticationState.value.isSuccessful) {
             authenticationRepository.login(username, password).map { apiResult ->
                 when (apiResult) {
                     is ResultWrapper.ApiError -> {
@@ -54,6 +55,10 @@ class LoginUseCase(
                         Log.d("LoginUseCase", "User $username has logged in successfully!")
 
                         with(apiResult.data) {
+
+                            //Save credentials
+                            credentialsAuthenticator.saveCredentials(user)
+
                             LoginState(
                                 isSuccessful = true,
                                 data = LoginData(
@@ -62,17 +67,17 @@ class LoginUseCase(
                                     user = user
                                 )
                             )
-
-                            //Save credentials
-                            credentialsAuthenticator.saveCredentials(user)
                         }
                     }
                 }
             }
-        } else //if (credentialsAuthenticationState.value.isError) {
-            LoginState(
-                isError = true,
-                error = KareError.INVALID_CREDENTIALS
+        } else { //if (credentialsAuthenticationState.value.isError)
+            flowOf(
+                LoginState(
+                    isError = true,
+                    error = KareError.INVALID_CREDENTIALS
+                )
             )
+        }
     }
 }

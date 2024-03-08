@@ -42,7 +42,7 @@ class AuthenticationLocalDataSource(
             if (state.value.isSuccessful) {
                 val user = userDao.getUserByUsername(username)
                 val accessToken = "access_token" //Not generating tokens for security concerns...
-                val refreshToken = "refresh token"
+                val refreshToken = "refresh_token"
 
                 val result = LoginWrapper(
                     LoginResponse(

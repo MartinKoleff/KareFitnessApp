@@ -24,6 +24,7 @@ import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
@@ -38,6 +39,7 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 import java.util.stream.Stream
+import kotlin.math.log
 
 class AuthenticationTest {
 
@@ -429,5 +431,60 @@ class AuthenticationTest {
         }
     }
 
-    //TODO: login use case test
+    @Test
+    fun `validate login with valid credentials`() = runTest {
+        val credentials = Credentials(
+            UUID.randomUUID(),
+            "mkoleff",
+            "password",
+            "koleff@kare.com"
+        )
+
+        //Save entry to DB
+        userDao.saveUser(
+            credentials.toEntity()
+        )
+
+        val loginState = loginUseCase.invoke(
+            credentials.username,
+            credentials.password
+        ).toList()
+
+        logger.i(TAG, "Login -> isLoading state raised.")
+        assertTrue { loginState[0].isLoading }
+
+        logger.i(TAG, "Login -> isSuccessful state raised.")
+        assertTrue { loginState[1].isSuccessful }
+
+        val accessToken = loginState[1].data.accessToken
+        val refreshToken = loginState[1].data.refreshToken
+        logger.i(TAG, "Assert access and refresh token are generated.")
+        logger.i(TAG, "Data: ${loginState[1]}")
+        assertTrue {
+            accessToken == "access_token" && refreshToken == "refresh_token"
+        }
+    }
+
+    @Test
+    fun `validate login with invalid credentials`() = runTest {
+        val credentials = Credentials(
+            UUID.randomUUID(),
+            "koleff",
+            "parola",
+            "koleff@karecom"
+        )
+
+        //Save entry to DB
+        userDao.saveUser(
+            credentials.toEntity()
+        )
+
+        val loginState = loginUseCase.invoke(
+            credentials.username,
+            credentials.password
+        ).first()
+
+        logger.i(TAG, "Data: $loginState")
+        assertTrue { loginState.isError && loginState.error == KareError.INVALID_CREDENTIALS }
+    }
 }
