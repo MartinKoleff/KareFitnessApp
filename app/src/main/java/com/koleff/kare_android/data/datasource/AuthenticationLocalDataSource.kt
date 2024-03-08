@@ -34,13 +34,8 @@ class AuthenticationLocalDataSource(
             delay(Constants.fakeDelay)
 
             //Validate credentials
-            val credentials = Credentials(
-                username = username,
-                password = password
-            )
-
             val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticator.checkCredentials(credentials).collect {
+            credentialsAuthenticator.checkLoginCredentials(username, password).collect {
                 state.value = it
             }
 

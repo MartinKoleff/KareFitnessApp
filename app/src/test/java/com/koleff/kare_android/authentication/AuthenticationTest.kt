@@ -23,11 +23,14 @@ import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
+import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
@@ -385,10 +388,11 @@ class AuthenticationTest {
             }
 
             assertDoesNotThrow {
-                when(val result = credentialsValidator.validate(credentials)){
+                when (val result = credentialsValidator.validateRegister(credentials)) {
                     is ResultWrapper.Success -> {
                         assertTrue(result.data.isSuccessful)
                     }
+
                     else -> {
 
                         //Failed test
@@ -412,7 +416,7 @@ class AuthenticationTest {
             )
         }
 
-        when (val result = credentialsValidator.validate(credentials)){
+        when (val result = credentialsValidator.validateRegister(credentials)) {
             is ResultWrapper.ApiError -> {
                 assertTrue(result.error == KareError.INVALID_CREDENTIALS)
             }

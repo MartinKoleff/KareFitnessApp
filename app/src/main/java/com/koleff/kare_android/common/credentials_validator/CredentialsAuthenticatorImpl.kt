@@ -12,8 +12,8 @@ class CredentialsAuthenticatorImpl @Inject constructor(
     private val credentialsValidator: CredentialsValidator,
     private val credentialsDataStore: CredentialsDataStore
 ) : CredentialsAuthenticator {
-    override suspend fun checkCredentials(credentials: Credentials): Flow<BaseState> = flow {
-        when (val data = credentialsValidator.validate(credentials)) {
+    override suspend fun checkRegisterCredentials(credentials: Credentials): Flow<BaseState> = flow {
+        when (val data = credentialsValidator.validateRegister(credentials)) {
             is ResultWrapper.ApiError ->
                 emit(
                     BaseState(
@@ -35,12 +35,37 @@ class CredentialsAuthenticatorImpl @Inject constructor(
                         isSuccessful = true
                     )
                 )
-
-                //save credentials and login...
-                saveCredentials(credentials)
             }
         }
     }
+
+    override suspend fun checkLoginCredentials(username: String, password: String): Flow<BaseState> = flow {
+        when (val data = credentialsValidator.validateLogin(username, password)) {
+            is ResultWrapper.ApiError ->
+                emit(
+                    BaseState(
+                        isError = true,
+                        error = data.error ?: KareError.GENERIC
+                    )
+                )
+
+            is ResultWrapper.Loading ->
+                emit(
+                    BaseState(
+                        isLoading = true
+                    )
+                )
+
+            is ResultWrapper.Success -> {
+                emit(
+                    BaseState(
+                        isSuccessful = true
+                    )
+                )
+            }
+        }
+    }
+
 
     override suspend fun saveCredentials(credentials: Credentials) {
         credentialsDataStore.saveCredentials(credentials)

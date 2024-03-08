@@ -14,11 +14,28 @@ typealias Credentials = UserDto
 class CredentialsValidatorImpl @Inject constructor(
     private val userRepository: UserRepository
 ) : CredentialsValidator {
-    override suspend fun validate(credentials: Credentials): ResultWrapper<ServerResponseData> {
+    override suspend fun validateRegister(credentials: Credentials): ResultWrapper<ServerResponseData> {
         return try {
             validateUsername(credentials.username)
-//            validateEmail(credentials.email) //no email on login...
+            validateEmail(credentials.email)
             validatePassword(credentials.password)
+
+            ResultWrapper.Success(
+                ServerResponseData(
+                    isSuccessful = true
+                )
+            )
+        } catch (e: IllegalArgumentException) {
+            ResultWrapper.ApiError(
+                error = KareError.INVALID_CREDENTIALS
+            )
+        }
+    }
+
+    override suspend fun validateLogin(username: String, password: String): ResultWrapper<ServerResponseData> {
+        return try {
+            validateUsername(username)
+            validatePassword(password)
 
             ResultWrapper.Success(
                 ServerResponseData(

@@ -28,13 +28,9 @@ class LoginUseCase(
         _credentialsAuthenticationState
 
     suspend operator fun invoke(username: String, password: String): Flow<LoginState> = flow {
-        val credentials = Credentials(
-            username = username,
-            password = password
-        )
 
         //Validate credentials
-        credentialsAuthenticator.checkCredentials(credentials)
+        credentialsAuthenticator.checkLoginCredentials(username, password)
             .collect { credentialsAuthenticationState ->
                 _credentialsAuthenticationState.value = credentialsAuthenticationState
             }
@@ -66,6 +62,9 @@ class LoginUseCase(
                                     user = user
                                 )
                             )
+
+                            //Save credentials
+                            credentialsAuthenticator.saveCredentials(user)
                         }
                     }
                 }
