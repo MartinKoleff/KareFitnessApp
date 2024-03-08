@@ -27,7 +27,16 @@ class UserLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
 
             try {
-                val data = userDao.getUserByEmail(email)
+                val data = userDao.getUserByEmail(email) ?: run {
+
+                    //User not found...
+                    emit(
+                        ResultWrapper.ApiError(
+                            error = KareError.USER_NOT_FOUND
+                        )
+                    )
+                    return@flow
+                }
 
                 val result = UserWrapper(
                     UserResponse(data)
@@ -43,13 +52,22 @@ class UserLocalDataSource @Inject constructor(
             }
         }
 
-    override suspend fun getUserByUsername(username: String): Flow<ResultWrapper<UserWrapper>>  =
+    override suspend fun getUserByUsername(username: String): Flow<ResultWrapper<UserWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             try {
-                val data = userDao.getUserByUsername(username)
+                val data = userDao.getUserByUsername(username) ?: run {
+
+                    //User not found...
+                    emit(
+                        ResultWrapper.ApiError(
+                            error = KareError.USER_NOT_FOUND
+                        )
+                    )
+                    return@flow
+                }
 
                 val result = UserWrapper(
                     UserResponse(data)

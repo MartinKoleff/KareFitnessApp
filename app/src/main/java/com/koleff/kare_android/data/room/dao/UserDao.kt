@@ -13,13 +13,13 @@ import java.util.UUID
 interface UserDao {
 
     @Query("SELECT * FROM users_table WHERE userId = :userId")
-    fun getUserById(userId: UUID): User
+    fun getUserById(userId: UUID): User?
 
     @Query("SELECT * FROM users_table WHERE email = :email")
-    fun getUserByEmail(email: String): User
+    fun getUserByEmail(email: String): User?
 
     @Query("SELECT * FROM users_table WHERE username = :username")
-    fun getUserByUsername(username: String): User
+    fun getUserByUsername(username: String): User?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveUser(user: User)

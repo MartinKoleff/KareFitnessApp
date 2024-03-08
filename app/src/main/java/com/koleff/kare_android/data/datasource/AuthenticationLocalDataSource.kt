@@ -40,7 +40,12 @@ class AuthenticationLocalDataSource(
             }
 
             if (state.value.isSuccessful) {
-                val user = userDao.getUserByUsername(username)
+                val user = userDao.getUserByUsername(username) ?: run {
+                    //No user was found...
+                    emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
+                    return@flow
+                }
+
                 val accessToken = "access_token" //Not generating tokens for security concerns...
                 val refreshToken = "refresh_token"
 
@@ -79,7 +84,7 @@ class AuthenticationLocalDataSource(
                 )
 
                 emit(ResultWrapper.Success(result))
-            }else{
+            } else {
                 emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
             }
         }
