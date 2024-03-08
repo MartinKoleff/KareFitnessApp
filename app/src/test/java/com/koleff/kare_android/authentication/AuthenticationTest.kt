@@ -27,6 +27,7 @@ import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
+import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 import java.util.stream.Stream
 
@@ -46,6 +47,54 @@ class AuthenticationTest {
 
     private val isLogging = true
     private lateinit var logger: TestLogger
+
+    companion object {
+        private const val TAG = "AuthenticationTest"
+
+        @JvmStatic
+        fun provideValidUsernames(): Stream<Arguments> {
+            val usernames = listOf(
+                "koleff777",
+                "mkoleff",
+                "vankatadlg",
+                "starshinata",
+                "1234567",
+                "Sliv3nT0pa"
+            )
+            val saveToDBFlags =
+                listOf(
+                    true,
+                    false
+                )
+            return usernames.flatMap { username ->
+                saveToDBFlags.map { flag ->
+                    Arguments.of(username, flag)
+                }
+            }.stream()
+        }
+
+        @JvmStatic
+        fun provideInvalidUsernames(): Stream<Arguments> {
+            val usernames = listOf(
+                "a",
+                "123",
+                "ivo",
+                "a3c",
+                "mk",
+                " "
+            )
+            val saveToDBFlags =
+                listOf(
+                    true,
+                    false
+                )
+            return usernames.flatMap { username ->
+                saveToDBFlags.map { flag ->
+                    Arguments.of(username, flag)
+                }
+            }.stream()
+        }
+    }
 
     @BeforeEach
     fun setup() {
@@ -81,8 +130,7 @@ class AuthenticationTest {
             "test@gmail",
             "testgmail.com",
             "testgmail.com",
-            "@gmail.com",
-            " "
+            "@gmail.com"
         ]
     )
     fun `email validation test with invalid emails`(email: String) = runTest {
@@ -117,27 +165,20 @@ class AuthenticationTest {
     }
 
     @ParameterizedTest(name = "Validates username {0}")
-    @CsvSource( //TODO: add to test to DB save flag for all tests...
-        value = [
-            "koleff777",
-            "mkoleff",
-            "vankatadlg",
-            "starshinata",
-            "1234567",
-            "Sliv3nT0pa"
-        ]
-    )
-    fun `username validation test with valid usernames`(username: String) = runTest {
+    @MethodSource("provideValidUsernames")
+    fun `username validation test with valid usernames`(username: String, saveToDB: Boolean) = runTest {
 
         //Save entry to db before test...
-        userDao.saveUser(
-            User(
-               UUID.randomUUID(),
-                username,
-                "password",
-                "email@gmail.com"
+        if(saveToDB) {
+            userDao.saveUser(
+                User(
+                    UUID.randomUUID(),
+                    username,
+                    "password",
+                    "email@gmail.com"
+                )
             )
-        )
+        }
 
         assertDoesNotThrow {
             credentialsValidator.validateUsername(username)
@@ -145,27 +186,20 @@ class AuthenticationTest {
     }
 
     @ParameterizedTest(name = "Validates username {0}")
-    @CsvSource( //TODO: add to test to DB save flag for all tests...
-        value = [
-            "a",
-            "123",
-            "ivo",
-            "a3c",
-            "mk",
-            " "
-        ]
-    )
-    fun `username validation test with invalid username`(username: String) = runTest {
+    @MethodSource("provideInvalidUsernames")
+    fun `username validation test with invalid username`(username: String, saveToDB: Boolean) = runTest {
 
         //Save entry to db before test...
-        userDao.saveUser(
-            User(
-                UUID.randomUUID(),
-                username,
-                "password",
-                "email@gmail.com"
+        if(saveToDB) {
+            userDao.saveUser(
+                User(
+                    UUID.randomUUID(),
+                    username,
+                    "password",
+                    "email@gmail.com"
+                )
             )
-        )
+        }
 
         val exception: Exception? = try {
             credentialsValidator.validateUsername(username)
