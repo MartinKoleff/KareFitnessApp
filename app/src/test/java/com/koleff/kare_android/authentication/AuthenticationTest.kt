@@ -226,7 +226,7 @@ class AuthenticationTest {
         authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
 
         loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
-        registerUseCase = RegisterUseCase(authenticationRepository)
+        registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
         authenticationUseCases = AuthenticationUseCases(
             loginUseCase,
             registerUseCase
@@ -432,7 +432,7 @@ class AuthenticationTest {
     }
 
     @Test
-    fun `validate login with valid credentials`() = runTest {
+    fun `login using LoginUseCase with valid credentials`() = runTest {
         val credentials = Credentials(
             UUID.randomUUID(),
             "mkoleff",
@@ -445,7 +445,7 @@ class AuthenticationTest {
             credentials.toEntity()
         )
 
-        val loginState = loginUseCase.invoke(
+        val loginState = authenticationUseCases.loginUseCase.invoke(
             credentials.username,
             credentials.password
         ).toList()
@@ -466,7 +466,7 @@ class AuthenticationTest {
     }
 
     @Test
-    fun `validate login with invalid credentials`() = runTest {
+    fun `login using LoginUseCase with invalid credentials`() = runTest {
         val credentials = Credentials(
             UUID.randomUUID(),
             "koleff",
@@ -479,12 +479,59 @@ class AuthenticationTest {
             credentials.toEntity()
         )
 
-        val loginState = loginUseCase.invoke(
+        val loginState = authenticationUseCases.loginUseCase.invoke(
             credentials.username,
             credentials.password
         ).first()
 
         logger.i(TAG, "Data: $loginState")
         assertTrue { loginState.isError && loginState.error == KareError.INVALID_CREDENTIALS }
+    }
+
+
+    @Test
+    fun `register using RegisterUseCase with valid credentials`() = runTest {
+        val credentials = Credentials(
+            UUID.randomUUID(),
+            "mkoleff",
+            "password",
+            "koleff@kare.com"
+        )
+        logger.i(TAG, "Credentials: $credentials")
+
+        val registerState = authenticationUseCases.registerUseCase.invoke(
+            credentials
+        ).toList()
+
+        logger.i(TAG, "Register -> isLoading state raised.")
+        assertTrue { registerState[0].isLoading }
+
+        logger.i(TAG, "Register -> isSuccessful state raised.")
+        assertTrue { registerState[1].isSuccessful }
+
+        logger.i(TAG, "Data: ${registerState[1]}")
+
+        logger.i(TAG, "Assert DB contains user.")
+        val dbEntry = userDao.getUserByUsername(credentials.username)
+        logger.i(TAG, "DB entry: $dbEntry")
+
+        assertTrue { dbEntry == credentials.toEntity() }
+    }
+
+    @Test
+    fun `register using RegisterUseCase with invalid credentials`() = runTest {
+        val credentials = Credentials(
+            UUID.randomUUID(),
+            "koleff",
+            "parola",
+            "koleff@karecom"
+        )
+
+        val registerState = authenticationUseCases.registerUseCase.invoke(
+            credentials
+        ).first()
+
+        logger.i(TAG, "Data: $registerState")
+        assertTrue { registerState.isError && registerState.error == KareError.INVALID_CREDENTIALS }
     }
 }

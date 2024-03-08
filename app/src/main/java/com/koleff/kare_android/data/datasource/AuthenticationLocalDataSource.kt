@@ -53,7 +53,7 @@ class AuthenticationLocalDataSource(
                 )
 
                 emit(ResultWrapper.Success(result))
-            }else{
+            } else {
                 emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
             }
         }
@@ -63,13 +63,24 @@ class AuthenticationLocalDataSource(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            //Save user
-            userDao.saveUser(user.toEntity())
+            //Validate credentials
+            val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
+            credentialsAuthenticator.checkRegisterCredentials(user).collect {
+                state.value = it
+            }
 
-            val result = ServerResponseData(
-                BaseResponse(isSuccessful = true)
-            )
+            if (state.value.isSuccessful) {
 
-            emit(ResultWrapper.Success(result))
+                //Save user
+                userDao.saveUser(user.toEntity())
+
+                val result = ServerResponseData(
+                    BaseResponse(isSuccessful = true)
+                )
+
+                emit(ResultWrapper.Success(result))
+            }else{
+                emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
+            }
         }
 }

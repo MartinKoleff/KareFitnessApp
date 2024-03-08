@@ -79,7 +79,7 @@ object AuthenticationModule {
     ): AuthenticationUseCases {
         return AuthenticationUseCases(
             loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator),
-            registerUseCase = RegisterUseCase(authenticationRepository)
+            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
         )
     }
 }
