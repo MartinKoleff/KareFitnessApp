@@ -52,6 +52,6 @@ class LoginViewModel @Inject constructor(
     }
 
     fun navigateToDashboard() {
-        onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
     }
 }
