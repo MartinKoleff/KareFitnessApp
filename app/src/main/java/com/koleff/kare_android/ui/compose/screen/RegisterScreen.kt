@@ -71,6 +71,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
 
     val onDismiss = {
         registerViewModel.clearError() //Enters launched effect to update showErrorDialog...
+        registerViewModel.clearState() //Clear showSuccessDialog...
     }
 
     var username by remember {
@@ -141,6 +142,37 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             painter = painterResource(id = R.drawable.ic_default),
             contentDescription = "Top Image",
             contentScale = ContentScale.Crop
+        )
+
+        CustomTitleAndSubtitle(
+            title = "Welcome to Kare!",
+            subtitle = "Create an account so you can become part of the family!"
+        )
+
+        //User text box
+        CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+            username = it
+        }
+
+        //Password text box
+        PasswordTextField(label = "Password") {
+            password = it
+        }
+
+        //User text box
+        CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
+            email = it
+        }
+
+        AuthenticationButton(
+            text = "Sign up",
+            onAction = onSignUp,
+            credentials =
+            Credentials(
+                username = username,
+                password = password,
+                email = email
+            )
         )
     }
 }

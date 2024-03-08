@@ -87,7 +87,7 @@ fun LoginScreen(
     }
 
     LaunchedEffect(loginState) {
-        if(loginState.isSuccessful){
+        if (loginState.isSuccessful) {
 
             //Cache credentials and tokens
             loginViewModel.saveCredentials()
@@ -176,7 +176,7 @@ fun LoginScreen(
         )
 
         //User text box
-        CustomTextField(label = "Username") {
+        CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
             username = it
         }
 
@@ -186,8 +186,9 @@ fun LoginScreen(
         }
 
 
-        SignInButton(
-            onSignIn = onSignIn,
+        AuthenticationButton(
+            text = "Sign in",
+            onAction = onSignIn,
             credentials =
             Credentials(
                 username = username,
@@ -226,39 +227,54 @@ fun CustomTitleAndSubtitle(title: String, subtitle: String) {
         )
 
     //Title
-    Text(
-        modifier = Modifier.padding(
-            titlePadding
-        ),
-        text = title,
-        style = TextStyle(
-            color = textColor,
-            fontSize = 48.sp,
-            fontWeight = FontWeight.ExtraBold
-        ),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(
+                titlePadding
+            ),
+            text = title,
+            style = TextStyle(
+                color = textColor,
+                fontSize = 40.sp,
+                fontWeight = FontWeight.ExtraBold
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 
     //Subtitle
-    Text(
-        modifier = Modifier.padding(
-            subtitlePadding
-        ),
-        text = subtitle,
-        style = TextStyle(
-            color = textColor,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Light
-        ),
-        maxLines = 1,
-        overflow = TextOverflow.Ellipsis
-    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(
+                subtitlePadding
+            ),
+            text = subtitle,
+            style = TextStyle(
+                color = textColor,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Light
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
 }
 
 @Composable
 fun CustomTextField(
     label: String,
+    iconId: Int,
     onValueChange: (String) -> Unit
 ) {
     var text by rememberSaveable {
@@ -294,13 +310,21 @@ fun CustomTextField(
         },
         leadingIcon = {
             Image(
-                painter = painterResource(id = R.drawable.ic_vector_profile),
+                modifier = Modifier
+                    .size(45.dp)
+                    .padding(vertical = 8.dp, horizontal = 2.dp),
+                painter = painterResource(iconId),
                 contentDescription = "Icon",
+                contentScale = ContentScale.Inside
 //                    colorFilter = ColorFilter.tint(
 //                        color = MaterialTheme.colorScheme.primary,
 //                        blendMode = BlendMode.DstIn
 //                    )
             )
+//            Icon(
+//                painter = painterResource(iconId),
+//                contentDescription = "Text box icon"
+//            )
         }
     )
 }
@@ -310,6 +334,7 @@ fun CustomTextField(
 fun CustomTextFieldPreview() {
     CustomTextField(
         label = "Username",
+        iconId = R.drawable.ic_user_2,
         onValueChange = {}
     )
 }
@@ -355,8 +380,11 @@ fun PasswordTextField(
         },
         leadingIcon = {
             Image(
+                modifier = Modifier
+                    .size(45.dp)
+                    .padding(vertical = 8.dp, horizontal = 2.dp),
                 painter = painterResource(id = R.drawable.ic_vector_password),
-                contentDescription = "Password Icon",
+                contentDescription = "Password icon",
 //                    colorFilter = ColorFilter.tint(
 //                        color = MaterialTheme.colorScheme.primary,
 //                        blendMode = BlendMode.DstIn
@@ -435,8 +463,9 @@ fun HorizontalLineWithTextPreview() {
 }
 
 @Composable
-fun SignInButton(
-    onSignIn: (Credentials) -> Unit,
+fun AuthenticationButton(
+    text: String,
+    onAction: (Credentials) -> Unit,
     credentials: Credentials
 ) {
     val cornerSize = 24.dp
@@ -460,7 +489,7 @@ fun SignInButton(
                 color = MaterialTheme.colorScheme.primaryContainer,
                 shape = RoundedCornerShape(cornerSize)
             )
-            .clickable(onClick = { onSignIn(credentials) }),
+            .clickable(onClick = { onAction(credentials) }),
         contentAlignment = Alignment.Center
     ) {
 
@@ -469,7 +498,7 @@ fun SignInButton(
             modifier = Modifier.padding(
                 PaddingValues(8.dp)
             ),
-            text = "Sign in",
+            text = text,
             style = TextStyle(
                 color = textColor,
                 fontSize = 24.sp,
@@ -484,8 +513,9 @@ fun SignInButton(
 @Preview
 @Composable
 fun SignInButtonPreview() {
-    SignInButton(
-        onSignIn = {
+    AuthenticationButton(
+        text = "Sign in",
+        onAction = {
 
         },
         credentials = Credentials()
