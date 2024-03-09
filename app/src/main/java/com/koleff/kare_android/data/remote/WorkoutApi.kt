@@ -59,7 +59,9 @@ interface WorkoutApi {
     ): WorkoutDetailsResponse
 
     @POST("api/v1/workout/addexercise")
-    fun addExercise(body: ExerciseAddRequest): WorkoutDetailsResponse
+    fun addExercise(
+        @Body body: ExerciseAddRequest
+    ): WorkoutDetailsResponse
 
     @PUT("api/v1/workout/updateworkoutdetails")
     suspend fun updateWorkoutDetails(
@@ -75,8 +77,12 @@ interface WorkoutApi {
     suspend fun createNewWorkout(): WorkoutResponse
 
     @GET("api/v1/workout/createcustomworkout")
-    suspend fun createCustomWorkout(body: UpdateWorkoutRequest): WorkoutResponse
+    suspend fun createCustomWorkout(
+        @Body body: UpdateWorkoutRequest
+    ): WorkoutResponse
 
     @GET("api/v1/workout/createcustomworkoutdetails")
-    suspend fun createCustomWorkoutDetails(body: UpdateWorkoutDetailsRequest): WorkoutDetailsResponse
+    suspend fun createCustomWorkoutDetails(
+        @Body body: UpdateWorkoutDetailsRequest
+    ): WorkoutDetailsResponse
 }

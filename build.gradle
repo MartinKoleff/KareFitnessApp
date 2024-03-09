@@ -13,6 +13,7 @@ buildscript {
 
     //https://developer.android.com/jetpack/androidx/releases/core
     ext.androidx_core_version = "1.12.0"
+    ext.androidx_core_splash_screen_version = "1.0.1"
 
     //https://developer.android.com/jetpack/androidx/releases/lifecycle
     ext.androidx_lifecycle_version = "2.7.0"
@@ -126,6 +127,9 @@ buildscript {
 
     //https://github.com/PierfrancescoSoffritti/android-youtube-player
     ext.youtube_video_player_version = "12.1.0"
+
+    //https://developer.android.com/media/media3/exoplayer
+    ext.media3_version = "1.2.1"
 
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$compose_navigation_version"

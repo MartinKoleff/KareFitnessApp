@@ -5,6 +5,7 @@ import androidx.multidex.MultiDexApplication
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -23,6 +24,9 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
     lateinit var workoutDBManager: WorkoutDBManager
 
     @Inject
+    lateinit var userDBManager: UserDBManager
+
+    @Inject
     lateinit var preferences: Preferences
 
     @OptIn(DelicateCoroutinesApi::class)
@@ -31,12 +35,16 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
         //Initialize Room DB on app start
         GlobalScope.launch(Dispatchers.IO) {
-            exerciseDBManager.initializeExerciseTableRoomDB {
-                preferences.initializeExerciseTableRoomDB()
+            exerciseDBManager.initializeExerciseTable {
+                preferences.initializeExerciseTable()
             }
 
-            workoutDBManager.initializeWorkoutTableRoomDB {
-                preferences.initializeWorkoutTableRoomDB()
+            workoutDBManager.initializeWorkoutTable {
+                preferences.initializeWorkoutTable()
+            }
+            
+            userDBManager.initializeUserTable {
+                preferences.initializeUserTable()
             }
         }
 

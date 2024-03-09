@@ -79,8 +79,8 @@ fun MuscleGroupScreen(
                 ExerciseList(
                     innerPadding = innerPadding,
                     exerciseList = exerciseListState.exerciseList,
-                    openExerciseDetailsScreen = { exercise ->
-                        exerciseListViewModel.openExerciseDetailsScreen(
+                    navigateToExerciseDetails = { exercise ->
+                        exerciseListViewModel.navigateToExerciseDetails(
                             exerciseId = exercise.exerciseId,
                             muscleGroupId = exercise.muscleGroup.muscleGroupId
                         )

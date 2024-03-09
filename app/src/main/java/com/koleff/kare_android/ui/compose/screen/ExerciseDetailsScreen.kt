@@ -56,7 +56,7 @@ fun ExerciseDetailsScreen(
         exerciseDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateBack)
     }
     val onNavigateSubmitExercise = {
-        exerciseDetailsViewModel.openSearchWorkoutScreen() //exerciseDetailsState.exercise
+        exerciseDetailsViewModel.navigateToSearchWorkout() //exerciseDetailsState.exercise
     }
 
     ExerciseDetailsScreenScaffold(

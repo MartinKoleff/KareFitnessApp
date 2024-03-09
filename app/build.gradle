@@ -97,6 +97,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$androidx_core_version"
     implementation "androidx.activity:activity-compose:$compose_activity_version"
     implementation "androidx.biometric:biometric:$androidx_biometric_version"
+    implementation "androidx.core:core-splashscreen:$androidx_core_splash_screen_version"
 //    implementation "androidx.appcompat:appcompat:$app_compat_version"
 
     //Lifecycle
@@ -117,10 +118,12 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-graphics:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
+    implementation 'androidx.media3:media3-exoplayer:1.2.1'
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.compose.material3:material3:$compose_material3_version"
     implementation "androidx.compose.material:material:$compose_material_version"
+    implementation "androidx.compose.material:material-icons-extended:$compose_material_version"
 
     //Pull to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
@@ -171,6 +174,11 @@ dependencies {
 
     //Firebase Crashlytics
     implementation("com.google.firebase:firebase-crashlytics-ndk:$firebase_crashlytics_version")
+
+    //Media3 Video player
+    implementation "androidx.media3:media3-exoplayer:$media3_version"
+    implementation "androidx.media3:media3-exoplayer-dash:$media3_version"
+    implementation "androidx.media3:media3-ui:$media3_version"
 
     //JUnit 4
 //    testImplementation "junit:junit:$robolectric_junit_version"

@@ -35,13 +35,13 @@ class WorkoutDetailsViewModel @Inject constructor(
 ) : BaseViewModel(navigationController) {
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
-    private val _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
+    private var _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
 
     val getWorkoutDetailsState: StateFlow<WorkoutDetailsState>
         get() = _getWorkoutDetailsState
 
-    private val _deleteExerciseState: MutableStateFlow<DeleteExerciseState> =
+    private var _deleteExerciseState: MutableStateFlow<DeleteExerciseState> =
         MutableStateFlow(DeleteExerciseState())
 
     val deleteExerciseState: StateFlow<DeleteExerciseState>
@@ -79,7 +79,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openSearchExercisesScreen(workoutId: Int) {
+    fun navigateToSearchExcercises(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchExercisesScreen(workoutId)
@@ -87,7 +87,7 @@ class WorkoutDetailsViewModel @Inject constructor(
         )
     }
 
-    fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+    fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.ExerciseDetailsConfigurator(
@@ -97,5 +97,15 @@ class WorkoutDetailsViewModel @Inject constructor(
                 )
             )
         )
+    }
+
+    override fun clearError() {
+       if(getWorkoutDetailsState.value.isError){
+           _getWorkoutDetailsState.value = WorkoutDetailsState()
+       }
+
+        if(deleteExerciseState.value.isError){
+            _deleteExerciseState.value = DeleteExerciseState()
+        }
     }
 }

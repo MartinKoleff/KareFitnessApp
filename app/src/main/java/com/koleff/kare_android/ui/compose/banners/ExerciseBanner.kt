@@ -261,7 +261,7 @@ fun ExerciseBannerV2(
 fun ExerciseList(
     innerPadding: PaddingValues = PaddingValues(0.dp),
     exerciseList: List<ExerciseDto>,
-    openExerciseDetailsScreen: (ExerciseDto) -> Unit,
+    navigateToExerciseDetails: (ExerciseDto) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -280,7 +280,7 @@ fun ExerciseList(
                     .height(200.dp),
                 exercise = exercise,
             ) {
-                openExerciseDetailsScreen(exercise)
+                navigateToExerciseDetails(exercise)
             }
         }
     }

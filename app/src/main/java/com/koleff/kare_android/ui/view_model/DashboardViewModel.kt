@@ -28,7 +28,7 @@ class DashboardViewModel @Inject constructor(
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : BaseViewModel(navigationController = navigationController) {
 
-    private val _state: MutableStateFlow<DashboardState> =
+    private var _state: MutableStateFlow<DashboardState> =
         MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))
     val state: StateFlow<DashboardState>
         get() = _state
@@ -78,5 +78,11 @@ class DashboardViewModel @Inject constructor(
                 )
             )
         )
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList())
+        }
     }
 }

@@ -14,7 +14,7 @@ class WorkoutDBManager @Inject constructor(
     private val hasInitializedDB: Boolean
 ) {
 
-    suspend fun initializeWorkoutTableRoomDB(onDBInitialized: () -> Unit) =
+    suspend fun initializeWorkoutTable(onDBInitialized: () -> Unit) =
         withContext(Dispatchers.IO) {
             if (hasInitializedDB) return@withContext
 

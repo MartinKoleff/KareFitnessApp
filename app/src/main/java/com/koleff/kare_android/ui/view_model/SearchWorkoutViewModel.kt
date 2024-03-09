@@ -31,19 +31,19 @@ class SearchWorkoutViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController) {
 
-    private val _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
+    private var _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
 
     val selectedWorkoutState: StateFlow<WorkoutDetailsState>
         get() = _selectedWorkoutState
 
-    private val _workoutsState: MutableStateFlow<WorkoutListState> =
+    private var _workoutsState: MutableStateFlow<WorkoutListState> =
         MutableStateFlow(WorkoutListState())
 
     val workoutsState: StateFlow<WorkoutListState>
         get() = _workoutsState
 
-    private val _updateWorkoutState: MutableStateFlow<WorkoutDetailsState> =
+    private var _updateWorkoutState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
 
     val updateWorkoutState: StateFlow<WorkoutDetailsState>
@@ -117,9 +117,10 @@ class SearchWorkoutViewModel @Inject constructor(
 
     fun updateWorkoutDetails(workout: WorkoutDetailsDto) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.updateWorkoutDetailsUseCase.invoke(workout).collect { updateWorkoutState ->
-                _updateWorkoutState.value = updateWorkoutState
-            }
+            workoutUseCases.updateWorkoutDetailsUseCase.invoke(workout)
+                .collect { updateWorkoutState ->
+                    _updateWorkoutState.value = updateWorkoutState
+                }
         }
     }
 
@@ -128,7 +129,7 @@ class SearchWorkoutViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openWorkoutDetailsScreen(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
                 popUpToRoute = Destination.Dashboard.route,
@@ -138,5 +139,17 @@ class SearchWorkoutViewModel @Inject constructor(
                 inclusive = false
             )
         )
+    }
+
+    override fun clearError() {
+        if (selectedWorkoutState.value.isError) {
+            _selectedWorkoutState.value = WorkoutDetailsState()
+        }
+        if (workoutsState.value.isError) {
+            _workoutsState.value = WorkoutListState()
+        }
+        if (updateWorkoutState.value.isError) {
+            _updateWorkoutState.value = WorkoutDetailsState()
+        }
     }
 }

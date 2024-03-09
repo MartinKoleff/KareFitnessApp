@@ -11,13 +11,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
+import com.koleff.kare_android.ui.compose.screen.LoginScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
+import com.koleff.kare_android.ui.compose.screen.RegisterScreen
 import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
+import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import kotlinx.coroutines.Dispatchers
@@ -33,7 +37,8 @@ import kotlinx.coroutines.flow.flowOn
 @ExperimentalAnimationApi
 @Composable
 fun AppNavigation(
-    navigationNotifier: NavigationNotifier
+    navigationNotifier: NavigationNotifier,
+    hasSignedIn: Boolean = false
 ) {
     val navController = rememberNavController()
 
@@ -89,15 +94,25 @@ fun AppNavigation(
             }
     }
 
+    //No cached data -> go to welcome screen (first time launch).
+    //Cached data -> go to dashboard screen (already signed in).
+    Log.d("AppNavigation", "Has credentials -> $hasSignedIn")
+    val startingDestination = if(hasSignedIn) {
+        Destination.Dashboard.route
+    }else{
+        Destination.Welcome.route
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Destination.Dashboard.route
+        startDestination = startingDestination
     ) {
         addDestinations()
     }
 }
 
 private fun NavGraphBuilder.addDestinations() {
+    addWelcomeGraph()
     composable(Destination.Dashboard.ROUTE) { backStackEntry ->
         DashboardScreen()
     }
@@ -124,5 +139,17 @@ private fun NavGraphBuilder.addDestinations() {
     }
     composable(Destination.SearchExercisesScreen.ROUTE) { backStackEntry ->
         SearchExercisesScreen()
+    }
+}
+
+internal fun NavGraphBuilder.addWelcomeGraph() {
+    composable(Destination.Welcome.ROUTE) { backStackEntry ->
+        WelcomeScreen()
+    }
+    composable(Destination.Login.ROUTE) {
+        LoginScreen()
+    }
+    composable(Destination.Register.ROUTE) { backStackEntry ->
+        RegisterScreen()
     }
 }

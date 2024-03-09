@@ -423,7 +423,7 @@ fun EditButton(
 fun WorkoutList(
     modifier: Modifier,
     workoutList: List<WorkoutDto>,
-    openWorkoutDetailsScreen: (WorkoutDto) -> Unit
+    navigateToWorkoutDetails: (WorkoutDto) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         items(workoutList) { workout ->
@@ -433,7 +433,7 @@ fun WorkoutList(
                     .height(200.dp),
                 workout = workout,
             ) {
-                openWorkoutDetailsScreen(workout)
+                navigateToWorkoutDetails(workout)
             }
         }
     }
@@ -470,7 +470,7 @@ fun WorkoutListPreview() {
     WorkoutList(
         modifier = modifier,
         workoutList = workoutList,
-        openWorkoutDetailsScreen = { workoutDto ->
+        navigateToWorkoutDetails = { workoutDto ->
 
         }
     )

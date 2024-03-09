@@ -97,4 +97,31 @@ sealed interface Destination {
                 "search_exercise/{workout_id}"
         }
     }
+
+    //Welcome screen
+    data object Welcome : Destination {
+
+        override val route: String
+            get() = "welcome"
+
+        const val ROUTE = "welcome"
+    }
+
+    //Login screen
+    data object Login : Destination {
+
+        override val route: String
+            get() = "login"
+
+        const val ROUTE = "login"
+    }
+
+    //Register screen
+    data object Register : Destination {
+
+        override val route: String
+            get() = "register"
+
+        const val ROUTE = "register"
+    }
 }

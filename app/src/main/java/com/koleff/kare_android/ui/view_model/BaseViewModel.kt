@@ -5,14 +5,11 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-open class BaseViewModel @Inject constructor(
+abstract class BaseViewModel(
     private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : ViewModel() {
@@ -43,4 +40,6 @@ open class BaseViewModel @Inject constructor(
             }
         }
     }
+
+    abstract fun clearError()
 }

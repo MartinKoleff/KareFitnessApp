@@ -45,16 +45,16 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
     val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
 
-    private val _exerciseState: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
+    private var _exerciseState: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
     val exerciseState: StateFlow<ExerciseState>
         get() = _exerciseState
 
-    private val _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
+    private var _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
     val selectedWorkoutState: StateFlow<WorkoutDetailsState>
         get() = _selectedWorkoutState
 
-    private val _updateWorkoutState: MutableStateFlow<WorkoutDetailsState> =
+    private var _updateWorkoutState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
     val updateWorkoutState: StateFlow<WorkoutDetailsState>
         get() = _updateWorkoutState
@@ -119,7 +119,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openWorkoutDetailsScreen(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
                 destinationRoute = Destination.WorkoutDetails(
@@ -136,5 +136,17 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
 
         //Reset state
         resetUpdateWorkoutState()
+    }
+
+    override fun clearError() {
+        if(exerciseState.value.isError){
+            _exerciseState.value = ExerciseState()
+        }
+        if(updateWorkoutState.value.isError){
+            _updateWorkoutState.value = WorkoutDetailsState()
+        }
+        if(selectedWorkoutState.value.isError){
+            _selectedWorkoutState.value = WorkoutDetailsState()
+        }
     }
 }

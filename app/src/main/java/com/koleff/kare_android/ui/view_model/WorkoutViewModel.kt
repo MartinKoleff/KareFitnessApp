@@ -41,31 +41,31 @@ class WorkoutViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController = navigationController) {
 
-    private val _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
+    private var _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
     val state: StateFlow<WorkoutListState>
         get() = _state
 
-    private val _deleteWorkoutState: MutableStateFlow<BaseState> =
+    private var _deleteWorkoutState: MutableStateFlow<BaseState> =
         MutableStateFlow(BaseState())
     val deleteWorkoutState: StateFlow<BaseState>
         get() = _deleteWorkoutState
 
-    private val _selectWorkoutState: MutableStateFlow<BaseState> =
+    private var _selectWorkoutState: MutableStateFlow<BaseState> =
         MutableStateFlow(BaseState())
     val selectWorkoutState: StateFlow<BaseState>
         get() = _selectWorkoutState
 
-    private val _getSelectedWorkoutState: MutableStateFlow<SelectedWorkoutState> =
+    private var _getSelectedWorkoutState: MutableStateFlow<SelectedWorkoutState> =
         MutableStateFlow(SelectedWorkoutState())
     val getSelectedWorkoutState: StateFlow<SelectedWorkoutState>
         get() = _getSelectedWorkoutState
 
-    private val _updateWorkoutState: MutableStateFlow<WorkoutState> =
+    private var _updateWorkoutState: MutableStateFlow<WorkoutState> =
         MutableStateFlow(WorkoutState())
     val updateWorkoutState: StateFlow<WorkoutState>
         get() = _updateWorkoutState
 
-    private val _createWorkoutState: MutableStateFlow<WorkoutState> =
+    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
         MutableStateFlow(WorkoutState())
     val createWorkoutState: StateFlow<WorkoutState>
         get() = _createWorkoutState
@@ -262,7 +262,7 @@ class WorkoutViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openSearchWorkoutScreen(exerciseId: Int) {
+    fun navigateToSearchWorkout(exerciseId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchWorkoutsScreen(
@@ -272,7 +272,7 @@ class WorkoutViewModel @Inject constructor(
         )
     }
 
-    fun openWorkoutDetailsScreen(workout: WorkoutDto) {
+    fun navigateToWorkoutDetails(workout: WorkoutDto) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.WorkoutDetails(workoutId = workout.workoutId)
@@ -280,7 +280,7 @@ class WorkoutViewModel @Inject constructor(
         )
     }
 
-    fun openWorkoutDetailsScreen(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.WorkoutDetails(workoutId = workoutId)
@@ -293,5 +293,26 @@ class WorkoutViewModel @Inject constructor(
         //Raise a flag to update Workouts screen...
         savedStateHandle["hasUpdated"] = true
         Log.d("WorkoutViewModel", "hasUpdated set to true.")
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = WorkoutListState()
+        }
+        if (deleteWorkoutState.value.isError) {
+            _deleteWorkoutState.value = BaseState()
+        }
+        if (updateWorkoutState.value.isError) {
+            _updateWorkoutState.value = WorkoutState()
+        }
+        if (selectWorkoutState.value.isError) {
+            _selectWorkoutState.value = BaseState()
+        }
+        if (getSelectedWorkoutState.value.isError) {
+            _getSelectedWorkoutState.value = SelectedWorkoutState()
+        }
+        if (createWorkoutState.value.isError) {
+            _createWorkoutState.value = WorkoutState()
+        }
     }
 }

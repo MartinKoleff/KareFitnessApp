@@ -84,8 +84,8 @@ fun SearchExercisesScreen(
                         .fillMaxSize(),
                     exerciseList = allExercises,
                     workoutId = workoutId,
-                    openExerciseDetailsConfiguratorScreen = { selectedExercise, workoutId ->
-                        searchExercisesViewModel.openExerciseDetailsConfiguratorScreen(
+                    navigateToExerciseDetailsConfigurator = { selectedExercise, workoutId ->
+                        searchExercisesViewModel.navigateToExerciseDetailsConfigurator(
                             exerciseId = selectedExercise.exerciseId,
                             workoutId = workoutId,
                             muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
@@ -139,7 +139,7 @@ fun SearchExercisesScreenPreview() {
                     .padding(top = 5.dp),
                 exerciseList = allExercises,
                 workoutId = 1,
-                openExerciseDetailsConfiguratorScreen = { exercise, workoutId ->
+                navigateToExerciseDetailsConfigurator = { exercise, workoutId ->
 
                 }
             )

@@ -5,7 +5,7 @@ object Constants {
     const val SCHEME = "https"
     const val PORT = 8080
 
-    const val BASE_URL = "test" //TODO: add deployed server url
+    const val BASE_URL = "karebackend-production.up.railway.app"
     const val BASE_URL_FULL = "$SCHEME://$BASE_URL/"
 
     const val BASE_LOCAL_URL = "localhost"
@@ -18,6 +18,8 @@ object Constants {
     const val fakeSmallDelay: Long = 750L
     
     const val navigationDelay: Long = 333L
+
+    const val splashScreenDelay: Long = 2000L
 
     const val DATABASE_NAME = "my_database"
     const val EXERCISE_TABLE_NAME = "ExerciseDto"
