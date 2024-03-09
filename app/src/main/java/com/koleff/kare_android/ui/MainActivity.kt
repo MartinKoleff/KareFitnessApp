@@ -1,7 +1,6 @@
 package com.koleff.kare_android.ui
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
 import android.view.animation.OvershootInterpolator
@@ -9,25 +8,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.navigation.AppNavigation
 import com.koleff.kare_android.common.navigation.NavigationNotifier
-import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.ui.theme.KareTheme
 import com.koleff.kare_android.ui.view_model.SplashScreenViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 @AndroidEntryPoint
