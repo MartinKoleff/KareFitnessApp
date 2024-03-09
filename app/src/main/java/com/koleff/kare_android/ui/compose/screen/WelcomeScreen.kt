@@ -49,8 +49,6 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.navigation.Destination
-import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.view_model.WelcomeViewModel
 
 @Composable
@@ -177,7 +175,7 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
         Image(
             modifier = Modifier
                 .size(175.dp),
-            painter = painterResource(R.drawable.logo),
+            painter = painterResource(R.drawable.ic_logo),
             contentDescription = "Logo image",
             contentScale = ContentScale.Crop
         )
@@ -219,7 +217,7 @@ fun LogoRow() {
         Image(
             modifier = Modifier
                 .size(175.dp),
-            painter = painterResource(R.drawable.logo),
+            painter = painterResource(R.drawable.ic_logo),
             contentDescription = "Logo image",
             contentScale = ContentScale.Crop
         )
