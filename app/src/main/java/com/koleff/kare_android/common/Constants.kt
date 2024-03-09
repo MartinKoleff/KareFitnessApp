@@ -19,7 +19,7 @@ object Constants {
     
     const val navigationDelay: Long = 333L
 
-    const val splashScreenDelay: Long = 3000L
+    const val splashScreenDelay: Long = 2000L
 
     const val DATABASE_NAME = "my_database"
     const val EXERCISE_TABLE_NAME = "ExerciseDto"

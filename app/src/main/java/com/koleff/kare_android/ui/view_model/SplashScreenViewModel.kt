@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants.splashScreenDelay
@@ -33,6 +34,11 @@ class SplashScreenViewModel @Inject constructor(
             val tokens = preferences.getTokens()
 
             val isSuccessful = credentials != null && tokens != null
+            Log.d("SplashScreenViewModel", "hasCredentials: $isSuccessful")
+            Log.d("SplashScreenViewModel", "Credentials: $credentials")
+            Log.d("SplashScreenViewModel", "Tokens: $tokens")
+
+            //TODO: do login request and if successful then skip login otherwise go through welcome process...
             if (isSuccessful) {
                 _state.value = SplashScreenState(
                     isSuccessful = true,

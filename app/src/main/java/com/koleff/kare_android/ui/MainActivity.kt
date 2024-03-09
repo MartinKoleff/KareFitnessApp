@@ -8,6 +8,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -39,8 +40,10 @@ class MainActivity : ComponentActivity() {
         setupSplashScreen()
 
         setContent {
+            val splashScreenState = splashScreenViewModel.state.collectAsState()
+
             KareTheme {
-                AppNavigation(navigationNotifier, hasSignedIn = splashScreenViewModel.state.value.hasCredentials)
+                AppNavigation(navigationNotifier, hasSignedIn = splashScreenState.value.hasCredentials)
             }
         }
 
