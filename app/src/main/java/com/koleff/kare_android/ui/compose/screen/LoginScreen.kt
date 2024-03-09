@@ -88,6 +88,7 @@ fun LoginScreen(
 
     LaunchedEffect(loginState) {
         if (loginState.isSuccessful) {
+            Log.d("LoginScreen", "Successfully signed in! Caching credentials and tokens!")
 
             //Cache credentials and tokens
             loginViewModel.saveCredentials()
@@ -161,7 +162,7 @@ fun LoginScreen(
     ) {
 
         //Gym image
-        Image(
+        Image( //TODO: replace with scaffold and top toolbar...
             modifier = gymImageModifier
                 .clip(RoundedCornerShape(cornerSize))
                 .padding(bottom = 6.dp),
@@ -184,7 +185,6 @@ fun LoginScreen(
         PasswordTextField(label = "Password") {
             password = it
         }
-
 
         AuthenticationButton(
             text = "Sign in",

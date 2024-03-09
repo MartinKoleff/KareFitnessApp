@@ -1,12 +1,14 @@
 package com.koleff.kare_android.common.preferences
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.Tokens
+import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import java.lang.NullPointerException
 import java.lang.reflect.Type
@@ -40,6 +42,7 @@ class DefaultPreferences(
             sharedPref.getString(Preferences.SELECTED_WORKOUT, "") ?: ""
 
         return try {
+            Log.d("DefaultPreferences", "Selected workout json: $selectedWorkoutJson")
             gson.fromJson(selectedWorkoutJson, WorkoutDto::class.java)
         } catch (ex: Exception) {
             when (ex) {
@@ -60,6 +63,7 @@ class DefaultPreferences(
 
         //Parse to MuscleGroupUIList...
         try {
+            Log.d("DefaultPreferences", "Dashboard muscle groups json: $muscleGroupListJson")
             val muscleGroupList: List<MuscleGroup> = gson.fromJson(muscleGroupListJson, type)
 
             if (muscleGroupList.isEmpty()) {
@@ -118,8 +122,10 @@ class DefaultPreferences(
     }
 
     override fun saveCredentials(credentials: Credentials) {
+        val json = gson.toJson(credentials)
+
         sharedPref.edit()
-            .putString(Preferences.CREDENTIALS, credentials.toString())
+            .putString(Preferences.CREDENTIALS, json)
             .apply()
     }
 
@@ -128,7 +134,8 @@ class DefaultPreferences(
             sharedPref.getString(Preferences.CREDENTIALS, "") ?: ""
 
         return try {
-            gson.fromJson(credentialsJson, Credentials::class.java)
+            Log.d("DefaultPreferences", "Credentials json: $credentialsJson")
+            gson.fromJson(credentialsJson, UserDto::class.java)
         } catch (ex: Exception) {
             when (ex) {
                 is IllegalAccessException, is NullPointerException -> {
@@ -141,8 +148,10 @@ class DefaultPreferences(
     }
 
     override fun saveTokens(tokens: Tokens) {
+        val json = gson.toJson(tokens)
+
         sharedPref.edit()
-            .putString(Preferences.TOKENS, tokens.toString())
+            .putString(Preferences.TOKENS, json)
             .apply()
     }
 
@@ -151,6 +160,7 @@ class DefaultPreferences(
             sharedPref.getString(Preferences.TOKENS, "") ?: ""
 
         return try {
+            Log.d("DefaultPreferences", "Tokens json: $tokensJson")
             gson.fromJson(tokensJson, Tokens::class.java)
         } catch (ex: Exception) {
             when (ex) {

@@ -10,6 +10,7 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.navigation.AppNavigation
 import com.koleff.kare_android.common.navigation.NavigationNotifier
+import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.ui.theme.KareTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
@@ -25,12 +26,15 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationNotifier: NavigationNotifier
 
+    @Inject
+    lateinit var preferences: Preferences
+
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class, FlowPreview::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             KareTheme {
-                AppNavigation(navigationNotifier)
+                AppNavigation(navigationNotifier, preferences)
             }
         }
 

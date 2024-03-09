@@ -11,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
@@ -36,7 +37,8 @@ import kotlinx.coroutines.flow.flowOn
 @ExperimentalAnimationApi
 @Composable
 fun AppNavigation(
-    navigationNotifier: NavigationNotifier
+    navigationNotifier: NavigationNotifier,
+    preferences: Preferences
 ) {
     val navController = rememberNavController()
 
@@ -92,9 +94,20 @@ fun AppNavigation(
             }
     }
 
+    //No cached data -> go to welcome screen (first time launch).
+    //Cached data -> go to dashboard screen (already signed in).
+    val hasCredentials = preferences.getCredentials() != null
+    Log.d("AppNavigation", "Has credentials -> $hasCredentials")
+
+    val startingDestination = if(hasCredentials) {
+        Destination.Dashboard.route
+    }else{
+        Destination.Welcome.route
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Destination.Welcome.route
+        startDestination = startingDestination
     ) {
         addDestinations()
     }
