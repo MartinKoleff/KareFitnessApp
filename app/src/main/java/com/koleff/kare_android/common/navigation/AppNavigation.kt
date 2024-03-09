@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.flowOn
 @Composable
 fun AppNavigation(
     navigationNotifier: NavigationNotifier,
-    preferences: Preferences
+    hasSignedIn: Boolean = false
 ) {
     val navController = rememberNavController()
 
@@ -96,10 +96,8 @@ fun AppNavigation(
 
     //No cached data -> go to welcome screen (first time launch).
     //Cached data -> go to dashboard screen (already signed in).
-    val hasCredentials = preferences.getCredentials() != null
-    Log.d("AppNavigation", "Has credentials -> $hasCredentials")
-
-    val startingDestination = if(hasCredentials) {
+    Log.d("AppNavigation", "Has credentials -> $hasSignedIn")
+    val startingDestination = if(hasSignedIn) {
         Destination.Dashboard.route
     }else{
         Destination.Welcome.route

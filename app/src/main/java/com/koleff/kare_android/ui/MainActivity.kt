@@ -26,27 +26,31 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var navigationNotifier: NavigationNotifier
 
-    @Inject
-    lateinit var preferences: Preferences
 
     @OptIn(ExperimentalComposeUiApi::class, ExperimentalAnimationApi::class, FlowPreview::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             KareTheme {
-                AppNavigation(navigationNotifier, preferences)
             }
         }
 
+        //Notification testing
         if (Constants.isTestingNotifications) {
             this.lifecycleScope.launch {
                 delay(5000)
 
                 NotificationManager.sendNotification(this@MainActivity, "Test Notification", "This is a sample notification using the channel.")
+                NotificationManager.sendNotification(
+                    this@MainActivity,
+                    "Test Notification",
+                    "This is a sample notification using the channel."
+                )
             }
         }
 
-        if(Constants.isTestingFirebaseCrashlytics){
+        //Firebase Crashlytics testing
+        if (Constants.isTestingFirebaseCrashlytics) {
             this.lifecycleScope.launch {
                 delay(5000)
 
