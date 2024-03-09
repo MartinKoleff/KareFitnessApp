@@ -13,6 +13,7 @@ buildscript {
 
     //https://developer.android.com/jetpack/androidx/releases/core
     ext.androidx_core_version = "1.12.0"
+    ext.androidx_core_splash_screen_version = "1.0.1"
 
     //https://developer.android.com/jetpack/androidx/releases/lifecycle
     ext.androidx_lifecycle_version = "2.7.0"
