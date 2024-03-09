@@ -3,30 +3,33 @@ package com.koleff.kare_android.data.datasource
 import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseSet
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.response.GetAllWorkoutsResponse
-import com.koleff.kare_android.data.model.response.GetWorkoutDetailsResponse
-import com.koleff.kare_android.data.model.response.GetWorkoutResponse
+import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
+import com.koleff.kare_android.data.model.response.WorkoutsListResponse
+import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
+import com.koleff.kare_android.data.model.response.WorkoutResponse
+import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
-import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
-import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
-import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
+import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
@@ -42,7 +45,43 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
+            //Deselect current selected workout
+            val selectedWorkoutInDB = workoutDao.getWorkoutByIsSelected()?.copy(
+                isSelected = false
+            )
+
+            //If you are trying to select the current selected workout
+            if(selectedWorkoutInDB?.workoutId == workoutId) {
+                emit(ResultWrapper.Success(result))
+                return@flow
+            }
+
+            //Update DB
+            selectedWorkoutInDB?.let {
+                updateWorkout(it.toWorkoutDto()).collect()
+            }
+
             workoutDao.selectWorkoutById(workoutId)
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            //Deselect workout
+            val workout = workoutDao.getWorkoutById(workoutId).copy(
+                isSelected = false
+            )
+
+            //Update DB
+            updateWorkout(workout.toWorkoutDto()).collect()
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -51,46 +90,76 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> = flow {
-        emit(ResultWrapper.Loading())
-        delay(Constants.fakeDelay)
+    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
 
-        val data = workoutDao.getWorkoutByIsSelected()
+            val data = workoutDao.getWorkoutByIsSelected()
 
-        val result = GetWorkoutWrapper(
-            GetWorkoutResponse(data.toWorkoutDto())
-        )
+            val result = SelectedWorkoutWrapper(
+                SelectedWorkoutResponse(data?.toWorkoutDto())
+            )
 
-        emit(ResultWrapper.Success(result))
-    }
+            emit(ResultWrapper.Success(result))
+        }
 
-    override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>> = flow {
+    override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
         val data = workoutDao.getWorkoutById(workoutId)
 
-        val result = GetWorkoutWrapper(
-            GetWorkoutResponse(data.toWorkoutDto())
+        val result = WorkoutWrapper(
+            WorkoutResponse(data.toWorkoutDto())
         )
 
         emit(ResultWrapper.Success(result))
     }
 
-    override suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>> = flow {
+    override suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
         val data = workoutDao.getWorkoutsOrderedById()
 
-        val result = GetAllWorkoutsWrapper(
-            GetAllWorkoutsResponse(data.map(Workout::toWorkoutDto))
+        val result = WorkoutListWrapper(
+            WorkoutsListResponse(data.map(Workout::toWorkoutDto))
         )
 
         emit(ResultWrapper.Success(result))
     }
 
-    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<WorkoutDetailsListWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val data = workoutDetailsDao.getWorkoutDetailsOrderedById()
+
+            val result = WorkoutDetailsListWrapper(
+                WorkoutDetailsListResponse(data.map { workoutDetailsWitExercises ->
+
+                    //Null safety
+                    workoutDetailsWitExercises.exercises ?: return@flow
+
+                    val exercises =
+                        workoutDetailsWitExercises.exercises.map { exercise ->
+                            val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                            exercise.toExerciseDto(sets)
+                        } as MutableList
+
+                    workoutDetailsWitExercises.workoutDetails.toWorkoutDetailsDto(
+                        exercises
+                    )
+                })
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -114,8 +183,8 @@ class WorkoutLocalDataSource @Inject constructor(
                 exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto) as MutableList<ExerciseDto>
             val workout = data.workoutDetails.toWorkoutDetailsDto(exercisesWithSetsDto)
 
-            val result = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(workout)
+            val result = WorkoutDetailsWrapper(
+                WorkoutDetailsResponse(workout)
             )
 
             emit(ResultWrapper.Success(result))
@@ -141,12 +210,14 @@ class WorkoutLocalDataSource @Inject constructor(
         return exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto)
     }
 
+    //No need for separate deleteWorkoutDetails functionality. When workout is deleted the workout details should be deleted also.
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             workoutDao.deleteWorkout(workoutId)
+            workoutDetailsDao.deleteWorkoutDetails(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -155,79 +226,55 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun updateWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val workoutId = workout.workoutId
+            val workoutId = workoutDetails.workoutId
             val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
+            //If no WorkoutDetails found -> return error
             data ?: run {
                 emit(ResultWrapper.ApiError())
                 return@flow
             }
 
             //Contains different exercises
-            val currentEntryInDB: List<ExerciseDto> =
-                data.safeExercises.map { it.toExerciseDto() }
+            val currentDB: List<ExerciseDto> =
+                data.safeExercises.map { exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
 
-            if (currentEntryInDB.size <= workout.exercises.size) {
+                    exercise.toExerciseDto(sets)
+                }
+
+            //WorkoutDetails -> Exercise cross refs
+            if (currentDB.size <= workoutDetails.exercises.size) {
                 val newExercises =
-                    workout.exercises.filterNot { currentEntryInDB.contains(it) }.distinct()
-                Log.d("SaveWorkout-LocalDataSource", "New exercises: $newExercises")
+                    workoutDetails.exercises
+                        .filterNot { currentDB.contains(it) }
+                        .distinct()
+                Log.d("UpdateWorkoutDetails", "New exercises: $newExercises")
 
                 val exerciseIds = newExercises.map { it.exerciseId }
 
-                //Wire new exercises ids to workout id -> setup cross refs
-                val crossRefs: List<WorkoutDetailsExerciseCrossRef> =
-                    exerciseIds.map { exerciseId ->
-                        WorkoutDetailsExerciseCrossRef(
-                            workoutDetailsId = workoutId,
-                            exerciseId = exerciseId
-                        )
-                    }
 
-                workoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef(crossRefs)
+                setupWorkoutDetailsExerciseCrossRefs(workoutId, exerciseIds)
+
+                //Exercise -> Exercise sets cross refs
+                setupExerciseSetCrossRef(workoutDetails)
             }
 
-            // Exercise sets -> setup cross refs
-            val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
-                workout.exercises.flatMap { exercise ->
-                    exercise.sets.map { set ->
-                        val setEntity = set.toSetEntity()
-
-                        if (set.setId == null) {
-                            //New set -> insert it
-                            val newSetId = UUID.randomUUID()
-                            setEntity.setId = newSetId
-
-                            exerciseSetDao.saveSet(setEntity)
-                        } else {
-                            //Existing set -> update it
-                            Log.d(
-                                "SaveWorkout-LocalDatasource",
-                                "Exercise set with setId ${setEntity.setId} updated. Data: $setEntity"
-                            )
-                            exerciseSetDao.updateSet(setEntity)
-                        }
-
-                        ExerciseSetCrossRef(
-                            exerciseId = exercise.exerciseId,
-                            setId = setEntity.setId
-                        )
-                    }
-                }
-
-            exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
-
-
-            //Update total exercises
-            val workoutEntry = workoutDao.getWorkoutById(workoutId)
-            workoutEntry.totalExercises = workout.exercises.size
+            //Update total exercises, name, muscle group and isSelected
+            val workoutEntry = workoutDao.getWorkoutById(workoutId).copy(
+                name = workoutDetails.name,
+                totalExercises = workoutDetails.exercises.size,
+                muscleGroup = workoutDetails.muscleGroup,
+                isSelected = workoutDetails.isSelected,
+            )
             workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
-            workoutDetailsDao.insertWorkoutDetails(workout.toWorkoutDetails())
+            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -235,6 +282,76 @@ class WorkoutLocalDataSource @Inject constructor(
 
             emit(ResultWrapper.Success(result))
         }
+
+    /**
+     * Helping functions
+     */
+
+    private suspend fun setupWorkoutDetailsExerciseCrossRefs(
+        workoutId: Int,
+        exerciseIds: List<Int>
+    ) {
+        val crossRefs = exerciseIds.map { exerciseId ->
+            WorkoutDetailsExerciseCrossRef(
+                workoutDetailsId = workoutId,
+                exerciseId = exerciseId
+            )
+        }
+        workoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef(crossRefs)
+    }
+
+    private suspend fun setupExerciseSetCrossRef(workoutDetails: WorkoutDetailsDto) {
+        val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
+            workoutDetails.exercises.flatMap { exercise ->
+                exercise.sets.map { set ->
+                    val exerciseSet = set.toExerciseSet()
+
+                    if (set.setId == null) {
+
+                        //New set -> insert it
+                        val newSetId = UUID.randomUUID()
+                        exerciseSet.setId = newSetId
+
+                        exerciseSetDao.saveSet(exerciseSet)
+                    } else {
+
+                        //Existing set -> update it
+                        Log.d(
+                            "UpdateWorkoutDetails",
+                            "Exercise set with setId ${exerciseSet.setId} added. Data: $exerciseSet"
+                        )
+
+                        //Trying to add set with already generated id
+                        try {
+                            exerciseSetDao.getSetById(exerciseSet.setId) //Checking if entry is in DB -> update
+
+                            exerciseSetDao.updateSet(exerciseSet)
+                        } catch (e: NoSuchElementException) {
+                            exerciseSetDao.saveSet(exerciseSet) //Entry is not in DB -> save
+                        }
+                    }
+
+                    ExerciseSetCrossRef(
+                        exerciseId = exercise.exerciseId,
+                        setId = exerciseSet.setId
+                    )
+                }
+            }
+
+        exerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
+    }
+
+    private suspend fun setupWorkoutDetailsWorkoutCrossRef(workoutId: Int, workoutDetailsId: Int) {
+        Log.d(
+            "CreateWorkout",
+            "WorkoutId: $workoutId, WorkoutDetailsId: $workoutDetailsId"
+        )
+        val crossRef = WorkoutDetailsWorkoutCrossRef(
+            workoutDetailsId = workoutId,
+            workoutId = workoutDetailsId
+        )
+        workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+    }
 
     override suspend fun updateWorkout(
         workout: WorkoutDto
@@ -248,6 +365,8 @@ class WorkoutLocalDataSource @Inject constructor(
             //Update duplicate data between Workout and WorkoutDetails...
             val workoutDetailsWithExercises =
                 workoutDetailsDao.getWorkoutDetailsById(workout.workoutId)
+
+            //If no WorkoutDetails found -> return error
             workoutDetailsWithExercises ?: emit(ResultWrapper.ApiError())
 
             val updatedWorkoutDetails = workoutDetailsWithExercises!!.workoutDetails.copy(
@@ -258,16 +377,6 @@ class WorkoutLocalDataSource @Inject constructor(
                 isSelected = workout.isSelected
             )
 
-//            val updatedWorkoutDetailsWithExercises =
-//                workoutDetailsWithExercises.copy(workoutDetails = updatedWorkoutDetails)
-//            val exercises: MutableList<ExerciseDto> =
-//                updatedWorkoutDetailsWithExercises.exercises.map { Exercise::toExerciseDto } as MutableList<ExerciseDto>
-//
-//            val workoutDetails = updatedWorkoutDetailsWithExercises.workoutDetails
-//                .toWorkoutDetailsDto(exercises)
-
-//            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
-
             workoutDetailsDao.updateWorkoutDetails(updatedWorkoutDetails)
 
             val result = ServerResponseData(
@@ -277,7 +386,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun createWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>> =
+    override suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -296,20 +405,96 @@ class WorkoutLocalDataSource @Inject constructor(
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails()) //returns 0
 
-            //Setup cross refs
-            Log.d(
-                "WorkoutLocalDataSource-CreateWorkout",
-                "WorkoutId: $workoutId, WorkoutDetailsId: $workoutDetailsId"
-            )
-            val crossRef = WorkoutDetailsWorkoutCrossRef(
-                workoutDetailsId = workoutId.toInt(),
-                workoutId = workoutDetailsId.toInt()
-            )
-            workoutDao.insertWorkoutDetailsWorkoutCrossRef(crossRef)
+            //WorkoutDetails - Workout cross refs
+            setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
 
-            val result = GetWorkoutWrapper(
-                GetWorkoutResponse(
+            val result = WorkoutWrapper(
+                WorkoutResponse(
                     workout.copy(workoutId = workoutId.toInt(), name = workoutName)
+                )
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //Get workout id
+
+            //Create duplicate WorkoutDetails with no exercises and sets...
+            val workoutDetailsDto =
+                WorkoutDetailsDto().copy(
+                    workoutId = workoutId.toInt(),
+                    name = workoutDto.name,
+                    muscleGroup = workoutDto.muscleGroup,
+                    isSelected = workoutDto.isSelected
+                )
+            val workoutDetailsId =
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toWorkoutDetails()) //returns 0
+
+            //WorkoutDetails - Workout cross refs
+            setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
+
+            //Select
+            if (workoutDto.isSelected) {
+                selectWorkout(workoutDto.workoutId).collect()
+            }
+
+            val result = WorkoutWrapper(
+                WorkoutResponse(
+                    workoutDto.copy(workoutId = workoutId.toInt())
+                )
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val workoutDetailsId =
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toWorkoutDetails()) //Get workout details id
+
+            //Create Workout for the WorkoutDetails...
+            val workoutDto =
+                WorkoutDto().copy(
+                    workoutId = workoutDetailsId.toInt(),
+                    name = workoutDetailsDto.name,
+                    muscleGroup = workoutDetailsDto.muscleGroup,
+                    isSelected = workoutDetailsDto.isSelected,
+                    totalExercises = workoutDetailsDto.exercises.size,
+                    snapshot = "snapshot $workoutDetailsId.png"
+                )
+            val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //returns 0
+
+            //WorkoutDetails - Workout cross refs
+            setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
+
+            //WorkoutDetails -> Exercise cross refs
+            val exercises =
+                workoutDetailsDto.exercises.distinct()
+            Log.d("CreateCustomWorkoutDetails", "Exercises: $exercises")
+
+            val exerciseIds = exercises.map { it.exerciseId }
+
+            setupWorkoutDetailsExerciseCrossRefs(workoutDetailsId.toInt(), exerciseIds)
+
+            //Exercise - ExerciseSet cross refs
+            setupExerciseSetCrossRef(workoutDetailsDto)
+
+            //Select
+            if (workoutDetailsDto.isSelected) {
+                selectWorkout(workoutDetailsDto.workoutId).collect()
+            }
+
+            val result = WorkoutDetailsWrapper(
+                WorkoutDetailsResponse(
+                    workoutDetailsDto.copy(workoutId = workoutDetailsId.toInt())
                 )
             )
 
@@ -319,7 +504,7 @@ class WorkoutLocalDataSource @Inject constructor(
     override suspend fun deleteExercise(
         workoutId: Int,
         exerciseId: Int
-    ): Flow<ResultWrapper<GetWorkoutDetailsWrapper>> =
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -331,22 +516,6 @@ class WorkoutLocalDataSource @Inject constructor(
                 return@flow
             }
 
-            val filteredExercises =
-                selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
-            val exercisesDto: MutableList<ExerciseDto> =
-                filteredExercises.map(Exercise::toExerciseDto) as MutableList<ExerciseDto>
-
-            val updatedWorkout = selectedWorkout.copy(exercises = filteredExercises)
-            val updatedWorkoutDto = updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDto)
-
-            //Delete workout details - exercise cross ref
-            val workoutDetailsExerciseCrossRef =
-                WorkoutDetailsExerciseCrossRef(
-                    workoutDetailsId = workoutId,
-                    exerciseId = exerciseId
-                )
-            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
-
             //Delete exercise - set cross ref
             val deletedExercise = exerciseDao.getExerciseById(exerciseId)
             for (set in deletedExercise.sets) {
@@ -356,18 +525,104 @@ class WorkoutLocalDataSource @Inject constructor(
                         setId = set.setId
                     )
                 exerciseDao.deleteExerciseSetCrossRef(exerciseSetCrossRef)
+                exerciseSetDao.deleteSet(set)
             }
 
-            //Update workout and workout details DAOs
-//            workoutDetailsDao.insertWorkoutDetails(updatedWorkoutDto)
+            //Delete workout details - exercise cross ref
+            val workoutDetailsExerciseCrossRef =
+                WorkoutDetailsExerciseCrossRef(
+                    workoutDetailsId = workoutId,
+                    exerciseId = exerciseId
+                )
+            workoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
+
+            //Update exercise list
+            val exerciseEntityList =
+                selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
+
+            val exercisesDtoList: MutableList<ExerciseDto> =
+                exerciseEntityList.map { exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                    exercise.toExerciseDto(sets)
+                } as MutableList
+
+            val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
+            val updatedWorkoutDto =
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exercisesDtoList)
 
             //Update total exercises
             val workout = workoutDao.getWorkoutById(workoutId)
             workout.totalExercises = updatedWorkout.safeExercises.size
             workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
 
-            val result = GetWorkoutDetailsWrapper(
-                GetWorkoutDetailsResponse(updatedWorkoutDto)
+            val result = WorkoutDetailsWrapper(
+                WorkoutDetailsResponse(updatedWorkoutDto)
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun addExercise(
+        workoutId: Int,
+        exercise: ExerciseDto
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val selectedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+
+            selectedWorkout ?: run {
+                emit(ResultWrapper.ApiError())
+                return@flow
+            }
+
+            //Add new exercise to workout exercise list
+            val exerciseDtoList = ArrayList(selectedWorkout.safeExercises
+                .map { exercise ->
+                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+
+                    exercise.toExerciseDto(sets)
+                }
+            ).apply {
+                add(exercise)
+            }
+
+            val exerciseEntityList = exerciseDtoList.map { it.toExercise() }
+
+            val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
+            val updatedWorkoutDto =
+                updatedWorkout.workoutDetails.toWorkoutDetailsDto(exerciseDtoList)
+
+            //Create workout details - exercise cross ref
+            val workoutDetailsExerciseCrossRef =
+                WorkoutDetailsExerciseCrossRef(
+                    workoutDetailsId = workoutId,
+                    exerciseId = exercise.exerciseId
+                )
+            workoutDetailsDao.insertWorkoutDetailsExerciseCrossRef(workoutDetailsExerciseCrossRef)
+
+            //Create exercise - set cross ref
+            for (set in exercise.sets) {
+                val exerciseSet = set.toExerciseSet()
+                exerciseSetDao.saveSet(exerciseSet)
+
+                val exerciseSetCrossRef =
+                    ExerciseSetCrossRef(
+                        exerciseId = exercise.exerciseId,
+                        setId = exerciseSet.setId
+                    )
+                exerciseDao.insertExerciseSetCrossRef(exerciseSetCrossRef)
+            }
+
+            //Update total exercises
+            val workout = workoutDao.getWorkoutById(workoutId)
+            workout.totalExercises = updatedWorkout.safeExercises.size
+            workoutDao.updateWorkout(workout) //if update is not working -> invalid id is provided
+
+            val result = WorkoutDetailsWrapper(
+                WorkoutDetailsResponse(updatedWorkoutDto)
             )
 
             emit(ResultWrapper.Success(result))

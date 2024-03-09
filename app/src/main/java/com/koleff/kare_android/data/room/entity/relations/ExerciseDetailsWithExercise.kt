@@ -15,5 +15,5 @@ data class ExerciseDetailsWithExercise(
         entityColumn = "exerciseId",
         associateBy = Junction(ExerciseDetailsExerciseCrossRef::class)
     )
-    val exercises: Exercise
+    val exercise: Exercise
 )

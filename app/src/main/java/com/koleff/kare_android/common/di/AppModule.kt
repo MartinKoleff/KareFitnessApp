@@ -5,58 +5,78 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.multidex.BuildConfig
-import androidx.navigation.Navigation
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
-import com.koleff.kare_android.common.Constants.useMockupDataSource
+import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
+import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
+import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.data.datasource.AuthenticationDataSource
+import com.koleff.kare_android.data.datasource.AuthenticationRemoteDataSource
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
-import com.koleff.kare_android.data.datasource.ExerciseMockupDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
+import com.koleff.kare_android.data.datasource.UserDataSource
+import com.koleff.kare_android.data.datasource.UserLocalDataSource
+import com.koleff.kare_android.data.datasource.UserRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
+import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.remote.ExerciseApi
+import com.koleff.kare_android.data.remote.UserApi
 import com.koleff.kare_android.data.remote.WorkoutApi
+import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
+import com.koleff.kare_android.data.repository.UserRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
+import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
+import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
+import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.domain.usecases.CreateWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
+import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
+import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.common.navigation.NavigationController
-import com.koleff.kare_android.common.navigation.NavigationControllerImpl
-import com.koleff.kare_android.common.navigation.NavigationNotifier
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -75,6 +95,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    /**
+     * Retrofit/OKHttp configurations
+     */
 
     @Provides
     @Singleton
@@ -111,9 +135,13 @@ object AppModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
+            .add(KotlinJsonAdapterFactory()) //TODO: fix uuid adapter issue...
             .build()
     }
+
+    /**
+     * APIs
+     */
 
     @Provides
     @Singleton
@@ -122,7 +150,7 @@ object AppModule {
             .baseUrl(Constants.BASE_URL_FULL)
             .client(okHttpClient)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ExerciseApi::class.java)
@@ -135,7 +163,7 @@ object AppModule {
             .baseUrl(Constants.BASE_URL_FULL)
             .client(okHttpClient)
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .addConverterFactory(MoshiConverterFactory.create(moshi)) //TODO: test with backend to decide which converter...
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
 //            .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(WorkoutApi::class.java)
@@ -143,32 +171,44 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideAuthenticationApi(okHttpClient: OkHttpClient, moshi: Moshi): AuthenticationApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_FULL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+//            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(AuthenticationApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserApi(okHttpClient: OkHttpClient, moshi: Moshi): UserApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_FULL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+//            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(UserApi::class.java)
+    }
+
+    /**
+     * Room DB
+     */
+
+    @Provides
+    @Singleton
     fun provideKareDatabase(@ApplicationContext appContext: Context): KareDatabase {
         return KareDatabase.buildDatabase(appContext)
     }
 
-    @Provides
-    @Singleton
-    fun provideExerciseDao(kareDatabase: KareDatabase): ExerciseDao {
-        return kareDatabase.exerciseDao
-    }
 
-    @Provides
-    @Singleton
-    fun provideExerciseDetailsDao(kareDatabase: KareDatabase): ExerciseDetailsDao {
-        return kareDatabase.exerciseDetailsDao
-    }
-
-    @Provides
-    @Singleton
-    fun provideExerciseDBManager(
-        preferences: Preferences,
-        exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseSetDao: ExerciseSetDao
-    ): ExerciseDBManager {
-        return ExerciseDBManager(preferences, exerciseDao, exerciseDetailsDao, exerciseSetDao)
-    }
+    /**
+     * DAOs
+     */
 
     @Provides
     @Singleton
@@ -190,36 +230,92 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideExerciseDao(kareDatabase: KareDatabase): ExerciseDao {
+        return kareDatabase.exerciseDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDetailsDao(kareDatabase: KareDatabase): ExerciseDetailsDao {
+        return kareDatabase.exerciseDetailsDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDao(kareDatabase: KareDatabase): UserDao {
+        return kareDatabase.userDao
+    }
+
+    /**
+     * DB Managers
+     */
+
+    @Provides
+    @Singleton
     fun provideWorkoutDBManager(
         preferences: Preferences,
         workoutDao: WorkoutDao,
         workoutDetailsDao: WorkoutDetailsDao
     ): WorkoutDBManager {
-        return WorkoutDBManager(preferences, workoutDao, workoutDetailsDao)
+        val hasInitializedDB = preferences.hasInitializedWorkoutTable()
+
+        return WorkoutDBManager(
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
+            hasInitializedDB = hasInitializedDB
+        )
     }
+
+    @Provides
+    @Singleton
+    fun provideExerciseDBManager(
+        preferences: Preferences,
+        exerciseDao: ExerciseDao,
+        exerciseDetailsDao: ExerciseDetailsDao,
+        exerciseSetDao: ExerciseSetDao
+    ): ExerciseDBManager {
+        val hasInitializedDB = preferences.hasInitializedExerciseTable()
+
+        return ExerciseDBManager(
+            exerciseDao = exerciseDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao,
+            hasInitializedDB = hasInitializedDB
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserDBManager(
+        preferences: Preferences,
+        userDao: UserDao
+    ): UserDBManager {
+        val hasInitializedDB = preferences.hasInitializedUserTable()
+
+        return UserDBManager(
+            userDao = userDao,
+            hasInitializedDB = hasInitializedDB
+        )
+    }
+
+    /**
+     * Data sources
+     */
 
     @Provides
     @Singleton
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseDBManager: ExerciseDBManager
+        exerciseDetailsDao: ExerciseDetailsDao
     ): ExerciseDataSource {
         return if (useLocalDataSource) ExerciseLocalDataSource(
             exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseDBManager = exerciseDBManager
+            exerciseDetailsDao = exerciseDetailsDao
         )
-        else if (useMockupDataSource) ExerciseMockupDataSource()
         else ExerciseRemoteDataSource(exerciseApi)
     }
 
-    @Provides
-    @Singleton
-    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
-        return ExerciseRepositoryImpl(exerciseDataSource)
-    }
 
     @Provides
     @Singleton
@@ -237,14 +333,7 @@ object AppModule {
             workoutDetailsDao = workoutDetailsDao,
             exerciseSetDao = exerciseSetDao
         )
-//        else if (useMockupDataSource) WorkoutMockupDataSource()
         else WorkoutRemoteDataSource(workoutApi, dispatcher)
-    }
-
-    @Provides
-    @Singleton
-    fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
-        return WorkoutRepositoryImpl(workoutDataSource)
     }
 
     @Provides
@@ -255,24 +344,69 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideUserDataSource(
+        userDao: UserDao,
+        userApi: UserApi,
+        @IoDispatcher dispatcher: CoroutineDispatcher
+    ): UserDataSource {
+        return if (useLocalDataSource) UserLocalDataSource(
+            userDao = userDao
+        )
+        else UserRemoteDataSource(userApi, dispatcher)
+    }
+
+    /**
+     * Repositories
+     */
+
+    @Provides
+    @Singleton
+    fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
+        return WorkoutRepositoryImpl(workoutDataSource)
+    }
+
+    @Provides
+    @Singleton
     fun provideDashboardRepository(dashboardDataSource: DashboardDataSource): DashboardRepository {
         return DashboardRepositoryImpl(dashboardDataSource)
     }
 
     @Provides
     @Singleton
+    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
+        return ExerciseRepositoryImpl(exerciseDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDataSource: UserDataSource): UserRepository {
+        return UserRepositoryImpl(userDataSource)
+    }
+
+    /**
+     * Usecases
+     */
+
+    @Provides
+    @Singleton
     fun provideWorkoutUseCases(workoutRepository: WorkoutRepository): WorkoutUseCases {
         return WorkoutUseCases(
             getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getWorkoutsUseCase = GetWorkoutsUseCase(workoutRepository),
+            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
+            getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
             getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
             updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+            updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+            addExerciseUseCase = AddExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
+            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
-            createWorkoutUseCase = CreateWorkoutUseCase(workoutRepository)
+            createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
+            createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
+            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
         )
     }
 
@@ -280,7 +414,7 @@ object AppModule {
     @Singleton
     fun provideExerciseUseCases(exerciseRepository: ExerciseRepository): ExerciseUseCases {
         return ExerciseUseCases(
-           onSearchExerciseUseCase = OnSearchExerciseUseCase(),
+            onSearchExerciseUseCase = OnSearchExerciseUseCase(),
             onFilterExercisesUseCase = OnFilterExercisesUseCase(),
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
             getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
@@ -288,6 +422,9 @@ object AppModule {
         )
     }
 
+    /**
+     * Shared preferences
+     */
     @Provides
     @Singleton
     fun provideSharedPreferences(

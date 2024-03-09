@@ -26,13 +26,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.data.model.dto.ExerciseSet
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import java.util.UUID
 
 @Composable
 fun ExerciseSetRow(
     modifier: Modifier = Modifier,
-    set: ExerciseSet,
+    set: ExerciseSetDto,
     onRepsChanged: (Int) -> Unit, // Callback when reps are updated
     onWeightChanged: (Float) -> Unit // Callback when weight is updated
 ) {
@@ -169,7 +169,7 @@ fun ExerciseSetRow(
 @Composable
 fun ExerciseSetRowList(
     modifier: Modifier,
-    exerciseSetList: List<ExerciseSet>,
+    exerciseSetList: List<ExerciseSetDto>,
     onRepsChanged: (Int) -> Unit, // Callback when reps are updated
     onWeightChanged: (Float) -> Unit // Callback when weight is updated
 ) {
@@ -189,7 +189,7 @@ fun ExerciseSetRowList(
             } else {
 
                 //Default set
-                ExerciseSet(UUID.randomUUID(), currentSetId + 1, 12, 0f)
+                ExerciseSetDto(UUID.randomUUID(), currentSetId + 1, 12, 0f)
             }
             ExerciseSetRow(
                 set = currentSet,

@@ -42,13 +42,13 @@ fun WorkoutDetailsScreen(
 ) {
     val workoutDetailsState by workoutDetailsViewModel.getWorkoutDetailsState.collectAsState()
     val workoutTitle =
-        if (workoutDetailsState.workout.name == "") "Loading..." else workoutDetailsState.workout.name
+        if (workoutDetailsState.workoutDetails.name == "") "Loading..." else workoutDetailsState.workoutDetails.name
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
 
-        workoutDetailsViewModel.openExerciseDetailsConfiguratorScreen(
+        workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(
             exerciseId = selectedExercise.exerciseId,
-            workoutId = workoutDetailsState.workout.workoutId,
+            workoutId = workoutDetailsState.workoutDetails.workoutId,
             muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
         )
     }
@@ -56,7 +56,7 @@ fun WorkoutDetailsScreen(
     val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
 
     var selectedWorkout by remember {
-        mutableStateOf(workoutDetailsState.workout)
+        mutableStateOf(workoutDetailsState.workoutDetails)
     }
 
     var exercises by remember {
@@ -71,7 +71,7 @@ fun WorkoutDetailsScreen(
     LaunchedEffect(key1 = workoutDetailsState) {
         if (workoutDetailsState.isSuccessful) {
             Log.d("WorkoutDetailsScreen", "Initial load completed.")
-            selectedWorkout = workoutDetailsState.workout
+            selectedWorkout = workoutDetailsState.workoutDetails
             exercises = selectedWorkout.exercises
             showAddExerciseBanner = true
         }
@@ -81,7 +81,7 @@ fun WorkoutDetailsScreen(
     LaunchedEffect(key1 = deleteExerciseState) {
         if (deleteExerciseState.isSuccessful) {
             Log.d("WorkoutDetailsScreen", "Exercise successfully deleted.")
-            selectedWorkout = deleteExerciseState.workout
+            selectedWorkout = deleteExerciseState.workoutDetails
             exercises = selectedWorkout.exercises
         }
     }
@@ -101,7 +101,7 @@ fun WorkoutDetailsScreen(
             onClick = {
                 selectedExercise?.let {
                     workoutDetailsViewModel.deleteExercise(
-                        workoutDetailsState.workout.workoutId,
+                        workoutDetailsState.workoutDetails.workoutId,
                         selectedExercise!!.exerciseId
                     )
                 }
@@ -114,7 +114,7 @@ fun WorkoutDetailsScreen(
     //Pull to refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = workoutDetailsViewModel.isRefreshing,
-        onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutDetailsState.workout.workoutId) }
+        onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutDetailsState.workoutDetails.workoutId) }
     )
 
     //Navigation Callbacks
@@ -176,8 +176,8 @@ fun WorkoutDetailsScreen(
                             AddExerciseToWorkoutBanner {
 
                                 //Open search exercise screen...
-                                workoutDetailsViewModel.openSearchExercisesScreen(
-                                    workoutId = workoutDetailsState.workout.workoutId
+                                workoutDetailsViewModel.navigateToSearchExcercises(
+                                    workoutId = workoutDetailsState.workoutDetails.workoutId
                                 )
                             }
                         }

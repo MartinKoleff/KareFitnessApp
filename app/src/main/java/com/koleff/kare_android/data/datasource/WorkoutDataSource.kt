@@ -1,36 +1,45 @@
 package com.koleff.kare_android.data.datasource
 
-import com.koleff.kare_android.data.model.dto.SaveWorkoutDto
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.domain.wrapper.GetAllWorkoutsWrapper
-import com.koleff.kare_android.domain.wrapper.GetExerciseDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.GetExercisesWrapper
-import com.koleff.kare_android.domain.wrapper.GetWorkoutDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.GetWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
-import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
+import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutDataSource {
     suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getSelectedWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>>
 
-    suspend fun getAllWorkouts(): Flow<ResultWrapper<GetAllWorkoutsWrapper>>
+    suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>>
 
-    suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
+    suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>
+
+    suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<WorkoutDetailsListWrapper>>
+
+    suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 
     suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun saveWorkout(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun updateWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun deleteExercise(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<GetWorkoutDetailsWrapper>>
+    suspend fun deleteExercise(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>>
+
+    suspend fun addExercise(workoutId: Int, exercise: ExerciseDto): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 
     suspend fun updateWorkout(workout: WorkoutDto): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun createWorkout(): Flow<ResultWrapper<GetWorkoutWrapper>>
+    suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>>
+
+    suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>>
+
+    suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 }

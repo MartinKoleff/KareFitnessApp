@@ -18,11 +18,11 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
-import com.koleff.kare_android.ui.state.WorkoutState
+import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.SelectedWorkoutState
-import com.koleff.kare_android.ui.state.UpdateWorkoutState
+import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -41,33 +41,33 @@ class WorkoutViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController = navigationController) {
 
-    private val _state: MutableStateFlow<WorkoutState> = MutableStateFlow(WorkoutState())
-    val state: StateFlow<WorkoutState>
+    private var _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
+    val state: StateFlow<WorkoutListState>
         get() = _state
 
-    private val _deleteWorkoutState: MutableStateFlow<BaseState> =
+    private var _deleteWorkoutState: MutableStateFlow<BaseState> =
         MutableStateFlow(BaseState())
     val deleteWorkoutState: StateFlow<BaseState>
         get() = _deleteWorkoutState
 
-    private val _selectWorkoutState: MutableStateFlow<BaseState> =
+    private var _selectWorkoutState: MutableStateFlow<BaseState> =
         MutableStateFlow(BaseState())
     val selectWorkoutState: StateFlow<BaseState>
         get() = _selectWorkoutState
 
-    private val _getSelectedWorkoutState: MutableStateFlow<SelectedWorkoutState> =
+    private var _getSelectedWorkoutState: MutableStateFlow<SelectedWorkoutState> =
         MutableStateFlow(SelectedWorkoutState())
     val getSelectedWorkoutState: StateFlow<SelectedWorkoutState>
         get() = _getSelectedWorkoutState
 
-    private val _updateWorkoutState: MutableStateFlow<UpdateWorkoutState> =
-        MutableStateFlow(UpdateWorkoutState())
-    val updateWorkoutState: StateFlow<UpdateWorkoutState>
+    private var _updateWorkoutState: MutableStateFlow<WorkoutState> =
+        MutableStateFlow(WorkoutState())
+    val updateWorkoutState: StateFlow<WorkoutState>
         get() = _updateWorkoutState
 
-    private val _createWorkoutState: MutableStateFlow<UpdateWorkoutState> =
-        MutableStateFlow(UpdateWorkoutState())
-    val createWorkoutState: StateFlow<UpdateWorkoutState>
+    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
+        MutableStateFlow(WorkoutState())
+    val createWorkoutState: StateFlow<WorkoutState>
         get() = _createWorkoutState
 
 
@@ -84,7 +84,7 @@ class WorkoutViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.Main) {
             preferences.loadSelectedWorkout()?.let { selectedWorkout ->
-                _state.value = WorkoutState(
+                _state.value = WorkoutListState(
                     isSuccessful = true,
                     workoutList = listOf(selectedWorkout)
                 )
@@ -99,7 +99,7 @@ class WorkoutViewModel @Inject constructor(
 
     fun onWorkoutFilterEvent(event: OnWorkoutScreenSwitchEvent) {
         viewModelScope.launch(dispatcher) {
-            _state.value = WorkoutState(
+            _state.value = WorkoutListState(
                 isLoading = true
             )
             delay(Constants.fakeSmallDelay)
@@ -184,7 +184,7 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update selected workout
                 if (getSelectedWorkoutState.isSuccessful) {
-                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout
+                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout ?: return@collect
 
                     val updatedList =
                         state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
@@ -219,9 +219,9 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun createWorkout() {
+    fun createNewWorkout() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.createWorkoutUseCase().collect { createWorkoutState ->
+            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
                 _createWorkoutState.value = createWorkoutState
 
                 //Update workout list
@@ -239,15 +239,15 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun resetCreateWorkoutState() {
+    private fun resetCreateWorkoutState() {
         _createWorkoutState.value =
-            UpdateWorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
     }
 
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getWorkoutsUseCase().collect { workoutState ->
+            workoutUseCases.getAllWorkoutsUseCase().collect { workoutState ->
                 _state.value = workoutState
 
 //                isRefreshing = workoutState.isLoading
@@ -262,33 +262,57 @@ class WorkoutViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openSearchWorkoutScreen(exerciseId: Int) {
+    fun navigateToSearchWorkout(exerciseId: Int) {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.SearchWorkoutsScreen.createRoute(
+            NavigationEvent.NavigateTo(
+                Destination.SearchWorkoutsScreen(
                     exerciseId = exerciseId
                 )
             )
         )
     }
 
-    fun openWorkoutDetailsScreen(workout: WorkoutDto) {
+    fun navigateToWorkoutDetails(workout: WorkoutDto) {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.WorkoutDetails.createRoute(workoutId = workout.workoutId)
+            NavigationEvent.NavigateTo(
+                Destination.WorkoutDetails(workoutId = workout.workoutId)
             )
         )
     }
 
-    fun openWorkoutDetailsScreen(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int) {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.WorkoutDetails.createRoute(workoutId = workoutId)
+            NavigationEvent.NavigateTo(
+                Destination.WorkoutDetails(workoutId = workoutId)
             )
         )
+
+        //Reset state
+        resetCreateWorkoutState()
 
         //Raise a flag to update Workouts screen...
         savedStateHandle["hasUpdated"] = true
         Log.d("WorkoutViewModel", "hasUpdated set to true.")
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = WorkoutListState()
+        }
+        if (deleteWorkoutState.value.isError) {
+            _deleteWorkoutState.value = BaseState()
+        }
+        if (updateWorkoutState.value.isError) {
+            _updateWorkoutState.value = WorkoutState()
+        }
+        if (selectWorkoutState.value.isError) {
+            _selectWorkoutState.value = BaseState()
+        }
+        if (getSelectedWorkoutState.value.isError) {
+            _getSelectedWorkoutState.value = SelectedWorkoutState()
+        }
+        if (createWorkoutState.value.isError) {
+            _createWorkoutState.value = WorkoutState()
+        }
     }
 }

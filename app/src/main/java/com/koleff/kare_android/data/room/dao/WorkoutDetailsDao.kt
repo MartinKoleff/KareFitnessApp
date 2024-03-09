@@ -17,10 +17,10 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExer
 interface WorkoutDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutDetails(workout: WorkoutDetails): Long
+    suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllDetails(workouts: List<WorkoutDetails>)
+    suspend fun insertAllDetails(workoutDetailsList: List<WorkoutDetails>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
@@ -50,7 +50,7 @@ interface WorkoutDetailsDao {
 
     @Transaction
     @Query("SELECT * FROM workout_details_table WHERE isSelected = 1") //true = 1, false = 0
-    fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises
+    fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises?
 
     @Transaction
     @Query("SELECT * FROM workout_details_table w WHERE workoutDetailsId = :workoutId")

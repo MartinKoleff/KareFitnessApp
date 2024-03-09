@@ -27,10 +27,11 @@ class ExerciseDetailsViewModel @Inject constructor(
 ) : BaseViewModel(navigationController) {
 
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
-    private val initialMuscleGroupId: Int = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
+    private val initialMuscleGroupId: Int =
+        savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull() ?: -1
     private val initialMuscleGroup = MuscleGroup.fromId(initialMuscleGroupId)
 
-    private val _state: MutableStateFlow<ExerciseDetailsState> =
+    private var _state: MutableStateFlow<ExerciseDetailsState> =
         MutableStateFlow(ExerciseDetailsState())
     val state: StateFlow<ExerciseDetailsState>
         get() = _state
@@ -62,11 +63,17 @@ class ExerciseDetailsViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openSearchWorkoutScreen() {
+    fun navigateToSearchWorkout() {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.SearchWorkoutsScreen.createRoute(state.value.exercise.id)
+            NavigationEvent.NavigateTo(
+                Destination.SearchWorkoutsScreen(state.value.exercise.id)
             )
         )
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = ExerciseDetailsState()
+        }
     }
 }

@@ -13,7 +13,7 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.state.ExercisesState
+import com.koleff.kare_android.ui.state.ExerciseListState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.Assisted
@@ -39,8 +39,8 @@ class ExerciseListViewModel @Inject constructor(
         ?: -1
     val muscleGroup = MuscleGroup.fromId(muscleGroupId)
 
-    private val _state: MutableStateFlow<ExercisesState> = MutableStateFlow(ExercisesState())
-    val state: StateFlow<ExercisesState>
+    private var _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
+    val state: StateFlow<ExerciseListState>
         get() = _state
 
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
@@ -95,14 +95,20 @@ class ExerciseListViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openExerciseDetailsScreen(exerciseId: Int, muscleGroupId: Int) {
+    fun navigateToExerciseDetails(exerciseId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
-            NavigationEvent.NavigateToRoute(
-                Destination.ExerciseDetails.createRoute(
+            NavigationEvent.NavigateTo(
+                Destination.ExerciseDetails(
                     exerciseId = exerciseId,
                     muscleGroupId = muscleGroupId
                 )
             )
         )
+    }
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = ExerciseListState()
+        }
     }
 }

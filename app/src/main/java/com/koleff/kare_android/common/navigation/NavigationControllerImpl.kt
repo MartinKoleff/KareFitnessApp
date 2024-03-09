@@ -1,7 +1,6 @@
 package com.koleff.kare_android.common.navigation
 
 import android.util.Log
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,23 +19,12 @@ class NavigationControllerImpl @Inject constructor() : NavigationController, Nav
         _navigationEvents.emit(NavigationEvent.NavigateTo(destination))
     }
 
-    //Used for custom routes
-    override suspend fun navigateToRoute(route: String) {
-        Log.d("NavigationController", "Emitting NavigateToRoute Event {$route}")
-        _navigationEvents.emit(NavigationEvent.NavigateToRoute(route))
-    }
-
     override suspend fun clearBackstackAndNavigateTo(destination: Destination) {
         Log.d(
             "NavigationController",
             "Emitting ClearBackstackAndNavigateTo Event {${destination.route}}"
         )
         _navigationEvents.emit(NavigationEvent.ClearBackstackAndNavigateTo(destination))
-    }
-
-    override suspend fun clearBackstackAndNavigateToRoute(route: String) {
-        Log.d("NavigationController", "Emitting ClearBackstackAndNavigateToRoute Event {$route}")
-        _navigationEvents.emit(NavigationEvent.ClearBackstackAndNavigateToRoute(route))
     }
 
     override suspend fun popUpToAndNavigateTo(

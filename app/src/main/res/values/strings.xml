@@ -2,4 +2,6 @@
     <string name="app_name">Kare Android</string>
     <string name="text_success">Success</string>
     <string name="text_internal_exception">Internal exception</string>
+    <string name="text_invalid_credentials">Invalid credentials.</string>
+    <string name="text_user_not_found">User not found.</string>
 </resources>

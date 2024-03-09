@@ -1,10 +1,13 @@
 package com.koleff.kare_android.ui.compose.dialogs
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -15,6 +18,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -24,7 +30,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import java.util.Locale
 
 @Composable
@@ -49,7 +57,7 @@ fun EditWorkoutDialog(
                     style = TextStyle(
                         color = Color.Black,
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Bold
                     ),
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -118,7 +126,7 @@ fun SuccessDialog(
                 style = TextStyle(
                     color = Color.Black,
                     fontSize = 24.sp,
-                    fontWeight = FontWeight.Normal
+                    fontWeight = FontWeight.Bold
                 ),
                 textAlign = TextAlign.Center,
                 maxLines = 2,
@@ -192,7 +200,7 @@ fun WarningDialog(
                     style = TextStyle(
                         color = Color.Black,
                         fontSize = 24.sp,
-                        fontWeight = FontWeight.Normal
+                        fontWeight = FontWeight.Bold
                     ),
                     textAlign = TextAlign.Center,
                     maxLines = 2,
@@ -216,7 +224,7 @@ fun WarningDialog(
         confirmButton = {
             Button(onClick = {
                 onClick()
-                if(callDismissOnConfirm) onDismiss()
+                if (callDismissOnConfirm) onDismiss()
             }) {
                 Text(
                     text = actionButtonTitle,
@@ -248,6 +256,80 @@ fun WarningDialog(
         },
         onDismissRequest = { onDismiss() },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
+    )
+}
+
+@Composable
+fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
+    val context = LocalContext.current
+    val errorMessage = context.resources.getString(error.errorMessageResourceId)
+    val title = "Error"
+
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp), //, vertical = 4.dp
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = title,
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        text = {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = errorMessage,
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Normal
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        confirmButton = {
+            Button(onClick = { onDismiss() }) {
+                Text(
+                    text = "OK",
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.End,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        icon = {
+            Image(
+                modifier = Modifier.size(50.dp),
+                painter = painterResource(id = R.drawable.ic_vector_event_warning),
+                contentScale = ContentScale.Crop,
+                contentDescription = "Warning icon"
+            )
+        }
     )
 }
 
@@ -339,5 +421,16 @@ fun EditWorkoutNameDialogPreview() {
         onDismiss = {},
         onConfirm = onConfirm,
         currentName = "Workout 1"
+    )
+}
+
+@Preview
+@Composable
+fun ErrorDialogPreview() {
+    val error = KareError.INVALID_CREDENTIALS
+
+    ErrorDialog(
+        error = error,
+        onDismiss = {}
     )
 }

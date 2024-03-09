@@ -28,7 +28,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.koleff.kare_android.data.model.dto.MuscleGroupUI
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Composable
 fun ImageCard(
@@ -91,7 +91,7 @@ fun ImageCard(
 @Composable
 fun MuscleGroupGrid(
     modifier: Modifier = Modifier,
-    muscleGroupList: List<MuscleGroupUI>,
+    muscleGroupList: List<MuscleGroup>,
     onMuscleGroupSelected: (Int) -> Unit
 ) {
     LazyVerticalStaggeredGrid(

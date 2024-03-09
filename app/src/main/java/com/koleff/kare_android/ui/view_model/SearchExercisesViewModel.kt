@@ -11,7 +11,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.state.ExercisesState
+import com.koleff.kare_android.ui.state.ExerciseListState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import dagger.assisted.AssistedFactory
@@ -31,8 +31,8 @@ class SearchExercisesViewModel @Inject constructor(
 ) : BaseViewModel(navigationController) {
     val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
-    private val _state: MutableStateFlow<ExercisesState> = MutableStateFlow(ExercisesState())
-    val state: StateFlow<ExercisesState>
+    private var _state: MutableStateFlow<ExerciseListState> = MutableStateFlow(ExerciseListState())
+    val state: StateFlow<ExerciseListState>
         get() = _state
 
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
@@ -110,17 +110,23 @@ class SearchExercisesViewModel @Inject constructor(
     }
 
     //Navigation
-    fun openExerciseDetailsConfiguratorScreen(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+    fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
                 popUpToRoute = Destination.Workouts.route,
-                destinationRoute = Destination.ExerciseDetailsConfigurator.createRoute(
+                destinationRoute = Destination.ExerciseDetailsConfigurator(
                     exerciseId,
                     muscleGroupId,
                     workoutId
-                ),
+                ).route,
                 inclusive = false
             )
         )
+    }
+
+    override fun clearError() {
+        if(state.value.isError){
+            _state.value = ExerciseListState()
+        }
     }
 }

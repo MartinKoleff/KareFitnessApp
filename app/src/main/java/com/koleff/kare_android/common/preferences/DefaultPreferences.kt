@@ -1,13 +1,15 @@
 package com.koleff.kare_android.common.preferences
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-import com.koleff.kare_android.data.model.dto.MuscleGroupUI
+import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.Tokens
+import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.view_model.MuscleGroupUIList
-import java.lang.IllegalStateException
 import java.lang.NullPointerException
 import java.lang.reflect.Type
 
@@ -18,7 +20,7 @@ class DefaultPreferences(
 
     private val gson: Gson = GsonBuilder().create()
 
-    override fun saveDashboardMuscleGroupList(muscleGroupList: MuscleGroupUIList) {
+    override fun saveDashboardMuscleGroupList(muscleGroupList: List<MuscleGroup>) {
         val json = gson.toJson(muscleGroupList)
 
         sharedPref.edit()
@@ -40,6 +42,7 @@ class DefaultPreferences(
             sharedPref.getString(Preferences.SELECTED_WORKOUT, "") ?: ""
 
         return try {
+            Log.d("DefaultPreferences", "Selected workout json: $selectedWorkoutJson")
             gson.fromJson(selectedWorkoutJson, WorkoutDto::class.java)
         } catch (ex: Exception) {
             when (ex) {
@@ -52,15 +55,16 @@ class DefaultPreferences(
         }
     }
 
-    override fun loadDashboardMuscleGroupList(): List<MuscleGroupUI> {
+    override fun loadDashboardMuscleGroupList(): List<MuscleGroup>{
         val muscleGroupListJson: String =
             sharedPref.getString(Preferences.DASHBOARD_MUSCLE_GROUP_LIST, "") ?: ""
 
-        val type: Type = object : TypeToken<List<MuscleGroupUI>>() {}.type
+        val type: Type = object : TypeToken<List<MuscleGroup>>() {}.type
 
         //Parse to MuscleGroupUIList...
         try {
-            val muscleGroupList: List<MuscleGroupUI> = gson.fromJson(muscleGroupListJson, type)
+            Log.d("DefaultPreferences", "Dashboard muscle groups json: $muscleGroupListJson")
+            val muscleGroupList: List<MuscleGroup> = gson.fromJson(muscleGroupListJson, type)
 
             if (muscleGroupList.isEmpty()) {
                 return emptyList()
@@ -78,29 +82,94 @@ class DefaultPreferences(
         }
     }
 
-    override fun hasInitializedExerciseTableRoomDB(): Boolean {
+    override fun hasInitializedExerciseTable(): Boolean {
         val hasInitialized: Boolean =
-            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE_ROOM_DB, false)
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE, false)
 
         return hasInitialized
     }
 
-    override fun initializeExerciseTableRoomDB() {
+    override fun initializeExerciseTable() {
         sharedPref.edit()
-            .putBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE_ROOM_DB, true)
+            .putBoolean(Preferences.HAS_INITIALIZED_EXERCISE_TABLE, true)
             .apply()
     }
 
-    override fun hasInitializedWorkoutTableRoomDB(): Boolean {
+    override fun hasInitializedWorkoutTable(): Boolean {
         val hasInitialized: Boolean =
-            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, false)
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE, false)
 
         return hasInitialized
     }
 
-    override fun initializeWorkoutTableRoomDB() {
+    override fun initializeWorkoutTable() {
         sharedPref.edit()
-            .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE_ROOM_DB, true)
+            .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_TABLE, true)
             .apply()
+    }
+
+    override fun hasInitializedUserTable(): Boolean {
+        val hasInitialized: Boolean =
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_USER_TABLE, false)
+
+        return hasInitialized
+    }
+
+    override fun initializeUserTable() {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_INITIALIZED_USER_TABLE, true)
+            .apply()
+    }
+
+    override fun saveCredentials(credentials: Credentials) {
+        val json = gson.toJson(credentials)
+
+        sharedPref.edit()
+            .putString(Preferences.CREDENTIALS, json)
+            .apply()
+    }
+
+    override fun getCredentials(): Credentials? {
+        val credentialsJson: String =
+            sharedPref.getString(Preferences.CREDENTIALS, "") ?: ""
+
+        return try {
+            Log.d("DefaultPreferences", "Credentials json: $credentialsJson")
+            gson.fromJson(credentialsJson, UserDto::class.java)
+        } catch (ex: Exception) {
+            when (ex) {
+                is IllegalAccessException, is NullPointerException -> {
+                    null
+                }
+
+                else -> throw ex
+            }
+        }
+    }
+
+    override fun saveTokens(tokens: Tokens) {
+        val json = gson.toJson(tokens)
+
+        sharedPref.edit()
+            .putString(Preferences.TOKENS, json)
+            .apply()
+    }
+
+    override fun getTokens(): Tokens? {
+        val tokensJson: String =
+            sharedPref.getString(Preferences.TOKENS, "") ?: ""
+
+        return try {
+            Log.d("DefaultPreferences", "Tokens json: $tokensJson")
+            gson.fromJson(tokensJson, Tokens::class.java)
+        } catch (ex: Exception) {
+            when (ex) {
+                is IllegalAccessException, is NullPointerException -> {
+                    null
+                }
+
+                else -> throw ex
+            }
+        }
     }
 }

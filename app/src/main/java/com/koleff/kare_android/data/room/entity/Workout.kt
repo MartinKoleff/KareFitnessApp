@@ -9,11 +9,11 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 data class Workout(
     @PrimaryKey(autoGenerate = true)
     val workoutId: Int,
-    val name: String,
-    val muscleGroup: MuscleGroup,
-    val snapshot: String,
+    var name: String,
+    var muscleGroup: MuscleGroup,
+    var snapshot: String,
     var totalExercises: Int,
-    val isSelected: Boolean,
+    var isSelected: Boolean,
 ) {
     fun toWorkoutDto(): WorkoutDto {
         return WorkoutDto(
