@@ -72,4 +72,8 @@ class LoginViewModel @Inject constructor(
         )
         preferences.saveTokens(tokens)
     }
+
+    fun navigateToWelcome() {
+        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Welcome))
+    }
 }

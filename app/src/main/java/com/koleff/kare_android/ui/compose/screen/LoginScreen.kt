@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,6 +45,7 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -62,6 +64,8 @@ import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.LoginViewModel
 
@@ -118,33 +122,6 @@ fun LoginScreen(
 
     val onGoogleSign: () -> Unit = {} //TODO: wire with OAuth2...
 
-    //Background image
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .drawWithContent {
-                val colors = listOf(
-                    Color.Red,
-                    Color.Red,
-                    Color.Black,
-                    Color.Blue
-                )
-                drawContent()
-                drawRect(
-                    brush = Brush.linearGradient(colors),
-                    blendMode = BlendMode.Overlay //ColorBurn
-                )
-            }
-    ) {
-
-        //Texture background
-        Image(
-            painter = painterResource(id = R.drawable.ic_login_background_4),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop
-        )
-    }
-
     //Loading screen
     if (loginState.isLoading) {
         LoadingWheel()
@@ -155,48 +132,47 @@ fun LoginScreen(
     }
 
     //Screen
-    Column(
-        modifier = Modifier.fillMaxSize(), //screenContentModifier
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-
-        //Gym image
-        Image( //TODO: replace with scaffold and top toolbar...
-            modifier = gymImageModifier
-                .clip(RoundedCornerShape(cornerSize))
-                .padding(bottom = 6.dp),
-            painter = painterResource(id = R.drawable.ic_default),
-            contentDescription = "Top Image",
-            contentScale = ContentScale.Crop
-        )
-
-        CustomTitleAndSubtitle(
-            title = "Welcome back!",
-            subtitle = "We missed you!"
-        )
-
-        //User text box
-        CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
-            username = it
+    AuthenticationScaffold(
+        screenTitle = "",
+        onNavigateBackAction = {
+            loginViewModel.navigateToWelcome()
         }
+    ) { innerPadding ->
 
-        //Password text box
-        PasswordTextField(label = "Password") {
-            password = it
-        }
-
-        AuthenticationButton(
-            text = "Sign in",
-            onAction = onSignIn,
-            credentials =
-            Credentials(
-                username = username,
-                password = password
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            CustomTitleAndSubtitle(
+                title = "Welcome back!",
+                subtitle = "We missed you!"
             )
-        )
-        SignInFooter(onGoogleSign = onGoogleSign)
-        //TODO: add don't have an account register redirect to registerScreen...
+
+            //User text box
+            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+                username = it
+            }
+
+            //Password text box
+            PasswordTextField(label = "Password") {
+                password = it
+            }
+
+            AuthenticationButton(
+                text = "Sign in",
+                onAction = onSignIn,
+                credentials =
+                Credentials(
+                    username = username,
+                    password = password
+                )
+            )
+            SignInFooter(onGoogleSign = onGoogleSign)
+            //TODO: add don't have an account register redirect to registerScreen...
+        }
     }
 }
 
