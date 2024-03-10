@@ -33,6 +33,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.credentials_validator.Credentials
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
 import com.koleff.kare_android.ui.view_model.RegisterViewModel
@@ -83,32 +84,6 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
     var email by remember {
         mutableStateOf("")
     }
-    //Background image
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .drawWithContent {
-                val colors = listOf(
-                    Color.Red,
-                    Color.Red,
-                    Color.Black,
-                    Color.Blue
-                )
-                drawContent()
-                drawRect(
-                    brush = Brush.linearGradient(colors),
-                    blendMode = BlendMode.Overlay //ColorBurn
-                )
-            }
-    ) {
-
-        //Texture background
-        Image(
-            painter = painterResource(id = R.drawable.ic_login_background_4),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop
-        )
-    }
 
     //Loading screen
     if (registerState.isLoading) {
@@ -128,52 +103,52 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
     }
 
     //Screen
-    Column(
-        modifier = Modifier.fillMaxSize(), //screenContentModifier
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
-
-        //Gym image
-        Image(
-            modifier = gymImageModifier
-                .clip(RoundedCornerShape(cornerSize))
-                .padding(bottom = 6.dp),
-            painter = painterResource(id = R.drawable.ic_default),
-            contentDescription = "Top Image",
-            contentScale = ContentScale.Crop
-        )
-
-        CustomTitleAndSubtitle(
-            title = "Welcome to Kare!",
-            subtitle = "Create an account so you can become part of the family!"
-        )
-
-        //User text box
-        CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
-            username = it
+    AuthenticationScaffold(
+        screenTitle = "",
+        onNavigateBackAction = {
+            registerViewModel.navigateToWelcome()
         }
+    ) { innerPadding ->
 
-        //Password text box
-        PasswordTextField(label = "Password") {
-            password = it
-        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
 
-        //User text box
-        CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
-            email = it
-        }
-
-        AuthenticationButton(
-            text = "Sign up",
-            onAction = onSignUp,
-            credentials =
-            Credentials(
-                username = username,
-                password = password,
-                email = email
+            CustomTitleAndSubtitle(
+                title = "Welcome to Kare!",
+                subtitle = "Create an account so you can become part of the family!"
             )
-        )
+
+            //User text box
+            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+                username = it
+            }
+
+            //Password text box
+            PasswordTextField(label = "Password") {
+                password = it
+            }
+
+            //User text box
+            CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
+                email = it
+            }
+
+            AuthenticationButton(
+                text = "Sign up",
+                onAction = onSignUp,
+                credentials =
+                Credentials(
+                    username = username,
+                    password = password,
+                    email = email
+                )
+            )
+        }
     }
 }
 
