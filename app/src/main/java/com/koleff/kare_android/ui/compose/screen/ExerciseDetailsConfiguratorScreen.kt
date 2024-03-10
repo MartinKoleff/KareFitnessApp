@@ -36,7 +36,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
-import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
@@ -80,7 +80,7 @@ fun ExerciseDetailsConfiguratorScreen(
         )
     }
 
-    ExerciseDetailsConfiguratorScreenScaffold(
+    ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = onSubmitExercise,
@@ -189,7 +189,7 @@ fun ExerciseDetailsConfiguratorScreenPreview() {
 
     val exerciseImageId = MuscleGroup.getImage(exerciseState.exercise.muscleGroup)
 
-    ExerciseDetailsConfiguratorScreenScaffold(
+    ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = {},
