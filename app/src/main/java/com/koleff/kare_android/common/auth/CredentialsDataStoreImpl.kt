@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common.credentials_validator
+package com.koleff.kare_android.common.auth
 
 import com.koleff.kare_android.common.preferences.Preferences
 

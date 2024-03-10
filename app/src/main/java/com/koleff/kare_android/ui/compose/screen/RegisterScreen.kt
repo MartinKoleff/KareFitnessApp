@@ -31,7 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog

@@ -60,7 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.LoadingWheel

@@ -1,9 +1,9 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.LoginResponse

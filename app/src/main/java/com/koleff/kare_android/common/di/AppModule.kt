@@ -8,10 +8,10 @@ import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.auth.CredentialsValidator
+import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource

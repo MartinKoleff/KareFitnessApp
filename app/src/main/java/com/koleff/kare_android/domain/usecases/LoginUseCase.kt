@@ -1,8 +1,8 @@
 package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
