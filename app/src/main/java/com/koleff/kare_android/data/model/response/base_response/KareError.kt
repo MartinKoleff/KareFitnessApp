@@ -11,6 +11,7 @@ enum class KareError(
 
     OK("success", R.string.text_success, ErrorType.SUCCESS),
     GENERIC("error_generic", R.string.text_internal_exception, ErrorType.INTERNAL),
+    NETWORK("error_network", R.string.text_network_exception, ErrorType.SERVER),
     INVALID_CREDENTIALS(
         "error_invalid_credentials",
         R.string.text_invalid_credentials,
