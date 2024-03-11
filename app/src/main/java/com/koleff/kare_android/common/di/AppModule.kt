@@ -8,6 +8,7 @@ import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
+import com.koleff.kare_android.common.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.DashboardDataSource
@@ -91,21 +92,23 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(preferences: Preferences): OkHttpClient {
+        val accessToken = preferences.getTokens()?.accessToken ?: ""
+
         val okHttpClientBuilder = OkHttpClient.Builder()
             .addInterceptor(Interceptor { chain ->
                 val original = chain.request()
 
                 val newUrl = original.url.newBuilder()
                     .scheme(Constants.SCHEME)
-                    .host(Constants.BASE_URL_FULL)
+                    .host(Constants.BASE_URL)
 //                    .port(Constants.PORT) //if port is needed
 //                    .addQueryParameter("access_key", Constants.API_KEY) //if API key is needed
                     .build()
 
                 val request = original.newBuilder()
                     .method(original.method, original.body)
-//                    .addHeader()
+                    .addHeader("Authorization" , "Bearer $accessToken") //TODO: add refresh token if access token is expired...
                     .url(newUrl)
                     .build()
 
