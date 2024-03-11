@@ -124,7 +124,8 @@ object AppModule {
     @Singleton
     fun provideMoshi(): Moshi {
         return Moshi.Builder()
-            .add(KotlinJsonAdapterFactory()) //TODO: fix uuid adapter issue...
+            .add(KotlinJsonAdapterFactory())
+            .add(UUIDJsonAdapter())
             .build()
     }
 
