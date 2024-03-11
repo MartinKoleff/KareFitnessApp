@@ -20,64 +20,38 @@ class LoginUseCase(
     private val authenticationRepository: AuthenticationRepository,
     private val credentialsAuthenticator: CredentialsAuthenticator
 ) {
+    suspend operator fun invoke(username: String, password: String): Flow<LoginState> =
+        authenticationRepository.login(username, password).map { apiResult ->
+            when (apiResult) {
+                is ResultWrapper.ApiError -> {
+                    LoginState(
+                        isError = true,
+                        error = apiResult.error ?: KareError.GENERIC
+                    )
+                }
 
-    private var _credentialsAuthenticationState: MutableStateFlow<BaseState> = MutableStateFlow(
-        BaseState()
-    )
-    private val credentialsAuthenticationState: StateFlow<BaseState> =
-        _credentialsAuthenticationState
+                is ResultWrapper.Loading -> {
+                    LoginState(isLoading = true)
+                }
 
+                is ResultWrapper.Success -> {
+                    Log.d("LoginUseCase", "User $username has logged in successfully!")
 
-    suspend operator fun invoke(username: String, password: String): Flow<LoginState> {
+                    with(apiResult.data) {
 
-        //Validate credentials
-        credentialsAuthenticator.checkLoginCredentials(username, password)
-            .collect { credentialsAuthenticationState ->
-                _credentialsAuthenticationState.value = credentialsAuthenticationState
-            }
+                        //Save credentials
+                        credentialsAuthenticator.saveCredentials(user)
 
-        //Valid credentials -> proceed with login
-        return if (credentialsAuthenticationState.value.isSuccessful) {
-            authenticationRepository.login(username, password).map { apiResult ->
-                when (apiResult) {
-                    is ResultWrapper.ApiError -> {
                         LoginState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
-                        )
-                    }
-
-                    is ResultWrapper.Loading -> {
-                        LoginState(isLoading = true)
-                    }
-
-                    is ResultWrapper.Success -> {
-                        Log.d("LoginUseCase", "User $username has logged in successfully!")
-
-                        with(apiResult.data) {
-
-                            //Save credentials
-                            credentialsAuthenticator.saveCredentials(user)
-
-                            LoginState(
-                                isSuccessful = true,
-                                data = LoginData(
-                                    accessToken = accessToken,
-                                    refreshToken = refreshToken,
-                                    user = user
-                                )
+                            isSuccessful = true,
+                            data = LoginData(
+                                accessToken = accessToken,
+                                refreshToken = refreshToken,
+                                user = user
                             )
-                        }
+                        )
                     }
                 }
             }
-        } else { //if (credentialsAuthenticationState.value.isError)
-            flowOf(
-                LoginState(
-                    isError = true,
-                    error = KareError.INVALID_CREDENTIALS
-                )
-            )
         }
-    }
 }

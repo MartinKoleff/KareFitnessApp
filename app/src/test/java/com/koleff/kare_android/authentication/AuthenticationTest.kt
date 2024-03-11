@@ -11,7 +11,6 @@ import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl
@@ -23,12 +22,10 @@ import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,7 +36,6 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 import java.util.stream.Stream
-import kotlin.math.log
 
 class AuthenticationTest {
 
@@ -226,7 +222,7 @@ class AuthenticationTest {
         authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
 
         loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
-        registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
+        registerUseCase = RegisterUseCase(authenticationRepository)
         authenticationUseCases = AuthenticationUseCases(
             loginUseCase,
             registerUseCase

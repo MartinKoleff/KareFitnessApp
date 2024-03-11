@@ -1,6 +1,5 @@
 package com.koleff.kare_android.common.auth
 
-import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.ui.state.BaseState
