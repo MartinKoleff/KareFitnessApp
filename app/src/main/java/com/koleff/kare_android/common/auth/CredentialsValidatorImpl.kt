@@ -1,5 +1,6 @@
 package com.koleff.kare_android.common.auth
 
+import android.util.Log
 import androidx.core.util.PatternsCompat.EMAIL_ADDRESS
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -27,7 +28,9 @@ class CredentialsValidatorImpl @Inject constructor(
             )
         } catch (e: IllegalArgumentException) {
             ResultWrapper.ApiError(
-                error = KareError.INVALID_CREDENTIALS
+                error = KareError.INVALID_CREDENTIALS.apply {
+                    extraMessage = e.message.toString()
+                }
             )
         }
     }
@@ -44,7 +47,9 @@ class CredentialsValidatorImpl @Inject constructor(
             )
         } catch (e: IllegalArgumentException) {
             ResultWrapper.ApiError(
-                error = KareError.INVALID_CREDENTIALS
+                error = KareError.INVALID_CREDENTIALS.apply {
+                    extraMessage = e.message.toString()
+                }
             )
         }
     }
@@ -75,7 +80,9 @@ class CredentialsValidatorImpl @Inject constructor(
                 is ResultWrapper.ApiError -> {
                     throw IllegalArgumentException("Email doesn't exist in DB.")
                 }
-                else -> {}
+                else -> {
+                    Log.d("USERLOCALDATASOURCE", "-1")
+                }
             }
         }
     }

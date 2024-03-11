@@ -1,16 +1,12 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
-import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.data.model.dto.UserDto
-import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.LoginResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.room.dao.UserDao
-import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
 import com.koleff.kare_android.domain.wrapper.LoginWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
@@ -18,7 +14,6 @@ import com.koleff.kare_android.ui.state.BaseState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 
 class AuthenticationLocalDataSource(
@@ -42,7 +37,7 @@ class AuthenticationLocalDataSource(
             if (state.value.isSuccessful) {
                 val user = userDao.getUserByUsername(username) ?: run {
                     //No user was found...
-                    emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
+                    emit(ResultWrapper.ApiError(error = KareError.USER_NOT_FOUND))
                     return@flow
                 }
 
