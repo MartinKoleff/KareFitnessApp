@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -39,15 +41,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -56,16 +56,14 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
-import com.koleff.kare_android.common.navigation.Destination
-import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
-import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.LoginViewModel
 
@@ -75,6 +73,9 @@ fun LoginScreen(
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val cornerSize = 36.dp
 
@@ -90,7 +91,18 @@ fun LoginScreen(
         loginViewModel.login(credentials)
     }
 
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(loginState) {
+        Log.d("LoginScreen", "Login state updated: $loginState")
+
+        //Update showErrorDialog based on loginState
+        showErrorDialog = loginState.isError
+
+        //Update showLoadingDialog based on loginState
+        showLoadingDialog = loginState.isLoading
+
         if (loginState.isSuccessful) {
             Log.d("LoginScreen", "Successfully signed in! Caching credentials and tokens!")
 
@@ -102,14 +114,8 @@ fun LoginScreen(
         }
     }
 
-    var showErrorDialog by remember { mutableStateOf(false) }
-
-    //Update showErrorDialog based on loginState
-    LaunchedEffect(loginState.isError) {
-        showErrorDialog = loginState.isError
-    }
-
     val onDismiss = {
+        showErrorDialog = false
         loginViewModel.clearError() //Enters launched effect to update showErrorDialog...
     }
 
@@ -122,16 +128,11 @@ fun LoginScreen(
 
     val onGoogleSign: () -> Unit = {} //TODO: wire with OAuth2...
 
-    //Loading screen
-    if (loginState.isLoading) {
-        LoadingWheel()
-    }
-
+    //Error dialog
     if (showErrorDialog) {
         ErrorDialog(loginState.error, onDismiss)
     }
 
-    //Screen
     AuthenticationScaffold(
         screenTitle = "",
         onNavigateBackAction = {
@@ -139,10 +140,26 @@ fun LoginScreen(
         }
     ) { innerPadding ->
 
+        //Loading screen
+        if (showLoadingDialog) {
+            LoadingWheel(innerPadding = PaddingValues(top = 46.dp))
+        }
+
+        //Screen
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .pointerInput(Unit) {
+
+                    //Hide keyboard on tap outside text field boxes
+                    detectTapGestures(
+                        onTap = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    )
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
