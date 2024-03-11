@@ -478,10 +478,16 @@ class AuthenticationTest {
         val loginState = authenticationUseCases.loginUseCase.invoke(
             credentials.username,
             credentials.password
-        ).first()
+        ).toList()
+
+        logger.i(TAG, "Login -> isLoading state raised.")
+        assertTrue { loginState[0].isLoading }
+
+        logger.i(TAG, "Login -> isError state raised.")
+        assertTrue { loginState[1].isError }
 
         logger.i(TAG, "Data: $loginState")
-        assertTrue { loginState.isError && loginState.error == KareError.INVALID_CREDENTIALS }
+        assertTrue { loginState[1].isError && loginState[1].error == KareError.INVALID_CREDENTIALS }
     }
 
 
@@ -525,9 +531,15 @@ class AuthenticationTest {
 
         val registerState = authenticationUseCases.registerUseCase.invoke(
             credentials
-        ).first()
+        ).toList()
+
+        logger.i(TAG, "Register -> isLoading state raised.")
+        assertTrue { registerState[0].isLoading }
+
+        logger.i(TAG, "Register -> isError state raised.")
+        assertTrue { registerState[1].isError }
 
         logger.i(TAG, "Data: $registerState")
-        assertTrue { registerState.isError && registerState.error == KareError.INVALID_CREDENTIALS }
+        assertTrue { registerState[1].isError && registerState[1].error == KareError.INVALID_CREDENTIALS }
     }
 }
