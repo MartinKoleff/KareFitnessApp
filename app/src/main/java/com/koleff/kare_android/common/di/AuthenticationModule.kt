@@ -61,8 +61,7 @@ object AuthenticationModule {
             userDao = userDao,
             credentialsAuthenticator = credentialsAuthenticator
         ) else AuthenticationRemoteDataSource(
-            authenticationApi = authenticationApi,
-            credentialsAuthenticator = credentialsAuthenticator
+            authenticationApi = authenticationApi
         )
     }
 
@@ -80,7 +79,7 @@ object AuthenticationModule {
     ): AuthenticationUseCases {
         return AuthenticationUseCases(
             loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator),
-            registerUseCase = RegisterUseCase(authenticationRepository)
+            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
         )
     }
 }

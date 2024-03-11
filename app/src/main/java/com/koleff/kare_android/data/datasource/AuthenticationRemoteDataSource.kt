@@ -22,37 +22,23 @@ import javax.inject.Inject
 
 class AuthenticationRemoteDataSource @Inject constructor(
     private val authenticationApi: AuthenticationApi,
-    private val credentialsAuthenticator: CredentialsAuthenticator,
     @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthenticationDataSource {
     override suspend fun login(
         username: String,
         password: String
-    ): Flow<ResultWrapper<LoginWrapper>> =
-        flow {
-            emit(ResultWrapper.Loading())
+    ): Flow<ResultWrapper<LoginWrapper>> {
+        val body = LoginRequest(
+            username,
+            password
+        )
 
-            //Validate credentials
-            val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticator.checkLoginCredentials(username, password).collect {
-                state.value = it
-            }
-
-            if (state.value.isSuccessful) {
-                val body = LoginRequest(
-                    username,
-                    password
-                )
-
-                Network.executeApiCall(dispatcher, {
-                    LoginWrapper(
-                        authenticationApi.login(body)
-                    )
-                })
-            } else {
-                emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
-            }
-        }
+        return Network.executeApiCall(dispatcher, {
+            LoginWrapper(
+                authenticationApi.login(body)
+            )
+        })
+    }
 
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         val body = RegistrationRequest(

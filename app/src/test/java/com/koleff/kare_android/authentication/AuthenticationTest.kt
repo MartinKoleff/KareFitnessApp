@@ -222,7 +222,7 @@ class AuthenticationTest {
         authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
 
         loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
-        registerUseCase = RegisterUseCase(authenticationRepository)
+        registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
         authenticationUseCases = AuthenticationUseCases(
             loginUseCase,
             registerUseCase
@@ -450,12 +450,12 @@ class AuthenticationTest {
         assertTrue { loginState[0].isLoading }
 
         logger.i(TAG, "Login -> isSuccessful state raised.")
-        assertTrue { loginState[1].isSuccessful }
+        assertTrue { loginState[2].isSuccessful }
 
-        val accessToken = loginState[1].data.accessToken
-        val refreshToken = loginState[1].data.refreshToken
+        val accessToken = loginState[2].data.accessToken
+        val refreshToken = loginState[2].data.refreshToken
         logger.i(TAG, "Assert access and refresh token are generated.")
-        logger.i(TAG, "Data: ${loginState[1]}")
+        logger.i(TAG, "Data: ${loginState[2]}")
         assertTrue {
             accessToken == "access_token" && refreshToken == "refresh_token"
         }
@@ -509,9 +509,9 @@ class AuthenticationTest {
         assertTrue { registerState[0].isLoading }
 
         logger.i(TAG, "Register -> isSuccessful state raised.")
-        assertTrue { registerState[1].isSuccessful }
+        assertTrue { registerState[2].isSuccessful }
 
-        logger.i(TAG, "Data: ${registerState[1]}")
+        logger.i(TAG, "Data: ${registerState[2]}")
 
         logger.i(TAG, "Assert DB contains user.")
         val dbEntry = userDao.getUserByUsername(credentials.username)

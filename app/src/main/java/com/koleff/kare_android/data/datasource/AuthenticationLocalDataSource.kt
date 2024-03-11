@@ -14,6 +14,8 @@ import com.koleff.kare_android.ui.state.BaseState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 
 class AuthenticationLocalDataSource(
@@ -29,12 +31,9 @@ class AuthenticationLocalDataSource(
             delay(Constants.fakeDelay)
 
             //Validate credentials
-            val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticator.checkLoginCredentials(username, password).collect {
-                state.value = it
-            }
+            val state= credentialsAuthenticator.checkLoginCredentials(username, password).firstOrNull()
 
-            if (state.value.isSuccessful) {
+            if (state?.isSuccessful == true) {
                 val user = userDao.getUserByUsername(username) ?: run {
                     //No user was found...
                     emit(ResultWrapper.ApiError(error = KareError.USER_NOT_FOUND))
@@ -64,12 +63,9 @@ class AuthenticationLocalDataSource(
             delay(Constants.fakeDelay)
 
             //Validate credentials
-            val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticator.checkRegisterCredentials(user).collect {
-                state.value = it
-            }
+            val state = credentialsAuthenticator.checkRegisterCredentials(user).firstOrNull()
 
-            if (state.value.isSuccessful) {
+            if (state?.isSuccessful == true) {
 
                 //Save user
                 userDao.saveUser(user.toEntity())
