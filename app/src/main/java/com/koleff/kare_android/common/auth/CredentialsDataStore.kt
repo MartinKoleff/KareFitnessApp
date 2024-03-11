@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common.credentials_validator
+package com.koleff.kare_android.common.auth
 
 interface CredentialsDataStore {
 

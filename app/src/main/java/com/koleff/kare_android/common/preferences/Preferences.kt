@@ -1,6 +1,6 @@
 package com.koleff.kare_android.common.preferences
 
-import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.WorkoutDto

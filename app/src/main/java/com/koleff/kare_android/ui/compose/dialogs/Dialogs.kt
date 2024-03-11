@@ -262,7 +262,8 @@ fun WarningDialog(
 @Composable
 fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val errorMessage = context.resources.getString(error.errorMessageResourceId)
+    val errorMessage =
+        context.resources.getString(error.errorMessageResourceId) + " " + error.extraMessage
     val title = "Error"
 
     AlertDialog(
@@ -427,7 +428,9 @@ fun EditWorkoutNameDialogPreview() {
 @Preview
 @Composable
 fun ErrorDialogPreview() {
-    val error = KareError.INVALID_CREDENTIALS
+    val error = KareError.INVALID_CREDENTIALS.apply {
+        extraMessage = "Username must be at least 4 characters long."
+    }
 
     ErrorDialog(
         error = error,

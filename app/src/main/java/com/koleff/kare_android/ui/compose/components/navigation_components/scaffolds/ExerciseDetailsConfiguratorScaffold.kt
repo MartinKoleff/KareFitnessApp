@@ -1,6 +1,6 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds
 
-import com.koleff.kare_android.ui.compose.components.navigation_components.toolbar.ExerciseDetailsToolbar
+import com.koleff.kare_android.ui.compose.components.navigation_components.toolbar.ExerciseDetailsConfiguratorToolbar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -15,17 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import com.koleff.kare_android.ui.compose.components.navigation_components.bottom_navigation_bar.ExerciseDetailsBottomNavigationBar
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
 
 @Composable
-fun ExerciseDetailsScreenScaffold(
+fun ExerciseDetailsConfiguratorScaffold(
     screenTitle: String,
     exerciseImageId: Int,
-    exerciseId: Int,
-    onNavigateAction: () -> Unit,
-    onNavigateBack: () -> Unit,
-    onNavigateSubmitExercise: () -> Unit,
+    onSubmitExercise: () -> Unit,
+    onNavigateBackAction: () -> Unit,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -35,7 +32,7 @@ fun ExerciseDetailsScreenScaffold(
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            ExerciseDetailsToolbar(
+            ExerciseDetailsConfiguratorToolbar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(screenHeight / 2.5f)
@@ -47,16 +44,10 @@ fun ExerciseDetailsScreenScaffold(
                         shape = RoundedToolbarShape(hasTopOutline = false)
                     ),
                 exerciseImageId = exerciseImageId,
-                onNavigateAction = onNavigateAction,
-                onNavigateBackAction = onNavigateBack
+                onSubmitExercise = onSubmitExercise,
+                onNavigateBackAction = onNavigateBackAction
             )
         },
-        bottomBar = {
-            ExerciseDetailsBottomNavigationBar(
-                exerciseId = exerciseId,
-                onNavigateSubmitExercise = onNavigateSubmitExercise
-            )
-        }
     ) { innerPadding ->
         modifierPadding(innerPadding)
     }

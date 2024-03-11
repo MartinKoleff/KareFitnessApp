@@ -1,15 +1,14 @@
 package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,20 +18,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
 import com.koleff.kare_android.ui.view_model.RegisterViewModel
@@ -41,6 +37,9 @@ import com.koleff.kare_android.ui.view_model.RegisterViewModel
 fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val cornerSize = 36.dp
 
@@ -56,20 +55,25 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
     }
 
     var showSuccessDialog by remember { mutableStateOf(false) }
-
-    //Show success dialog
-    LaunchedEffect(registerState.isSuccessful) {
-        showSuccessDialog = registerState.isSuccessful
-    }
-
     var showErrorDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
 
-    //Update showErrorDialog based on loginState
-    LaunchedEffect(registerState.isError) {
+
+    LaunchedEffect(registerState) {
+        Log.d("RegisterScreen", "Register state updated: $registerState")
+
+        //Update showSuccessDialog based on loginState
+        showSuccessDialog = registerState.isSuccessful
+
+        //Update showErrorDialog based on loginState
         showErrorDialog = registerState.isError
+
+        //Update showLoadingDialog based on loginState
+        showLoadingDialog = registerState.isLoading
     }
 
     val onDismiss = {
+        showErrorDialog = false
         registerViewModel.clearError() //Enters launched effect to update showErrorDialog...
         registerViewModel.clearState() //Clear showSuccessDialog...
     }
@@ -82,37 +86,6 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
     }
     var email by remember {
         mutableStateOf("")
-    }
-    //Background image
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .drawWithContent {
-                val colors = listOf(
-                    Color.Red,
-                    Color.Red,
-                    Color.Black,
-                    Color.Blue
-                )
-                drawContent()
-                drawRect(
-                    brush = Brush.linearGradient(colors),
-                    blendMode = BlendMode.Overlay //ColorBurn
-                )
-            }
-    ) {
-
-        //Texture background
-        Image(
-            painter = painterResource(id = R.drawable.ic_login_background_4),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop
-        )
-    }
-
-    //Loading screen
-    if (registerState.isLoading) {
-        LoadingWheel()
     }
 
     if (showErrorDialog) {
@@ -127,53 +100,67 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         )
     }
 
-    //Screen
-    Column(
-        modifier = Modifier.fillMaxSize(), //screenContentModifier
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
+    AuthenticationScaffold(
+        screenTitle = "",
+        onNavigateBackAction = {
+            registerViewModel.navigateToWelcome()
+        }
+    ) { innerPadding ->
 
-        //Gym image
-        Image(
-            modifier = gymImageModifier
-                .clip(RoundedCornerShape(cornerSize))
-                .padding(bottom = 6.dp),
-            painter = painterResource(id = R.drawable.ic_default),
-            contentDescription = "Top Image",
-            contentScale = ContentScale.Crop
-        )
-
-        CustomTitleAndSubtitle(
-            title = "Welcome to Kare!",
-            subtitle = "Create an account so you can become part of the family!"
-        )
-
-        //User text box
-        CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
-            username = it
+        //Loading screen
+        if (showLoadingDialog) {
+            LoadingWheel(innerPadding = PaddingValues(top = 46.dp))
         }
 
-        //Password text box
-        PasswordTextField(label = "Password") {
-            password = it
-        }
+        //Screen
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .pointerInput(Unit) {
 
-        //User text box
-        CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
-            email = it
-        }
-
-        AuthenticationButton(
-            text = "Sign up",
-            onAction = onSignUp,
-            credentials =
-            Credentials(
-                username = username,
-                password = password,
-                email = email
+                    //Hide keyboard on tap outside text field boxes
+                    detectTapGestures(
+                        onTap = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    )
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            CustomTitleAndSubtitle(
+                title = "Welcome to Kare!",
+                subtitle = "Create an account so you can become part of the family!"
             )
-        )
+
+            //User text box
+            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+                username = it
+            }
+
+            //Password text box
+            PasswordTextField(label = "Password") {
+                password = it
+            }
+
+            //User text box
+            CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
+                email = it
+            }
+
+            AuthenticationButton(
+                text = "Sign up",
+                onAction = onSignUp,
+                credentials =
+                Credentials(
+                    username = username,
+                    password = password,
+                    email = email
+                )
+            )
+        }
     }
 }
 

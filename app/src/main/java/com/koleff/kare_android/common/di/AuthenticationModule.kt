@@ -1,18 +1,16 @@
 package com.koleff.kare_android.common.di
 
-import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
-import com.koleff.kare_android.common.credentials_validator.CredentialsDataStore
-import com.koleff.kare_android.common.credentials_validator.CredentialsDataStoreImpl
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.auth.CredentialsDataStore
+import com.koleff.kare_android.common.auth.CredentialsDataStoreImpl
+import com.koleff.kare_android.common.auth.CredentialsValidator
+import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationRemoteDataSource
-import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.room.dao.UserDao
@@ -62,7 +60,9 @@ object AuthenticationModule {
         return if (useLocalDataSource) AuthenticationLocalDataSource(
             userDao = userDao,
             credentialsAuthenticator = credentialsAuthenticator
-        ) else AuthenticationRemoteDataSource(authenticationApi) //TODO: add credentials authenticator check before calling server?
+        ) else AuthenticationRemoteDataSource(
+            authenticationApi = authenticationApi
+        )
     }
 
     @Provides

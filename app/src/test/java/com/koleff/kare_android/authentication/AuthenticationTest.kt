@@ -2,16 +2,15 @@ package com.koleff.kare_android.authentication
 
 import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake
 import com.koleff.kare_android.authentication.data.UserDaoFake
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
+import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.auth.CredentialsValidator
+import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl
@@ -23,12 +22,10 @@ import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -39,7 +36,6 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 import java.util.stream.Stream
-import kotlin.math.log
 
 class AuthenticationTest {
 
@@ -454,12 +450,12 @@ class AuthenticationTest {
         assertTrue { loginState[0].isLoading }
 
         logger.i(TAG, "Login -> isSuccessful state raised.")
-        assertTrue { loginState[1].isSuccessful }
+        assertTrue { loginState[2].isSuccessful }
 
-        val accessToken = loginState[1].data.accessToken
-        val refreshToken = loginState[1].data.refreshToken
+        val accessToken = loginState[2].data.accessToken
+        val refreshToken = loginState[2].data.refreshToken
         logger.i(TAG, "Assert access and refresh token are generated.")
-        logger.i(TAG, "Data: ${loginState[1]}")
+        logger.i(TAG, "Data: ${loginState[2]}")
         assertTrue {
             accessToken == "access_token" && refreshToken == "refresh_token"
         }
@@ -482,10 +478,16 @@ class AuthenticationTest {
         val loginState = authenticationUseCases.loginUseCase.invoke(
             credentials.username,
             credentials.password
-        ).first()
+        ).toList()
+
+        logger.i(TAG, "Login -> isLoading state raised.")
+        assertTrue { loginState[0].isLoading }
+
+        logger.i(TAG, "Login -> isError state raised.")
+        assertTrue { loginState[1].isError }
 
         logger.i(TAG, "Data: $loginState")
-        assertTrue { loginState.isError && loginState.error == KareError.INVALID_CREDENTIALS }
+        assertTrue { loginState[1].isError && loginState[1].error == KareError.INVALID_CREDENTIALS }
     }
 
 
@@ -507,9 +509,9 @@ class AuthenticationTest {
         assertTrue { registerState[0].isLoading }
 
         logger.i(TAG, "Register -> isSuccessful state raised.")
-        assertTrue { registerState[1].isSuccessful }
+        assertTrue { registerState[2].isSuccessful }
 
-        logger.i(TAG, "Data: ${registerState[1]}")
+        logger.i(TAG, "Data: ${registerState[2]}")
 
         logger.i(TAG, "Assert DB contains user.")
         val dbEntry = userDao.getUserByUsername(credentials.username)
@@ -529,9 +531,15 @@ class AuthenticationTest {
 
         val registerState = authenticationUseCases.registerUseCase.invoke(
             credentials
-        ).first()
+        ).toList()
+
+        logger.i(TAG, "Register -> isLoading state raised.")
+        assertTrue { registerState[0].isLoading }
+
+        logger.i(TAG, "Register -> isError state raised.")
+        assertTrue { registerState[1].isError }
 
         logger.i(TAG, "Data: $registerState")
-        assertTrue { registerState.isError && registerState.error == KareError.INVALID_CREDENTIALS }
+        assertTrue { registerState[1].isError && registerState[1].error == KareError.INVALID_CREDENTIALS }
     }
 }

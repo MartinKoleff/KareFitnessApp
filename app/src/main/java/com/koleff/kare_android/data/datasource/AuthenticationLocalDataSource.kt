@@ -1,16 +1,12 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.data.model.dto.UserDto
-import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.LoginResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.room.dao.UserDao
-import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
 import com.koleff.kare_android.domain.wrapper.LoginWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
@@ -18,7 +14,8 @@ import com.koleff.kare_android.ui.state.BaseState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 
 class AuthenticationLocalDataSource(
@@ -34,15 +31,12 @@ class AuthenticationLocalDataSource(
             delay(Constants.fakeDelay)
 
             //Validate credentials
-            val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticator.checkLoginCredentials(username, password).collect {
-                state.value = it
-            }
+            val state= credentialsAuthenticator.checkLoginCredentials(username, password).firstOrNull()
 
-            if (state.value.isSuccessful) {
+            if (state?.isSuccessful == true) {
                 val user = userDao.getUserByUsername(username) ?: run {
                     //No user was found...
-                    emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
+                    emit(ResultWrapper.ApiError(error = KareError.USER_NOT_FOUND))
                     return@flow
                 }
 
@@ -69,12 +63,9 @@ class AuthenticationLocalDataSource(
             delay(Constants.fakeDelay)
 
             //Validate credentials
-            val state: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
-            credentialsAuthenticator.checkRegisterCredentials(user).collect {
-                state.value = it
-            }
+            val state = credentialsAuthenticator.checkRegisterCredentials(user).firstOrNull()
 
-            if (state.value.isSuccessful) {
+            if (state?.isSuccessful == true) {
 
                 //Save user
                 userDao.saveUser(user.toEntity())
