@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.network
 
 import android.os.Build
 import android.util.Log

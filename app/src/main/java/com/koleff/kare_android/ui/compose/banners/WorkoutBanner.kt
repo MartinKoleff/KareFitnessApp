@@ -444,7 +444,6 @@ fun WorkoutList(
 fun WorkoutListPreview() {
     val n = 5
     val workoutList: MutableList<WorkoutDto> = mutableListOf()
-    val navController = rememberNavController()
     repeat(n) { index ->
         val currentWorkout = WorkoutDto(
             workoutId = index,

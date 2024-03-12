@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
-import com.koleff.kare_android.common.Network
+import com.koleff.kare_android.common.network.Network
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto

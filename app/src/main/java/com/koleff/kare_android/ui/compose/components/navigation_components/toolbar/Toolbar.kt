@@ -62,8 +62,6 @@ fun Toolbar(
 @Preview
 @Composable
 fun ToolbarPreview() {
-    val navController = rememberNavController()
-
     Toolbar(
         onNavigateBackAction = {},
         onNavigateToAction = {}

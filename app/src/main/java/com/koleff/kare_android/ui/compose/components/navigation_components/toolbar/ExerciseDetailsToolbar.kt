@@ -95,7 +95,6 @@ fun ExerciseDetailsToolbar(
 @Preview
 @Composable
 fun PreviewExerciseDetailsToolbar() {
-    val navController = rememberNavController()
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp

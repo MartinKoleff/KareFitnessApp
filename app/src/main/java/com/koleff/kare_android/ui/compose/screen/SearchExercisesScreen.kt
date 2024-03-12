@@ -100,7 +100,6 @@ fun SearchExercisesScreen(
 @Preview
 @Composable
 fun SearchExercisesScreenPreview() {
-    val navController = rememberNavController()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
