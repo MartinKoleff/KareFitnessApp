@@ -106,12 +106,19 @@ object AppModule {
 //                    .addQueryParameter("access_key", Constants.API_KEY) //if API key is needed
                     .build()
 
-                val request = original.newBuilder()
+                val requestBuilder  = original.newBuilder()
                     .method(original.method, original.body)
-                    .addHeader("Authorization" , "Bearer $accessToken") //TODO: add refresh token if access token is expired...
                     .url(newUrl)
-                    .build()
 
+                val unauthorizedRequestPaths = listOf("/login", "/register")
+                val requestPath = original.url.encodedPath
+
+                //Add token authorization for all requests except auth ones
+                if (!requestPath.endsWith(unauthorizedRequestPaths[0]) && !requestPath.endsWith(unauthorizedRequestPaths[1])) {
+                    requestBuilder.addHeader("Authorization", "Bearer $accessToken")
+                }
+
+                val request = requestBuilder.build()
                 chain.proceed(request)
             })
 
