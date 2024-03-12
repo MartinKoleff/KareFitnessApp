@@ -2,6 +2,7 @@ package com.koleff.kare_android
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.multidex.MultiDexApplication
+import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
@@ -33,21 +34,24 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
     override fun onCreate() {
         super<MultiDexApplication>.onCreate()
 
-        //Initialize Room DB on app start
-        GlobalScope.launch(Dispatchers.IO) {
-            exerciseDBManager.initializeExerciseTable {
-                preferences.initializeExerciseTable()
+
+        //Initialize Room DB on app start (only for local testing)
+        if (useLocalDataSource) {
+            GlobalScope.launch(Dispatchers.IO) {
+                exerciseDBManager.initializeExerciseTable {
+                    preferences.initializeExerciseTable()
+                }
+
+                workoutDBManager.initializeWorkoutTable {
+                    preferences.initializeWorkoutTable()
+                }
+
+                userDBManager.initializeUserTable {
+                    preferences.initializeUserTable()
+                }
             }
 
-            workoutDBManager.initializeWorkoutTable {
-                preferences.initializeWorkoutTable()
-            }
-            
-            userDBManager.initializeUserTable {
-                preferences.initializeUserTable()
-            }
         }
-
         //Create push notification channel
         NotificationManager.createNotificationChannel(this@KareApp)
 
