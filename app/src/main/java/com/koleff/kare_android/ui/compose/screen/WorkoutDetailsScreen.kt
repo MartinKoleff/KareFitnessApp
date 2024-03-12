@@ -28,11 +28,13 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -58,17 +60,17 @@ fun WorkoutDetailsScreen(
     var selectedWorkout by remember {
         mutableStateOf(workoutDetailsState.workoutDetails)
     }
-
     var exercises by remember {
         mutableStateOf(selectedWorkout.exercises)
     }
+    var selectedExercise by remember { mutableStateOf<ExerciseDto?>(null) }
 
     var showAddExerciseBanner by remember {
         mutableStateOf(workoutDetailsState.isSuccessful)
     }
 
     //Update workout on initial load
-    LaunchedEffect(key1 = workoutDetailsState) {
+    LaunchedEffect(workoutDetailsState) {
         if (workoutDetailsState.isSuccessful) {
             Log.d("WorkoutDetailsScreen", "Initial load completed.")
             selectedWorkout = workoutDetailsState.workoutDetails
@@ -78,7 +80,7 @@ fun WorkoutDetailsScreen(
     }
 
     //When exercise is deleted -> update workout exercise list
-    LaunchedEffect(key1 = deleteExerciseState) {
+    LaunchedEffect(deleteExerciseState) {
         if (deleteExerciseState.isSuccessful) {
             Log.d("WorkoutDetailsScreen", "Exercise successfully deleted.")
             selectedWorkout = deleteExerciseState.workoutDetails
@@ -88,9 +90,32 @@ fun WorkoutDetailsScreen(
 
     //Dialog visibility
     var showDeleteDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+
 
     //Dialog callbacks
-    var selectedExercise by remember { mutableStateOf<ExerciseDto?>(null) }
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        workoutDetailsViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
+
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
+    LaunchedEffect(workoutDetailsState.isError, deleteExerciseState.isError){
+
+        error = if (workoutDetailsState.isError) {
+            workoutDetailsState.error
+        } else if (deleteExerciseState.isError) {
+            deleteExerciseState.error
+       } else {
+            null
+        }
+
+        showErrorDialog =
+            workoutDetailsState.isError || deleteExerciseState.isError
+
+        Log.d("WorkoutDetailsScreen", "Error detected -> $showErrorDialog")
+    }
 
     //Dialogs
     if (showDeleteDialog) {
@@ -109,6 +134,12 @@ fun WorkoutDetailsScreen(
             },
             onDismiss = { showDeleteDialog = false }
         )
+    }
+
+    if (showErrorDialog) {
+        error?.let {
+            ErrorDialog(error!!, onErrorDialogDismiss)
+        }
     }
 
     //Pull to refresh

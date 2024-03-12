@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -22,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.SearchWorkoutList
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
@@ -58,7 +61,7 @@ fun SearchWorkoutsScreen(
         }
     }
 
-    LaunchedEffect(key1 = workoutDetailsState) {
+    LaunchedEffect(workoutDetailsState) {
 
         //Await workout details
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workoutDetails.workoutId != -1) {
@@ -68,7 +71,7 @@ fun SearchWorkoutsScreen(
         }
     }
 
-    LaunchedEffect(key1 = updateWorkoutState) {
+    LaunchedEffect(updateWorkoutState) {
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
 
@@ -82,6 +85,40 @@ fun SearchWorkoutsScreen(
 
             //Reset state
             searchWorkoutViewModel.resetUpdateWorkoutState()
+        }
+    }
+
+    //Dialog visibility
+    var showErrorDialog by remember { mutableStateOf(false) }
+
+    //Dialog callbacks
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        searchWorkoutViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
+
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
+    LaunchedEffect(workoutDetailsState.isError, updateWorkoutState.isError){
+
+        error = if (workoutDetailsState.isError) {
+            workoutDetailsState.error
+        } else if (updateWorkoutState.isError) {
+            updateWorkoutState.error
+        } else {
+            null
+        }
+
+        showErrorDialog =
+            workoutDetailsState.isError || updateWorkoutState.isError
+
+        Log.d("SearchWorkoutsScreen", "Error detected -> $showErrorDialog")
+    }
+
+    //Dialogs
+    if (showErrorDialog) {
+        error?.let {
+            ErrorDialog(error!!, onErrorDialogDismiss)
         }
     }
 

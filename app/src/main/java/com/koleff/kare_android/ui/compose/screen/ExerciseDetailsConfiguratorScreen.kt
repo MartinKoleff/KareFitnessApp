@@ -16,6 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -34,9 +37,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
@@ -80,11 +85,52 @@ fun ExerciseDetailsConfiguratorScreen(
         )
     }
 
+    //Dialog visibility
+    var showErrorDialog by remember { mutableStateOf(false) }
+
+    //Dialog callbacks
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        exerciseDetailsConfiguratorViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
+
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
+    LaunchedEffect(
+        exerciseState.isError,
+        selectedWorkoutState.isError,
+        updateWorkoutState.isError
+    ) {
+
+        error = if (exerciseState.isError) {
+            exerciseState.error
+        } else if (selectedWorkoutState.isError) {
+            selectedWorkoutState.error
+        } else if (updateWorkoutState.isError) {
+            updateWorkoutState.error
+        } else {
+            null
+        }
+
+        showErrorDialog =
+            exerciseState.isError || selectedWorkoutState.isError || updateWorkoutState.isError
+
+        Log.d("ExerciseDetailsConfiguratorScreen", "Error detected -> $showErrorDialog")
+    }
+
+    //Dialogs
+    if (showErrorDialog) {
+        error?.let {
+            ErrorDialog(error!!, onErrorDialogDismiss)
+        }
+    }
+
     ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = onSubmitExercise,
-        onNavigateBackAction = onNavigateBack) { innerPadding ->
+        onNavigateBackAction = onNavigateBack
+    ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
