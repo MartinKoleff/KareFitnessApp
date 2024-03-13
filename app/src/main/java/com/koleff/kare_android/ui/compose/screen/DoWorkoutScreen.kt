@@ -52,6 +52,26 @@ fun ExerciseTimer(
         mutableStateOf(timeLeft)
     }
 
+    var hours: Float by remember {
+        mutableStateOf(time.split(":")[0].toFloat())
+    }
+
+    var minutes: Float by remember {
+        mutableStateOf(time.split(":")[1].toFloat())
+    }
+
+    var seconds: Float by remember {
+        mutableStateOf(time.split(":")[2].toFloat())
+    }
+
+    //When timeLeft updates -> update time...
+    LaunchedEffect(timeLeft) {
+        time = timeLeft
+        hours = time.split(":")[0].toFloat()
+        minutes = time.split(":")[1].toFloat()
+        seconds = time.split(":")[2].toFloat()
+    }
+
     Canvas(modifier = modifier) {
 
         drawContext.canvas.nativeCanvas.apply {
@@ -119,3 +139,21 @@ fun ExerciseTimer(
     }
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun ExerciseTimerPreview() {
+    val totalTime = 5 * 60 + 36
+    val hours = totalTime / 24
+    val minutes = totalTime / (24 * 60)
+    val seconds = totalTime / (24 * 60 * 60)
+    var currentTime by remember { mutableStateOf("00:05:36") }
+
+    LaunchedEffect(Unit) {
+        TimerUtil.startTimer(5 * 60 + 36){
+            currentTime = it
+        }
+    }
+
+    ExerciseTimer(modifier = Modifier.fillMaxSize(), timeLeft = currentTime)
+}
