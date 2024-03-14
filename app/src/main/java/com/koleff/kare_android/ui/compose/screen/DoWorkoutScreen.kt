@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ fun DoWorkoutScreenPreview() {
 fun ExerciseTimer(
     modifier: Modifier = Modifier,
     timeLeft: String,
+    totalTime: Int, //In seconds
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle()
 ) {
     var time: String by remember {
@@ -53,15 +55,15 @@ fun ExerciseTimer(
     }
 
     var hours: Float by remember {
-        mutableStateOf(time.split(":")[0].toFloat())
+        mutableFloatStateOf(time.split(":")[0].toFloat())
     }
 
     var minutes: Float by remember {
-        mutableStateOf(time.split(":")[1].toFloat())
+        mutableFloatStateOf(time.split(":")[1].toFloat())
     }
 
     var seconds: Float by remember {
-        mutableStateOf(time.split(":")[2].toFloat())
+        mutableFloatStateOf(time.split(":")[2].toFloat())
     }
 
     //When timeLeft updates -> update time...
@@ -70,6 +72,19 @@ fun ExerciseTimer(
         hours = time.split(":")[0].toFloat()
         minutes = time.split(":")[1].toFloat()
         seconds = time.split(":")[2].toFloat()
+    }
+
+    //Time elapsed logic
+    val timeLeftInSeconds = remember(time) {
+        (hours * 3600 + minutes * 60 + seconds).toInt()
+    }
+
+    val percentageLeft = remember(timeLeftInSeconds) {
+        timeLeftInSeconds.toFloat() / totalTime
+    }
+
+    val linesToColorDifferently = remember(percentageLeft) {
+        (exerciseTimerStyle.totalLines * percentageLeft).toInt()
     }
 
     Canvas(modifier = modifier) {
@@ -107,12 +122,11 @@ fun ExerciseTimer(
                 }
             )
 
-            //TODO: color the lines percentage of time left (0s left -> 100%)...
-
             //Lines
             for (i in 0..exerciseTimerStyle.totalLines) {
                 val lineLength = exerciseTimerStyle.lineLength.toPx()
-                val lineColor = exerciseTimerStyle.lineColor
+                val isElapsed = i >= linesToColorDifferently
+                val lineColor = if (isElapsed) exerciseTimerStyle.elapsedLineColor else exerciseTimerStyle.lineColor
 
                 val angleInRadian = -DegreeUtils.toRadian((i * 6).toFloat())
                 val outerRadius = exerciseTimerStyle.timerRadius.toPx()
@@ -143,17 +157,21 @@ fun ExerciseTimer(
 @Preview
 @Composable
 fun ExerciseTimerPreview() {
-    val totalTime = 5 * 60 + 36
+    val totalTime = 30 //all parts are 30 in the timer
     val hours = totalTime / 24
     val minutes = totalTime / (24 * 60)
     val seconds = totalTime / (24 * 60 * 60)
-    var currentTime by remember { mutableStateOf("00:05:36") }
+    var currentTime by remember { mutableStateOf(String.format("%02d:%02d:%02d", hours, minutes, seconds)) }
 
     LaunchedEffect(Unit) {
-        TimerUtil.startTimer(5 * 60 + 36){
+        TimerUtil.startTimer(totalTime){
             currentTime = it
         }
     }
 
-    ExerciseTimer(modifier = Modifier.fillMaxSize(), timeLeft = currentTime)
+    ExerciseTimer(
+        modifier = Modifier.fillMaxSize(),
+        timeLeft = currentTime,
+        totalTime = totalTime
+    )
 }

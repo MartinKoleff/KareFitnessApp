@@ -8,5 +8,6 @@ data class ExerciseTimerStyle(
     val timerRadius: Dp = 150.dp,
     val totalLines: Int = 30,
     val lineLength: Dp = 35.dp,
-    val lineColor: Color = Color.Yellow
+    val lineColor: Color = Color.Gray,
+    val elapsedLineColor: Color = Color.Yellow
 )
