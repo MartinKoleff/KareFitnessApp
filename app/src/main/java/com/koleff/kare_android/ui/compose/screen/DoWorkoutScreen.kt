@@ -206,6 +206,84 @@ fun DoWorkoutFooter(
     //TODO: add slider below for exercise data sheet...
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExerciseDataSheetModal() {
+    val sheetState = rememberModalBottomSheetState()
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    if (isSheetOpen) {
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = {
+                isSheetOpen = false
+            },
+            dragHandle = {
+                GrabHandle()
+            }
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_default),
+                contentDescription = null
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun ExerciseDataSheetModalPreview() {
+    ExerciseDataSheetModal()
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ExerciseDataSheetModal2(exercise: ExerciseDto) {
+    val scaffoldState = rememberBottomSheetScaffoldState()
+
+
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetContent = {
+          ExerciseDataSheet(exercise = exercise)
+        },
+//        sheetDragHandle = {
+//            GrabHandle()
+//        },
+        sheetPeekHeight = 35.dp
+    ) {
+
+       //screen...
+    }
+}
+
+@Preview
+@Composable
+fun ExerciseDataSheetModal2Preview() {
+    ExerciseDataSheetModal2(exercise = MockupDataGenerator.generateExercise())
+}
+
+@Composable
+fun GrabHandle(modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .height(5.dp)
+            .background(
+                color = Color.LightGray,
+                shape = RoundedCornerShape(50)
+            )
+    )
+}
+
+@Preview
+@Composable
+fun GrabHandlePreview() {
+    GrabHandle()
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
