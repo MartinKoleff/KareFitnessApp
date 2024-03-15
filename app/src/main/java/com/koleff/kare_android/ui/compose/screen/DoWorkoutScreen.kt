@@ -2,8 +2,10 @@ package com.koleff.kare_android.ui.compose.screen
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +37,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -63,6 +66,11 @@ import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 // (use the same for rest).
 // Also display next exercise / set number (2 different cases).
 // Have screen for finishing workout with stats...
+
+//TODO: add toolbar with x and progress lines of how much exercises are there (and mark the passed ones and current one bold)...
+// show percentage completed workout...
+
+//TODO: add next exercise / set to the bottom sheet dialog...
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
@@ -70,6 +78,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val time =
         ExerciseTime(hours = 0, minutes = 1, seconds = 30) //default time (wire with exercise time)
     val exercise = MockupDataGenerator.generateExercise()
+    val currentSet = 1
 
     //Navigation Callbacks
     val onExitWorkoutAction = {
@@ -84,14 +93,18 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     ) {
         //Video player...
 
-        DoWorkoutFooterWithModal(totalTime = time, exercise = exercise)
+        DoWorkoutFooterWithModal(totalTime = time, exercise = exercise, currentSet = currentSet)
     }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DoWorkoutFooterWithModal(totalTime: ExerciseTime, exercise: ExerciseDto) {
-    ExerciseDataSheetModal2(exercise = exercise) {
+fun DoWorkoutFooterWithModal(
+    totalTime: ExerciseTime,
+    exercise: ExerciseDto,
+    currentSet: Int
+) {
+    ExerciseDataSheetModal2(exercise = exercise, currentSet = currentSet) {
 
         //Footer
         Box(
@@ -112,8 +125,9 @@ fun DoWorkoutFooterWithModal(totalTime: ExerciseTime, exercise: ExerciseDto) {
 fun DoWorkoutFooterWithModalPreview() {
     val time = ExerciseTime(hours = 0, minutes = 5, seconds = 30)
     val exercise = MockupDataGenerator.generateExercise()
+    val currentSet = 1
 
-    DoWorkoutFooterWithModal(totalTime = time, exercise = exercise)
+    DoWorkoutFooterWithModal(totalTime = time, exercise = exercise, currentSet = currentSet)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -281,12 +295,13 @@ fun ExerciseDataSheetModalPreview() {
 @Composable
 fun ExerciseDataSheetModal2(
     exercise: ExerciseDto,
+    currentSet: Int,
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
-    val sheetPeekHeight = 35.dp
+    val sheetPeekHeight = 85.dp
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
@@ -294,6 +309,8 @@ fun ExerciseDataSheetModal2(
             .fillMaxWidth(),
         scaffoldState = scaffoldState,
         sheetContent = {
+            CurrentExerciseInfoRow(currentExercise = exercise, currentSet = currentSet)
+
             ExerciseDataSheet(exercise = exercise)
         },
         sheetDragHandle = {
@@ -307,14 +324,70 @@ fun ExerciseDataSheetModal2(
     }
 }
 
+@Composable
+fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
+    val textColor = Color.White
+    val setsTextColor = Color.Yellow
+    val cornerSize = 24.dp
+
+    val totalSets = currentExercise.sets.size
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(50.dp)
+            .background(Color.Gray),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            modifier = Modifier.padding(
+                5.dp
+            ),
+            text = currentExercise.name,
+            style = TextStyle(
+                color = textColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        Text(
+            modifier = Modifier.padding(
+                5.dp
+            ),
+            text = "$currentSet of $totalSets",
+            style = TextStyle(
+                color = setsTextColor,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Preview
+@Composable
+fun CurrentExerciseInfoRowInfoRowPreview() {
+    val currentExercise = MockupDataGenerator.generateExercise()
+    val currentSet = 1
+    CurrentExerciseInfoRow(currentExercise = currentExercise, currentSet = currentSet)
+}
+
 @Preview
 @Composable
 fun ExerciseDataSheetModal2Preview() {
-    ExerciseDataSheetModal2(exercise = MockupDataGenerator.generateExercise()) {
+    val exercise = MockupDataGenerator.generateExercise()
+    val currentSet = 1
+
+    ExerciseDataSheetModal2(exercise = exercise, currentSet = currentSet) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Red)
+                .background(Color.Black)
         )
     }
 }
