@@ -335,18 +335,25 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
         modifier = Modifier
             .fillMaxWidth()
             .height(50.dp)
+            .clip(
+                RoundedCornerShape(cornerSize)
+            )
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            )
             .background(Color.Gray),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             modifier = Modifier.padding(
-                5.dp
+                horizontal = 8.dp
             ),
             text = currentExercise.name,
             style = TextStyle(
                 color = textColor,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             ),
             maxLines = 2,
@@ -355,12 +362,12 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
 
         Text(
             modifier = Modifier.padding(
-                5.dp
+                horizontal = 8.dp
             ),
             text = "$currentSet of $totalSets",
             style = TextStyle(
                 color = setsTextColor,
-                fontSize = 12.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             ),
             maxLines = 2,
