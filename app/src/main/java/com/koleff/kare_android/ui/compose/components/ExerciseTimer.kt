@@ -144,7 +144,7 @@ fun ExerciseTimer(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun ExerciseTimerPreview() { //TODO: timer always goes to the bottom center of the screen no matter the row it is in...
+fun ExerciseTimerPreview() {
     val totalTime = ExerciseTime(hours = 0, minutes = 3, seconds = 30)
     var currentTime by remember {
         mutableStateOf(

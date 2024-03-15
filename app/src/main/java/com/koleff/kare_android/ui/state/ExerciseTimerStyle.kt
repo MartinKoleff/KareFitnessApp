@@ -5,7 +5,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class ExerciseTimerStyle(
-    val timerRadius: Dp = 150.dp,
+    val timerRadius: Dp = 100.dp,
     val totalLines: Int = 30,
     val lineLength: Dp = 35.dp,
     val lineColor: Color = Color.Gray,

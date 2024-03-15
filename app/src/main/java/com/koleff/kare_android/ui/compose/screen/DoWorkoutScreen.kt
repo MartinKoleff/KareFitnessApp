@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.SheetState
 import androidx.compose.material.ExperimentalMaterialApi
@@ -35,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -67,6 +69,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
     val time =
         ExerciseTime(hours = 0, minutes = 1, seconds = 30) //default time (wire with exercise time)
+    val exercise = MockupDataGenerator.generateExercise()
 
     //Navigation Callbacks
     val onExitWorkoutAction = {
@@ -81,15 +84,43 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     ) {
         //Video player...
 
-        DoWorkoutFooter(totalTime = time)
+        DoWorkoutFooterWithModal(totalTime = time, exercise = exercise)
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DoWorkoutFooterWithModal(totalTime: ExerciseTime, exercise: ExerciseDto) {
+    ExerciseDataSheetModal2(exercise = exercise) {
+
+        //Footer
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+                .background(Color.Black),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            DoWorkoutFooter(totalTime = totalTime)
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun DoWorkoutFooterWithModalPreview() {
+    val time = ExerciseTime(hours = 0, minutes = 5, seconds = 30)
+    val exercise = MockupDataGenerator.generateExercise()
+
+    DoWorkoutFooterWithModal(totalTime = time, exercise = exercise)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutFooter(
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
-    totalTime: ExerciseTime
+    totalTime: ExerciseTime,
 ) {
     val exerciseDataPadding = PaddingValues(4.dp)
     val textColor = Color.White
@@ -112,7 +143,7 @@ fun DoWorkoutFooter(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(exerciseTimerStyle.timerRadius)
+            .height(exerciseTimerStyle.timerRadius * 1.5f)
     ) {
 
         //reps
@@ -160,8 +191,8 @@ fun DoWorkoutFooter(
 
         ExerciseTimer(
             modifier = Modifier
-                .weight(2.5f)
-                .size(exerciseTimerStyle.timerRadius),
+                .fillMaxHeight()
+                .weight(2.5f),
             timeLeft = currentTime,
             totalTime = totalTime
         )
@@ -202,8 +233,16 @@ fun DoWorkoutFooter(
             )
         }
     }
+}
 
-    //TODO: add slider below for exercise data sheet...
+@RequiresApi(Build.VERSION_CODES.O)
+@Preview
+@Composable
+fun DoWorkoutFooterPreview() {
+    val time = ExerciseTime(hours = 0, minutes = 5, seconds = 30)
+    val exercise = MockupDataGenerator.generateExercise()
+
+    DoWorkoutFooter(totalTime = time)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -240,36 +279,56 @@ fun ExerciseDataSheetModalPreview() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ExerciseDataSheetModal2(exercise: ExerciseDto) {
+fun ExerciseDataSheetModal2(
+    exercise: ExerciseDto,
+    content: @Composable (paddingValues: PaddingValues) -> Unit
+) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val sheetPeekHeight = 35.dp
+
     val scaffoldState = rememberBottomSheetScaffoldState()
-
-
     BottomSheetScaffold(
+        modifier = Modifier
+            .fillMaxWidth(),
         scaffoldState = scaffoldState,
         sheetContent = {
-          ExerciseDataSheet(exercise = exercise)
+            ExerciseDataSheet(exercise = exercise)
         },
-//        sheetDragHandle = {
-//            GrabHandle()
-//        },
-        sheetPeekHeight = 35.dp
+        sheetDragHandle = {
+            GrabHandle()
+        },
+        sheetPeekHeight = sheetPeekHeight
     ) {
 
-       //screen...
+        //Screen
+        content(it)
     }
 }
 
 @Preview
 @Composable
 fun ExerciseDataSheetModal2Preview() {
-    ExerciseDataSheetModal2(exercise = MockupDataGenerator.generateExercise())
+    ExerciseDataSheetModal2(exercise = MockupDataGenerator.generateExercise()) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Red)
+        )
+    }
 }
 
 @Composable
 fun GrabHandle(modifier: Modifier = Modifier) {
+    val configuration = LocalConfiguration.current
+
+    val screenHeight = configuration.screenHeightDp.dp
+    val screenWidth = configuration.screenWidthDp.dp
+
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .width(screenWidth / 2 - 75.dp) //.fillMaxWidth()
             .padding(16.dp)
             .height(5.dp)
             .background(
@@ -283,12 +342,4 @@ fun GrabHandle(modifier: Modifier = Modifier) {
 @Composable
 fun GrabHandlePreview() {
     GrabHandle()
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun DoWorkoutFooterPreview() {
-    val time = ExerciseTime(hours = 0, minutes = 5, seconds = 30)
-    DoWorkoutFooter(totalTime = time)
 }
