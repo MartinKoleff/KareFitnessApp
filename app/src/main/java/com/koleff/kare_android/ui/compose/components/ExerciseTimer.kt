@@ -5,7 +5,9 @@ import android.graphics.Paint
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -73,7 +75,7 @@ fun ExerciseTimer(
 
     Canvas(modifier = modifier) {
         drawContext.canvas.nativeCanvas.apply {
-            val circleCenter = Offset(x = center.x, y = height.toFloat()) //center.y
+            val circleCenter = Offset(x = center.x, y = center.y + (exerciseTimerStyle.timerRadius.toPx() / 2)) //height.toFloat()
 
             //Draw circle
             drawCircle(
@@ -142,7 +144,7 @@ fun ExerciseTimer(
 @RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
-fun ExerciseTimerPreview() {
+fun ExerciseTimerPreview() { //TODO: timer always goes to the bottom center of the screen no matter the row it is in...
     val totalTime = ExerciseTime(hours = 0, minutes = 3, seconds = 30)
     var currentTime by remember {
         mutableStateOf(
@@ -154,7 +156,7 @@ fun ExerciseTimerPreview() {
             )
         )
     }
-
+    val exerciseTimerStyle = ExerciseTimerStyle()
     LaunchedEffect(Unit) {
         TimerUtil.startTimer(totalTime.toSeconds()) {
             currentTime = it
@@ -162,7 +164,10 @@ fun ExerciseTimerPreview() {
     }
 
     ExerciseTimer(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+//            .size(exerciseTimerStyle.timerRadius * 2)
+            .background(androidx.compose.ui.graphics.Color.Black),
         timeLeft = currentTime,
         totalTime = totalTime
     )
