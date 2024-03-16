@@ -124,4 +124,15 @@ sealed interface Destination {
 
         const val ROUTE = "register"
     }
+
+    //Do workout screen
+    data class DoWorkoutScreen(private val workoutId: Int) : Destination {
+        override val route: String
+            get() = "do_workout/$workoutId"
+
+        companion object {
+            const val ROUTE =
+                "do_workout/{workout_id}"
+        }
+    }
 }
