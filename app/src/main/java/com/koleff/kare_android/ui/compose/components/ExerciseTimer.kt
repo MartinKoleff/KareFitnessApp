@@ -159,7 +159,7 @@ fun ExerciseTimerPreview() {
     val exerciseTimerStyle = ExerciseTimerStyle()
     LaunchedEffect(Unit) {
         TimerUtil.startTimer(totalTime.toSeconds()) {
-            currentTime = it
+            currentTime = it.toString()
         }
     }
 

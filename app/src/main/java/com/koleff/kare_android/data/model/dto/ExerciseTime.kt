@@ -9,7 +9,7 @@ data class ExerciseTime(
         return (hours * 60 * 60) + (minutes * 60) + seconds
     }
 
-    fun toTime(): String{
+    override fun toString(): String{
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
 }
