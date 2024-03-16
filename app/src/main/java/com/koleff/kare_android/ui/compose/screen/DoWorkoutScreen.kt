@@ -39,8 +39,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -86,7 +91,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
     val onNextExerciseAction = {
         Log.d("DoWorkoutScreen", "Next exercise requested.")
-        doWorkoutViewModel.nextExercise()
+        doWorkoutViewModel.selectNextExercise()
     }
 
     DoWorkoutScaffold(
@@ -104,6 +109,132 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             timeLeft = it
         }
     }
+}
+
+//TODO: screen between sets
+// that counts down time before next set...
+// (use the same for rest).
+// Also display next exercise / set number (2 different cases).
+// Have screen for finishing workout with stats...
+
+//Cant be separate screen because of navigation delay...
+//Rather be overlay on the existing DoWorkoutScreen blurring the background until it gets configured (next exercise, reset timer, etc...)
+@Composable
+fun NextExerciseCountdownScreen(
+    doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel(),
+    nextExercise: ExerciseDto,
+    currentSetNumber: Int,
+    countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
+    isWorkoutComplete: Boolean = false
+) {
+    val alpha = 0.35f
+    var time by remember {
+        mutableStateOf(countdownTime)
+    }
+
+    val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
+    val state by doWorkoutViewModel.state.collectAsState()
+
+    //On screen initialization...
+    LaunchedEffect(Unit) {
+        doWorkoutViewModel.selectNextExercise()
+
+        TimerUtil.startTimer(countdownTime.toSeconds()) {
+            time = it
+        }
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .drawWithContent {
+                val colors = listOf(
+                    Color.Red.copy(alpha = alpha),
+                    Color.Red.copy(alpha = alpha),
+                    Color.Red.copy(alpha = alpha),
+                    Color.Blue.copy(alpha = alpha),
+                    Color.Blue.copy(alpha = alpha),
+                    Color.Cyan.copy(alpha = alpha),
+                    Color.Yellow.copy(alpha = alpha)
+                )
+                drawContent()
+                drawRect(
+                    brush = Brush.linearGradient(colors),
+                    blendMode = BlendMode.Screen
+                )
+            },
+        verticalArrangement = Arrangement.Top
+    ) {
+        val textColor = Color.White
+        val exerciseText = if (isWorkoutComplete) {
+            "Workout completed!"
+        } else {
+            "Next exercise: ${nextExercise.name}."
+        }
+
+        val setText =
+            "Currently doing set $currentSetNumber out of ${nextExercise.sets.size} total sets."
+
+//        Box(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .height(150.dp),
+//            contentAlignment = Alignment.TopCenter
+//        ) {
+        Text(
+            modifier = Modifier
+                .padding(vertical = 12.dp, horizontal = 6.dp),
+            text = exerciseText,
+            style = TextStyle(
+                color = textColor,
+                fontSize = 36.sp,
+                fontWeight = FontWeight.ExtraBold
+            ),
+            maxLines = 3,
+            overflow = TextOverflow.Ellipsis
+        )
+//        }
+
+        Text(
+            modifier = Modifier
+                .padding(vertical = 12.dp, horizontal = 6.dp),
+            text = setText,
+            style = TextStyle(
+                color = textColor,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Medium
+            ),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        //Time countdown until next exercise
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(7f),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
+                text = time.toSeconds().toString(),
+                style = TextStyle(
+                    color = textColor,
+                    fontSize = 64.sp,
+                    fontWeight = FontWeight.Medium
+                ),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun NextExerciseCountdownScreenPreview() {
+    val nextExercise = MockupDataGenerator.generateExercise()
+    val currentSetNumber = 2
+    NextExerciseCountdownScreen(nextExercise = nextExercise, currentSetNumber = currentSetNumber)
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

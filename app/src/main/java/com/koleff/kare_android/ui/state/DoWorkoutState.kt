@@ -18,5 +18,7 @@ data class DoWorkoutData(
     val currentExercise: ExerciseDto = ExerciseDto(),
     val currentSetNumber: Int = -1,
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
+    val isNextExercise: Boolean = false,
+    val isNextSet: Boolean = false,
     val isWorkoutCompleted: Boolean = false
 )
