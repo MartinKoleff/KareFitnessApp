@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.screen
 
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -61,13 +62,7 @@ import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
-import kotlinx.coroutines.reactive.asPublisher
 
-//TODO: screen between sets
-// that counts down time before next set...
-// (use the same for rest).
-// Also display next exercise / set number (2 different cases).
-// Have screen for finishing workout with stats...
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
@@ -90,6 +85,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     val onNextExerciseAction = {
+        Log.d("DoWorkoutScreen", "Next exercise requested.")
         doWorkoutViewModel.nextExercise()
     }
 

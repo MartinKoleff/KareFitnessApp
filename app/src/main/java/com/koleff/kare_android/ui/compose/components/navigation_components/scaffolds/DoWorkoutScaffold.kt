@@ -13,6 +13,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.toolb
 fun DoWorkoutScaffold(
     screenTitle: String,
     onExitWorkoutAction: () -> Unit,
+    onNextExerciseAction: () -> Unit,
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
@@ -21,6 +22,7 @@ fun DoWorkoutScaffold(
             DoWorkoutToolbar(
                 title = screenTitle,
                 onExitWorkoutAction = onExitWorkoutAction,
+                onNextExerciseAction = onNextExerciseAction
             )
         }
     ) { innerPadding ->

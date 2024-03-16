@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -19,11 +20,15 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
+//TODO: timer from workout start...
+//TODO: add toolbar with x and progress lines of how much exercises are there (and mark the passed ones and current one bold)...
+// show percentage completed workout...
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DoWorkoutToolbar(
     title: String = "",
     onExitWorkoutAction: () -> Unit,
+    onNextExerciseAction: () -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
@@ -47,6 +52,14 @@ fun DoWorkoutToolbar(
                 onNavigateAction = onExitWorkoutAction
             )
         },
+        actions = {
+            NavigationItem(
+                icon = painterResource(id = R.drawable.ic_vector_arrow_forward),
+                label = "Go to next exercise",
+                onNavigateAction = onNextExerciseAction,
+                tint = Color.Green
+            )
+        },
         scrollBehavior = scrollBehavior
     )
 }
@@ -56,5 +69,6 @@ fun DoWorkoutToolbar(
 fun DoWorkoutToolbarPreview() {
     DoWorkoutToolbar(
         onExitWorkoutAction = {},
+        onNextExerciseAction = {}
     )
 }

@@ -84,7 +84,7 @@ fun SearchExercisesScreen(
                         .fillMaxSize(),
                     exerciseList = allExercises,
                     workoutId = workoutId,
-                    navigateToExerciseDetailsConfigurator = { selectedExercise, workoutId ->
+                    navigateToExerciseDetailsConfigurator = { selectedExercise, workoutId -> //TODO: select multiple exercises rework...
                         searchExercisesViewModel.navigateToExerciseDetailsConfigurator(
                             exerciseId = selectedExercise.exerciseId,
                             workoutId = workoutId,

@@ -48,6 +48,11 @@ fun WorkoutDetailsScreen(
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
 
+        //TODO: select multiple exercises rework...
+
+        //TODO: submit exercise directly and skip exercise details configurator...
+
+        //TODO: remove exercise details configurator...
         workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(
             exerciseId = selectedExercise.exerciseId,
             workoutId = workoutDetailsState.workoutDetails.workoutId,
@@ -101,13 +106,13 @@ fun WorkoutDetailsScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(workoutDetailsState.isError, deleteExerciseState.isError){
+    LaunchedEffect(workoutDetailsState.isError, deleteExerciseState.isError) {
 
         error = if (workoutDetailsState.isError) {
             workoutDetailsState.error
         } else if (deleteExerciseState.isError) {
             deleteExerciseState.error
-       } else {
+        } else {
             null
         }
 
