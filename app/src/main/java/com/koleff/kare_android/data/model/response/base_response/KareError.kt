@@ -17,7 +17,8 @@ enum class KareError(
         R.string.text_invalid_credentials,
         ErrorType.INTERNAL
     ),
-    USER_NOT_FOUND("error_user_not_found", R.string.text_user_not_found, ErrorType.INTERNAL);
+    USER_NOT_FOUND("error_user_not_found", R.string.text_user_not_found, ErrorType.INTERNAL),
+    INVALID_EXERCISE("error_invalid_exercise", R.string.text_invalid_exercise, ErrorType.INTERNAL);
 
 
     companion object {
