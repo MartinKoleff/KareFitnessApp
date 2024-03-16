@@ -347,9 +347,11 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            modifier = Modifier.padding(
-                horizontal = 8.dp
-            ),
+            modifier = Modifier
+                .padding(
+                    horizontal = 8.dp
+                )
+                .weight(5f),
             text = currentExercise.name,
             style = TextStyle(
                 color = textColor,
@@ -361,9 +363,11 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
         )
 
         Text(
-            modifier = Modifier.padding(
-                horizontal = 8.dp
-            ),
+            modifier = Modifier
+                .padding(
+                    horizontal = 8.dp
+                )
+                .weight(1f),
             text = "$currentSet of $totalSets",
             style = TextStyle(
                 color = setsTextColor,
