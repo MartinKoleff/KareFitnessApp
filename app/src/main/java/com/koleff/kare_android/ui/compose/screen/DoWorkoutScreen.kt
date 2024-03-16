@@ -71,10 +71,9 @@ import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
-
     val state by doWorkoutViewModel.state.collectAsState()
 
-    val time = state.doWorkoutData.defaultExerciseTime
+    val time = state.doWorkoutData.defaultExerciseTime //TODO: test when NextExerciseCountdownScreen for inconsistencies...
     val currentExercise = state.doWorkoutData.currentExercise
     val currentSet = state.doWorkoutData.currentSetNumber
 
@@ -90,8 +89,31 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     val onNextExerciseAction = {
-        Log.d("DoWorkoutScreen", "Next exercise requested.")
+        Log.d("DoWorkoutScreen", "Select next exercise requested.")
         doWorkoutViewModel.selectNextExercise()
+    }
+
+    //Observe selectNextExercise
+    var showNextExerciseCountdown by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(state.isLoading) {
+        showNextExerciseCountdown = state.isLoading
+    }
+
+    if (showNextExerciseCountdown) {
+        NextExerciseCountdownScreen(
+            nextExercise = state.doWorkoutData.currentExercise,
+            currentSetNumber = state.doWorkoutData.currentSetNumber,
+            countdownTime = state.doWorkoutData.countdownTime
+        ){ countdownTime ->
+
+            //Start next exercise...
+            if(countdownTime == ExerciseTime(0, 0, 0)) {
+                doWorkoutViewModel.confirmNextExercise()
+//                showNextExerciseCountdown = false
+            }
+        }
     }
 
     DoWorkoutScaffold(
@@ -107,42 +129,40 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             currentSet = currentSet
         ) {
             timeLeft = it
+
+            //Exercise completed. Select next exercise.
+            if(timeLeft == ExerciseTime(0, 0, 0)){
+                onNextExerciseAction()
+            }
         }
     }
 }
-
-//TODO: screen between sets
-// that counts down time before next set...
-// (use the same for rest).
-// Also display next exercise / set number (2 different cases).
-// Have screen for finishing workout with stats...
 
 //Cant be separate screen because of navigation delay...
 //Rather be overlay on the existing DoWorkoutScreen blurring the background until it gets configured (next exercise, reset timer, etc...)
 @Composable
 fun NextExerciseCountdownScreen(
-    doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel(),
     nextExercise: ExerciseDto,
     currentSetNumber: Int,
-    countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
-    isWorkoutComplete: Boolean = false
+    isWorkoutComplete: Boolean = false,
+    countdownTime: ExerciseTime,
+    onTimePassed: (ExerciseTime) -> Unit
 ) {
-    val alpha = 0.35f
     var time by remember {
         mutableStateOf(countdownTime)
     }
 
-    val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
-    val state by doWorkoutViewModel.state.collectAsState()
-
     //On screen initialization...
     LaunchedEffect(Unit) {
-        doWorkoutViewModel.selectNextExercise()
-
+        Log.d("NextExerciseCountdownScreen", "Timer started.")
         TimerUtil.startTimer(countdownTime.toSeconds()) {
             time = it
+            onTimePassed(it)
         }
     }
+
+    val alpha = 0.35f
+    val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -234,7 +254,14 @@ fun NextExerciseCountdownScreen(
 fun NextExerciseCountdownScreenPreview() {
     val nextExercise = MockupDataGenerator.generateExercise()
     val currentSetNumber = 2
-    NextExerciseCountdownScreen(nextExercise = nextExercise, currentSetNumber = currentSetNumber)
+    val countdownTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10)
+    val onTimePassed: (ExerciseTime) -> Unit = {}
+    NextExerciseCountdownScreen(
+        nextExercise = nextExercise,
+        currentSetNumber = currentSetNumber,
+        countdownTime = countdownTime,
+        onTimePassed = onTimePassed
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)

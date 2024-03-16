@@ -7,7 +7,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 
 data class DoWorkoutState (
     val isSuccessful: Boolean = false,
-    val isLoading: Boolean = false,
+    var isLoading: Boolean = false,
     val isError: Boolean = false,
     val error : KareError = KareError.GENERIC,
     val doWorkoutData: DoWorkoutData = DoWorkoutData()
@@ -18,7 +18,6 @@ data class DoWorkoutData(
     val currentExercise: ExerciseDto = ExerciseDto(),
     val currentSetNumber: Int = -1,
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
-    val isNextExercise: Boolean = false,
-    val isNextSet: Boolean = false,
+    val countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
     val isWorkoutCompleted: Boolean = false
 )

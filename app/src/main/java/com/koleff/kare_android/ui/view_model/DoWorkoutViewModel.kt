@@ -18,8 +18,6 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
     val state: StateFlow<DoWorkoutState>
         get() = _state
 
-    //Countdown time between exercises and sets (time to get ready)
-    private val countdownTime: Int = 10
     override fun clearError() {
         if (state.value.isError) {
             _state.value = DoWorkoutState()
@@ -27,9 +25,7 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
     }
 
     fun selectNextExercise() = with(_state.value.doWorkoutData) {
-
-        //TODO: loading logic to show next exercise countdown screen for 10 seconds for example...
-        Log.d("DoWorkoutViewModel", "Next exercise requested.")
+        Log.d("DoWorkoutViewModel", "Select next exercise requested.")
 
         //Find exercise position in list
         val currentExercisePosition = workout.exercises.indexOf(currentExercise)
@@ -42,12 +38,12 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
             return@with
         }
 
-
         val currentExerciseSets = workout.exercises[currentExercisePosition].sets
         if (currentSetNumber + 1 == currentExerciseSets.size) {
 
             //Latest exercise (and set)
             if (currentExercisePosition + 1 == workout.exercises.size) {
+                Log.d("DoWorkoutViewModel", "Workout ${workout.name} finished!")
 
                 //Workout finished...
                 _state.value = DoWorkoutState(
@@ -56,41 +52,35 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
                     )
                 )
             } else {
+                val nextExercise = workout.exercises[currentExercisePosition + 1]
+                Log.d("DoWorkoutViewModel", "Next exercise: $nextExercise")
 
                 //Next exercise
                 _state.value = DoWorkoutState(
-                    isSuccessful = true,
+                    isLoading = true,
                     doWorkoutData = DoWorkoutData(
-                        currentExercise = workout.exercises[currentExercisePosition + 1],
-                        isNextExercise = true
+                        currentExercise = nextExercise
                     )
                 )
             }
         } else {
+            val nextSetNumber = currentSetNumber + 1
+            Log.d("DoWorkoutViewModel", "Next set: $nextSetNumber")
 
             //Next set
             _state.value = DoWorkoutState(
-                isSuccessful = true,
+                isLoading = true,
                 doWorkoutData = DoWorkoutData(
-                    currentSetNumber = currentSetNumber + 1,
-                    isNextSet = true
+                    currentSetNumber = nextSetNumber
                 )
             )
         }
     }
+
+    //Used when next exercise is selected and NextExerciseCountdownScreen is still showing
+    fun confirmNextExercise(){
+        _state.value.apply {
+            isLoading = false
+        }
+    }
 }
-
-// //Temporary navigating to Do Workout Screen to test it...
-//    workoutDetailsViewModel.onNavigationEvent(
-//        NavigationEvent.NavigateTo(
-//            Destination.DoWorkoutScreen(workoutId = workoutDetailsState.workoutDetails.workoutId)
-//        )
-//    )
-
-//Prepare next exercise and start countdown...
-//fun prepareNextExercise(){
-//
-//}
-
-//fun startCountdown(){
-//}
