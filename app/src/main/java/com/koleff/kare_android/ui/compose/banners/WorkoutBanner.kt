@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -38,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -64,6 +66,7 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import kotlin.math.roundToInt
 
 @Composable
@@ -74,8 +77,6 @@ fun WorkoutBanner(
     onClick: (WorkoutDto) -> Unit
 ) {
     val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
@@ -98,7 +99,7 @@ fun WorkoutBanner(
                     .fillMaxHeight()
                     .width(screenWidth / 2)
                     .align(Alignment.TopEnd),
-                painter = painterResource(id = workoutImage), //TODO: change to url
+                painter = painterResource(id = workoutImage),
                 contentDescription = workout.name,
                 contentScale = ContentScale.Crop
             )
@@ -142,16 +143,18 @@ fun WorkoutBanner(
                     }
             )
 
-            //Workout Title TextBox
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2),
             ) {
+
+                //Texts
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxHeight()
                         .padding(end = 8.dp),
+//                        .weight(7f),
                     verticalArrangement = Arrangement.Center, //TODO: change to Top when adding sets...
                 ) {
 
@@ -199,6 +202,23 @@ fun WorkoutBanner(
                         //TODO: add the first 3 sets and their reps, weight/duration...
                     }
                 }
+
+//                //Start workout button
+//                NavigationItem(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .weight(1.5f)
+//                        .drawBehind {
+//                            drawCircle(
+//                                color = Color.White,
+//                                radius = this.size.width / 2
+//                            )
+//                        },
+//                    icon = painterResource(id = androidx.media3.ui.R.drawable.exo_legacy_controls_play),
+//                    label = "Start workout",
+//                    tint = Color.Green,
+//                    onNavigateAction = onStartWorkoutAction
+//                )
             }
         }
     }
