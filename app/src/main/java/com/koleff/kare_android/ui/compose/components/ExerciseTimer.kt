@@ -116,7 +116,7 @@ fun ExerciseTimer(
                 val lineColor =
                     if (isElapsed) exerciseTimerStyle.elapsedLineColor else exerciseTimerStyle.lineColor
 
-                val angleInRadian = -DegreeUtils.toRadian((i * 6).toFloat())
+                val angleInRadian = -Math.toRadians(i * 6.0).toFloat()
                 val outerRadius = exerciseTimerStyle.timerRadius.toPx()
 
                 val lineStart = Offset(

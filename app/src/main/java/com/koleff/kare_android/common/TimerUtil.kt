@@ -1,21 +1,45 @@
 package com.koleff.kare_android.common
 
 import com.koleff.kare_android.data.model.dto.ExerciseTime
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 object TimerUtil {
-    suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
-        var totalTime = totalSeconds
-        while (totalTime >= 0) {
-            val hours = totalTime / 3600
-            val minutes = (totalTime % 3600) / 60
-            val seconds = totalTime % 60
+    private var totalTime = 0
+    private var job: Job? = null
+    private val timerScope = CoroutineScope(Dispatchers.Main)
 
-            //Callback
-            updateTime(ExerciseTime(hours, minutes, seconds))
+    fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
+        totalTime = totalSeconds
 
-            delay(1000)
-            totalTime--
+        job?.cancel()  //Cancel any existing job to ensure no duplicate timers are running
+        job = timerScope.launch {
+            while (isActive && totalTime >= 0) {
+                val hours = totalTime / 3600
+                val minutes = (totalTime % 3600) / 60
+                val seconds = totalTime % 60
+
+                updateTime(ExerciseTime(hours, minutes, seconds))
+                delay(1000)
+                totalTime--
+            }
         }
+    }
+
+    fun pauseTimer() {
+        job?.cancel()
+    }
+
+    fun resumeTimer(updateTime: (ExerciseTime) -> Unit) {
+        startTimer(totalTime, updateTime)
+    }
+
+    fun resetTimer() {
+        totalTime = 0
+        job?.cancel()
     }
 }
