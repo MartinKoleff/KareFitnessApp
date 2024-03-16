@@ -14,7 +14,7 @@ object MockupDataGenerator {
 
     private val exercises = ExerciseGenerator.getAllExercises()
     private val exerciseDetails = ExerciseGenerator.getAllExerciseDetails()
-    val workoutNames = listOf(
+    private val workoutNames = listOf(
         "Epic workout",
         "Koleff destroy your back workout",
         "Emil Krustev full body workout",
@@ -33,6 +33,19 @@ object MockupDataGenerator {
         "Legs workout",
         "Back workout",
         "MuscleMania workout"
+    )
+
+    private val motivationalQuotes =  listOf(
+        "Keep going!",
+        "Good job!",
+        "The end is near!",
+        "Almost done!",
+        "You are tough!",
+        "Wonderful!",
+        "Don't give up!",
+        "Hard work pays off!",
+        "I already see the progress you have made!",
+        "Amazing work!"
     )
 
     fun generateExercise(
@@ -226,5 +239,9 @@ object MockupDataGenerator {
         )
 
         return Pair(workout, workoutDetails)
+    }
+
+    fun generateMotivationalQuote(): String {
+        return motivationalQuotes.random()
     }
 }
