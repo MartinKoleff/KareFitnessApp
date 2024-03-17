@@ -6,4 +6,5 @@
     <string name="text_user_not_found">User not found.</string>
     <string name="text_network_exception">Network error.</string>
     <string name="text_invalid_exercise">"Invalid exerise found. "</string>
+    <string name="text_workout_has_no_exercises">Workout has no exercises.</string>
 </resources>

@@ -1,18 +1,35 @@
 package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.DoWorkoutData
 import com.koleff.kare_android.ui.state.DoWorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class DoWorkoutViewModel @Inject constructor(private val navigationController: NavigationController) :
+class DoWorkoutViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
+    private val navigationController: NavigationController,
+    private val workoutUseCases: WorkoutUseCases,
+    @IoDispatcher private val dispatcher: CoroutineDispatcher
+) :
     BaseViewModel(navigationController) {
+    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _state: MutableStateFlow<DoWorkoutState> = MutableStateFlow(DoWorkoutState())
     val state: StateFlow<DoWorkoutState>
@@ -21,6 +38,56 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
     override fun clearError() {
         if (state.value.isError) {
             _state.value = DoWorkoutState()
+        }
+    }
+
+    init {
+        setup()
+    }
+
+    private fun setup() = with(_state.value.doWorkoutData) {
+        viewModelScope.launch(dispatcher) {
+            Log.d("DoWorkoutViewModel", "Initialization...")
+
+            _state.value = DoWorkoutState(
+                isLoading = true
+            )
+            delay(Constants.fakeDelay)
+
+            workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { result ->
+                if (result.isSuccessful) {
+                    val selectedWorkoutDetails = result.workoutDetails
+                    Log.d("DoWorkoutViewModel", "Fetched workout: $selectedWorkoutDetails")
+
+                    val firstExercise = workout.exercises.firstOrNull() ?: run {
+                        _state.value = DoWorkoutState(
+                            isError = true,
+                            error = KareError.WORKOUT_HAS_NO_EXERCISES
+                        )
+                        return@collect
+                    }
+                    Log.d("DoWorkoutViewModel", "First exercise: $firstExercise")
+
+                    val firstSet = 1
+                    _state.value = DoWorkoutState(
+                        isSuccessful = true,
+                        doWorkoutData = DoWorkoutData(
+                            currentExercise = firstExercise,
+                            currentSetNumber = firstSet,
+                            workout = selectedWorkoutDetails,
+                            isNextExerciseCountdown = true
+                        )
+                    )
+                } else if (result.isError) {
+                    _state.value = DoWorkoutState(
+                        isError = true,
+                        error = result.error
+                    )
+                }
+
+                delay(state.value.doWorkoutData.countdownTime.toSeconds().toLong())
+                confirmExercise()
+            }
         }
     }
 
@@ -47,6 +114,7 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
 
                 //Workout finished...
                 _state.value = DoWorkoutState(
+                    isSuccessful = true,
                     doWorkoutData = DoWorkoutData(
                         isWorkoutCompleted = true
                     )
@@ -57,9 +125,10 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
 
                 //Next exercise
                 _state.value = DoWorkoutState(
-                    isLoading = true,
+                    isSuccessful = true,
                     doWorkoutData = DoWorkoutData(
-                        currentExercise = nextExercise
+                        currentExercise = nextExercise,
+                        isNextExerciseCountdown = true
                     )
                 )
             }
@@ -69,18 +138,19 @@ class DoWorkoutViewModel @Inject constructor(private val navigationController: N
 
             //Next set
             _state.value = DoWorkoutState(
-                isLoading = true,
+                isSuccessful = true,
                 doWorkoutData = DoWorkoutData(
-                    currentSetNumber = nextSetNumber
+                    currentSetNumber = nextSetNumber,
+                    isNextExerciseCountdown = true
                 )
             )
         }
     }
 
     //Used when next exercise is selected and NextExerciseCountdownScreen is still showing
-    fun confirmNextExercise(){
-        _state.value.apply {
-            isLoading = false
+    fun confirmExercise() {
+        _state.value.doWorkoutData.apply {
+            isNextExerciseCountdown = false
         }
     }
 }

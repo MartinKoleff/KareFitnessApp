@@ -64,6 +64,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
@@ -73,7 +74,8 @@ import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val state by doWorkoutViewModel.state.collectAsState()
 
-    val time = state.doWorkoutData.defaultExerciseTime //TODO: test when NextExerciseCountdownScreen for inconsistencies...
+    val time =
+        state.doWorkoutData.defaultExerciseTime
     val currentExercise = state.doWorkoutData.currentExercise
     val currentSet = state.doWorkoutData.currentSetNumber
 
@@ -97,8 +99,9 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     var showNextExerciseCountdown by remember {
         mutableStateOf(false)
     }
-    LaunchedEffect(state.isLoading) {
-        showNextExerciseCountdown = state.isLoading
+    LaunchedEffect(state.doWorkoutData.isNextExerciseCountdown) {
+        showNextExerciseCountdown = state.doWorkoutData.isNextExerciseCountdown
+        Log.d("DoWorkoutScreen", "Show next exercise countdown: $showNextExerciseCountdown")
     }
 
     if (showNextExerciseCountdown) {
@@ -106,33 +109,49 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             nextExercise = state.doWorkoutData.currentExercise,
             currentSetNumber = state.doWorkoutData.currentSetNumber,
             countdownTime = state.doWorkoutData.countdownTime
-        ){ countdownTime ->
+        ) { countdownTime ->
 
             //Start next exercise...
-            if(countdownTime == ExerciseTime(0, 0, 0)) {
-                doWorkoutViewModel.confirmNextExercise()
+            if (countdownTime == ExerciseTime(0, 0, 0)) {
+                doWorkoutViewModel.confirmExercise()
 //                showNextExerciseCountdown = false
             }
         }
     }
 
-    DoWorkoutScaffold(
-        screenTitle = currentExercise.name,
-        onExitWorkoutAction = onExitWorkoutAction,
-        onNextExerciseAction = onNextExerciseAction
-    ) {
-        //Video player...
+    //Wait for data on initialization
+    var showLoadingDialog by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(state.isLoading) {
+        showLoadingDialog = state.isLoading
+        Log.d("DoWorkoutScreen", "Loading: $showLoadingDialog")
+    }
 
-        DoWorkoutFooterWithModal(
-            totalTime = time,
-            exercise = currentExercise,
-            currentSet = currentSet
+    //Loading screen
+    if (showLoadingDialog) {
+        LoadingWheel()
+    } else {
+        DoWorkoutScaffold(
+            screenTitle = currentExercise.name,
+            onExitWorkoutAction = onExitWorkoutAction,
+            onNextExerciseAction = onNextExerciseAction
         ) {
-            timeLeft = it
 
-            //Exercise completed. Select next exercise.
-            if(timeLeft == ExerciseTime(0, 0, 0)){
-                onNextExerciseAction()
+            //Video player...
+
+            //TODO: invalid values...
+            DoWorkoutFooterWithModal(
+                totalTime = time,
+                exercise = currentExercise,
+                currentSet = currentSet
+            ) {
+                timeLeft = it
+
+                //Exercise completed. Select next exercise.
+                if (timeLeft == ExerciseTime(0, 0, 0)) {
+                    onNextExerciseAction()
+                }
             }
         }
     }
@@ -194,12 +213,7 @@ fun NextExerciseCountdownScreen(
         val setText =
             "Currently doing set $currentSetNumber out of ${nextExercise.sets.size} total sets."
 
-//        Box(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .height(150.dp),
-//            contentAlignment = Alignment.TopCenter
-//        ) {
+        //Texts
         Text(
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 6.dp),
@@ -212,7 +226,6 @@ fun NextExerciseCountdownScreen(
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
-//        }
 
         Text(
             modifier = Modifier
@@ -483,7 +496,7 @@ fun ExerciseDataSheetModal2(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
-    val sheetPeekHeight = 85.dp
+    val sheetPeekHeight = 88.dp
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
