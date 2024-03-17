@@ -134,11 +134,12 @@ object ExerciseGenerator {
         }
     }
 
-    private fun loadExerciseSets(): List<ExerciseSet> {
+    fun loadExerciseSets(): List<ExerciseSet> {
         return listOf(
-            ExerciseSet(UUID.randomUUID(), 1, 12, 25f),
-            ExerciseSet(UUID.randomUUID(), 2, 10, 30f),
-            ExerciseSet(UUID.randomUUID(), 3, 8, 35f)
+            ExerciseSet(UUID.randomUUID(), 1, 12, 0.0f),
+            ExerciseSet(UUID.randomUUID(), 2, 10, 0.0f),
+            ExerciseSet(UUID.randomUUID(), 3, 8, 0.0f),
+            ExerciseSet(UUID.randomUUID(), 4, 1, 50f),
         )
     }
 
@@ -1114,11 +1115,12 @@ object ExerciseGenerator {
 
     fun loadExerciseSetsCrossRefs(
         exercise: Exercise,
-        exerciseSets: List<ExerciseSet>
+        exerciseSets: List<ExerciseSet>,
+        totalSets: Int = 4
     ): List<ExerciseSetCrossRef> {
         val crossRefs: MutableList<ExerciseSetCrossRef> = mutableListOf()
 
-        repeat(3) {
+        repeat(totalSets) {
             crossRefs.add(ExerciseSetCrossRef(exercise.exerciseId, exerciseSets[it].setId))
         }
 

@@ -147,13 +147,14 @@ object MockupDataGenerator {
     }
 
     fun generateExerciseSetsList(
-        n: Int = 3,
+        n: Int = 4,
         isGenerateSetId: Boolean = true
     ): List<ExerciseSetDto> {
         val exerciseSetList = listOf(
             generateExerciseSet(isGenerateSetId, 1, 12, 50f),
             generateExerciseSet(isGenerateSetId, 2, 10, 55.5f),
             generateExerciseSet(isGenerateSetId, 3, 8, 60f),
+            generateExerciseSet(isGenerateSetId, 4, 1, 80f),
         )
 
         return exerciseSetList

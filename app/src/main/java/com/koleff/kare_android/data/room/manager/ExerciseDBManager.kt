@@ -20,30 +20,36 @@ class ExerciseDBManager @Inject constructor(
     private val exerciseSetDao: ExerciseSetDao,
     private val hasInitializedDB: Boolean
 ) {
-    suspend fun initializeExerciseTable(onDBInitialized: () -> Unit) = withContext(Dispatchers.IO) {
-        if (hasInitializedDB) return@withContext
+    suspend fun initializeExerciseTable(hasSets: Boolean = true, onDBInitialized: () -> Unit) =
+        withContext(Dispatchers.IO) {
+            if (hasInitializedDB) return@withContext
 
-        for (muscleGroup in MuscleGroup.getSupportedMuscleGroups()) {
-            val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
-            val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup)
+            for (muscleGroup in MuscleGroup.getSupportedMuscleGroups()) {
+                val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
+                val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup)
 
-            exerciseDao.insertAll(exercisesList)
-            exerciseDetailsDao.insertAll(exerciseDetailsList)
+                exerciseDao.insertAll(exercisesList)
+                exerciseDetailsDao.insertAll(exerciseDetailsList)
 
-            //Exercise - ExerciseSet cross refs for each exercise
-//            for(exercise in exercisesList){
-//                val exerciseSets = ExerciseGenerator.loadExerciseSets()
-//                exerciseSetDao.insertAllExerciseSets(exerciseSets)
-//
-//                val exerciseSetsCrossRef = ExerciseGenerator.loadExerciseSetsCrossRefs(exercise, exerciseSets)
-//                exerciseDao.insertAllExerciseSetCrossRef(exerciseSetsCrossRef)
-//            }
+                //Exercise - ExerciseSet cross refs for each exercise
+                if (hasSets) {
+                    for (exercise in exercisesList) {
+                        val exerciseSets = ExerciseGenerator.loadExerciseSets()
+                        exerciseSetDao.insertAllExerciseSets(exerciseSets)
+
+                        val totalSets = exerciseSets.size
+                        val exerciseSetsCrossRef =
+                            ExerciseGenerator.loadExerciseSetsCrossRefs(exercise, exerciseSets, totalSets)
+                        exerciseDao.insertAllExerciseSetCrossRef(exerciseSetsCrossRef)
+                    }
+                }
+            }
+
+            //ExerciseDetails - Exercise cross refs
+            val exerciseDetailsExerciseCrossRef =
+                ExerciseGenerator.loadAllExerciseDetailsExerciseCrossRefs()
+            exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRef)
+
+            onDBInitialized()
         }
-
-        //ExerciseDetails - Exercise cross refs
-        val exerciseDetailsExerciseCrossRef = ExerciseGenerator.loadAllExerciseDetailsExerciseCrossRefs()
-        exerciseDao.insertAllExerciseDetailsExerciseCrossRefs(exerciseDetailsExerciseCrossRef)
-
-        onDBInitialized()
-    }
 }
