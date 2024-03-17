@@ -49,15 +49,16 @@ fun DoWorkoutToolbar(
             NavigationItem(
                 icon = painterResource(id = R.drawable.ic_vector_close),
                 label = "Exit workout",
-                onNavigateAction = onExitWorkoutAction
+                onNavigateAction = onExitWorkoutAction,
+                tint = Color.White
             )
         },
         actions = {
             NavigationItem(
-                icon = painterResource(id = R.drawable.ic_vector_arrow_forward),
+                icon = painterResource(id = R.drawable.ic_forward),
                 label = "Go to next exercise",
                 onNavigateAction = onNextExerciseAction,
-                tint = Color.Green
+                tint = Color.White
             )
         },
         scrollBehavior = scrollBehavior
