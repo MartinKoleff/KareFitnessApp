@@ -66,6 +66,7 @@ import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 
@@ -120,12 +121,32 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     //Wait for data on initialization
+    var showErrorDialog by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(state.isError) {
+        showErrorDialog = state.isError
+        Log.d("DoWorkoutScreen", "Error: $showErrorDialog")
+    }
+
+    //Dialog callbacks
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        doWorkoutViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
+
+    //Wait for data on initialization
     var showLoadingDialog by remember {
         mutableStateOf(false)
     }
     LaunchedEffect(state.isLoading) {
         showLoadingDialog = state.isLoading
         Log.d("DoWorkoutScreen", "Loading: $showLoadingDialog")
+    }
+
+    //Error dialog
+    if (showErrorDialog) {
+        ErrorDialog(state.error, onErrorDialogDismiss)
     }
 
     //Loading screen
@@ -137,10 +158,8 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             onExitWorkoutAction = onExitWorkoutAction,
             onNextExerciseAction = onNextExerciseAction
         ) {
-
             //Video player...
 
-            //TODO: invalid values...
             DoWorkoutFooterWithModal(
                 totalTime = time,
                 exercise = currentExercise,

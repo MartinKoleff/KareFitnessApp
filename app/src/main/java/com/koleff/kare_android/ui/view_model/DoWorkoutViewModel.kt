@@ -59,7 +59,7 @@ class DoWorkoutViewModel @Inject constructor(
                     val selectedWorkoutDetails = result.workoutDetails
                     Log.d("DoWorkoutViewModel", "Fetched workout: $selectedWorkoutDetails")
 
-                    val firstExercise = workout.exercises.firstOrNull() ?: run {
+                    val firstExercise = selectedWorkoutDetails.exercises.firstOrNull() ?: run {
                         _state.value = DoWorkoutState(
                             isError = true,
                             error = KareError.WORKOUT_HAS_NO_EXERCISES
