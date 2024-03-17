@@ -1,11 +1,14 @@
 package com.koleff.kare_android.ui.compose.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -66,7 +70,7 @@ fun ExerciseDataSheet(exercise: ExerciseDto) {
                 .height(screenHeight / 4)
         ) {
 
-            
+
             //TODO: add when last set has data typed in to add new row...
             items(exercise.sets.size) { setId ->
                 ExerciseDataSheetRow(set = exercise.sets[setId])
@@ -157,7 +161,7 @@ fun ExerciseDataSheetRow(set: ExerciseSetDto) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(35.dp)
+            .height(60.dp)
             .padding(horizontal = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -179,24 +183,26 @@ fun ExerciseDataSheetRow(set: ExerciseSetDto) {
         )
 
         //Reps
-        var reps by remember { mutableStateOf(set.reps.toString()) }
+        val repsText = set.reps.toString()
+        var reps by remember { mutableStateOf(repsText) }
         ExerciseDataSheetTextField(
             modifier = Modifier
                 .padding(4.dp)
                 .weight(1.5f),
-            text = set.reps.toString(),
+            text = reps,
             onValueChange = {
                 reps = it
             }
         )
 
         //Weight
-        var weight by remember { mutableStateOf(set.weight.toString()) }
+        val weightText = set.weight.toString()
+        var weight by remember { mutableStateOf(weightText) }
         ExerciseDataSheetTextField(
             modifier = Modifier
                 .padding(4.dp)
                 .weight(1.5f),
-            text = set.weight.toString(),
+            text = weight,
             onValueChange = {
                 weight = it
             }
@@ -223,9 +229,25 @@ fun ExerciseDataSheetTextField(
     text: String,
     onValueChange: (String) -> Unit
 ) {
+    val cornerSize = 16.dp
+    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (LocalConfiguration.current.isNightModeActive) Color.White else Color.Black
+    } else {
+        Color.Black
+    }
     TextField(
-        modifier = modifier,
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            ),
         value = text,
+        textStyle = TextStyle(
+            fontSize = 12.sp,
+            color = textColor,
+            fontWeight = FontWeight.Bold
+        ),
         onValueChange = onValueChange
     )
 }
