@@ -8,8 +8,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-object TimerUtil {
-    private var totalTime = 0
+class TimerUtil(private var totalTime: Int = 0) {
     private var job: Job? = null
     private val timerScope = CoroutineScope(Dispatchers.Main)
 

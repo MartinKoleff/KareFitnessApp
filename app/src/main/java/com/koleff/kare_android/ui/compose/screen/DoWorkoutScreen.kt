@@ -74,6 +74,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
+import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -97,11 +98,11 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     val onNextExerciseAction = {
-        Log.d("DoWorkoutScreen", "Select next exercise requested.")
+        Log.d("DoWorkoutScreen", "Select next exercise requested. Time = $time.")
         doWorkoutViewModel.selectNextExercise()
 
         //Reset timer...
-        timeLeft = time //TODO: test for await...
+        timeLeft = time
     }
 
     //Observe selectNextExercise
@@ -163,6 +164,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             //Video player...
 
             DoWorkoutFooterWithModal(
+                workoutTimer = doWorkoutViewModel.workoutTimer,
                 totalTime = time,
                 exercise = currentExercise,
                 currentSetNumber = currentSetNumber,
@@ -180,6 +182,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         //Next exercise countdown screen overlay
         if (showNextExerciseCountdown) { //TODO: add animation transition for more smooth appearance...
             NextExerciseCountdownScreen(
+                countdownTimer = doWorkoutViewModel.countdownTimer,
                 nextExercise = state.doWorkoutData.currentExercise,
                 currentSetNumber = state.doWorkoutData.currentSetNumber,
                 countdownTime = state.doWorkoutData.countdownTime,
@@ -200,6 +203,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 //Rather be overlay on the existing DoWorkoutScreen blurring the background until it gets configured (next exercise, reset timer, etc...)
 @Composable
 fun NextExerciseCountdownScreen(
+    countdownTimer: TimerUtil,
     nextExercise: ExerciseDto,
     currentSetNumber: Int,
     isWorkoutComplete: Boolean = false,
@@ -214,7 +218,7 @@ fun NextExerciseCountdownScreen(
     //On screen initialization...
     LaunchedEffect(Unit) {
         Log.d("NextExerciseCountdownScreen", "Timer started.")
-        TimerUtil.startTimer(countdownTime.toSeconds()) {
+        countdownTimer.startTimer(countdownTime.toSeconds()) {
             time = it
             onTimePassed(it)
         }
@@ -310,7 +314,9 @@ fun NextExerciseCountdownScreenPreview() {
     val countdownTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10)
     val defaultTotalSets = 4
     val onTimePassed: (ExerciseTime) -> Unit = {}
+    val countdownTimer = TimerUtil(countdownTime.toSeconds())
     NextExerciseCountdownScreen(
+        countdownTimer = countdownTimer,
         nextExercise = nextExercise,
         currentSetNumber = currentSetNumber,
         countdownTime = countdownTime,
@@ -322,6 +328,7 @@ fun NextExerciseCountdownScreenPreview() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutFooterWithModal(
+    workoutTimer: TimerUtil,
     totalTime: ExerciseTime,
     exercise: ExerciseDto,
     currentSetNumber: Int, //Used for CurrentExerciseInfoRow
@@ -343,7 +350,12 @@ fun DoWorkoutFooterWithModal(
                 .padding(it),
             contentAlignment = Alignment.BottomCenter
         ) {
-            DoWorkoutFooter(totalTime = totalTime, currentSet = currentSet, onTimePassed = onTimePassed)
+            DoWorkoutFooter(
+                workoutTimer = workoutTimer,
+                totalTime = totalTime,
+                currentSet = currentSet,
+                onTimePassed = onTimePassed
+            )
         }
     }
 }
@@ -356,11 +368,13 @@ fun DoWorkoutFooterWithModalPreview() {
     val exercise = MockupDataGenerator.generateExercise()
     val currentSetNumber = 1
     val defaultTotalSets = 4
+    val workoutTimer = TimerUtil(time.toSeconds())
     val onTimePassed: (ExerciseTime) -> Unit = {
 
     }
 
     DoWorkoutFooterWithModal(
+        workoutTimer = workoutTimer,
         totalTime = time,
         exercise = exercise,
         currentSetNumber = currentSetNumber,
@@ -372,6 +386,7 @@ fun DoWorkoutFooterWithModalPreview() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutFooter(
+    workoutTimer: TimerUtil,
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
     totalTime: ExerciseTime,
     currentSet: ExerciseSetDto,
@@ -396,7 +411,7 @@ fun DoWorkoutFooter(
     }
 
     val repsText = currentSet.reps.toString()
-    val weightText = if(currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
+    val weightText = if (currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -440,13 +455,27 @@ fun DoWorkoutFooter(
         }
 
         //timer
+//        var resetCounter by remember {
+//            mutableIntStateOf(0)
+//        }
         LaunchedEffect(Unit) {
-            TimerUtil.startTimer(totalTime.toSeconds()) {
+            workoutTimer.startTimer(totalTime.toSeconds()) {
                 onTimePassed(it)
 
                 currentTime = it.toString()
+//                if (it == ExerciseTime(0, 0, 0)) resetCounter++
             }
         }
+
+//        //TODO: migrate to class and create 2 TimerUtil obj (NextExerciseCountdownTimer and DoWorkoutTimer)
+//        // sync the pause between them...
+//        LaunchedEffect(resetCounter) {
+//            //Await countdown
+//            delay(TimerUtil.countdownTime)
+//
+//            //Reset timer
+//            TimerUtil.resetTimer()
+//        }
 
         ExerciseTimer(
             modifier = Modifier
@@ -500,10 +529,16 @@ fun DoWorkoutFooter(
 fun DoWorkoutFooterPreview() {
     val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
     val currentSet = MockupDataGenerator.generateExerciseSet()
+    val workoutTimer = TimerUtil(time.toSeconds())
     val onTimePassed: (ExerciseTime) -> Unit = {
 
     }
-    DoWorkoutFooter(totalTime = time, currentSet = currentSet, onTimePassed = onTimePassed)
+    DoWorkoutFooter(
+        workoutTimer = workoutTimer,
+        totalTime = time,
+        currentSet = currentSet,
+        onTimePassed = onTimePassed
+    )
 }
 
 
@@ -579,7 +614,11 @@ fun ExerciseDataSheetModal2(
 }
 
 @Composable
-fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSetNumber: Int, defaultTotalSets: Int) {
+fun CurrentExerciseInfoRow(
+    currentExercise: ExerciseDto,
+    currentSetNumber: Int,
+    defaultTotalSets: Int
+) {
     val textColor = Color.White
     val setsTextColor = Color.Yellow
     val cornerSize = 24.dp

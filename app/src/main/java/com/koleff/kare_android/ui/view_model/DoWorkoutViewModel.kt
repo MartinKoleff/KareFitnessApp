@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -28,7 +29,12 @@ class DoWorkoutViewModel @Inject constructor(
     BaseViewModel(navigationController) {
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
-    private val _state: MutableStateFlow<DoWorkoutState> = MutableStateFlow(DoWorkoutState(isLoading = true))
+    private val _state: MutableStateFlow<DoWorkoutState> =
+        MutableStateFlow(DoWorkoutState(isLoading = true))
+
+    val workoutTimer: TimerUtil
+    val countdownTimer: TimerUtil
+
     val state: StateFlow<DoWorkoutState>
         get() = _state
 
@@ -39,6 +45,11 @@ class DoWorkoutViewModel @Inject constructor(
     }
 
     init {
+        with(_state.value.doWorkoutData) {
+            workoutTimer = TimerUtil(defaultExerciseTime.toSeconds())
+            countdownTimer = TimerUtil(countdownTime.toSeconds())
+        }
+
         setup()
     }
 
@@ -104,8 +115,9 @@ class DoWorkoutViewModel @Inject constructor(
 
         val currentExerciseSets =
             workout.exercises[currentExercisePosition].sets
-        val isNextExercise = (currentSetNumber + 1 > currentExerciseSets.size && currentExerciseSets.isNotEmpty())
-                || (currentExerciseSets.isEmpty() && currentSetNumber + 1 > defaultTotalSets)
+        val isNextExercise =
+            (currentSetNumber + 1 > currentExerciseSets.size && currentExerciseSets.isNotEmpty())
+                    || (currentExerciseSets.isEmpty() && currentSetNumber + 1 > defaultTotalSets)
         if (isNextExercise) {
 
             //Latest exercise (and set)
