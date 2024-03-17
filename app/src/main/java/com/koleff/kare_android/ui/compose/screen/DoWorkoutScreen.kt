@@ -7,6 +7,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,10 +42,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -94,6 +97,9 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val onNextExerciseAction = {
         Log.d("DoWorkoutScreen", "Select next exercise requested.")
         doWorkoutViewModel.selectNextExercise()
+
+        //Reset timer...
+        timeLeft = time //TODO: test for await...
     }
 
     //Observe selectNextExercise
@@ -103,21 +109,6 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     LaunchedEffect(state.doWorkoutData.isNextExerciseCountdown) {
         showNextExerciseCountdown = state.doWorkoutData.isNextExerciseCountdown
         Log.d("DoWorkoutScreen", "Show next exercise countdown: $showNextExerciseCountdown")
-    }
-
-    if (showNextExerciseCountdown) {
-        NextExerciseCountdownScreen(
-            nextExercise = state.doWorkoutData.currentExercise,
-            currentSetNumber = state.doWorkoutData.currentSetNumber,
-            countdownTime = state.doWorkoutData.countdownTime
-        ) { countdownTime ->
-
-            //Start next exercise...
-            if (countdownTime == ExerciseTime(0, 0, 0)) {
-                doWorkoutViewModel.confirmExercise()
-//                showNextExerciseCountdown = false
-            }
-        }
     }
 
     //Wait for data on initialization
@@ -149,27 +140,54 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         ErrorDialog(state.error, onErrorDialogDismiss)
     }
 
+    //Lower alpha for when NextExerciseCountdownScreen is displayed...
+    val screenModifier = if (showNextExerciseCountdown) {
+        Modifier
+            .fillMaxSize()
+            .alpha(0.15f)
+    } else Modifier.fillMaxSize()
+
     //Loading screen
     if (showLoadingDialog) {
         LoadingWheel()
     } else {
         DoWorkoutScaffold(
+            modifier = screenModifier,
             screenTitle = currentExercise.name,
             onExitWorkoutAction = onExitWorkoutAction,
             onNextExerciseAction = onNextExerciseAction
         ) {
+
             //Video player...
 
             DoWorkoutFooterWithModal(
                 totalTime = time,
                 exercise = currentExercise,
-                currentSet = currentSet
+                currentSet = currentSet,
+                defaultTotalSets = state.doWorkoutData.defaultTotalSets
             ) {
                 timeLeft = it
 
                 //Exercise completed. Select next exercise.
                 if (timeLeft == ExerciseTime(0, 0, 0)) {
                     onNextExerciseAction()
+                }
+            }
+        }
+
+        //Next exercise countdown screen overlay
+        if (showNextExerciseCountdown) { //TODO: add animation transition for more smooth appearance...
+            NextExerciseCountdownScreen(
+                nextExercise = state.doWorkoutData.currentExercise,
+                currentSetNumber = state.doWorkoutData.currentSetNumber,
+                countdownTime = state.doWorkoutData.countdownTime,
+                defaultTotalSets = state.doWorkoutData.defaultTotalSets
+            ) { countdownTime ->
+
+                //Start next exercise...
+                if (countdownTime == ExerciseTime(0, 0, 0)) {
+                    doWorkoutViewModel.confirmExercise()
+//                    showNextExerciseCountdown = false
                 }
             }
         }
@@ -184,6 +202,7 @@ fun NextExerciseCountdownScreen(
     currentSetNumber: Int,
     isWorkoutComplete: Boolean = false,
     countdownTime: ExerciseTime,
+    defaultTotalSets: Int,
     onTimePassed: (ExerciseTime) -> Unit
 ) {
     var time by remember {
@@ -199,12 +218,13 @@ fun NextExerciseCountdownScreen(
         }
     }
 
-    val alpha = 0.35f
+    val alpha = 0.5f
     val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
+    val totalSets = if(nextExercise.sets.isNotEmpty()) nextExercise.sets.size else defaultTotalSets
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .drawWithContent {
+            .drawBehind {
                 val colors = listOf(
                     Color.Red.copy(alpha = alpha),
                     Color.Red.copy(alpha = alpha),
@@ -214,10 +234,9 @@ fun NextExerciseCountdownScreen(
                     Color.Cyan.copy(alpha = alpha),
                     Color.Yellow.copy(alpha = alpha)
                 )
-                drawContent()
                 drawRect(
                     brush = Brush.linearGradient(colors),
-                    blendMode = BlendMode.Screen
+                    blendMode = BlendMode.Darken
                 )
             },
         verticalArrangement = Arrangement.Top
@@ -230,7 +249,7 @@ fun NextExerciseCountdownScreen(
         }
 
         val setText =
-            "Currently doing set $currentSetNumber out of ${nextExercise.sets.size} total sets."
+            "Currently doing set $currentSetNumber out of $totalSets total sets."
 
         //Texts
         Text(
@@ -287,11 +306,13 @@ fun NextExerciseCountdownScreenPreview() {
     val nextExercise = MockupDataGenerator.generateExercise()
     val currentSetNumber = 2
     val countdownTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10)
+    val defaultTotalSets = 4
     val onTimePassed: (ExerciseTime) -> Unit = {}
     NextExerciseCountdownScreen(
         nextExercise = nextExercise,
         currentSetNumber = currentSetNumber,
         countdownTime = countdownTime,
+        defaultTotalSets = defaultTotalSets,
         onTimePassed = onTimePassed
     )
 }
@@ -302,16 +323,16 @@ fun DoWorkoutFooterWithModal(
     totalTime: ExerciseTime,
     exercise: ExerciseDto,
     currentSet: Int,
+    defaultTotalSets: Int,
     onTimePassed: (ExerciseTime) -> Unit
 ) {
-    ExerciseDataSheetModal2(exercise = exercise, currentSet = currentSet) {
+    ExerciseDataSheetModal2(exercise = exercise, currentSet = currentSet, defaultTotalSets = defaultTotalSets) {
 
         //Footer
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(it)
-                .background(Color.Black),
+                .padding(it),
             contentAlignment = Alignment.BottomCenter
         ) {
             DoWorkoutFooter(totalTime = totalTime, onTimePassed = onTimePassed)
@@ -326,6 +347,7 @@ fun DoWorkoutFooterWithModalPreview() {
     val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
     val exercise = MockupDataGenerator.generateExercise()
     val currentSet = 1
+    val defaultTotalSets = 4
     val onTimePassed: (ExerciseTime) -> Unit = {
 
     }
@@ -334,6 +356,7 @@ fun DoWorkoutFooterWithModalPreview() {
         totalTime = time,
         exercise = exercise,
         currentSet = currentSet,
+        defaultTotalSets = defaultTotalSets,
         onTimePassed = onTimePassed
     )
 }
@@ -510,6 +533,7 @@ fun ExerciseDataSheetModalPreview() {
 fun ExerciseDataSheetModal2(
     exercise: ExerciseDto,
     currentSet: Int,
+    defaultTotalSets: Int,
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -523,7 +547,11 @@ fun ExerciseDataSheetModal2(
             .fillMaxWidth(),
         scaffoldState = scaffoldState,
         sheetContent = {
-            CurrentExerciseInfoRow(currentExercise = exercise, currentSet = currentSet)
+            CurrentExerciseInfoRow(
+                currentExercise = exercise,
+                currentSet = currentSet,
+                defaultTotalSets = defaultTotalSets
+            )
 
             ExerciseDataSheet(exercise = exercise)
         },
@@ -539,12 +567,13 @@ fun ExerciseDataSheetModal2(
 }
 
 @Composable
-fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
+fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int, defaultTotalSets: Int) {
     val textColor = Color.White
     val setsTextColor = Color.Yellow
     val cornerSize = 24.dp
 
-    val totalSets = currentExercise.sets.size
+    val totalSets = if(currentExercise.sets.isNotEmpty()) currentExercise.sets.size else defaultTotalSets
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -599,7 +628,12 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int) {
 fun CurrentExerciseInfoRowInfoRowPreview() {
     val currentExercise = MockupDataGenerator.generateExercise()
     val currentSet = 1
-    CurrentExerciseInfoRow(currentExercise = currentExercise, currentSet = currentSet)
+    val defaultTotalSets = 4
+    CurrentExerciseInfoRow(
+        currentExercise = currentExercise,
+        currentSet = currentSet,
+        defaultTotalSets = defaultTotalSets
+    )
 }
 
 @Preview
@@ -607,8 +641,12 @@ fun CurrentExerciseInfoRowInfoRowPreview() {
 fun ExerciseDataSheetModal2Preview() {
     val exercise = MockupDataGenerator.generateExercise()
     val currentSet = 1
-
-    ExerciseDataSheetModal2(exercise = exercise, currentSet = currentSet) {
+    val defaultTotalSets = 4
+    ExerciseDataSheetModal2(
+        exercise = exercise,
+        currentSet = currentSet,
+        defaultTotalSets = defaultTotalSets
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()

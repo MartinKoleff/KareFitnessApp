@@ -20,5 +20,6 @@ data class DoWorkoutData(
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
     val countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
     val isWorkoutCompleted: Boolean = false,
-    var isNextExerciseCountdown: Boolean = false
+    var isNextExerciseCountdown: Boolean = false,
+    var defaultTotalSets: Int = 4
 )

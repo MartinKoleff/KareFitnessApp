@@ -66,6 +66,8 @@ fun ExerciseDataSheet(exercise: ExerciseDto) {
                 .height(screenHeight / 4)
         ) {
 
+            
+            //TODO: add when last set has data typed in to add new row...
             items(exercise.sets.size) { setId ->
                 ExerciseDataSheetRow(set = exercise.sets[setId])
             }

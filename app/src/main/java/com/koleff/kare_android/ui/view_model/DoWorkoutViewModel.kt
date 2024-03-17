@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -16,8 +15,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -45,7 +42,7 @@ class DoWorkoutViewModel @Inject constructor(
         setup()
     }
 
-    private fun setup() = with(_state.value.doWorkoutData) {
+    private fun setup() {
         viewModelScope.launch(dispatcher) {
             Log.d("DoWorkoutViewModel", "Initialization...")
 
@@ -105,8 +102,11 @@ class DoWorkoutViewModel @Inject constructor(
             return@with
         }
 
-        val currentExerciseSets = workout.exercises[currentExercisePosition].sets
-        if (currentSetNumber + 1 == currentExerciseSets.size) {
+        val currentExerciseSets =
+            workout.exercises[currentExercisePosition].sets  //currentExerciseSets size is always 0...
+        if ((currentSetNumber + 1 == currentExerciseSets.size)
+            || (currentExerciseSets.isEmpty() && currentSetNumber + 1 < defaultTotalSets)
+        ) {
 
             //Latest exercise (and set)
             if (currentExercisePosition + 1 == workout.exercises.size) {
@@ -124,33 +124,34 @@ class DoWorkoutViewModel @Inject constructor(
                 Log.d("DoWorkoutViewModel", "Next exercise: $nextExercise")
 
                 //Next exercise
+                val updatedData = _state.value.doWorkoutData.copy(
+                    isNextExerciseCountdown = true,
+                    currentExercise = nextExercise
+                )
                 _state.value = DoWorkoutState(
                     isSuccessful = true,
-                    doWorkoutData = DoWorkoutData(
-                        currentExercise = nextExercise,
-                        isNextExerciseCountdown = true
-                    )
+                    doWorkoutData = updatedData
                 )
             }
-        } else {
+        } else { //TODO: fix next set not working...
             val nextSetNumber = currentSetNumber + 1
             Log.d("DoWorkoutViewModel", "Next set: $nextSetNumber")
 
             //Next set
+            val updatedData = _state.value.doWorkoutData.copy(
+                isNextExerciseCountdown = true,
+                currentSetNumber = nextSetNumber
+            )
             _state.value = DoWorkoutState(
                 isSuccessful = true,
-                doWorkoutData = DoWorkoutData(
-                    currentSetNumber = nextSetNumber,
-                    isNextExerciseCountdown = true
-                )
+                doWorkoutData = updatedData
             )
         }
     }
 
     //Used when next exercise is selected and NextExerciseCountdownScreen is still showing
     fun confirmExercise() {
-        _state.value.doWorkoutData.apply {
-            isNextExerciseCountdown = false
-        }
+        val updatedData = _state.value.doWorkoutData.copy(isNextExerciseCountdown = false)
+        _state.value = _state.value.copy(doWorkoutData = updatedData)
     }
 }
