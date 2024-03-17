@@ -28,7 +28,7 @@ class DoWorkoutViewModel @Inject constructor(
     BaseViewModel(navigationController) {
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
-    private val _state: MutableStateFlow<DoWorkoutState> = MutableStateFlow(DoWorkoutState())
+    private val _state: MutableStateFlow<DoWorkoutState> = MutableStateFlow(DoWorkoutState(isLoading = true))
     val state: StateFlow<DoWorkoutState>
         get() = _state
 
@@ -103,9 +103,9 @@ class DoWorkoutViewModel @Inject constructor(
         }
 
         val currentExerciseSets =
-            workout.exercises[currentExercisePosition].sets  //currentExerciseSets size is always 0...
-        val isNextExercise = (currentSetNumber + 1 == currentExerciseSets.size)
-                || !(currentExerciseSets.isEmpty() && currentSetNumber + 1 < defaultTotalSets)
+            workout.exercises[currentExercisePosition].sets
+        val isNextExercise = (currentSetNumber + 1 > currentExerciseSets.size && currentExerciseSets.isNotEmpty())
+                || (currentExerciseSets.isEmpty() && currentSetNumber + 1 > defaultTotalSets)
         if (isNextExercise) {
 
             //Latest exercise (and set)
@@ -126,7 +126,8 @@ class DoWorkoutViewModel @Inject constructor(
                 //Next exercise
                 val updatedData = _state.value.doWorkoutData.copy(
                     isNextExerciseCountdown = true,
-                    currentExercise = nextExercise
+                    currentExercise = nextExercise,
+                    currentSetNumber = 1
                 )
                 _state.value = DoWorkoutState(
                     isSuccessful = true,

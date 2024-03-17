@@ -64,7 +64,9 @@ import com.koleff.kare_android.common.TimerUtil
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
@@ -81,7 +83,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val time =
         state.doWorkoutData.defaultExerciseTime
     val currentExercise = state.doWorkoutData.currentExercise
-    val currentSet = state.doWorkoutData.currentSetNumber
+    val currentSetNumber = state.doWorkoutData.currentSetNumber
 
     var timeLeft by remember {
         mutableStateOf(time)
@@ -128,7 +130,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
     //Wait for data on initialization
     var showLoadingDialog by remember {
-        mutableStateOf(false)
+        mutableStateOf(state.isLoading)
     }
     LaunchedEffect(state.isLoading) {
         showLoadingDialog = state.isLoading
@@ -163,7 +165,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             DoWorkoutFooterWithModal(
                 totalTime = time,
                 exercise = currentExercise,
-                currentSet = currentSet,
+                currentSetNumber = currentSetNumber,
                 defaultTotalSets = state.doWorkoutData.defaultTotalSets
             ) {
                 timeLeft = it
@@ -220,7 +222,7 @@ fun NextExerciseCountdownScreen(
 
     val alpha = 0.5f
     val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
-    val totalSets = if(nextExercise.sets.isNotEmpty()) nextExercise.sets.size else defaultTotalSets
+    val totalSets = if (nextExercise.sets.isNotEmpty()) nextExercise.sets.size else defaultTotalSets
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -322,11 +324,17 @@ fun NextExerciseCountdownScreenPreview() {
 fun DoWorkoutFooterWithModal(
     totalTime: ExerciseTime,
     exercise: ExerciseDto,
-    currentSet: Int,
-    defaultTotalSets: Int,
+    currentSetNumber: Int, //Used for CurrentExerciseInfoRow
+    defaultTotalSets: Int, //Used for CurrentExerciseInfoRow
     onTimePassed: (ExerciseTime) -> Unit
 ) {
-    ExerciseDataSheetModal2(exercise = exercise, currentSet = currentSet, defaultTotalSets = defaultTotalSets) {
+    val currentSet = exercise.sets[currentSetNumber - 1]
+
+    ExerciseDataSheetModal2(
+        exercise = exercise,
+        currentSetNumber = currentSetNumber,
+        defaultTotalSets = defaultTotalSets
+    ) {
 
         //Footer
         Box(
@@ -335,7 +343,7 @@ fun DoWorkoutFooterWithModal(
                 .padding(it),
             contentAlignment = Alignment.BottomCenter
         ) {
-            DoWorkoutFooter(totalTime = totalTime, onTimePassed = onTimePassed)
+            DoWorkoutFooter(totalTime = totalTime, currentSet = currentSet, onTimePassed = onTimePassed)
         }
     }
 }
@@ -346,7 +354,7 @@ fun DoWorkoutFooterWithModal(
 fun DoWorkoutFooterWithModalPreview() {
     val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
     val exercise = MockupDataGenerator.generateExercise()
-    val currentSet = 1
+    val currentSetNumber = 1
     val defaultTotalSets = 4
     val onTimePassed: (ExerciseTime) -> Unit = {
 
@@ -355,7 +363,7 @@ fun DoWorkoutFooterWithModalPreview() {
     DoWorkoutFooterWithModal(
         totalTime = time,
         exercise = exercise,
-        currentSet = currentSet,
+        currentSetNumber = currentSetNumber,
         defaultTotalSets = defaultTotalSets,
         onTimePassed = onTimePassed
     )
@@ -366,6 +374,7 @@ fun DoWorkoutFooterWithModalPreview() {
 fun DoWorkoutFooter(
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
     totalTime: ExerciseTime,
+    currentSet: ExerciseSetDto,
     onTimePassed: (ExerciseTime) -> Unit
 ) {
     val exerciseDataPadding = PaddingValues(4.dp)
@@ -386,7 +395,8 @@ fun DoWorkoutFooter(
         )
     }
 
-
+    val repsText = currentSet.reps.toString()
+    val weightText = if(currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -405,7 +415,7 @@ fun DoWorkoutFooter(
                 modifier = Modifier.padding(
                     exerciseDataPadding
                 ),
-                text = "8",
+                text = repsText,
                 style = TextStyle(
                     color = textColor,
                     fontSize = 16.sp,
@@ -458,7 +468,7 @@ fun DoWorkoutFooter(
                 modifier = Modifier.padding(
                     exerciseDataPadding
                 ),
-                text = "--",
+                text = weightText,
                 style = TextStyle(
                     color = textColor,
                     fontSize = 16.sp,
@@ -489,13 +499,15 @@ fun DoWorkoutFooter(
 @Composable
 fun DoWorkoutFooterPreview() {
     val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
-    val exercise = MockupDataGenerator.generateExercise()
+    val currentSet = MockupDataGenerator.generateExerciseSet()
     val onTimePassed: (ExerciseTime) -> Unit = {
 
     }
-    DoWorkoutFooter(totalTime = time, onTimePassed = onTimePassed)
+    DoWorkoutFooter(totalTime = time, currentSet = currentSet, onTimePassed = onTimePassed)
 }
 
+
+//When set list is empty there are no rows showing
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExerciseDataSheetModal() {
@@ -532,7 +544,7 @@ fun ExerciseDataSheetModalPreview() {
 @Composable
 fun ExerciseDataSheetModal2(
     exercise: ExerciseDto,
-    currentSet: Int,
+    currentSetNumber: Int,
     defaultTotalSets: Int,
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
@@ -549,7 +561,7 @@ fun ExerciseDataSheetModal2(
         sheetContent = {
             CurrentExerciseInfoRow(
                 currentExercise = exercise,
-                currentSet = currentSet,
+                currentSetNumber = currentSetNumber,
                 defaultTotalSets = defaultTotalSets
             )
 
@@ -567,12 +579,13 @@ fun ExerciseDataSheetModal2(
 }
 
 @Composable
-fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int, defaultTotalSets: Int) {
+fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSetNumber: Int, defaultTotalSets: Int) {
     val textColor = Color.White
     val setsTextColor = Color.Yellow
     val cornerSize = 24.dp
 
-    val totalSets = if(currentExercise.sets.isNotEmpty()) currentExercise.sets.size else defaultTotalSets
+    val totalSets =
+        if (currentExercise.sets.isNotEmpty()) currentExercise.sets.size else defaultTotalSets
 
     Row(
         modifier = Modifier
@@ -611,7 +624,7 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int, defaul
                     horizontal = 8.dp
                 )
                 .weight(1f),
-            text = "$currentSet of $totalSets",
+            text = "$currentSetNumber of $totalSets",
             style = TextStyle(
                 color = setsTextColor,
                 fontSize = 16.sp,
@@ -627,11 +640,11 @@ fun CurrentExerciseInfoRow(currentExercise: ExerciseDto, currentSet: Int, defaul
 @Composable
 fun CurrentExerciseInfoRowInfoRowPreview() {
     val currentExercise = MockupDataGenerator.generateExercise()
-    val currentSet = 1
+    val currentSetNumber = 1
     val defaultTotalSets = 4
     CurrentExerciseInfoRow(
         currentExercise = currentExercise,
-        currentSet = currentSet,
+        currentSetNumber = currentSetNumber,
         defaultTotalSets = defaultTotalSets
     )
 }
@@ -640,11 +653,11 @@ fun CurrentExerciseInfoRowInfoRowPreview() {
 @Composable
 fun ExerciseDataSheetModal2Preview() {
     val exercise = MockupDataGenerator.generateExercise()
-    val currentSet = 1
+    val currentSetNumber = 1
     val defaultTotalSets = 4
     ExerciseDataSheetModal2(
         exercise = exercise,
-        currentSet = currentSet,
+        currentSetNumber = currentSetNumber,
         defaultTotalSets = defaultTotalSets
     ) {
         Box(
