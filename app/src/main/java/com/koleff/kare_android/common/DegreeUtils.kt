@@ -2,6 +2,7 @@ package com.koleff.kare_android.common
 
 import kotlin.math.PI
 
+@Deprecated("Unused")
 object DegreeUtils {
 
     fun toRadian(degree: Float): Float{

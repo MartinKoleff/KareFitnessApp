@@ -311,7 +311,7 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Get workout -> isSuccessful state raised.")
         assertTrue { getWorkoutState[1].isSuccessful }
 
-        val fetchedWorkout = getWorkoutState[1].workoutList.first()
+        val fetchedWorkout = getWorkoutState[1].workout
         logger.i(TAG, "Fetched workout: $fetchedWorkout")
 
         logger.i(TAG, "Assert fetched workout is the same as inserted one.")
@@ -484,7 +484,7 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Get workout -> isSuccessful state raised.")
             assertTrue { getWorkoutState[1].isSuccessful }
 
-            val fetchedWorkout = getWorkoutState[1].workoutList.first()
+            val fetchedWorkout = getWorkoutState[1].workout
             logger.i(TAG, "Fetched workout -> $fetchedWorkout")
             logger.i(TAG, "Fetched workout total exercises -> ${fetchedWorkout.totalExercises}")
             logger.i(
@@ -987,7 +987,7 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Get workout 1 -> isSuccessful state raised.")
             assertTrue { getWorkoutState[1].isSuccessful }
 
-            val fetchedWorkout = getWorkoutState[1].workoutList.first()
+            val fetchedWorkout = getWorkoutState[1].workout
             logger.i(TAG, "Assert workout 1 is not selected in the DB.")
             assertFalse { fetchedWorkout.isSelected }
 
