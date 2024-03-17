@@ -104,9 +104,9 @@ class DoWorkoutViewModel @Inject constructor(
 
         val currentExerciseSets =
             workout.exercises[currentExercisePosition].sets  //currentExerciseSets size is always 0...
-        if ((currentSetNumber + 1 == currentExerciseSets.size)
-            || (currentExerciseSets.isEmpty() && currentSetNumber + 1 < defaultTotalSets)
-        ) {
+        val isNextExercise = (currentSetNumber + 1 == currentExerciseSets.size)
+                || !(currentExerciseSets.isEmpty() && currentSetNumber + 1 < defaultTotalSets)
+        if (isNextExercise) {
 
             //Latest exercise (and set)
             if (currentExercisePosition + 1 == workout.exercises.size) {
@@ -133,7 +133,7 @@ class DoWorkoutViewModel @Inject constructor(
                     doWorkoutData = updatedData
                 )
             }
-        } else { //TODO: fix next set not working...
+        } else {
             val nextSetNumber = currentSetNumber + 1
             Log.d("DoWorkoutViewModel", "Next set: $nextSetNumber")
 
