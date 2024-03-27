@@ -4,13 +4,14 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -18,16 +19,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.SheetState
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,7 +33,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,12 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -66,7 +61,6 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
-import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
@@ -74,21 +68,16 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
-import kotlinx.coroutines.delay
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val state by doWorkoutViewModel.state.collectAsState()
 
-    val time =
-        state.doWorkoutData.defaultExerciseTime
+    val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
+    val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
     val currentExercise = state.doWorkoutData.currentExercise
     val currentSetNumber = state.doWorkoutData.currentSetNumber
-
-    var timeLeft by remember {
-        mutableStateOf(time)
-    }
 
     //Navigation Callbacks
     val onExitWorkoutAction = {
@@ -97,21 +86,13 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         )
     }
 
-    val onNextExerciseAction = {
-        Log.d("DoWorkoutScreen", "Select next exercise requested. Time = $time.")
-        doWorkoutViewModel.selectNextExercise()
-
-        //Reset timer...
-        timeLeft = time
-    }
-
     //Observe selectNextExercise
     var showNextExerciseCountdown by remember {
         mutableStateOf(false)
     }
     LaunchedEffect(state.doWorkoutData.isNextExerciseCountdown) {
         showNextExerciseCountdown = state.doWorkoutData.isNextExerciseCountdown
-        Log.d("DoWorkoutScreen", "Show next exercise countdown: $showNextExerciseCountdown")
+        Log.d("DoWorkoutScreen", "Show next exercise: $showNextExerciseCountdown")
     }
 
     //Wait for data on initialization
@@ -158,43 +139,29 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             modifier = screenModifier,
             screenTitle = currentExercise.name,
             onExitWorkoutAction = onExitWorkoutAction,
-            onNextExerciseAction = onNextExerciseAction
+            onNextExerciseAction = { doWorkoutViewModel.selectNextExercise() }
         ) {
 
             //Video player...
 
             DoWorkoutFooterWithModal(
-                workoutTimer = doWorkoutViewModel.workoutTimer,
-                totalTime = time,
+                totalTime = workoutTimerState.time,
                 exercise = currentExercise,
                 currentSetNumber = currentSetNumber,
                 defaultTotalSets = state.doWorkoutData.defaultTotalSets
-            ) {
-                timeLeft = it
-
-                //Exercise completed. Select next exercise.
-                if (timeLeft == ExerciseTime(0, 0, 0)) {
-                    onNextExerciseAction()
-                }
-            }
+            )
         }
 
         //Next exercise countdown screen overlay
         if (showNextExerciseCountdown) { //TODO: add animation transition for more smooth appearance...
+            Log.d("DoWorkoutScreen", "Workout timer = ${workoutTimerState.time}. Countdown timer: ${countdownTimerState.time}")
+
             NextExerciseCountdownScreen(
-                countdownTimer = doWorkoutViewModel.countdownTimer,
                 nextExercise = state.doWorkoutData.currentExercise,
                 currentSetNumber = state.doWorkoutData.currentSetNumber,
-                countdownTime = state.doWorkoutData.countdownTime,
+                countdownTime = countdownTimerState.time,
                 defaultTotalSets = state.doWorkoutData.defaultTotalSets
-            ) { countdownTime ->
-
-                //Start next exercise...
-                if (countdownTime == ExerciseTime(0, 0, 0)) {
-                    doWorkoutViewModel.confirmExercise()
-//                    showNextExerciseCountdown = false
-                }
-            }
+            )
         }
     }
 }
@@ -203,27 +170,12 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 //Rather be overlay on the existing DoWorkoutScreen blurring the background until it gets configured (next exercise, reset timer, etc...)
 @Composable
 fun NextExerciseCountdownScreen(
-    countdownTimer: TimerUtil,
     nextExercise: ExerciseDto,
     currentSetNumber: Int,
     isWorkoutComplete: Boolean = false,
     countdownTime: ExerciseTime,
-    defaultTotalSets: Int,
-    onTimePassed: (ExerciseTime) -> Unit
+    defaultTotalSets: Int
 ) {
-    var time by remember {
-        mutableStateOf(countdownTime)
-    }
-
-    //On screen initialization...
-    LaunchedEffect(Unit) {
-        Log.d("NextExerciseCountdownScreen", "Timer started.")
-        countdownTimer.startTimer(countdownTime.toSeconds()) {
-            time = it
-            onTimePassed(it)
-        }
-    }
-
     val alpha = 0.5f
     val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
     val totalSets = if (nextExercise.sets.isNotEmpty()) nextExercise.sets.size else defaultTotalSets
@@ -293,7 +245,7 @@ fun NextExerciseCountdownScreen(
         ) {
             Text(
                 modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
-                text = time.toSeconds().toString(),
+                text = countdownTime.toSeconds().toString(),
                 style = TextStyle(
                     color = textColor,
                     fontSize = 64.sp,
@@ -316,24 +268,20 @@ fun NextExerciseCountdownScreenPreview() {
     val onTimePassed: (ExerciseTime) -> Unit = {}
     val countdownTimer = TimerUtil(countdownTime.toSeconds())
     NextExerciseCountdownScreen(
-        countdownTimer = countdownTimer,
         nextExercise = nextExercise,
         currentSetNumber = currentSetNumber,
         countdownTime = countdownTime,
-        defaultTotalSets = defaultTotalSets,
-        onTimePassed = onTimePassed
+        defaultTotalSets = defaultTotalSets
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutFooterWithModal(
-    workoutTimer: TimerUtil,
     totalTime: ExerciseTime,
     exercise: ExerciseDto,
     currentSetNumber: Int, //Used for CurrentExerciseInfoRow
-    defaultTotalSets: Int, //Used for CurrentExerciseInfoRow
-    onTimePassed: (ExerciseTime) -> Unit
+    defaultTotalSets: Int //Used for CurrentExerciseInfoRow
 ) {
     val currentSet = exercise.sets[currentSetNumber - 1]
 
@@ -351,10 +299,8 @@ fun DoWorkoutFooterWithModal(
             contentAlignment = Alignment.BottomCenter
         ) {
             DoWorkoutFooter(
-                workoutTimer = workoutTimer,
                 totalTime = totalTime,
-                currentSet = currentSet,
-                onTimePassed = onTimePassed
+                currentSet = currentSet
             )
         }
     }
@@ -374,23 +320,19 @@ fun DoWorkoutFooterWithModalPreview() {
     }
 
     DoWorkoutFooterWithModal(
-        workoutTimer = workoutTimer,
         totalTime = time,
         exercise = exercise,
         currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets,
-        onTimePassed = onTimePassed
+        defaultTotalSets = defaultTotalSets
     )
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutFooter(
-    workoutTimer: TimerUtil,
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
     totalTime: ExerciseTime,
-    currentSet: ExerciseSetDto,
-    onTimePassed: (ExerciseTime) -> Unit
+    currentSet: ExerciseSetDto
 ) {
     val exerciseDataPadding = PaddingValues(4.dp)
     val textColor = Color.White
@@ -399,7 +341,7 @@ fun DoWorkoutFooter(
     val hours = totalTime.hours
     val minutes = totalTime.minutes
     val seconds = totalTime.seconds
-    var currentTime by remember {
+    val currentTime by remember {
         mutableStateOf(
             String.format(
                 "%02d:%02d:%02d",
@@ -455,28 +397,6 @@ fun DoWorkoutFooter(
         }
 
         //timer
-//        var resetCounter by remember {
-//            mutableIntStateOf(0)
-//        }
-        LaunchedEffect(Unit) {
-            workoutTimer.startTimer(totalTime.toSeconds()) {
-                onTimePassed(it)
-
-                currentTime = it.toString()
-//                if (it == ExerciseTime(0, 0, 0)) resetCounter++
-            }
-        }
-
-//        //TODO: migrate to class and create 2 TimerUtil obj (NextExerciseCountdownTimer and DoWorkoutTimer)
-//        // sync the pause between them...
-//        LaunchedEffect(resetCounter) {
-//            //Await countdown
-//            delay(TimerUtil.countdownTime)
-//
-//            //Reset timer
-//            TimerUtil.resetTimer()
-//        }
-
         ExerciseTimer(
             modifier = Modifier
                 .fillMaxHeight()
@@ -534,10 +454,8 @@ fun DoWorkoutFooterPreview() {
 
     }
     DoWorkoutFooter(
-        workoutTimer = workoutTimer,
         totalTime = time,
-        currentSet = currentSet,
-        onTimePassed = onTimePassed
+        currentSet = currentSet
     )
 }
 

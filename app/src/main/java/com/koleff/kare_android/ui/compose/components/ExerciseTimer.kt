@@ -37,7 +37,7 @@ fun ExerciseTimer(
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle()
 ) {
     var time: String by remember {
-        mutableStateOf(timeLeft)
+        mutableStateOf(timeLeft) //TODO: fix state not updating...
     }
 
     var hours: Float by remember {
@@ -157,8 +157,9 @@ fun ExerciseTimerPreview() {
         )
     }
     val exerciseTimerStyle = ExerciseTimerStyle()
+    val workoutTimer = TimerUtil()
     LaunchedEffect(Unit) {
-        TimerUtil.startTimer(totalTime.toSeconds()) {
+        workoutTimer.startTimer(totalTime.toSeconds()) {
             currentTime = it.toString()
         }
     }
