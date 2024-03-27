@@ -110,7 +110,6 @@ class DoWorkoutViewModel @Inject constructor(
                         )
                     )
 
-                    confirmExercise()
                     startWorkoutTimer()
                 } else if (result.isError) {
                     _state.value = DoWorkoutState(
@@ -160,7 +159,6 @@ class DoWorkoutViewModel @Inject constructor(
 
                 //Next exercise
                 val updatedData = _state.value.doWorkoutData.copy(
-                    isNextExerciseCountdown = true,
                     currentExercise = nextExercise,
                     currentSetNumber = 1
                 )
@@ -168,6 +166,7 @@ class DoWorkoutViewModel @Inject constructor(
                     isSuccessful = true,
                     doWorkoutData = updatedData
                 )
+                showNextExerciseCountdownScreen()
             }
         } else {
             val nextSetNumber = currentSetNumber + 1
@@ -175,21 +174,26 @@ class DoWorkoutViewModel @Inject constructor(
 
             //Next set
             val updatedData = _state.value.doWorkoutData.copy(
-                isNextExerciseCountdown = true,
                 currentSetNumber = nextSetNumber
             )
             _state.value = DoWorkoutState(
                 isSuccessful = true,
                 doWorkoutData = updatedData
             )
+            showNextExerciseCountdownScreen()
         }
 
-        startWorkoutTimer()
+        startCountdownTimer()
     }
 
     //Used when next exercise is selected and NextExerciseCountdownScreen is still showing
-    private fun confirmExercise() {
+    private fun hideNextExerciseCountdownScreen() {
         val updatedData = _state.value.doWorkoutData.copy(isNextExerciseCountdown = false)
+        _state.value = _state.value.copy(doWorkoutData = updatedData)
+    }
+
+    private fun showNextExerciseCountdownScreen(){
+        val updatedData = _state.value.doWorkoutData.copy(isNextExerciseCountdown = true)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
     }
 
@@ -201,13 +205,16 @@ class DoWorkoutViewModel @Inject constructor(
             _workoutTimerState.value = _countdownTimerState.value.copy(time = defaultWorkoutTime)
         }
 
+        //Show next exercise countdown screen
+        showNextExerciseCountdownScreen()
+
         countdownTimer.startTimer(totalSeconds = countdownTime.toSeconds()) { timeLeft ->
             _countdownTimerState.value = _countdownTimerState.value.copy(time = timeLeft)
 
             //Countdown has finished
             if(countdownTimerState.value.time == ExerciseTime(0, 0, 0)){
                 Log.d("DoWorkoutViewModel", "Countdown finished! Selecting next exercise...")
-                selectNextExercise()
+                startWorkoutTimer()
             }
         }
     }
@@ -221,13 +228,16 @@ class DoWorkoutViewModel @Inject constructor(
                 _countdownTimerState.value.copy(time = defaultCountdownTime)
         }
 
+        //Hide next exercise countdown screen
+        hideNextExerciseCountdownScreen()
+
         workoutTimer.startTimer(totalSeconds = exerciseTime.toSeconds()) { timeLeft ->
             _workoutTimerState.value = _workoutTimerState.value.copy(time = timeLeft)
 
-            //Workout timer has finished
+            //Workout timer has finished -> select next exercise
             if(workoutTimerState.value.time == ExerciseTime(0, 0, 0)){
                 Log.d("DoWorkoutViewModel", "Exercise timer finished! Starting countdown timer for next exercise.")
-                startCountdownTimer()
+                selectNextExercise()
             }
         }
     }
