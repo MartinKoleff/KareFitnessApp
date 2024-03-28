@@ -1,21 +1,24 @@
 package com.koleff.kare_android.ui.state
 
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
-data class DoWorkoutState (
+data class DoWorkoutState(
     val isSuccessful: Boolean = false,
     val isLoading: Boolean = false,
     val isError: Boolean = false,
-    val error : KareError = KareError.GENERIC,
+    val error: KareError = KareError.GENERIC,
     val doWorkoutData: DoWorkoutData = DoWorkoutData()
 )
 
 data class DoWorkoutData(
     val currentExercise: ExerciseDto = ExerciseDto(),
     val currentSetNumber: Int = -1,
+    val currentSet: ExerciseSetDto = currentExercise.sets.getOrNull(currentSetNumber - 1)
+        ?: ExerciseSetDto(number = -1, reps = -1, weight = -1f),
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
     var defaultTotalSets: Int = 4,
     val defaultExerciseTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 1, seconds = 0),

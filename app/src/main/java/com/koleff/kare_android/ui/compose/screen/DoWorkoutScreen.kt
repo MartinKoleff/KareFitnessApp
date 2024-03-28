@@ -80,6 +80,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
     val currentExercise = state.doWorkoutData.currentExercise
     val currentSetNumber = state.doWorkoutData.currentSetNumber
+    val currentSet = state.doWorkoutData.currentSet
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -137,7 +138,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             Modifier
                 .fillMaxSize()
                 .blur(20.dp, 20.dp)
-        }else {
+        } else {
             Modifier
                 .fillMaxSize()
                 .alpha(0.15f)
@@ -148,37 +149,49 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     if (showLoadingDialog) {
         LoadingWheel()
     } else {
-        DoWorkoutScaffold(
-            modifier = screenModifier,
-            screenTitle = currentExercise.name,
-            onExitWorkoutAction = onExitWorkoutAction,
-            onNextExerciseAction = { doWorkoutViewModel.selectNextExercise() }
-        ) {
 
-            //Video player...
+        //Above all screens
+        ExerciseDataSheetModal2(
+            exercise = currentExercise,
+            currentSetNumber = currentSetNumber,
+            defaultTotalSets = state.doWorkoutData.defaultTotalSets
+        ) { exerciseDataSheetPaddingValues ->
+            DoWorkoutScaffold(
+                modifier = screenModifier,
+                screenTitle = currentExercise.name,
+                onExitWorkoutAction = onExitWorkoutAction,
+                onNextExerciseAction = { doWorkoutViewModel.selectNextExercise() }
+            ) {
 
-            DoWorkoutFooterWithModal(
-                totalTime = workoutTimerInitialState.time,
-                timeLeft = workoutTimerState.time,
-                exercise = currentExercise,
-                currentSetNumber = currentSetNumber,
-                defaultTotalSets = state.doWorkoutData.defaultTotalSets
-            )
-        }
+                //Video player...
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(exerciseDataSheetPaddingValues),
+                    contentAlignment = Alignment.BottomCenter
+                ) {
+                    DoWorkoutFooter(
+                        totalTime = workoutTimerInitialState.time,
+                        timeLeft = workoutTimerState.time,
+                        currentSet = currentSet
+                    )
+                }
+            }
 
-        //Next exercise countdown screen overlay
-        if (showNextExerciseCountdown) { //TODO: add animation transition for more smooth appearance...
-            Log.d(
-                "DoWorkoutScreen",
-                "Workout timer = ${workoutTimerState.time}. Countdown timer: ${countdownTimerState.time}"
-            )
+            //Next exercise countdown screen overlay
+            if (showNextExerciseCountdown) { //TODO: add animation transition for more smooth appearance...
+                Log.d(
+                    "DoWorkoutScreen",
+                    "Workout timer = ${workoutTimerState.time}. Countdown timer: ${countdownTimerState.time}"
+                )
 
-            NextExerciseCountdownScreen(
-                nextExercise = state.doWorkoutData.currentExercise,
-                currentSetNumber = state.doWorkoutData.currentSetNumber,
-                countdownTime = countdownTimerState.time,
-                defaultTotalSets = state.doWorkoutData.defaultTotalSets
-            )
+                NextExerciseCountdownScreen(
+                    nextExercise = state.doWorkoutData.currentExercise,
+                    currentSetNumber = state.doWorkoutData.currentSetNumber,
+                    countdownTime = countdownTimerState.time,
+                    defaultTotalSets = state.doWorkoutData.defaultTotalSets
+                )
+            }
         }
     }
 }
