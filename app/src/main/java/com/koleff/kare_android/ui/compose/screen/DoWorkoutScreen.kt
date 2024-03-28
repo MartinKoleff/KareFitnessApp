@@ -39,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
@@ -130,11 +131,17 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         ErrorDialog(state.error, onErrorDialogDismiss)
     }
 
-    //Lower alpha for when NextExerciseCountdownScreen is displayed...
+    //Blur for Android 12+ / Lower alpha for < Android 12  when NextExerciseCountdownScreen is displayed...
     val screenModifier = if (showNextExerciseCountdown) {
-        Modifier
-            .fillMaxSize()
-            .alpha(0.15f)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            Modifier
+                .fillMaxSize()
+                .blur(20.dp, 20.dp)
+        }else {
+            Modifier
+                .fillMaxSize()
+                .alpha(0.15f)
+        }
     } else Modifier.fillMaxSize()
 
     //Loading screen
@@ -283,6 +290,21 @@ fun NextExerciseCountdownScreenPreview() {
         countdownTime = countdownTime,
         defaultTotalSets = defaultTotalSets
     )
+}
+
+@Composable
+fun HalfTransparentColumn(alpha: Float = 0.3f, content: @Composable ColumnScope.() -> Unit) {
+    Column {
+        content()
+
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val height = size.height / 2
+            drawRect(
+                color = Color.Black.copy(alpha = alpha),
+                size = Size(size.width, height)
+            )
+        }
+    }
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
