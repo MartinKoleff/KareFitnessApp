@@ -60,7 +60,8 @@ class TimerUtil(private var totalTime: Int = 0) {
 
         fun calculateMarkedLines(percentageTimeLeft: Float, totalLines: Int): Int {
             val markedLines = (totalLines * (100 - percentageTimeLeft) / 100).toInt()
-            // Ensure we don't end up with more than the total lines or less than 0
+
+            //More than the total lines or less than 0 check
             return when {
                 markedLines > totalLines -> totalLines
                 markedLines < 0 -> 0

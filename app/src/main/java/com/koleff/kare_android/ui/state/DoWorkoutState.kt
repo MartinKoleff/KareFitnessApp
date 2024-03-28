@@ -14,12 +14,14 @@ data class DoWorkoutState (
 )
 
 data class DoWorkoutData(
-    val defaultExerciseTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 1, seconds = 30),
     val currentExercise: ExerciseDto = ExerciseDto(),
     val currentSetNumber: Int = -1,
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
+    var defaultTotalSets: Int = 4,
+    val defaultExerciseTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 1, seconds = 0),
     val countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
+    val restTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 30),
     val isWorkoutCompleted: Boolean = false,
     var isNextExerciseCountdown: Boolean = false,
-    var defaultTotalSets: Int = 4
+    var isRestCountdown: Boolean = false
 )

@@ -37,6 +37,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 
+//TODO: add header to start workout...
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutDetailsScreen(
