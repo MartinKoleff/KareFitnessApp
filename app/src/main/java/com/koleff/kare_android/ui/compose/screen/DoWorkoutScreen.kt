@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,6 +54,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -191,10 +194,16 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 )
 
                 NextExerciseCountdownScreen(
-                    nextExercise = if(state.doWorkoutData.isNextExercise) nextExercise else currentExercise,
-                    currentSetNumber = if(state.doWorkoutData.isNextExercise) nextSetNumber else currentSetNumber,
+                    nextExercise = if (state.doWorkoutData.isNextExercise) nextExercise else currentExercise,
+                    currentSetNumber = if (state.doWorkoutData.isNextExercise) nextSetNumber else currentSetNumber,
                     countdownTime = countdownTimerState.time,
-                    defaultTotalSets = state.doWorkoutData.defaultTotalSets
+                    defaultTotalSets = state.doWorkoutData.defaultTotalSets,
+                    countdownNumberPadding = PaddingValues(
+                        top = exerciseDataSheetPaddingValues.calculateTopPadding(),
+                        bottom = exerciseDataSheetPaddingValues.calculateBottomPadding() + 88.dp,
+                        start = exerciseDataSheetPaddingValues.calculateStartPadding(LayoutDirection.Ltr),
+                        end = exerciseDataSheetPaddingValues.calculateEndPadding(LayoutDirection.Ltr)
+                    ) //sheetPeekHeight = 88.dp //exerciseDataSheetPaddingValues
                 )
             }
         }
@@ -209,7 +218,8 @@ fun NextExerciseCountdownScreen(
     currentSetNumber: Int,
     isWorkoutComplete: Boolean = false,
     countdownTime: ExerciseTime,
-    defaultTotalSets: Int
+    defaultTotalSets: Int,
+    countdownNumberPadding: PaddingValues = PaddingValues(vertical = 12.dp, horizontal = 6.dp)
 ) {
     val alpha = 0.5f
     val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
@@ -279,7 +289,7 @@ fun NextExerciseCountdownScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                modifier = Modifier.padding(vertical = 12.dp, horizontal = 6.dp),
+                modifier = Modifier.padding(countdownNumberPadding),
                 text = countdownTime.toSeconds().toString(),
                 style = TextStyle(
                     color = textColor,
