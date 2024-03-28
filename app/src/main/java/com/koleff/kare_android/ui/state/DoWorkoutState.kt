@@ -16,15 +16,24 @@ data class DoWorkoutState(
 
 data class DoWorkoutData(
     val currentExercise: ExerciseDto = ExerciseDto(),
+    val nextExercise: ExerciseDto = ExerciseDto(),
     val currentSetNumber: Int = -1,
-    val currentSet: ExerciseSetDto = currentExercise.sets.getOrNull(currentSetNumber - 1)
-        ?: ExerciseSetDto(number = -1, reps = -1, weight = -1f),
+    val nextSetNumber: Int = -1,
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
     var defaultTotalSets: Int = 4,
     val defaultExerciseTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 1, seconds = 0),
     val countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
     val restTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 30),
     val isWorkoutCompleted: Boolean = false,
-    var isNextExerciseCountdown: Boolean = false,
+    var isBetweenExerciseCountdown: Boolean = false,
+    var isNextExercise: Boolean = false,
     var isRestCountdown: Boolean = false
-)
+){
+    val currentSet: ExerciseSetDto
+        get() = currentExercise.sets.getOrNull(currentSetNumber - 1)
+        ?: ExerciseSetDto(number = -1, reps = -1, weight = -1f)
+
+    val nextSet: ExerciseSetDto
+        get() = currentExercise.sets.getOrNull(nextSetNumber - 1)
+        ?: ExerciseSetDto(number = -1, reps = -1, weight = -1f)
+}

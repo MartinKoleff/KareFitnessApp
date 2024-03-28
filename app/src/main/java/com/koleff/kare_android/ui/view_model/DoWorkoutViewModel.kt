@@ -7,6 +7,7 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -51,6 +52,8 @@ class DoWorkoutViewModel @Inject constructor(
     val countdownTimerState: StateFlow<TimerState>
         get() = _countdownTimerState
 
+    private val isLogging: Boolean = false
+
     override fun clearError() {
         if (state.value.isError) {
             _state.value = DoWorkoutState()
@@ -67,7 +70,7 @@ class DoWorkoutViewModel @Inject constructor(
 
         //Log timer states
         viewModelScope.launch(Dispatchers.Default) {
-            while (true) {
+            while (isLogging) {
                 Log.d("DoWorkoutViewModel", "----------------Timers------------------")
                 Log.d("DoWorkoutViewModel", "Countdown time: ${countdownTimerState.value.time}")
                 Log.d("DoWorkoutViewModel", "Workout time: ${workoutTimerState.value.time}")
@@ -97,20 +100,26 @@ class DoWorkoutViewModel @Inject constructor(
                         )
                         return@collect
                     }
+                    val firstSetNumber = 1
                     Log.d("DoWorkoutViewModel", "First exercise: $firstExercise")
 
-                    val firstSet = 1
+                    val nextExercise = selectedWorkoutDetails.exercises.getOrNull(1) ?: ExerciseDto()
+                    val nextSetNumber = 2
+                    Log.d("DoWorkoutViewModel", "Next exercise: $nextExercise")
+
                     _state.value = DoWorkoutState(
                         isSuccessful = true,
                         doWorkoutData = DoWorkoutData(
                             currentExercise = firstExercise,
-                            currentSetNumber = firstSet,
+                            currentSetNumber = firstSetNumber,
+                            nextExercise = nextExercise,
+                            nextSetNumber = nextSetNumber,
                             workout = selectedWorkoutDetails,
-                            isNextExerciseCountdown = true
+                            isBetweenExerciseCountdown = true
                         )
                     )
 
-                    startWorkoutTimer()
+                    startWorkoutTimer(isInitialCall = true)
                 } else if (result.isError) {
                     _state.value = DoWorkoutState(
                         isError = true,
@@ -121,7 +130,7 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun selectNextExercise() = with(_state.value.doWorkoutData) {
+    private fun selectNextExercise() = with(_state.value.doWorkoutData) {
         Log.d("DoWorkoutViewModel", "Select next exercise requested.")
 
         //Find exercise position in list
@@ -140,6 +149,7 @@ class DoWorkoutViewModel @Inject constructor(
         val isNextExercise =
             (currentSetNumber + 1 > currentExerciseSets.size && currentExerciseSets.isNotEmpty())
                     || (currentExerciseSets.isEmpty() && currentSetNumber + 1 > defaultTotalSets)
+
         if (isNextExercise) {
 
             //Latest exercise (and set)
@@ -154,13 +164,15 @@ class DoWorkoutViewModel @Inject constructor(
                     )
                 )
             } else {
-                val nextExercise = workout.exercises[currentExercisePosition + 1]
+                val nextSetNumber =
+                    if (currentExerciseSets.size >= currentSetNumber + 1) currentSetNumber + 1 else 1
                 Log.d("DoWorkoutViewModel", "Next exercise: $nextExercise")
 
                 //Next exercise
                 val updatedData = _state.value.doWorkoutData.copy(
-                    currentExercise = nextExercise,
-                    currentSetNumber = 1
+//                    currentSetNumber = currentExerciseSets.size,
+                    nextSetNumber = nextSetNumber,
+                    isNextExercise = true
                 )
                 _state.value = DoWorkoutState(
                     isSuccessful = true,
@@ -169,12 +181,16 @@ class DoWorkoutViewModel @Inject constructor(
                 showNextExerciseCountdownScreen()
             }
         } else {
-            val nextSetNumber = currentSetNumber + 1
+            val nextSetNumber =
+                if (currentExerciseSets.size >= currentSetNumber + 1) currentSetNumber + 1 else 1
+            Log.d("DoWorkoutViewModel", "Current set becomes: $currentSetNumber")
             Log.d("DoWorkoutViewModel", "Next set: $nextSetNumber")
 
             //Next set
             val updatedData = _state.value.doWorkoutData.copy(
-                currentSetNumber = nextSetNumber
+                currentSetNumber = currentSetNumber,
+                nextSetNumber = nextSetNumber,
+                isNextExercise = false
             )
             _state.value = DoWorkoutState(
                 isSuccessful = true,
@@ -186,14 +202,20 @@ class DoWorkoutViewModel @Inject constructor(
         startCountdownTimer()
     }
 
+    //If called from the button update current set and next set directly...
+    fun skipNextExercise() {
+        updateExerciseSets()
+        selectNextExercise()
+    }
+
     //Used when next exercise is selected and NextExerciseCountdownScreen is still showing
     private fun hideNextExerciseCountdownScreen() {
-        val updatedData = _state.value.doWorkoutData.copy(isNextExerciseCountdown = false)
+        val updatedData = _state.value.doWorkoutData.copy(isBetweenExerciseCountdown = false)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
     }
 
-    private fun showNextExerciseCountdownScreen(){
-        val updatedData = _state.value.doWorkoutData.copy(isNextExerciseCountdown = true)
+    private fun showNextExerciseCountdownScreen() {
+        val updatedData = _state.value.doWorkoutData.copy(isBetweenExerciseCountdown = true)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
     }
 
@@ -212,33 +234,77 @@ class DoWorkoutViewModel @Inject constructor(
             _countdownTimerState.value = _countdownTimerState.value.copy(time = timeLeft)
 
             //Countdown has finished
-            if(countdownTimerState.value.time == ExerciseTime(0, 0, 0)){
+            if (countdownTimerState.value.time == ExerciseTime(0, 0, 0)) {
                 Log.d("DoWorkoutViewModel", "Countdown finished! Selecting next exercise...")
                 startWorkoutTimer()
             }
         }
     }
 
-    private fun startWorkoutTimer(exerciseTime: ExerciseTime = state.value.doWorkoutData.defaultExerciseTime) {
+    private fun startWorkoutTimer(
+        exerciseTime: ExerciseTime = state.value.doWorkoutData.defaultExerciseTime,
+        isInitialCall: Boolean = false
+    ) =
+        with(state.value.doWorkoutData) {
 
-        //Reset countdown timer and state
-        countdownTimer.resetTimer().also {
-            val defaultCountdownTime = state.value.doWorkoutData.countdownTime
-            _countdownTimerState.value =
-                _countdownTimerState.value.copy(time = defaultCountdownTime)
-        }
+            //Reset countdown timer and state
+            countdownTimer.resetTimer().also {
+                val defaultCountdownTime = countdownTime
+                _countdownTimerState.value =
+                    _countdownTimerState.value.copy(time = defaultCountdownTime)
+            }
 
-        //Hide next exercise countdown screen
-        hideNextExerciseCountdownScreen()
+            //Hide next exercise countdown screen
+            hideNextExerciseCountdownScreen()
 
-        workoutTimer.startTimer(totalSeconds = exerciseTime.toSeconds()) { timeLeft ->
-            _workoutTimerState.value = _workoutTimerState.value.copy(time = timeLeft)
+            //Update current and next exercise sets after countdown timer has finished.
+            if (!isInitialCall) {
+                updateExerciseSets()
+            }
 
-            //Workout timer has finished -> select next exercise
-            if(workoutTimerState.value.time == ExerciseTime(0, 0, 0)){
-                Log.d("DoWorkoutViewModel", "Exercise timer finished! Starting countdown timer for next exercise.")
-                selectNextExercise()
+            workoutTimer.startTimer(totalSeconds = exerciseTime.toSeconds()) { timeLeft ->
+                _workoutTimerState.value = _workoutTimerState.value.copy(time = timeLeft)
+
+                //Workout timer has finished -> select next exercise
+                if (workoutTimerState.value.time == ExerciseTime(0, 0, 0)) {
+                    Log.d(
+                        "DoWorkoutViewModel",
+                        "Exercise timer finished! Starting countdown timer for next exercise."
+                    )
+                    selectNextExercise()
+                }
             }
         }
+
+    private fun updateExerciseSets() = with(state.value.doWorkoutData) {
+        val currentSetNumber = nextSetNumber //Next set becomes current
+        val nextSetNumber =
+            if (currentExercise.sets.size >= currentSetNumber + 1) currentSetNumber + 1 else 1
+
+        var updatedData = this.copy(
+            currentSetNumber = currentSetNumber,
+            nextSetNumber = nextSetNumber,
+        )
+
+        //Update current and next exercise
+        if(isNextExercise){
+            val currentExercisePosition = workout.exercises.indexOf(currentExercise)
+            val currentExercise = workout.exercises[currentExercisePosition + 1]
+            val nextExercise = workout.exercises[currentExercisePosition + 2]
+            Log.d("DoWorkoutViewModel", "New current exercise: $currentExercise")
+            Log.d("DoWorkoutViewModel", "Next exercise: $nextExercise")
+
+            updatedData = updatedData.copy(
+                currentExercise = currentExercise,
+                currentSetNumber = 1,
+                nextExercise = nextExercise,
+                isNextExercise = false
+            )
+        }
+
+        _state.value = _state.value.copy(doWorkoutData = updatedData)
+
+        Log.d("DoWorkoutViewModel", "Current set becomes: $currentSetNumber")
+        Log.d("DoWorkoutViewModel", "Next set: $nextSetNumber")
     }
 }

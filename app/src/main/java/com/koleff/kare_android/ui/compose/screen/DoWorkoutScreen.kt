@@ -81,6 +81,9 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val currentExercise = state.doWorkoutData.currentExercise
     val currentSetNumber = state.doWorkoutData.currentSetNumber
     val currentSet = state.doWorkoutData.currentSet
+    val nextExercise = state.doWorkoutData.nextExercise
+    val nextSetNumber = state.doWorkoutData.nextSetNumber
+    val nextSet = state.doWorkoutData.nextSet
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -97,8 +100,8 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     var showNextExerciseCountdown by remember {
         mutableStateOf(false)
     }
-    LaunchedEffect(state.doWorkoutData.isNextExerciseCountdown) {
-        showNextExerciseCountdown = state.doWorkoutData.isNextExerciseCountdown
+    LaunchedEffect(state.doWorkoutData.isBetweenExerciseCountdown) {
+        showNextExerciseCountdown = state.doWorkoutData.isBetweenExerciseCountdown
         workoutTimerInitialState = workoutTimerState
         Log.d("DoWorkoutScreen", "Show next exercise: $showNextExerciseCountdown")
     }
@@ -160,10 +163,12 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 modifier = screenModifier,
                 screenTitle = currentExercise.name,
                 onExitWorkoutAction = onExitWorkoutAction,
-                onNextExerciseAction = { doWorkoutViewModel.selectNextExercise() }
+                onNextExerciseAction = { doWorkoutViewModel.skipNextExercise() }
             ) {
 
                 //Video player...
+
+                //Exercise Timer, weight and reps
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -186,8 +191,8 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 )
 
                 NextExerciseCountdownScreen(
-                    nextExercise = state.doWorkoutData.currentExercise,
-                    currentSetNumber = state.doWorkoutData.currentSetNumber,
+                    nextExercise = if(state.doWorkoutData.isNextExercise) nextExercise else currentExercise,
+                    currentSetNumber = if(state.doWorkoutData.isNextExercise) nextSetNumber else currentSetNumber,
                     countdownTime = countdownTimerState.time,
                     defaultTotalSets = state.doWorkoutData.defaultTotalSets
                 )
