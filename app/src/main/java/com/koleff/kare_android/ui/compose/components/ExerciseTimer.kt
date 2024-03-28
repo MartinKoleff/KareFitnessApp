@@ -3,15 +3,16 @@ package com.koleff.kare_android.ui.compose.components
 import android.graphics.Color
 import android.graphics.Paint
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -21,7 +22,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.koleff.kare_android.common.DegreeUtils
 import com.koleff.kare_android.common.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
@@ -32,50 +32,40 @@ import kotlin.math.sin
 @Composable
 fun ExerciseTimer(
     modifier: Modifier = Modifier,
-    timeLeft: String,
+    timeLeft: ExerciseTime,
     totalTime: ExerciseTime,
-    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle()
+    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
+    isLogging: Boolean = false
 ) {
-    var time: String by remember {
-        mutableStateOf(timeLeft) //TODO: fix state not updating...
+    val timePercentageLeftState  = remember {
+        mutableFloatStateOf(100.0f)
     }
 
-    var hours: Float by remember {
-        mutableFloatStateOf(time.split(":")[0].toFloat())
+    val markedLinesState = remember {
+        mutableIntStateOf(exerciseTimerStyle.totalLines)
     }
 
-    var minutes: Float by remember {
-        mutableFloatStateOf(time.split(":")[1].toFloat())
-    }
-
-    var seconds: Float by remember {
-        mutableFloatStateOf(time.split(":")[2].toFloat())
-    }
-
-    //When timeLeft updates -> update time...
+    // Update state variables within LaunchedEffect when timeLeft changes
     LaunchedEffect(timeLeft) {
-        time = timeLeft
-        hours = time.split(":")[0].toFloat()
-        minutes = time.split(":")[1].toFloat()
-        seconds = time.split(":")[2].toFloat()
-    }
+        timePercentageLeftState.floatValue =
+            TimerUtil.calculateTimeLeftPercentage(totalTime, timeLeft)
+        markedLinesState.intValue = TimerUtil.calculateMarkedLines(
+            timePercentageLeftState.floatValue,
+            exerciseTimerStyle.totalLines
+        )
 
-    //Time elapsed logic
-    val timeLeftInSeconds = remember(time) {
-        (hours * 3600 + minutes * 60 + seconds).toInt()
-    }
-
-    val percentageLeft = remember(timeLeftInSeconds) {
-        timeLeftInSeconds.toFloat() / totalTime.toSeconds()
-    }
-
-    val linesToColorDifferently = remember(percentageLeft) {
-        (exerciseTimerStyle.totalLines * percentageLeft).toInt()
+        if (isLogging) {
+            Log.d("ExerciseTimer", "Percentage of Time Left: ${timePercentageLeftState.floatValue}%")
+            Log.d("ExerciseTimer", "Marked Lines: ${markedLinesState.intValue}")
+        }
     }
 
     Canvas(modifier = modifier) {
         drawContext.canvas.nativeCanvas.apply {
-            val circleCenter = Offset(x = center.x, y = center.y + (exerciseTimerStyle.timerRadius.toPx() / 2)) //height.toFloat()
+            val circleCenter = Offset(
+                x = center.x,
+                y = center.y + (exerciseTimerStyle.timerRadius.toPx() / 2)
+            ) //height.toFloat()
 
             //Draw circle
             drawCircle(
@@ -97,7 +87,7 @@ fun ExerciseTimer(
 
             //Timer display
             drawText(
-                time,
+                timeLeft.toString(),
                 circleCenter.x,
                 circleCenter.y - 10.dp.toPx(),
                 Paint().apply {
@@ -112,7 +102,7 @@ fun ExerciseTimer(
             //Lines
             for (i in 0..exerciseTimerStyle.totalLines) {
                 val lineLength = exerciseTimerStyle.lineLength.toPx()
-                val isElapsed = i >= linesToColorDifferently
+                val isElapsed = i >= markedLinesState.intValue
                 val lineColor =
                     if (isElapsed) exerciseTimerStyle.elapsedLineColor else exerciseTimerStyle.lineColor
 
@@ -147,20 +137,13 @@ fun ExerciseTimer(
 fun ExerciseTimerPreview() {
     val totalTime = ExerciseTime(hours = 0, minutes = 3, seconds = 30)
     var currentTime by remember {
-        mutableStateOf(
-            String.format(
-                "%02d:%02d:%02d",
-                totalTime.hours,
-                totalTime.minutes,
-                totalTime.seconds
-            )
-        )
+        mutableStateOf(ExerciseTime(totalTime.hours, totalTime.minutes, totalTime.seconds))
     }
     val exerciseTimerStyle = ExerciseTimerStyle()
     val workoutTimer = TimerUtil()
     LaunchedEffect(Unit) {
         workoutTimer.startTimer(totalTime.toSeconds()) {
-            currentTime = it.toString()
+            currentTime = it
         }
     }
 

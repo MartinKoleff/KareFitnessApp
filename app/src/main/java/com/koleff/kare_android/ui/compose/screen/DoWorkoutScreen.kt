@@ -337,21 +337,6 @@ fun DoWorkoutFooter(
     val exerciseDataPadding = PaddingValues(4.dp)
     val textColor = Color.White
 
-    //Timer
-    val hours = totalTime.hours
-    val minutes = totalTime.minutes
-    val seconds = totalTime.seconds
-    val currentTime by remember {
-        mutableStateOf(
-            String.format(
-                "%02d:%02d:%02d",
-                hours,
-                minutes,
-                seconds
-            )
-        )
-    }
-
     val repsText = currentSet.reps.toString()
     val weightText = if (currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
     Row(
@@ -401,7 +386,7 @@ fun DoWorkoutFooter(
             modifier = Modifier
                 .fillMaxHeight()
                 .weight(2.5f),
-            timeLeft = currentTime,
+            timeLeft = totalTime,
             totalTime = totalTime
         )
 
