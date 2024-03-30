@@ -178,24 +178,12 @@ fun WorkoutDetailsScreen(
         onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutDetailsState.workoutDetails.workoutId) }
     )
 
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        workoutDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        workoutDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        workoutDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { workoutDetailsViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     MainScreenScaffold(
         workoutTitle,
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToDashboard = { workoutDetailsViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { workoutDetailsViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
+        onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val contentModifier = Modifier
             .fillMaxSize()

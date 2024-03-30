@@ -16,25 +16,12 @@ import com.koleff.kare_android.ui.view_model.DashboardViewModel
 
 @Composable
 fun DashboardScreen(dashboardViewModel: DashboardViewModel = hiltViewModel()) {
-
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { dashboardViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     MainScreenScaffold(
         "Dashboard",
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToDashboard = { dashboardViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { dashboardViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { dashboardViewModel.onNavigateBack() },
+        onNavigateToSettings = { dashboardViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val muscleGroupState by dashboardViewModel.state.collectAsState()
 

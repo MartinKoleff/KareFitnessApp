@@ -33,19 +33,6 @@ import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 fun MuscleGroupScreen(
     exerciseListViewModel: ExerciseListViewModel = hiltViewModel()
 ) {
-
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     val exerciseListState by exerciseListViewModel.state.collectAsState()
     val muscleGroup = exerciseListViewModel.muscleGroup
 
@@ -82,11 +69,11 @@ fun MuscleGroupScreen(
     }
 
     MainScreenScaffold(
-        muscleGroup.name,
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        muscleGroup.muscleGroupName,
+        onNavigateToDashboard = { exerciseListViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { exerciseListViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { exerciseListViewModel.onNavigateBack() },
+        onNavigateToSettings = { exerciseListViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val buttonModifier = Modifier
             .fillMaxWidth()

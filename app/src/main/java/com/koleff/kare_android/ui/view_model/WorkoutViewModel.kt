@@ -39,7 +39,7 @@ class WorkoutViewModel @Inject constructor(
     private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : BaseViewModel(navigationController = navigationController) {
+) : BaseViewModel(navigationController = navigationController), MainScreenNavigation {
 
     private var _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
     val state: StateFlow<WorkoutListState>
@@ -314,5 +314,21 @@ class WorkoutViewModel @Inject constructor(
         if (createWorkoutState.value.isError) {
             _createWorkoutState.value = WorkoutState()
         }
+    }
+
+    override fun onNavigateToDashboard() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+
+    override fun onNavigateToWorkouts() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+
+    override fun onNavigateToSettings() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+
+    override fun onNavigateBack()  {
+        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

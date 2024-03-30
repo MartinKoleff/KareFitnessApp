@@ -50,25 +50,12 @@ import java.util.Locale
 fun WorkoutsScreen(
     workoutListViewModel: WorkoutViewModel = hiltViewModel()
 ) {
-
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     MainScreenScaffold(
         "Workouts",
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToDashboard = { workoutListViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { workoutListViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { workoutListViewModel.onNavigateBack() },
+        onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val buttonModifier = Modifier
             .fillMaxWidth()
