@@ -42,6 +42,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -53,15 +54,16 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
-
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -69,23 +71,19 @@ fun WorkoutDetailsScreen(
     workoutDetailsViewModel: WorkoutDetailsViewModel = hiltViewModel()
 ) {
     val workoutDetailsState by workoutDetailsViewModel.getWorkoutDetailsState.collectAsState()
+    val updateWorkoutDetailsState by workoutDetailsViewModel.updateWorkoutDetailsState.collectAsState()
+    val deleteWorkoutDetailsState by workoutDetailsViewModel.deleteWorkoutState.collectAsState()
+    val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
+
     val workoutTitle =
-        if (workoutDetailsState.workoutDetails.name == "") "Loading..." else workoutDetailsState.workoutDetails.name
+        if (workoutDetailsState.workoutDetails.name == "" || updateWorkoutDetailsState.isLoading) "Loading..."
+        else workoutDetailsState.workoutDetails.name
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
         //TODO: select multiple exercises rework...
 
         //TODO: submit exercise directly and skip exercise details configurator...
-
-        //Temporary use as start workout...
-        workoutDetailsViewModel.onNavigationEvent(
-            NavigationEvent.NavigateTo(
-                Destination.DoWorkoutScreen(workoutId = workoutDetailsState.workoutDetails.workoutId)
-            )
-        )
     }
-
-    val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
 
     var selectedWorkout by remember {
         mutableStateOf(workoutDetailsState.workoutDetails)
@@ -119,9 +117,12 @@ fun WorkoutDetailsScreen(
     }
 
     //Dialog visibility
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteExerciseDialog by remember { mutableStateOf(false) }
+    var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
+    var showSelectDialog by remember { mutableStateOf(false) }
+    var showDeleteWorkoutDialog by remember { mutableStateOf(false) }
+    var showWorkoutConfigureDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
-
 
     //Dialog callbacks
     val onErrorDialogDismiss = {
@@ -129,26 +130,59 @@ fun WorkoutDetailsScreen(
         workoutDetailsViewModel.clearError() //Enters launched effect to update showErrorDialog...
     }
 
+    val onDeleteWorkout: () -> Unit = {
+        workoutDetailsViewModel.deleteWorkout()
+
+        showDeleteWorkoutDialog = false
+    }
+
+//    val onSelectWorkout: () -> Unit = {
+//        workoutDetailsViewModel.selectWorkout(selectedWorkout.workoutId)
+//
+//        showSelectDialog = false
+//    }
+
+    val onEditWorkoutName: (String) -> Unit = { newName ->
+        val updatedWorkout = selectedWorkout.copy(name = newName)
+
+        //Update workout
+        workoutDetailsViewModel.updateWorkout(updatedWorkout)
+
+        showEditWorkoutNameDialog = false
+    }
+
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(workoutDetailsState.isError, deleteExerciseState.isError) {
+    LaunchedEffect(
+        workoutDetailsState.isError,
+        deleteExerciseState.isError,
+        deleteWorkoutDetailsState.isError,
+        updateWorkoutDetailsState.isError
+    ) {
 
         error = if (workoutDetailsState.isError) {
             workoutDetailsState.error
         } else if (deleteExerciseState.isError) {
             deleteExerciseState.error
+        } else if (deleteWorkoutDetailsState.isError) {
+            deleteWorkoutDetailsState.error
+        } else if (updateWorkoutDetailsState.isError) {
+            updateWorkoutDetailsState.error
         } else {
             null
         }
 
         showErrorDialog =
-            workoutDetailsState.isError || deleteExerciseState.isError
+            workoutDetailsState.isError ||
+                    deleteExerciseState.isError ||
+                    deleteWorkoutDetailsState.isError ||
+                    updateWorkoutDetailsState.isError
 
         Log.d("WorkoutDetailsScreen", "Error detected -> $showErrorDialog")
     }
 
     //Dialogs
-    if (showDeleteDialog) {
+    if (showDeleteExerciseDialog) {
         WarningDialog(
             title = "Delete Exercise",
             description = "Are you sure you want to delete this exercise? This action cannot be undone.",
@@ -162,7 +196,25 @@ fun WorkoutDetailsScreen(
                 }
 
             },
-            onDismiss = { showDeleteDialog = false }
+            onDismiss = { showDeleteExerciseDialog = false }
+        )
+    }
+
+    if (showEditWorkoutNameDialog) {
+        EditWorkoutDialog(
+            currentName = selectedWorkout.name,
+            onDismiss = { showEditWorkoutNameDialog = false },
+            onConfirm = onEditWorkoutName
+        )
+    }
+
+    if (showDeleteWorkoutDialog) {
+        WarningDialog(
+            title = "Delete Workout",
+            description = "Are you sure you want to delete this workout? This action cannot be undone.",
+            actionButtonTitle = "Delete",
+            onClick = onDeleteWorkout,
+            onDismiss = { showDeleteWorkoutDialog = false }
         )
     }
 
@@ -185,6 +237,8 @@ fun WorkoutDetailsScreen(
         onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
         onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
     ) { innerPadding ->
+
+
         val contentModifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
@@ -195,19 +249,35 @@ fun WorkoutDetailsScreen(
                 .pullRefresh(pullRefreshState)
         ) {
 
-            if (workoutDetailsState.isLoading || deleteExerciseState.isLoading) {
+            if (workoutDetailsState.isLoading ||
+                deleteExerciseState.isLoading ||
+                deleteWorkoutDetailsState.isLoading ||
+                updateWorkoutDetailsState.isLoading
+            ) {
                 LoadingWheel(innerPadding = innerPadding)
             } else {
-
-                //Collapsable header
-
-
                 //Exercises
                 LazyColumn(
                     modifier = contentModifier,
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+                    //Collapsable header
+                    item {
+                        StartWorkoutHeader(
+                            title = workoutTitle,
+                            subtitle = MuscleGroup.toDescription(selectedWorkout.muscleGroup),
+                            onStartWorkoutAction = {
+                                workoutDetailsViewModel.startWorkout()
+                            },
+                            onConfigureAction = { showWorkoutConfigureDialog = true },
+                            onAddExerciseAction = { workoutDetailsViewModel.addExercise() },
+                            onDeleteWorkoutAction = { showDeleteWorkoutDialog = true },
+                            onEditWorkoutNameAction = { showEditWorkoutNameDialog = true }
+                        )
+                    }
+
                     Log.d("WorkoutDetailsScreen", "Exercises: $exercises")
                     items(exercises.size) { currentExerciseId ->
                         val currentExercise = exercises[currentExerciseId]
@@ -220,7 +290,7 @@ fun WorkoutDetailsScreen(
                             onClick = onExerciseSelected,
                             onDelete = {
                                 selectedExercise = currentExercise
-                                showDeleteDialog = true
+                                showDeleteExerciseDialog = true
                             }
                         )
                     }
@@ -230,9 +300,7 @@ fun WorkoutDetailsScreen(
                             AddExerciseToWorkoutBanner {
 
                                 //Open search exercise screen...
-                                workoutDetailsViewModel.navigateToSearchExcercises(
-                                    workoutId = workoutDetailsState.workoutDetails.workoutId
-                                )
+                                workoutDetailsViewModel.addExercise()
                             }
                         }
                     }
@@ -301,19 +369,31 @@ fun StartWorkoutHeader(
     subtitle: String,
     onStartWorkoutAction: () -> Unit,
     onConfigureAction: () -> Unit,
-    onAddExerciseAction: () -> Unit
+    onAddExerciseAction: () -> Unit,
+    onDeleteWorkoutAction: () -> Unit,
+    onEditWorkoutNameAction: () -> Unit
 ) {
     Column {
         StartWorkoutTitleAndSubtitle(title, subtitle)
 
-        StartWorkoutActionRow(onConfigureAction, onAddExerciseAction)
+        StartWorkoutActionRow(
+            onConfigureAction = onConfigureAction,
+            onAddExerciseAction = onAddExerciseAction,
+            onDeleteWorkoutAction = onDeleteWorkoutAction,
+            onEditWorkoutNameAction = onEditWorkoutNameAction
+        )
 
         StartWorkoutButton(text = "Start workout!", onStartWorkoutAction = onStartWorkoutAction)
     }
 }
 
 @Composable
-fun StartWorkoutActionRow(onConfigureAction: () -> Unit, onAddExerciseAction: () -> Unit) {
+fun StartWorkoutActionRow(
+    onConfigureAction: () -> Unit,
+    onAddExerciseAction: () -> Unit,
+    onDeleteWorkoutAction: () -> Unit,
+    onEditWorkoutNameAction: () -> Unit
+) {
 
     //Same as StartWorkoutButton
     val paddingValues = PaddingValues(
@@ -362,7 +442,7 @@ fun StartWorkoutActionRow(onConfigureAction: () -> Unit, onAddExerciseAction: ()
                 modifier = Modifier.weight(1f),
                 text = "Edit workout name",
                 iconResourceId = R.drawable.ic_edit,
-                onAction = onAddExerciseAction
+                onAction = onEditWorkoutNameAction
             )
 
             StartWorkoutActionButton(
@@ -377,7 +457,7 @@ fun StartWorkoutActionRow(onConfigureAction: () -> Unit, onAddExerciseAction: ()
                 modifier = Modifier.weight(1f),
                 text = "Delete workout",
                 iconResourceId = R.drawable.ic_delete,
-                onAction = onAddExerciseAction
+                onAction = onDeleteWorkoutAction
             )
         }
     }
@@ -500,13 +580,17 @@ fun StartWorkoutActionButtonPreview() {
 fun StartWorkoutActionRowPreview() {
     val onAddExerciseAction = {}
     val onConfigureAction = {}
+    val onDeleteWorkoutAction = {}
+    val onEditWorkoutNameAction = {}
     Box(
         modifier = Modifier
             .background(Color.Black)
     ) {
         StartWorkoutActionRow(
             onAddExerciseAction = onAddExerciseAction,
-            onConfigureAction = onConfigureAction
+            onConfigureAction = onConfigureAction,
+            onDeleteWorkoutAction = onDeleteWorkoutAction,
+            onEditWorkoutNameAction = onEditWorkoutNameAction
         )
     }
 
@@ -550,7 +634,8 @@ fun StartWorkoutTitleAndSubtitle(
             style = TextStyle(
                 color = textColor,
                 fontSize = 40.sp,
-                fontWeight = FontWeight.ExtraBold
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center
             ),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
@@ -572,7 +657,8 @@ fun StartWorkoutTitleAndSubtitle(
             style = TextStyle(
                 color = textColor,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Light
+                fontWeight = FontWeight.Light,
+                textAlign = TextAlign.Center
             ),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
@@ -586,12 +672,16 @@ fun StartWorkoutHeaderPreview() {
     val onStartWorkoutAction = {}
     val onConfigureAction = {}
     val onAddExerciseAction = {}
+    val onEditWorkoutNameAction = {}
+    val onDeleteWorkoutAction = {}
     StartWorkoutHeader(
-        title = "Workout 5",
+        title = "Arnold destroy back workout",
         subtitle = "Biceps, triceps and forearms.",
         onStartWorkoutAction = onStartWorkoutAction,
         onConfigureAction = onConfigureAction,
-        onAddExerciseAction = onAddExerciseAction
+        onAddExerciseAction = onAddExerciseAction,
+        onEditWorkoutNameAction = onEditWorkoutNameAction,
+        onDeleteWorkoutAction = onDeleteWorkoutAction
     )
 }
 

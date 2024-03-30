@@ -12,8 +12,14 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.state.SelectedWorkoutState
+import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -47,6 +53,16 @@ class WorkoutDetailsViewModel @Inject constructor(
     val deleteExerciseState: StateFlow<DeleteExerciseState>
         get() = _deleteExerciseState
 
+    private var _deleteWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val deleteWorkoutState: StateFlow<BaseState>
+        get() = _deleteWorkoutState
+
+    private var _updateWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
+        MutableStateFlow(WorkoutDetailsState())
+    val updateWorkoutDetailsState: StateFlow<WorkoutDetailsState>
+        get() = _updateWorkoutDetailsState
+
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
 
     init {
@@ -79,7 +95,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     }
 
     //Navigation
-    fun navigateToSearchExcercises(workoutId: Int) {
+    private fun navigateToSearchExcercises(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchExercisesScreen(workoutId)
@@ -87,6 +103,7 @@ class WorkoutDetailsViewModel @Inject constructor(
         )
     }
 
+    //Deprecated
     fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
@@ -100,13 +117,65 @@ class WorkoutDetailsViewModel @Inject constructor(
     }
 
     override fun clearError() {
-       if(getWorkoutDetailsState.value.isError){
-           _getWorkoutDetailsState.value = WorkoutDetailsState()
-       }
+        if (getWorkoutDetailsState.value.isError) {
+            _getWorkoutDetailsState.value = WorkoutDetailsState()
+        }
 
-        if(deleteExerciseState.value.isError){
+        if (deleteExerciseState.value.isError) {
             _deleteExerciseState.value = DeleteExerciseState()
         }
+
+        if(deleteWorkoutState.value.isError){
+            _deleteWorkoutState.value = BaseState()
+        }
+
+        if(updateWorkoutDetailsState.value.isError){
+            _updateWorkoutDetailsState.value = WorkoutDetailsState()
+        }
+    }
+
+    fun startWorkout() {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateTo(
+                Destination.DoWorkoutScreen(workoutId = workoutId)
+            )
+        )
+    }
+
+    fun addExercise() {
+        navigateToSearchExcercises(
+            workoutId = workoutId
+        )
+    }
+
+    fun deleteWorkout() {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.deleteWorkoutUseCase(workoutId).collect { deleteWorkoutState ->
+                _deleteWorkoutState.value = deleteWorkoutState
+
+                //Clear backstack and navigate to dashboard
+                if (deleteWorkoutState.isSuccessful) {
+                    super.onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
+                }
+            }
+        }
+    }
+
+    fun updateWorkout(workoutDetailsDto: WorkoutDetailsDto) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.updateWorkoutDetailsUseCase(workoutDetailsDto)
+                .collect { updateWorkoutState ->
+                    _updateWorkoutDetailsState.value = updateWorkoutState
+
+                    //Update workout name
+                    if (updateWorkoutState.isSuccessful) {
+                        _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                            workoutDetails = updateWorkoutState.workoutDetails
+                        )
+                    }
+                }
+        }
+    }
 
     override fun onNavigateToDashboard() {
         super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
