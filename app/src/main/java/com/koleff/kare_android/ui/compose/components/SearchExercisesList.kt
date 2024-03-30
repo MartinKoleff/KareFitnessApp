@@ -22,6 +22,7 @@ fun SearchExercisesList(
     exerciseList: List<ExerciseDto>,
     workoutId: Int,
     navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit,
+    onSubmitExercise: (ExerciseDto) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         val muscleGroups = exerciseList.map(ExerciseDto::muscleGroup).distinct()
@@ -46,7 +47,11 @@ fun SearchExercisesList(
                         .height(200.dp),
                     exercise = currentExercise,
                 ) { selectedExercise ->
-                    navigateToExerciseDetailsConfigurator(selectedExercise, workoutId)
+                    onSubmitExercise(selectedExercise)
+
+                    //TODO: select multiple exercises rework...
+
+                    //navigateToExerciseDetailsConfigurator(selectedExercise, workoutId)
                 }
             }
         }
@@ -68,6 +73,9 @@ fun SearchExercisesListPreview() {
         exerciseList = exerciseList,
         workoutId = 1,
         navigateToExerciseDetailsConfigurator = { exercise, workoutId ->
+
+        },
+        onSubmitExercise = {
 
         }
     )

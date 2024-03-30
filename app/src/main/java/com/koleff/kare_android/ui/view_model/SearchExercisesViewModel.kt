@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,10 +11,14 @@ import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.ui.state.ExerciseListState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
+import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -26,6 +31,7 @@ import javax.inject.Inject
 class SearchExercisesViewModel @Inject constructor(
     private val exerciseUseCases: ExerciseUseCases,
     private val savedStateHandle: SavedStateHandle,
+    private val workoutUseCases: WorkoutUseCases,
     private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController) {
@@ -40,6 +46,11 @@ class SearchExercisesViewModel @Inject constructor(
     private val _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState>
         get() = _searchState
+
+    private var _updateWorkoutState: MutableStateFlow<WorkoutDetailsState> =
+        MutableStateFlow(WorkoutDetailsState())
+    val updateWorkoutState: StateFlow<WorkoutDetailsState>
+        get() = _updateWorkoutState
 
 //    val searchState = _searchState
 //        .debounce(Constants.fakeSmallDelay)
@@ -128,5 +139,56 @@ class SearchExercisesViewModel @Inject constructor(
         if(state.value.isError){
             _state.value = ExerciseListState()
         }
+    }
+
+    fun onExerciseUpdateEvent(event: OnExerciseUpdateEvent) {
+        when (event) {
+            is OnExerciseUpdateEvent.OnExerciseDelete -> {
+                val exercise = event.exercise
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.deleteExerciseUseCase(
+                        workoutId = workoutId,
+                        exerciseId = exercise.exerciseId
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+
+                        //Go to workout details
+                        if(updateWorkoutState.isSuccessful){
+                            navigateToWorkoutDetails()
+                        }
+                    }
+                }
+            }
+
+            is OnExerciseUpdateEvent.OnExerciseSubmit -> {
+                val exercise = event.exercise
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.addExerciseUseCase(
+                        workoutId = workoutId,
+                        exercise = exercise
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+                    }
+                }
+            }
+        }
+    }
+
+    private fun navigateToWorkoutDetails() {
+        super.onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                destinationRoute = Destination.WorkoutDetails(
+                    workoutId
+                ).route,
+                popUpToRoute = Destination.Workouts.route,
+                inclusive = false
+            )
+        )
+
+        //Raise a flag to update Workouts screen...
+        savedStateHandle["hasUpdated"] = true
+        Log.d("SearchExercisesViewModel", "hasUpdated set to true.")
     }
 }

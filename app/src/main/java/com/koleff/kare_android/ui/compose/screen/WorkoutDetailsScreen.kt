@@ -81,8 +81,6 @@ fun WorkoutDetailsScreen(
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
         //TODO: select multiple exercises rework...
-
-        //TODO: submit exercise directly and skip exercise details configurator...
     }
 
     var selectedWorkout by remember {

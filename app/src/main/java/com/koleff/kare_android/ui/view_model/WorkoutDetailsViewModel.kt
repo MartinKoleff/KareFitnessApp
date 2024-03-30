@@ -95,7 +95,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     }
 
     //Navigation
-    private fun navigateToSearchExcercises(workoutId: Int) {
+    private fun navigateToSearchExercises(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchExercisesScreen(workoutId)
@@ -143,7 +143,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     }
 
     fun addExercise() {
-        navigateToSearchExcercises(
+        navigateToSearchExercises(
             workoutId = workoutId
         )
     }
