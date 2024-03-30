@@ -163,13 +163,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            CustomTitleAndSubtitle(
+            AuthorizationTitleAndSubtitle(
                 title = "Welcome back!",
                 subtitle = "We missed you!"
             )
 
             //User text box
-            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
                 username = it
             }
 
@@ -200,7 +200,7 @@ fun LoginScreenPreview() {
 }
 
 @Composable
-fun CustomTitleAndSubtitle(title: String, subtitle: String) {
+fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     val textColor = Color.White
 
     val titlePadding =
@@ -267,7 +267,7 @@ fun CustomTitleAndSubtitle(title: String, subtitle: String) {
 @Composable
 fun CustomTextField(
     label: String,
-    iconId: Int,
+    iconResourceId: Int,
     onValueChange: (String) -> Unit
 ) {
     var text by rememberSaveable {
@@ -306,7 +306,7 @@ fun CustomTextField(
                 modifier = Modifier
                     .size(45.dp)
                     .padding(vertical = 8.dp, horizontal = 2.dp),
-                painter = painterResource(iconId),
+                painter = painterResource(iconResourceId),
                 contentDescription = "Icon",
                 contentScale = ContentScale.Inside
 //                    colorFilter = ColorFilter.tint(
@@ -315,7 +315,7 @@ fun CustomTextField(
 //                    )
             )
 //            Icon(
-//                painter = painterResource(iconId),
+//                painter = painterResource(iconResourceId),
 //                contentDescription = "Text box icon"
 //            )
         }
@@ -327,7 +327,7 @@ fun CustomTextField(
 fun CustomTextFieldPreview() {
     CustomTextField(
         label = "Username",
-        iconId = R.drawable.ic_user_2,
+        iconResourceId = R.drawable.ic_user_2,
         onValueChange = {}
     )
 }

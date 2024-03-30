@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -308,6 +309,7 @@ fun DeleteButton(
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
+    val paddingValues = PaddingValues(bottom = 8.dp)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -325,11 +327,16 @@ fun DeleteButton(
             .clickable(onClick = onDelete)
     ) {
         Icon(
-            imageVector = Icons.Default.Delete,
+            painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "Delete",
             tint = Color.White,
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier
+                .size(iconSize)
         )
+
+        Spacer(modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth())
 
         Text(
             text = title,
@@ -353,6 +360,7 @@ fun SelectButton(
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
+    val paddingValues = PaddingValues(bottom = 8.dp)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -374,10 +382,15 @@ fun SelectButton(
         Image(
             painter = image,
             contentDescription = "Select",
-            modifier = Modifier.size(iconSize),
+            modifier = Modifier
+                .size(iconSize),
             colorFilter = ColorFilter.tint(Color.White),
             contentScale = ContentScale.Crop // This makes the image fill the bounds of the box
         )
+
+        Spacer(modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth())
 
         Text(
             text = title,
@@ -401,6 +414,7 @@ fun EditButton(
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
+    val paddingValues = PaddingValues(bottom = 8.dp)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -418,11 +432,16 @@ fun EditButton(
             .clickable(onClick = onEdit)
     ) {
         Icon(
-            imageVector = Icons.Default.Edit,
+            painter = painterResource(id = R.drawable.ic_edit),
             contentDescription = "Edit",
             tint = Color.White,
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier
+                .size(iconSize)
         )
+
+        Spacer(modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth())
 
         Text(
             text = title,

@@ -130,13 +130,13 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            CustomTitleAndSubtitle(
+            AuthorizationTitleAndSubtitle(
                 title = "Welcome to Kare!",
                 subtitle = "Create an account so you can become part of the family!"
             )
 
             //User text box
-            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
                 username = it
             }
 
@@ -146,7 +146,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             }
 
             //User text box
-            CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
+            CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
                 email = it
             }
 

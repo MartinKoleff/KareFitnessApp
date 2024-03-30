@@ -80,9 +80,7 @@ class CredentialsValidatorImpl @Inject constructor(
                 is ResultWrapper.ApiError -> {
                     throw IllegalArgumentException("Email doesn't exist in DB.")
                 }
-                else -> {
-                    Log.d("USERLOCALDATASOURCE", "-1")
-                }
+                else -> {}
             }
         }
     }
