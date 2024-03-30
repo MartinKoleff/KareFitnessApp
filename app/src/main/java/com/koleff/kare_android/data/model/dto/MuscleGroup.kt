@@ -35,6 +35,7 @@ enum class MuscleGroup(
             LEGS
         )
 
+
         fun fromId(id: Int): MuscleGroup =
             entries.find { it.muscleGroupId == id } ?: NONE
 
@@ -44,6 +45,26 @@ enum class MuscleGroup(
 
         fun getTotalExercises(muscleGroup: MuscleGroup): Int {
             return ExerciseGenerator.getTotalExercisesForMuscleGroup(muscleGroup)
+        }
+
+        fun toDescription(muscleGroup: MuscleGroup): String {
+            return when (muscleGroup) {
+                CHEST, BACK, TRICEPS, BICEPS, SHOULDERS, LEGS, ABS, CARDIO, FULL_BODY  -> {
+                    muscleGroup.muscleGroupName
+                }
+                UPPER_LOWER_BODY -> {
+                    "Upper Body ○ Lower Body"
+                }
+                ARMS -> {
+                    "Triceps ○ Biceps ○ Forearms"
+                }
+                PUSH_PULL_LEGS -> {
+                    muscleGroup.muscleGroupName.replace(" ", " ○ ")
+                }
+                else -> { //OTHER, ALL, NONE
+                    ""
+                }
+            }
         }
     }
 }
