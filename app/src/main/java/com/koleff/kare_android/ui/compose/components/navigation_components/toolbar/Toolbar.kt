@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.Navig
 @Composable
 fun Toolbar(
     modifier: Modifier = Modifier,
+    textAlpha: Float = 1f,
     title: String = "",
     hasTitle: Boolean = true,
     onNavigateBackAction: () -> Unit,
@@ -42,7 +44,7 @@ fun Toolbar(
         title = {
             if (hasTitle) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().alpha(textAlpha),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -81,6 +83,7 @@ fun ToolbarPreview() {
 
     Toolbar(
         modifier = Modifier.height(100.dp),
+        textAlpha = 1f, //Hide text until passed the 2 line threshold -> glitch with 2 lined text on 1 line.
         title = "Arnold explosive chest workout",
         onNavigateBackAction = {},
         onNavigateToAction = {}

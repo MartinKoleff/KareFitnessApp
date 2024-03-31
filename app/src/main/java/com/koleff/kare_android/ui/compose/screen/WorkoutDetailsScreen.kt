@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -70,6 +71,7 @@ import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.state.AnimatedToolbarState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -258,18 +260,25 @@ fun WorkoutDetailsScreen(
         targetValue = if (showToolbar.value) 65.dp else 0.dp,
         label = "Main screen toolbar height"
     )
+    val textAlpha by animateFloatAsState(
+        targetValue = if (toolbarHeight.value > 40.dp) 1f else 0f,
+        label = "Text alpha animation"
+    )
 
     //Recompositions when scroll state changes
     val isLogging = false
     LaunchedEffect(lazyListState) {
         snapshotFlow { lazyListState.firstVisibleItemIndex }
             .collectLatest { index ->
-              if(isLogging) Log.d("WorkoutDetailsScreen", "First visible item index: $index")
+                if (isLogging) Log.d("WorkoutDetailsScreen", "First visible item index: $index")
             }
 
         snapshotFlow { lazyListState.firstVisibleItemScrollOffset }
             .collectLatest { offset ->
-               if(isLogging) Log.d("WorkoutDetailsScreen", "First visible item scroll offset: $offset")
+                if (isLogging) Log.d(
+                    "WorkoutDetailsScreen",
+                    "First visible item scroll offset: $offset"
+                )
             }
     }
 
@@ -279,8 +288,11 @@ fun WorkoutDetailsScreen(
         onNavigateToWorkouts = { workoutDetailsViewModel.onNavigateToWorkouts() },
         onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
         onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() },
-        showToolbar = showToolbar.value,
-        toolbarHeight = toolbarHeight.value
+        animatedToolbarState = AnimatedToolbarState(
+            showToolbar = showToolbar.value,
+            toolbarHeight = toolbarHeight.value,
+            textAlpha = textAlpha
+        )
     ) { innerPadding ->
 
 
@@ -312,6 +324,7 @@ fun WorkoutDetailsScreen(
                     //Collapsable header
                     item {
                         StartWorkoutHeader(
+                            modifier = Modifier.fillParentMaxHeight(),
                             title = workoutTitle,
                             subtitle = MuscleGroup.toDescription(selectedWorkout.muscleGroup),
                             onStartWorkoutAction = {
@@ -330,7 +343,7 @@ fun WorkoutDetailsScreen(
 
                         SwipeableExerciseBanner(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillParentMaxWidth()
                                 .height(200.dp),
                             exercise = currentExercise,
                             onClick = onExerciseSelected,
@@ -411,6 +424,7 @@ fun StartWorkoutButton(
 
 @Composable
 fun StartWorkoutHeader(
+    modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
     onStartWorkoutAction: () -> Unit,
@@ -419,7 +433,11 @@ fun StartWorkoutHeader(
     onDeleteWorkoutAction: () -> Unit,
     onEditWorkoutNameAction: () -> Unit
 ) {
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.Bottom,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         StartWorkoutTitleAndSubtitle(title, subtitle)
 
         StartWorkoutActionRow(

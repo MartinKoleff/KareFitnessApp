@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.ui.compose.components.navigation_components.bottom_navigation_bar.BottomNavigationBar
 import com.koleff.kare_android.ui.compose.components.navigation_components.toolbar.Toolbar
+import com.koleff.kare_android.ui.state.AnimatedToolbarState
 
 @Composable
 fun MainScreenScaffold(
@@ -18,19 +19,19 @@ fun MainScreenScaffold(
     onNavigateBackAction: () -> Unit,
     onNavigateToDashboard: () -> Unit,
     onNavigateToWorkouts: () -> Unit,
-    showToolbar: Boolean = true,
-    toolbarHeight: Dp? = null,
+    animatedToolbarState: AnimatedToolbarState = AnimatedToolbarState(),
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            if (showToolbar) {
+            if (animatedToolbarState.showToolbar) {
                 Toolbar(
-                    modifier = if (toolbarHeight == null) Modifier  //.height(65.dp)
-                                     else Modifier
-                                         .height(toolbarHeight),
+                    modifier = if (animatedToolbarState.toolbarHeight == animatedToolbarState.defaultToolbarHeight) Modifier
+                    else Modifier
+                        .height(animatedToolbarState.toolbarHeight),
                     title = screenTitle,
+                    textAlpha = animatedToolbarState.textAlpha,
                     onNavigateToAction = onNavigateToSettings,
                     onNavigateBackAction = onNavigateBackAction
                 )
