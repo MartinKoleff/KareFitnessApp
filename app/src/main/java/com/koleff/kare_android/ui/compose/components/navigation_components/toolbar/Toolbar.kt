@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,6 +20,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.Navig
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Toolbar(
+    modifier: Modifier = Modifier,
     title: String = "",
     hasTitle: Boolean = true,
     onNavigateBackAction: () -> Unit,
@@ -27,6 +29,7 @@ fun Toolbar(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     CenterAlignedTopAppBar(
+        modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,

@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
@@ -30,15 +32,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +71,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -228,12 +236,63 @@ fun WorkoutDetailsScreen(
         onRefresh = { workoutDetailsViewModel.getWorkoutDetails(workoutDetailsState.workoutDetails.workoutId) }
     )
 
+    //Collapsable header state
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val lazyListState = rememberLazyListState()
+    val scrollThreshold = screenHeight / 2
+
+    //firstVisibleItemIndex -> How many elements are scrolled from the screen.
+    //First element is collapsable header. Second is workout banner and etc...
+    val showToolbar = remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex > 0 ||
+            lazyListState.firstVisibleItemScrollOffset >= scrollThreshold.value
+        }
+    }
+    val toolbarHeight = animateDpAsState(
+        targetValue = if (showToolbar.value) 70.dp else 0.dp,
+        label = "Main screen toolbar height"
+    )
+
+//    LaunchedEffect(isBeyondThreshold) {
+//        snapshotFlow { isBeyondThreshold.value }
+//            .collect { beyondThreshold ->
+//                showToolbar.value = beyondThreshold
+//            }
+//    }
+
+//    LaunchedEffect(lazyListState) {
+//        snapshotFlow { lazyListState.firstVisibleItemIndex }
+//            .collectLatest { index ->
+//                scrollIndex.intValue = index
+//            }
+//
+//        snapshotFlow { lazyListState.firstVisibleItemScrollOffset }
+//            .collectLatest { offset ->
+//                isBeyondThreshold.value = scrollIndex.intValue > 0 || lazyListState.firstVisibleItemScrollOffset >= scrollThreshold.value
+//                showToolbar.value = isBeyondThreshold.value
+//            }
+//    }
+
+
+    LaunchedEffect(
+        remember { derivedStateOf { lazyListState.firstVisibleItemIndex } },
+        remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }
+    ) {
+        //This effect is necessary to ensure recomposition happens when scroll changes,
+        //but the actual logic to show the toolbar is handled by showToolbar's derivedStateOf
+    }
+
     MainScreenScaffold(
-        workoutTitle,
+        screenTitle = workoutTitle,
         onNavigateToDashboard = { workoutDetailsViewModel.onNavigateToDashboard() },
         onNavigateToWorkouts = { workoutDetailsViewModel.onNavigateToWorkouts() },
         onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
-        onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
+        onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() },
+        showToolbar = showToolbar.value,
+        toolbarHeight = toolbarHeight.value
     ) { innerPadding ->
 
 
@@ -256,6 +315,7 @@ fun WorkoutDetailsScreen(
             } else {
                 //Exercises
                 LazyColumn(
+                    state = lazyListState,
                     modifier = contentModifier,
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -371,7 +431,7 @@ fun StartWorkoutHeader(
     onDeleteWorkoutAction: () -> Unit,
     onEditWorkoutNameAction: () -> Unit
 ) {
-    Column {
+    Column(modifier = Modifier.fillMaxSize()) {
         StartWorkoutTitleAndSubtitle(title, subtitle)
 
         StartWorkoutActionRow(
