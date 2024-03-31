@@ -245,44 +245,32 @@ fun WorkoutDetailsScreen(
 
     //firstVisibleItemIndex -> How many elements are scrolled from the screen.
     //First element is collapsable header. Second is workout banner and etc...
+    //------------------------------------------------------------------------
+    //firstVisibleItemScrollOffset -> current scroll session offset.
+    //Resets once you stop scrolling.
     val showToolbar = remember {
         derivedStateOf {
             lazyListState.firstVisibleItemIndex > 0 ||
-            lazyListState.firstVisibleItemScrollOffset >= scrollThreshold.value
+                    lazyListState.firstVisibleItemScrollOffset >= scrollThreshold.value
         }
     }
     val toolbarHeight = animateDpAsState(
-        targetValue = if (showToolbar.value) 70.dp else 0.dp,
+        targetValue = if (showToolbar.value) 65.dp else 0.dp,
         label = "Main screen toolbar height"
     )
 
-//    LaunchedEffect(isBeyondThreshold) {
-//        snapshotFlow { isBeyondThreshold.value }
-//            .collect { beyondThreshold ->
-//                showToolbar.value = beyondThreshold
-//            }
-//    }
+    //Recompositions when scroll state changes
+    val isLogging = false
+    LaunchedEffect(lazyListState) {
+        snapshotFlow { lazyListState.firstVisibleItemIndex }
+            .collectLatest { index ->
+              if(isLogging) Log.d("WorkoutDetailsScreen", "First visible item index: $index")
+            }
 
-//    LaunchedEffect(lazyListState) {
-//        snapshotFlow { lazyListState.firstVisibleItemIndex }
-//            .collectLatest { index ->
-//                scrollIndex.intValue = index
-//            }
-//
-//        snapshotFlow { lazyListState.firstVisibleItemScrollOffset }
-//            .collectLatest { offset ->
-//                isBeyondThreshold.value = scrollIndex.intValue > 0 || lazyListState.firstVisibleItemScrollOffset >= scrollThreshold.value
-//                showToolbar.value = isBeyondThreshold.value
-//            }
-//    }
-
-
-    LaunchedEffect(
-        remember { derivedStateOf { lazyListState.firstVisibleItemIndex } },
-        remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }
-    ) {
-        //This effect is necessary to ensure recomposition happens when scroll changes,
-        //but the actual logic to show the toolbar is handled by showToolbar's derivedStateOf
+        snapshotFlow { lazyListState.firstVisibleItemScrollOffset }
+            .collectLatest { offset ->
+               if(isLogging) Log.d("WorkoutDetailsScreen", "First visible item scroll offset: $offset")
+            }
     }
 
     MainScreenScaffold(

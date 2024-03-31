@@ -27,8 +27,9 @@ fun MainScreenScaffold(
         topBar = {
             if (showToolbar) {
                 Toolbar(
-                    modifier = if (toolbarHeight == null) Modifier
-                                     else Modifier.height(toolbarHeight),
+                    modifier = if (toolbarHeight == null) Modifier  //.height(65.dp)
+                                     else Modifier
+                                         .height(toolbarHeight),
                     title = screenTitle,
                     onNavigateToAction = onNavigateToSettings,
                     onNavigateBackAction = onNavigateBackAction

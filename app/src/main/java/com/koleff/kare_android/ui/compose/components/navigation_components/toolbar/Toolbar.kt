@@ -1,7 +1,11 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,11 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,23 +41,30 @@ fun Toolbar(
         ),
         title = {
             if (hasTitle) {
-                Text(
-                    text = title,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    textAlign = TextAlign.Center
-                )
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = title,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         },
         navigationIcon = {
             NavigationItem(
-                icon = Icons.Filled.ArrowBack,
+                modifier = Modifier.fillMaxHeight(),
+                icon = Icons.AutoMirrored.Filled.ArrowBackIos,
                 label = "Go back",
                 onNavigateAction = onNavigateBackAction
             )
         },
         actions = {
             NavigationItem(
+                modifier = Modifier.fillMaxHeight(),
                 icon = Icons.Filled.Settings,
                 label = "Settings",
                 onNavigateAction = onNavigateToAction
@@ -65,7 +77,11 @@ fun Toolbar(
 @Preview
 @Composable
 fun ToolbarPreview() {
+    //Adding modifier moves all components up. Without modifier all components are centered.
+
     Toolbar(
+        modifier = Modifier.height(100.dp),
+        title = "Arnold explosive chest workout",
         onNavigateBackAction = {},
         onNavigateToAction = {}
     )
