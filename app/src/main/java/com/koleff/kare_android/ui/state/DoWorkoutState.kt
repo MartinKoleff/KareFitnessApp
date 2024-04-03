@@ -7,12 +7,12 @@ import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
 data class DoWorkoutState(
-    val isSuccessful: Boolean = false,
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val error: KareError = KareError.GENERIC,
-    val doWorkoutData: DoWorkoutData = DoWorkoutData()
-)
+    val doWorkoutData: DoWorkoutData = DoWorkoutData(),
+    override val isSuccessful: Boolean = false,
+    override val isLoading: Boolean = false,
+    override val isError: Boolean = false,
+    override val error: KareError = KareError.GENERIC
+): BaseState(isSuccessful, isLoading, isError, error)
 
 data class DoWorkoutData(
     val currentExercise: ExerciseDto = ExerciseDto(),
