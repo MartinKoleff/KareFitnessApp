@@ -72,6 +72,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.AnimatedToolbarState
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -133,11 +134,6 @@ fun WorkoutDetailsScreen(
     var showErrorDialog by remember { mutableStateOf(false) }
 
     //Dialog callbacks
-    val onErrorDialogDismiss = {
-        showErrorDialog = false
-        workoutDetailsViewModel.clearError() //Enters launched effect to update showErrorDialog...
-    }
-
     val onDeleteWorkout: () -> Unit = {
         workoutDetailsViewModel.deleteWorkout()
 
@@ -161,35 +157,41 @@ fun WorkoutDetailsScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        workoutDetailsViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
+
     LaunchedEffect(
-        workoutDetailsState.isError,
-        deleteExerciseState.isError,
-        deleteWorkoutDetailsState.isError,
-        updateWorkoutDetailsState.isError
+        workoutDetailsState,
+        deleteExerciseState,
+        deleteWorkoutDetailsState,
+        updateWorkoutDetailsState,
+        startWorkoutState
     ) {
+        val states = listOf(
+            workoutDetailsState,
+            deleteExerciseState,
+            deleteWorkoutDetailsState,
+            updateWorkoutDetailsState,
+            startWorkoutState
+        )
 
-        error = if (workoutDetailsState.isError) {
-            workoutDetailsState.error
-        } else if (deleteExerciseState.isError) {
-            deleteExerciseState.error
-        } else if (deleteWorkoutDetailsState.isError) {
-            deleteWorkoutDetailsState.error
-        } else if (updateWorkoutDetailsState.isError) {
-            updateWorkoutDetailsState.error
-        } else {
-            null
-        }
-
-        showErrorDialog =
-            workoutDetailsState.isError ||
-                    deleteExerciseState.isError ||
-                    deleteWorkoutDetailsState.isError ||
-                    updateWorkoutDetailsState.isError
+        val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+        error = errorState.error
+        showErrorDialog = errorState.isError
 
         Log.d("WorkoutDetailsScreen", "Error detected -> $showErrorDialog")
     }
 
     //Dialogs
+    if (showErrorDialog) {
+        Log.d("WorkoutDetailsScreen", "Error: $error")
+        error?.let {
+            ErrorDialog(it, onErrorDialogDismiss)
+        }
+    }
+
     if (showDeleteExerciseDialog) {
         WarningDialog(
             title = "Delete Exercise",
@@ -226,11 +228,6 @@ fun WorkoutDetailsScreen(
         )
     }
 
-    if (showErrorDialog) {
-        error?.let {
-            ErrorDialog(error!!, onErrorDialogDismiss)
-        }
-    }
 
     //Pull to refresh
     val pullRefreshState = rememberPullRefreshState(
@@ -309,7 +306,8 @@ fun WorkoutDetailsScreen(
             if (workoutDetailsState.isLoading ||
                 deleteExerciseState.isLoading ||
                 deleteWorkoutDetailsState.isLoading ||
-                updateWorkoutDetailsState.isLoading
+                updateWorkoutDetailsState.isLoading ||
+                startWorkoutState.isLoading
             ) {
                 LoadingWheel(innerPadding = innerPadding)
             } else {

@@ -47,16 +47,10 @@ fun MuscleGroupScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(exerciseListState.isError){
-
-        error = if (exerciseListState.isError) {
-            exerciseListState.error
-        } else {
-            null
-        }
-
+    LaunchedEffect(exerciseListState){
         showErrorDialog =
             exerciseListState.isError
+        error = exerciseListState.error
 
         Log.d("MuscleGroupScreen", "Error detected -> $showErrorDialog")
     }
@@ -64,7 +58,7 @@ fun MuscleGroupScreen(
     //Dialogs
     if (showErrorDialog) {
         error?.let {
-            ErrorDialog(error!!, onErrorDialogDismiss)
+            ErrorDialog(it, onErrorDialogDismiss)
         }
     }
 
@@ -89,6 +83,7 @@ fun MuscleGroupScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+
             //Filter buttons
             MachineFilterSegmentButton(
                 modifier = buttonModifier,

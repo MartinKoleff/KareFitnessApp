@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
@@ -91,14 +92,18 @@ fun LoginScreen(
         loginViewModel.login(credentials)
     }
 
+    //Dialog visibility
     var showErrorDialog by remember { mutableStateOf(false) }
     var showLoadingDialog by remember { mutableStateOf(false) }
 
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
     LaunchedEffect(loginState) {
         Log.d("LoginScreen", "Login state updated: $loginState")
 
         //Update showErrorDialog based on loginState
         showErrorDialog = loginState.isError
+        error = loginState.error
 
         //Update showLoadingDialog based on loginState
         showLoadingDialog = loginState.isLoading
@@ -130,7 +135,9 @@ fun LoginScreen(
 
     //Error dialog
     if (showErrorDialog) {
-        ErrorDialog(loginState.error, onDismiss)
+        error?.let {
+            ErrorDialog(it, onDismiss)
+        }
     }
 
     AuthenticationScaffold(

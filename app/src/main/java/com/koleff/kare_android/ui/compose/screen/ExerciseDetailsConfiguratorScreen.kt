@@ -43,6 +43,7 @@ import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
@@ -97,31 +98,26 @@ fun ExerciseDetailsConfiguratorScreen(
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
     LaunchedEffect(
-        exerciseState.isError,
-        selectedWorkoutState.isError,
-        updateWorkoutState.isError
+        exerciseState,
+        selectedWorkoutState,
+        updateWorkoutState
     ) {
+        val states = listOf(
+            exerciseState,
+            selectedWorkoutState,
+            updateWorkoutState
+        )
 
-        error = if (exerciseState.isError) {
-            exerciseState.error
-        } else if (selectedWorkoutState.isError) {
-            selectedWorkoutState.error
-        } else if (updateWorkoutState.isError) {
-            updateWorkoutState.error
-        } else {
-            null
-        }
-
-        showErrorDialog =
-            exerciseState.isError || selectedWorkoutState.isError || updateWorkoutState.isError
-
+        val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+        error = errorState.error
+        showErrorDialog = errorState.isError
         Log.d("ExerciseDetailsConfiguratorScreen", "Error detected -> $showErrorDialog")
     }
 
     //Dialogs
     if (showErrorDialog) {
         error?.let {
-            ErrorDialog(error!!, onErrorDialogDismiss)
+            ErrorDialog(it, onErrorDialogDismiss)
         }
     }
 

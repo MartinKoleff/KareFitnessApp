@@ -66,6 +66,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
@@ -103,19 +104,20 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     var showNextExerciseCountdown by remember {
         mutableStateOf(false)
     }
-    LaunchedEffect(state.doWorkoutData.isBetweenExerciseCountdown) {
-        showNextExerciseCountdown = state.doWorkoutData.isBetweenExerciseCountdown
-        workoutTimerInitialState = workoutTimerState
-        Log.d("DoWorkoutScreen", "Show next exercise: $showNextExerciseCountdown")
+
+    //Wait for data on initialization
+    var showLoadingDialog by remember {
+        mutableStateOf(state.isLoading)
     }
 
     //Wait for data on initialization
     var showErrorDialog by remember {
         mutableStateOf(false)
     }
-    LaunchedEffect(state.isError) {
-        showErrorDialog = state.isError
-        Log.d("DoWorkoutScreen", "Error: $showErrorDialog")
+
+    //Error handling
+    var error: KareError? by remember {
+        mutableStateOf(null)
     }
 
     //Dialog callbacks
@@ -123,19 +125,24 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         showErrorDialog = false
         doWorkoutViewModel.clearError() //Enters launched effect to update showErrorDialog...
     }
+    LaunchedEffect(state) {
+        showErrorDialog = state.isError
+        error = state.error
+        Log.d("DoWorkoutScreen", "Error: $showErrorDialog")
 
-    //Wait for data on initialization
-    var showLoadingDialog by remember {
-        mutableStateOf(state.isLoading)
-    }
-    LaunchedEffect(state.isLoading) {
         showLoadingDialog = state.isLoading
         Log.d("DoWorkoutScreen", "Loading: $showLoadingDialog")
+
+        showNextExerciseCountdown = state.doWorkoutData.isBetweenExerciseCountdown
+        workoutTimerInitialState = workoutTimerState
+        Log.d("DoWorkoutScreen", "Show next exercise: $showNextExerciseCountdown")
     }
 
     //Error dialog
     if (showErrorDialog) {
-        ErrorDialog(state.error, onErrorDialogDismiss)
+        error?.let {
+            ErrorDialog(it, onErrorDialogDismiss)
+        }
     }
 
     //Blur for Android 12+ / Lower alpha for < Android 12  when NextExerciseCountdownScreen is displayed...

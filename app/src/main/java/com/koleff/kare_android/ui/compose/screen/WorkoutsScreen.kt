@@ -42,6 +42,7 @@ import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import java.util.Locale
 
@@ -153,35 +154,36 @@ fun WorkoutsScreen(
         }
 
         //Error handling
+        val onErrorDialogDismiss = {
+            showErrorDialog = false
+            workoutListViewModel.clearError() //Enters launched effect to update showErrorDialog...
+        }
+
         var error by remember { mutableStateOf<KareError?>(null) }
         LaunchedEffect(
-            workoutState.isError,
-            createWorkoutState.isError,
-            deleteWorkoutState.isError,
-            updateWorkoutState.isError
+            workoutState,
+            createWorkoutState,
+            deleteWorkoutState,
+            updateWorkoutState
         ) {
+            val states = listOf(
+                workoutState,
+                createWorkoutState,
+                deleteWorkoutState,
+                updateWorkoutState
+            )
 
-            error = if (workoutState.isError) {
-                workoutState.error
-            } else if (createWorkoutState.isError) {
-                createWorkoutState.error
-            } else if (deleteWorkoutState.isError) {
-                deleteWorkoutState.error
-            } else if (updateWorkoutState.isError) {
-                updateWorkoutState.error
-            } else {
-                null
-            }
-
-            showErrorDialog =
-                workoutState.isError || createWorkoutState.isError || deleteWorkoutState.isError || updateWorkoutState.isError
+            val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+            error = errorState.error
+            showErrorDialog = errorState.isError
 
             Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
         }
 
-        val onErrorDialogDismiss = {
-            showErrorDialog = false
-            workoutListViewModel.clearError() //Enters launched effect to update showErrorDialog...
+        if (showErrorDialog) {
+            error?.let {
+                ErrorDialog(it, onErrorDialogDismiss)
+            }
         }
 
         //Dialogs
@@ -201,12 +203,6 @@ fun WorkoutsScreen(
                 onClick = onDeleteWorkout,
                 onDismiss = { showDeleteDialog = false }
             )
-        }
-
-        if (showErrorDialog) {
-            error?.let {
-                ErrorDialog(error!!, onErrorDialogDismiss)
-            }
         }
 
         if (showSelectDialog && selectedWorkout != null) {
