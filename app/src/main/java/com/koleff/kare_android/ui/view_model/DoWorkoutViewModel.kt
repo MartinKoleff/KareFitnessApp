@@ -247,15 +247,15 @@ class DoWorkoutViewModel @Inject constructor(
     ) =
         with(state.value.doWorkoutData) {
 
+            //Hide next exercise countdown screen
+            hideNextExerciseCountdownScreen()
+
             //Reset countdown timer and state
             countdownTimer.resetTimer().also {
                 val defaultCountdownTime = countdownTime
                 _countdownTimerState.value =
                     _countdownTimerState.value.copy(time = defaultCountdownTime)
             }
-
-            //Hide next exercise countdown screen
-            hideNextExerciseCountdownScreen()
 
             //Update current and next exercise sets after countdown timer has finished.
             if (!isInitialCall) {

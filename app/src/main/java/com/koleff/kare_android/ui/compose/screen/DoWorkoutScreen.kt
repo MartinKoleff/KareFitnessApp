@@ -202,7 +202,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
                 NextExerciseCountdownScreen(
                     nextExercise = if (state.doWorkoutData.isNextExercise) nextExercise else currentExercise,
-                    currentSetNumber = if (state.doWorkoutData.isNextExercise) nextSetNumber else currentSetNumber,
+                    currentSetNumber = nextSetNumber,
                     countdownTime = countdownTimerState.time,
                     defaultTotalSets = state.doWorkoutData.defaultTotalSets,
                     countdownNumberPadding = PaddingValues(
