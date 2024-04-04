@@ -14,6 +14,7 @@ import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -62,6 +63,12 @@ class WorkoutDetailsViewModel @Inject constructor(
         MutableStateFlow(WorkoutDetailsState())
     val updateWorkoutDetailsState: StateFlow<WorkoutDetailsState>
         get() = _updateWorkoutDetailsState
+
+
+    private var _startWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val startWorkoutState: StateFlow<BaseState>
+        get() = _startWorkoutState
 
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
 
@@ -125,21 +132,35 @@ class WorkoutDetailsViewModel @Inject constructor(
             _deleteExerciseState.value = DeleteExerciseState()
         }
 
-        if(deleteWorkoutState.value.isError){
+        if (deleteWorkoutState.value.isError) {
             _deleteWorkoutState.value = BaseState()
         }
 
-        if(updateWorkoutDetailsState.value.isError){
+        if (updateWorkoutDetailsState.value.isError) {
             _updateWorkoutDetailsState.value = WorkoutDetailsState()
+        }
+        if(startWorkoutState.value.isError){
+            _startWorkoutState.value = BaseState()
         }
     }
 
     fun startWorkout() {
-        super.onNavigationEvent(
-            NavigationEvent.NavigateTo(
-                Destination.DoWorkoutScreen(workoutId = workoutId)
+
+        //Empty exercise list
+        if (getWorkoutDetailsState.value.workoutDetails.exercises.isEmpty()) {
+            _startWorkoutState.value = BaseState(
+                isError = true,
+                error = KareError.WORKOUT_HAS_NO_EXERCISES
             )
-        )
+        } else {
+            _startWorkoutState.value = BaseState(isSuccessful = true)
+
+            super.onNavigationEvent(
+                NavigationEvent.NavigateTo(
+                    Destination.DoWorkoutScreen(workoutId = workoutId)
+                )
+            )
+        }
     }
 
     fun addExercise() {
@@ -189,7 +210,7 @@ class WorkoutDetailsViewModel @Inject constructor(
         super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }
 
-    override fun onNavigateBack()  {
+    override fun onNavigateBack() {
         super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

@@ -85,6 +85,7 @@ fun WorkoutDetailsScreen(
     val updateWorkoutDetailsState by workoutDetailsViewModel.updateWorkoutDetailsState.collectAsState()
     val deleteWorkoutDetailsState by workoutDetailsViewModel.deleteWorkoutState.collectAsState()
     val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
+    val startWorkoutState by workoutDetailsViewModel.startWorkoutState.collectAsState()
 
     val workoutTitle =
         if (workoutDetailsState.workoutDetails.name == "" || updateWorkoutDetailsState.isLoading) "Loading..."
