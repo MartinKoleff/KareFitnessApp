@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,7 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -45,6 +48,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
@@ -55,6 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -70,6 +76,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
@@ -304,14 +311,21 @@ fun WorkoutDetailsScreen(
             .fillMaxSize()
             .padding(innerPadding)
 
+        val paddingValues = PaddingValues(
+            top = toolbarSize + innerPadding.calculateTopPadding(), //Top toolbar padding
+            start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+            end = innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+            bottom = innerPadding.calculateBottomPadding()
+        )
+
         Box(
             Modifier
                 .fillMaxSize()
                 .pullRefresh(pullRefreshState)
         ) {
 
-                LoadingWheel(innerPadding = innerPadding)
             if (showLoadingDialog) {
+                LoadingWheel(innerPadding = paddingValues)
             } else {
                 //Exercises
                 LazyColumn(
@@ -333,7 +347,9 @@ fun WorkoutDetailsScreen(
                             onConfigureAction = { showWorkoutConfigureDialog = true },
                             onAddExerciseAction = { workoutDetailsViewModel.addExercise() },
                             onDeleteWorkoutAction = { showDeleteWorkoutDialog = true },
-                            onEditWorkoutNameAction = { showEditWorkoutNameDialog = true }
+                            onEditWorkoutNameAction = { showEditWorkoutNameDialog = true },
+                            onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
+                            onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
                         )
                     }
 
@@ -431,23 +447,91 @@ fun StartWorkoutHeader(
     onConfigureAction: () -> Unit,
     onAddExerciseAction: () -> Unit,
     onDeleteWorkoutAction: () -> Unit,
-    onEditWorkoutNameAction: () -> Unit
+    onEditWorkoutNameAction: () -> Unit,
+    onNavigateBackAction: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Bottom,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        StartWorkoutTitleAndSubtitle(title, subtitle)
+    Box(modifier = modifier) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            StartWorkoutToolbar(onNavigateBackAction, onNavigateToSettings)
+        }
 
-        StartWorkoutActionRow(
-            onConfigureAction = onConfigureAction,
-            onAddExerciseAction = onAddExerciseAction,
-            onDeleteWorkoutAction = onDeleteWorkoutAction,
-            onEditWorkoutNameAction = onEditWorkoutNameAction
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            StartWorkoutTitleAndSubtitle(title, subtitle)
+
+            StartWorkoutActionRow(
+                onConfigureAction = onConfigureAction,
+                onAddExerciseAction = onAddExerciseAction,
+                onDeleteWorkoutAction = onDeleteWorkoutAction,
+                onEditWorkoutNameAction = onEditWorkoutNameAction
+            )
+
+            StartWorkoutButton(text = "Start workout!", onStartWorkoutAction = onStartWorkoutAction)
+        }
+    }
+}
+
+@Composable
+fun StartWorkoutToolbar(
+    onNavigateBackAction: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    toolbarHeight: Dp = 65.dp
+) {
+    val color = Color.White
+    val tintColor = Color.Black
+    val cornerSize = 24.dp
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp.dp
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(toolbarHeight)
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = Color.White),
+                shape = RoundedCornerShape(cornerSize)
+            ).drawBehind {
+                drawLine(
+                    color = color,
+                    start = Offset(0f, (toolbarHeight / 2).toPx()),
+                    end = Offset(screenWidth.toPx(), (toolbarHeight / 2).toPx()),
+                    strokeWidth = 5.dp.toPx()
+                )
+            },
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        NavigationItem(
+            modifier = Modifier
+                .drawBehind {
+                    drawCircle(
+                        color = color,
+                        radius = this.size.maxDimension / 3
+                    )
+                },
+            icon = Icons.AutoMirrored.Filled.ArrowBackIos,
+            label = "Go back",
+            onNavigateAction = onNavigateBackAction,
+            tint = tintColor
         )
 
-        StartWorkoutButton(text = "Start workout!", onStartWorkoutAction = onStartWorkoutAction)
+        NavigationItem(
+            modifier = Modifier
+                .drawBehind {
+                    drawCircle(
+                        color = color,
+                        radius = this.size.maxDimension / 3
+                    )
+                },
+            icon = Icons.Filled.Settings,
+            label = "Settings",
+            onNavigateAction = onNavigateToSettings,
+            tint = tintColor
+        )
     }
 }
 
@@ -738,14 +822,19 @@ fun StartWorkoutHeaderPreview() {
     val onAddExerciseAction = {}
     val onEditWorkoutNameAction = {}
     val onDeleteWorkoutAction = {}
+    val onNavigateBackAction = {}
+    val onNavigateToSettings = {}
     StartWorkoutHeader(
+        modifier = Modifier.fillMaxSize(),
         title = "Arnold destroy back workout",
         subtitle = "Biceps, triceps and forearms.",
         onStartWorkoutAction = onStartWorkoutAction,
         onConfigureAction = onConfigureAction,
         onAddExerciseAction = onAddExerciseAction,
         onEditWorkoutNameAction = onEditWorkoutNameAction,
-        onDeleteWorkoutAction = onDeleteWorkoutAction
+        onDeleteWorkoutAction = onDeleteWorkoutAction,
+        onNavigateBackAction = onNavigateBackAction,
+        onNavigateToSettings = onNavigateToSettings
     )
 }
 
