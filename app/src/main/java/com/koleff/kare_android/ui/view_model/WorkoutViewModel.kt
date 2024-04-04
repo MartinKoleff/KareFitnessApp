@@ -234,6 +234,17 @@ class WorkoutViewModel @Inject constructor(
 
                     _state.value = _state.value.copy(workoutList = updatedList)
                     originalWorkoutList = updatedList
+
+                    //Await update workout
+                    Log.d(
+                        "WorkoutViewModel",
+                        "Create workout with id ${createdWorkout.workoutId}"
+                    )
+                    navigateToWorkoutDetails(createdWorkout.workoutId)
+
+                    //Reset create workout state...
+                    resetCreateWorkoutState() //TODO: directly navigate and skip loading?
+                    Log.d("WorkoutViewModel", "Resetting create workout state...")
                 }
             }
         }
@@ -286,9 +297,6 @@ class WorkoutViewModel @Inject constructor(
                 Destination.WorkoutDetails(workoutId = workoutId)
             )
         )
-
-        //Reset state
-        resetCreateWorkoutState()
 
         //Raise a flag to update Workouts screen...
         savedStateHandle["hasUpdated"] = true
