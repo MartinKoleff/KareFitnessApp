@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -53,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -133,6 +136,7 @@ fun WorkoutDetailsScreen(
     var showDeleteWorkoutDialog by remember { mutableStateOf(false) }
     var showWorkoutConfigureDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
 
     //Dialog callbacks
     val onDeleteWorkout: () -> Unit = {
@@ -181,8 +185,10 @@ fun WorkoutDetailsScreen(
         val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
         error = errorState.error
         showErrorDialog = errorState.isError
-
         Log.d("WorkoutDetailsScreen", "Error detected -> $showErrorDialog")
+
+        val loadingState = states.firstOrNull { it.isLoading } ?: BaseState()
+        showLoadingDialog = loadingState.isLoading
     }
 
     //Dialogs
@@ -254,8 +260,9 @@ fun WorkoutDetailsScreen(
                     lazyListState.firstVisibleItemScrollOffset >= scrollThreshold.value
         }
     }
+    val toolbarSize = 65.dp
     val toolbarHeight = animateDpAsState(
-        targetValue = if (showToolbar.value) 65.dp else 0.dp,
+        targetValue = if (showToolbar.value) toolbarSize else 0.dp,
         label = "Main screen toolbar height"
     )
     val textAlpha by animateFloatAsState(
@@ -293,7 +300,6 @@ fun WorkoutDetailsScreen(
         )
     ) { innerPadding ->
 
-
         val contentModifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
@@ -304,13 +310,8 @@ fun WorkoutDetailsScreen(
                 .pullRefresh(pullRefreshState)
         ) {
 
-            if (workoutDetailsState.isLoading ||
-                deleteExerciseState.isLoading ||
-                deleteWorkoutDetailsState.isLoading ||
-                updateWorkoutDetailsState.isLoading ||
-                startWorkoutState.isLoading
-            ) {
                 LoadingWheel(innerPadding = innerPadding)
+            if (showLoadingDialog) {
             } else {
                 //Exercises
                 LazyColumn(
@@ -384,7 +385,7 @@ fun StartWorkoutButton(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val textColor = Color.Black
+    val textColor = Color.White
 
     Box(
         modifier = Modifier
@@ -397,7 +398,7 @@ fun StartWorkoutButton(
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = MaterialTheme.colorScheme.primary,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = { onStartWorkoutAction() }),
@@ -747,10 +748,6 @@ fun StartWorkoutHeaderPreview() {
         onDeleteWorkoutAction = onDeleteWorkoutAction
     )
 }
-
-
-//TODO: options row (settings, configure, select workout,
-// edit workout name, add/delete exercises, delete workout
 
 //TODO: Image background...
 

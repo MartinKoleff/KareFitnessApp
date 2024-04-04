@@ -105,23 +105,12 @@ fun WorkoutsScreen(
         val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
         val createWorkoutState by workoutListViewModel.createWorkoutState.collectAsState()
 
-        LaunchedEffect(createWorkoutState) {
-
-            //Await update workout
-            if (createWorkoutState.isSuccessful) {
-                Log.d(
-                    "WorkoutsScreen",
-                    "Create workout with id ${createWorkoutState.workout.workoutId}"
-                )
-                workoutListViewModel.navigateToWorkoutDetails(createWorkoutState.workout.workoutId)
-            }
-        }
-
         //Dialog visibility
         var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
         var showSelectDialog by remember { mutableStateOf(false) }
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showErrorDialog by remember { mutableStateOf(false) }
+        var showLoadingDialog by remember { mutableStateOf(false) }
 
         //Dialog callbacks
         var selectedWorkout by remember { mutableStateOf<WorkoutDto?>(null) }
@@ -176,8 +165,12 @@ fun WorkoutsScreen(
             val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
             error = errorState.error
             showErrorDialog = errorState.isError
-
             Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
+
+            val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
+            showLoadingDialog = loadingState.isLoading
+                    || workoutListViewModel.isRefreshing
+                    || createWorkoutState.isSuccessful //When done -> hide workout list until navigation to WorkoutDetailsScreen starts.
         }
 
         if (showErrorDialog) {
@@ -236,12 +229,7 @@ fun WorkoutsScreen(
                     workoutListViewModel = workoutListViewModel
                 )
 
-                if (workoutState.isLoading ||
-                    workoutListViewModel.isRefreshing ||
-                    deleteWorkoutState.isLoading ||
-                    updateWorkoutState.isLoading ||
-                    createWorkoutState.isLoading
-                ) { //Don't show loader if retrieved from cache...
+                if (showLoadingDialog) { //Don't show loader if retrieved from cache...
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
