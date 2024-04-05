@@ -65,10 +65,10 @@ class WorkoutViewModel @Inject constructor(
     val updateWorkoutState: StateFlow<WorkoutState>
         get() = _updateWorkoutState
 
-    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
-        MutableStateFlow(WorkoutState())
-    val createWorkoutState: StateFlow<WorkoutState>
-        get() = _createWorkoutState
+//    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
+//        MutableStateFlow(WorkoutState())
+//    val createWorkoutState: StateFlow<WorkoutState>
+//        get() = _createWorkoutState
 
 
     val isRefreshing by mutableStateOf(state.value.isLoading)
@@ -219,40 +219,54 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+//    fun createNewWorkout() {
+//        viewModelScope.launch(dispatcher) {
+//            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
+//                _createWorkoutState.value = createWorkoutState
+//
+//                //Update workout list
+//                if (createWorkoutState.isSuccessful) {
+//                    val createdWorkout = createWorkoutState.workout
+//
+//                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
+//                    updatedList.add(createdWorkout)
+//                    updatedList.sortBy { it.name }
+//
+//                    _state.value = _state.value.copy(workoutList = updatedList)
+//                    originalWorkoutList = updatedList
+//
+//                    //Await update workout
+//                    Log.d(
+//                        "WorkoutViewModel",
+//                        "Create workout with id ${createdWorkout.workoutId}"
+//                    )
+//                    navigateToWorkoutDetails(createdWorkout.workoutId)
+//
+//                    //Reset create workout state...
+//                    resetCreateWorkoutState()
+//                    Log.d("WorkoutViewModel", "Resetting create workout state...")
+//                }
+//            }
+//        }
+//    }
+
+//    private fun resetCreateWorkoutState() {
+//        _createWorkoutState.value =
+//            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+//    }
+
+    //Directly navigate and skip loading. Call create workout use case in workout details view model
+//    fun createNewWorkout() {
+//        viewModelScope.launch(dispatcher) {
+//            savedStateHandle["isNewWorkout"] = true
+//            Log.d("WorkoutViewModel", "isNewWorkout set to true.")
+//
+//            navigateToWorkoutDetails(-1)
+//        }
+//    }
+
     fun createNewWorkout() {
-        viewModelScope.launch(dispatcher) {
-            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
-                _createWorkoutState.value = createWorkoutState
-
-                //Update workout list
-                if (createWorkoutState.isSuccessful) {
-                    val createdWorkout = createWorkoutState.workout
-
-                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
-                    updatedList.add(createdWorkout)
-                    updatedList.sortBy { it.name }
-
-                    _state.value = _state.value.copy(workoutList = updatedList)
-                    originalWorkoutList = updatedList
-
-                    //Await update workout
-                    Log.d(
-                        "WorkoutViewModel",
-                        "Create workout with id ${createdWorkout.workoutId}"
-                    )
-                    navigateToWorkoutDetails(createdWorkout.workoutId)
-
-                    //Reset create workout state...
-                    resetCreateWorkoutState() //TODO: directly navigate and skip loading?
-                    Log.d("WorkoutViewModel", "Resetting create workout state...")
-                }
-            }
-        }
-    }
-
-    private fun resetCreateWorkoutState() {
-        _createWorkoutState.value =
-            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+        navigateToWorkoutDetails(-1, isNewWorkout = true)
     }
 
 
@@ -286,15 +300,15 @@ class WorkoutViewModel @Inject constructor(
     fun navigateToWorkoutDetails(workout: WorkoutDto) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
-                Destination.WorkoutDetails(workoutId = workout.workoutId)
+                Destination.WorkoutDetails(workoutId = workout.workoutId,  isNewWorkout = false)
             )
         )
     }
 
-    fun navigateToWorkoutDetails(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int, isNewWorkout: Boolean = false) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
-                Destination.WorkoutDetails(workoutId = workoutId)
+                Destination.WorkoutDetails(workoutId = workoutId, isNewWorkout = isNewWorkout)
             )
         )
 
@@ -319,9 +333,9 @@ class WorkoutViewModel @Inject constructor(
         if (getSelectedWorkoutState.value.isError) {
             _getSelectedWorkoutState.value = SelectedWorkoutState()
         }
-        if (createWorkoutState.value.isError) {
-            _createWorkoutState.value = WorkoutState()
-        }
+//        if (createWorkoutState.value.isError) {
+//            _createWorkoutState.value = WorkoutState()
+//        }
     }
 
     override fun onNavigateToDashboard() {
@@ -336,7 +350,7 @@ class WorkoutViewModel @Inject constructor(
         super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }
 
-    override fun onNavigateBack()  {
+    override fun onNavigateBack() {
         super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

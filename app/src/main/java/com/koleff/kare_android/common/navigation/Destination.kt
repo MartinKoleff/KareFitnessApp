@@ -58,13 +58,13 @@ sealed interface Destination {
     }
 
     //When workout is selected -> show details screen
-    class WorkoutDetails(private val workoutId: Int) : Destination {
+    class WorkoutDetails(private val workoutId: Int, private val isNewWorkout: Boolean = false) : Destination {
         override val route: String
-            get() = "workout_details/$workoutId"
+            get() = "workout_details/$workoutId/$isNewWorkout"
 
         companion object {
             const val ROUTE =
-                "workout_details/{workout_id}"
+                "workout_details/{workout_id}/{is_new_workout}"
         }
     }
 

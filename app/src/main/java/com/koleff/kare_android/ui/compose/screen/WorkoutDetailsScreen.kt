@@ -96,6 +96,7 @@ fun WorkoutDetailsScreen(
     val deleteWorkoutDetailsState by workoutDetailsViewModel.deleteWorkoutState.collectAsState()
     val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
     val startWorkoutState by workoutDetailsViewModel.startWorkoutState.collectAsState()
+    val createWorkoutState by workoutDetailsViewModel.createWorkoutState.collectAsState()
 
     val workoutTitle =
         if (workoutDetailsState.workoutDetails.name == "" || updateWorkoutDetailsState.isLoading) "Loading..."
@@ -186,7 +187,8 @@ fun WorkoutDetailsScreen(
             deleteExerciseState,
             deleteWorkoutDetailsState,
             updateWorkoutDetailsState,
-            startWorkoutState
+            startWorkoutState,
+            createWorkoutState
         )
 
         val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
@@ -335,7 +337,7 @@ fun WorkoutDetailsScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
-                    //Collapsable header
+                    //Collapsable header with toolbar
                     item {
                         StartWorkoutHeader(
                             modifier = Modifier.fillParentMaxHeight(),

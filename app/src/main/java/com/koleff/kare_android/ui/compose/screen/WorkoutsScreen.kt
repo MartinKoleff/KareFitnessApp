@@ -103,7 +103,6 @@ fun WorkoutsScreen(
         val workoutState by workoutListViewModel.state.collectAsState()
         val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
         val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
-        val createWorkoutState by workoutListViewModel.createWorkoutState.collectAsState()
 
         //Dialog visibility
         var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
@@ -151,13 +150,11 @@ fun WorkoutsScreen(
         var error by remember { mutableStateOf<KareError?>(null) }
         LaunchedEffect(
             workoutState,
-            createWorkoutState,
             deleteWorkoutState,
             updateWorkoutState
         ) {
             val states = listOf(
                 workoutState,
-                createWorkoutState,
                 deleteWorkoutState,
                 updateWorkoutState
             )
@@ -168,9 +165,7 @@ fun WorkoutsScreen(
             Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
 
             val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
-            showLoadingDialog = loadingState.isLoading
-                    || workoutListViewModel.isRefreshing
-                    || createWorkoutState.isSuccessful //When done -> hide workout list until navigation to WorkoutDetailsScreen starts.
+            showLoadingDialog = loadingState.isLoading || workoutListViewModel.isRefreshing
         }
 
         if (showErrorDialog) {

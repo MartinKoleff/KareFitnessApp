@@ -70,14 +70,24 @@ class WorkoutDetailsViewModel @Inject constructor(
     val startWorkoutState: StateFlow<BaseState>
         get() = _startWorkoutState
 
+    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
+        MutableStateFlow(WorkoutState())
+    val createWorkoutState: StateFlow<WorkoutState>
+        get() = _createWorkoutState
+
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
 
+    private val isNewWorkout = savedStateHandle.get<String>("is_new_workout").toBoolean()
+
     init {
+        Log.d("WorkoutDetailsViewModel", "isNewWorkout: $isNewWorkout")
         Log.d("WorkoutDetailsViewModel", "WorkoutId: $workoutId")
 
         //Invalid id handling
         if (workoutId != -1) {
             getWorkoutDetails(workoutId)
+        }else if(isNewWorkout){
+            createNewWorkout()
         }
     }
 
@@ -139,8 +149,13 @@ class WorkoutDetailsViewModel @Inject constructor(
         if (updateWorkoutDetailsState.value.isError) {
             _updateWorkoutDetailsState.value = WorkoutDetailsState()
         }
+
         if(startWorkoutState.value.isError){
             _startWorkoutState.value = BaseState()
+        }
+
+        if(createWorkoutState.value.isError){
+            _createWorkoutState.value = WorkoutState()
         }
     }
 
@@ -196,6 +211,32 @@ class WorkoutDetailsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun createNewWorkout() {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
+                _createWorkoutState.value = createWorkoutState
+
+                if (createWorkoutState.isSuccessful) {
+                    val createdWorkout = createWorkoutState.workout
+
+                    Log.d(
+                        "WorkoutDetailsViewModel",
+                        "Create workout with id ${createdWorkout.workoutId}"
+                    )
+
+                    getWorkoutDetails(createdWorkout.workoutId) //TODO: convert workout to workout details to skip fetch?
+                    Log.d(
+                        "WorkoutDetailsViewModel",
+                        "Fetching workout details for the newly created workout."
+                    )
+                }
+            }
+        }
+
+        //Reset state
+        savedStateHandle["isNewWorkout"] = false
     }
 
     override fun onNavigateToDashboard() {
