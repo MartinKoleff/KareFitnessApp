@@ -186,9 +186,5 @@ class SearchExercisesViewModel @Inject constructor(
                 inclusive = false
             )
         )
-
-        //Raise a flag to update Workouts screen...
-        savedStateHandle["hasUpdated"] = true
-        Log.d("SearchExercisesViewModel", "hasUpdated set to true.")
     }
 }

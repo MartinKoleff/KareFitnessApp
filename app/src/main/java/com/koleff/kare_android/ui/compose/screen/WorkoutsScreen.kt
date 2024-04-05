@@ -16,17 +16,23 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.navigation.Destination
@@ -43,13 +49,16 @@ import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.view_model.HasUpdatedSharedViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutsScreen(
-    workoutListViewModel: WorkoutViewModel = hiltViewModel()
+    workoutListViewModel: WorkoutViewModel = hiltViewModel(),
+    hasUpdatedSharedViewModel: HasUpdatedSharedViewModel = hiltViewModel()
 ) {
     MainScreenScaffold(
         "Workouts",
@@ -90,14 +99,54 @@ fun WorkoutsScreen(
             onRefresh = { workoutListViewModel.getWorkouts() }
         )
 
-        //Refresh screen
-        LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
-            Log.d(
-                "WorkoutsScreen",
-                "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdated}."
-            )
-            workoutListViewModel.getWorkouts()
+        //Has updated observer
+        LaunchedEffect(Unit) {
+            hasUpdatedSharedViewModel.hasUpdated.collect { hasUpdated ->
+                Log.d("WorkoutsScreen", "Observer detected hasUpdated change!")
+
+                //Refresh screen
+                if (hasUpdated) {
+                    Log.d(
+                        "WorkoutsScreen",
+                        "WorkoutsScreen updated -> hasUpdated: ${hasUpdatedSharedViewModel.hasUpdated}."
+                    )
+
+                    workoutListViewModel.getWorkouts()
+                    hasUpdatedSharedViewModel.notifyUpdate(false) //Reset state
+                }
+            }
         }
+
+        //Has updated observer
+//        val scope = rememberCoroutineScope()
+//        val hasUpdatedState by remember {
+//            mutableStateOf(hasUpdatedSharedViewModel.hasUpdated)
+//        }
+//        LaunchedEffect(true) {
+//            hasUpdatedSharedViewModel.hasUpdated.observeForever { newValue ->
+//                scope.launch {
+//                    Log.d(
+//                        "WorkoutsScreen",
+//                        "WorkoutsScreen updated -> hasUpdated: ${hasUpdatedSharedViewModel.hasUpdated}."
+//                    )
+//
+//                    hasUpdatedState.value = newValue
+//
+//                    //Refresh screen
+//                    if(newValue){
+//                        workoutListViewModel.getWorkouts()
+//                        hasUpdatedSharedViewModel.notifyUpdate(false) //Reset state
+//                    }
+//                }
+//            }
+//        }
+//
+//        val lifecycleOwner = LocalLifecycleOwner.current
+//        DisposableEffect(true) {
+//            onDispose {
+//                hasUpdatedSharedViewModel.hasUpdated.removeObservers(lifecycleOwner)
+//            }
+//        }
 
         //States
         val workoutState by workoutListViewModel.state.collectAsState()
@@ -309,6 +358,8 @@ fun WorkoutsScreen(
                                 } else {
                                     AddWorkoutBanner {
                                         workoutListViewModel.createNewWorkout()
+                                        hasUpdatedSharedViewModel.notifyUpdate(true)
+                                        Log.d("WorkoutScreen", "hasUpdated set to true.")
                                     }
                                 }
                             }
@@ -326,3 +377,22 @@ fun WorkoutsScreen(
     }
 }
 
+
+//@Composable
+//fun observeHasUpdated(
+//   onHasUpdated: () -> Unit
+//) {
+//    val lifecycleOwner = LocalLifecycleOwner.current
+//
+//    DisposableEffect(lifecycleOwner) {
+//        val observer = LifecycleEventObserver { _, event ->
+//            onHasUpdated()
+//        }
+//
+//        lifecycleOwner.lifecycle.addObserver(observer)
+//
+//        onDispose {
+//            lifecycleOwner.lifecycle.removeObserver(observer)
+//        }
+//    }
+//}

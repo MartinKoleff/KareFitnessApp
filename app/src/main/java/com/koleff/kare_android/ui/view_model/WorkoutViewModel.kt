@@ -77,11 +77,7 @@ class WorkoutViewModel @Inject constructor(
 
     private val hasLoadedFromCache = mutableStateOf(false)
 
-    val hasUpdated = savedStateHandle.get<Boolean>("hasUpdated") ?: false
-
     init {
-        Log.d("WorkoutViewModel", "hasUpdated: $hasUpdated")
-
         viewModelScope.launch(Dispatchers.Main) {
             preferences.loadSelectedWorkout()?.let { selectedWorkout ->
                 _state.value = WorkoutListState(
@@ -269,7 +265,6 @@ class WorkoutViewModel @Inject constructor(
         navigateToWorkoutDetails(-1, isNewWorkout = true)
     }
 
-
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.getAllWorkoutsUseCase().collect { workoutState ->
@@ -282,8 +277,6 @@ class WorkoutViewModel @Inject constructor(
                 }
             }
         }
-
-        savedStateHandle["hasUpdated"] = false
     }
 
     //Navigation
@@ -311,10 +304,6 @@ class WorkoutViewModel @Inject constructor(
                 Destination.WorkoutDetails(workoutId = workoutId, isNewWorkout = isNewWorkout)
             )
         )
-
-        //Raise a flag to update Workouts screen...
-        savedStateHandle["hasUpdated"] = true
-        Log.d("WorkoutViewModel", "hasUpdated set to true.")
     }
 
     override fun clearError() {

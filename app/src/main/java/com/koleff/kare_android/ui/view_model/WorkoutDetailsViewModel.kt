@@ -106,9 +106,6 @@ class WorkoutDetailsViewModel @Inject constructor(
                     _deleteExerciseState.value = deleteExerciseState
                 }
         }
-
-        savedStateHandle["hasUpdated"] = true
-        Log.d("ExerciseDetailsConfiguratorViewModel", "hasUpdated set to true.")
     }
 
     //Navigation
