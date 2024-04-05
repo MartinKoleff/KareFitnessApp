@@ -4,26 +4,18 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
-import com.koleff.kare_android.ui.state.SelectedWorkoutState
+import com.koleff.kare_android.ui.state.HasUpdated
 import com.koleff.kare_android.ui.state.WorkoutState
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,6 +30,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
     private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
+    private val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController), MainScreenNavigation {
     private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
@@ -105,6 +98,9 @@ class WorkoutDetailsViewModel @Inject constructor(
                 .collect { deleteExerciseState ->
                     _deleteExerciseState.value = deleteExerciseState
                 }
+
+            Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
+            hasUpdated.notifyUpdate(true)
         }
     }
 

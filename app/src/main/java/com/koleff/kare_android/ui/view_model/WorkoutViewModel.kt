@@ -1,15 +1,10 @@
 package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
@@ -21,6 +16,7 @@ import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.state.HasUpdated
 import com.koleff.kare_android.ui.state.SelectedWorkoutState
 import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,6 +34,7 @@ class WorkoutViewModel @Inject constructor(
     private val preferences: Preferences,
     private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
+    val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController = navigationController), MainScreenNavigation {
 
@@ -263,6 +260,9 @@ class WorkoutViewModel @Inject constructor(
 
     fun createNewWorkout() {
         navigateToWorkoutDetails(-1, isNewWorkout = true)
+
+        Log.d("WorkoutViewModel", "hasUpdated set to true.")
+        hasUpdated.notifyUpdate(true)
     }
 
     fun getWorkouts() {
@@ -277,6 +277,9 @@ class WorkoutViewModel @Inject constructor(
                 }
             }
         }
+
+        Log.d("WorkoutViewModel", "hasUpdated set to false.")
+        hasUpdated.notifyUpdate(false)
     }
 
     //Navigation

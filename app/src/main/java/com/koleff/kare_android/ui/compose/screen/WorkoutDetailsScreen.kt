@@ -82,8 +82,7 @@ import kotlinx.coroutines.flow.collectLatest
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutDetailsScreen(
-    workoutDetailsViewModel: WorkoutDetailsViewModel = hiltViewModel(),
-    hasUpdatedSharedViewModel: HasUpdatedSharedViewModel = hiltViewModel()
+    workoutDetailsViewModel: WorkoutDetailsViewModel = hiltViewModel()
 ) {
     val workoutDetailsState by workoutDetailsViewModel.getWorkoutDetailsState.collectAsState()
     val updateWorkoutDetailsState by workoutDetailsViewModel.updateWorkoutDetailsState.collectAsState()
@@ -214,9 +213,6 @@ fun WorkoutDetailsScreen(
                         workoutDetailsState.workoutDetails.workoutId,
                         selectedExercise!!.exerciseId
                     )
-
-                    hasUpdatedSharedViewModel.notifyUpdate(true)
-                    Log.d("WorkoutDetailsScreen", "hasUpdated set to true.")
                 }
 
             },
