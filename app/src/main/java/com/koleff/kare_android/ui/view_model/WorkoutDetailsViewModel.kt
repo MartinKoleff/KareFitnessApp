@@ -9,6 +9,7 @@ import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
@@ -113,14 +114,13 @@ class WorkoutDetailsViewModel @Inject constructor(
         )
     }
 
-    //Deprecated
-    fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+    fun navigateToExerciseDetailsConfigurator(exercise: ExerciseDto) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.ExerciseDetailsConfigurator(
-                    exerciseId = exerciseId,
+                    exerciseId = exercise.exerciseId,
                     workoutId = workoutId,
-                    muscleGroupId = muscleGroupId
+                    muscleGroupId = exercise.muscleGroup.muscleGroupId
                 )
             )
         )

@@ -1,15 +1,23 @@
 package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
@@ -31,13 +40,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
@@ -63,14 +75,6 @@ fun ExerciseDetailsConfiguratorScreen(
     val initialMuscleGroup = exerciseDetailsConfiguratorViewModel.initialMuscleGroup
     val exerciseImageId = MuscleGroup.getImage(initialMuscleGroup)
 
-    val onSubmitExercise: () -> Unit = {
-        if (!exerciseState.isLoading) {
-            exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
-                OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
-            )
-        }
-    }
-
     LaunchedEffect(updateWorkoutState) {
 
         //Await update workout
@@ -88,15 +92,28 @@ fun ExerciseDetailsConfiguratorScreen(
 
     //Dialog visibility
     var showErrorDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
 
     //Dialog callbacks
-    val onErrorDialogDismiss = {
-        showErrorDialog = false
-        exerciseDetailsConfiguratorViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    val onSubmitExercise: () -> Unit = {
+        if (!exerciseState.isLoading) {
+            exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
+                OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
+            )
+        }
+    }
+
+    val onDeleteSet: (ExerciseSetDto) -> Unit = { selectedExerciseSet ->
+        exerciseDetailsConfiguratorViewModel.deleteSet(selectedExerciseSet)
     }
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
+
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        exerciseDetailsConfiguratorViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
     LaunchedEffect(
         exerciseState,
         selectedWorkoutState,
@@ -112,6 +129,9 @@ fun ExerciseDetailsConfiguratorScreen(
         error = errorState.error
         showErrorDialog = errorState.isError
         Log.d("ExerciseDetailsConfiguratorScreen", "Error detected -> $showErrorDialog")
+
+        val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
+        showLoadingDialog = loadingState.isLoading
     }
 
     //Dialogs
@@ -121,15 +141,27 @@ fun ExerciseDetailsConfiguratorScreen(
         }
     }
 
+    val cornerSize = 24.dp
     ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = onSubmitExercise,
         onNavigateBackAction = onNavigateBack
     ) { innerPadding ->
-        val modifier = Modifier
-            .padding(innerPadding)
+        Column(modifier = Modifier
             .fillMaxSize()
+            .padding(innerPadding)
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primaryContainer,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary
+                    )
+                )
+            )
             .pointerInput(Unit) {
 
                 //Hide keyboard on tap outside SearchBar
@@ -139,124 +171,91 @@ fun ExerciseDetailsConfiguratorScreen(
                         focusManager.clearFocus()
                     }
                 )
-            }
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
+            }) {
+
+            //Exercise name
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 8.dp
+                        )
+                    ),
+                    text = exerciseState.exercise.name,
+                    style = TextStyle(
+                        color = Color.White,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
-            )
+            }
 
-        ExerciseDetailsConfiguratorContent(
-            modifier = modifier,
-            exerciseState = exerciseState,
-            updateWorkoutState = updateWorkoutState
-        )
-    }
-}
-
-@Composable
-fun ExerciseDetailsConfiguratorContent(
-    modifier: Modifier,
-    exerciseState: ExerciseState,
-    updateWorkoutState: WorkoutDetailsState,
-) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        item {
-            if (exerciseState.isLoading || updateWorkoutState.isLoading) {
-                LoadingWheel()
+            if (showLoadingDialog) {
+                LoadingWheel() //TODO: fix not visible...
             } else {
-                Box(
+
+                //Exercise sets
+                LazyColumn(
                     modifier = Modifier
-                        .size((50 + 8 + 8).dp)
-                )
+                        .padding(horizontal = 24.dp)
+                        .clip(RoundedCornerShape(cornerSize))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                listOf(
+                                    Color.DarkGray,
+                                    Color.Black,
+                                    Color.Black,
+                                    Color.Black,
+                                    Color.Black
+                                )
+                            ),
+                            shape = RoundedCornerShape(cornerSize)
+                        ),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    //Rows with sets / reps / weight configuration
+                    items(exerciseState.exercise.sets.size) { currentSetId ->
+                        val currentSet = exerciseState.exercise.sets[currentSetId]
+                        ExerciseSetRow(
+                            set = currentSet,
+                            onRepsChanged = { newReps ->
+                                currentSet.reps = newReps
+//                    currentSet.setId = null //When set is changed -> generate new UUID
+                            },
+                            onWeightChanged = { newWeight ->
+                                currentSet.weight = newWeight
+//                    currentSet.setId = null //When set is changed -> generate new UUID
+                            },
+                            onDelete = {
+                                onDeleteSet(currentSet)
+                            }
+                        )
+                    }
+
+                    //TODO: add new set footer...
+                    item {
+
+                    }
+
+                    //TODO: add rest after exercise...
+                    item {
+
+                    }
+                }
             }
         }
-        item { //TODO: fix in place...
-            Text(
-                modifier = Modifier.padding(
-                    PaddingValues(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 16.dp,
-                        bottom = 8.dp
-                    )
-                ),
-                text = exerciseState.exercise.name,
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        //Rows with sets / reps / weight configuration
-        items(exerciseState.exercise.sets.size) { currentSetId ->
-            val currentSet = exerciseState.exercise.sets[currentSetId]
-            ExerciseSetRow(
-                set = currentSet,
-                onRepsChanged = { newReps ->
-                    currentSet.reps = newReps
-//                    currentSet.setId = null //When set is changed -> generate new UUID
-                },
-                onWeightChanged = { newWeight ->
-                    currentSet.weight = newWeight
-//                    currentSet.setId = null //When set is changed -> generate new UUID
-                }
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ExerciseDetailsConfiguratorScreenPreview() {
-    val exerciseState = ExerciseState(
-        exercise = MockupDataGenerator.generateExercise(),
-        isSuccessful = true
-    )
-
-    val exerciseImageId = MuscleGroup.getImage(exerciseState.exercise.muscleGroup)
-
-    ExerciseDetailsConfiguratorScaffold(
-        screenTitle = exerciseState.exercise.name,
-        exerciseImageId = exerciseImageId,
-        onSubmitExercise = {},
-        onNavigateBackAction = {}
-    ) { innerPadding ->
-        val modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                )
-            )
-
-        val updateWorkoutState = WorkoutDetailsState()
-        ExerciseDetailsConfiguratorContent(
-            modifier = modifier,
-            exerciseState = exerciseState,
-            updateWorkoutState = updateWorkoutState
-        )
     }
 }

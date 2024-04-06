@@ -95,7 +95,7 @@ fun WorkoutDetailsScreen(
         else workoutDetailsState.workoutDetails.name
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
-        //TODO: select multiple exercises rework...
+        workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
     }
 
     var selectedWorkout by remember {
