@@ -10,6 +10,7 @@ import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.ui.state.ExerciseState
@@ -139,14 +140,40 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
     }
 
     override fun clearError() {
-        if(exerciseState.value.isError){
+        if (exerciseState.value.isError) {
             _exerciseState.value = ExerciseState()
         }
-        if(updateWorkoutState.value.isError){
+        if (updateWorkoutState.value.isError) {
             _updateWorkoutState.value = WorkoutDetailsState()
         }
-        if(selectedWorkoutState.value.isError){
+        if (selectedWorkoutState.value.isError) {
             _selectedWorkoutState.value = WorkoutDetailsState()
         }
+    }
+
+    //TODO: migrate to use cases...
+    //TODO: wire with dialog...
+    fun deleteSet(selectedExerciseSet: ExerciseSetDto) = with(exerciseState.value) {
+        val updatedSets =
+            exercise.sets.filterNot { exerciseSet -> exerciseSet == selectedExerciseSet }
+
+        val updatedExercise = exercise.copy(sets = updatedSets)
+        _exerciseState.value = _exerciseState.value.copy(exercise = updatedExercise)
+    }
+
+    fun addNewSet() = with(exerciseState.value) {
+        val defaultReps = 12
+        val nextSetNumber = exercise.sets.map { it.number }.maxOf { it } //Find last set number...
+
+        val updatedSets = exercise.sets as MutableList
+        val newSet = ExerciseSetDto(
+            number = nextSetNumber,
+            reps = defaultReps,
+            weight = 0.0f
+        )
+        updatedSets.add(newSet)
+
+        val updatedExercise = exercise.copy(sets = updatedSets)
+        _exerciseState.value = _exerciseState.value.copy(exercise = updatedExercise)
     }
 }
