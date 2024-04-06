@@ -45,9 +45,11 @@ import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
@@ -307,11 +309,13 @@ object AppModule {
     fun provideExerciseDataSource(
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
-        exerciseDetailsDao: ExerciseDetailsDao
+        exerciseDetailsDao: ExerciseDetailsDao,
+        exerciseSetDao: ExerciseSetDao
     ): ExerciseDataSource {
         return if (useLocalDataSource) ExerciseLocalDataSource(
             exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao
         )
         else ExerciseRemoteDataSource(exerciseApi)
     }
@@ -418,7 +422,9 @@ object AppModule {
             onFilterExercisesUseCase = OnFilterExercisesUseCase(),
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
             getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
-            getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
+            getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
+            deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
+            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository)
         )
     }
 
