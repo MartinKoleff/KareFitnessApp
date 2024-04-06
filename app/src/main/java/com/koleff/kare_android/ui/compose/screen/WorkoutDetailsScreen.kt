@@ -74,7 +74,6 @@ import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.state.AnimatedToolbarState
 import com.koleff.kare_android.ui.state.BaseState
-import com.koleff.kare_android.ui.view_model.HasUpdatedSharedViewModel
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -303,6 +302,14 @@ fun WorkoutDetailsScreen(
         )
     ) { innerPadding ->
 
+        //Fixed WorkoutDetails custom toolbar
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+            StartWorkoutToolbar(
+                onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
+                onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
+            )
+        }
+
         val contentModifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
@@ -448,9 +455,9 @@ fun StartWorkoutHeader(
     onNavigateToSettings: () -> Unit
 ) {
     Box(modifier = modifier) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-            StartWorkoutToolbar(onNavigateBackAction, onNavigateToSettings)
-        }
+//        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+//            StartWorkoutToolbar(onNavigateBackAction, onNavigateToSettings)
+//        }
 
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -485,19 +492,7 @@ fun StartWorkoutToolbar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(toolbarHeight)
-            .clip(RoundedCornerShape(cornerSize))
-            .border(
-                border = BorderStroke(2.dp, color = Color.White),
-                shape = RoundedCornerShape(cornerSize)
-            ).drawBehind {
-                drawLine(
-                    color = color,
-                    start = Offset(0f, (toolbarHeight / 2).toPx()),
-                    end = Offset(screenWidth.toPx(), (toolbarHeight / 2).toPx()),
-                    strokeWidth = 5.dp.toPx()
-                )
-            },
+            .height(toolbarHeight),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -529,6 +524,15 @@ fun StartWorkoutToolbar(
             tint = tintColor
         )
     }
+}
+
+@Preview
+@Composable
+fun StartWorkoutToolbarPreview() {
+    StartWorkoutToolbar(
+        onNavigateBackAction = {},
+        onNavigateToSettings = {}
+    )
 }
 
 @Composable
