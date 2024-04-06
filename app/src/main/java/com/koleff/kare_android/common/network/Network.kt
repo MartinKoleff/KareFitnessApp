@@ -14,7 +14,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 
-@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 object Network {
     private const val MAX_RETRY_COUNT = 1
 
