@@ -3,7 +3,6 @@ package com.koleff.kare_android.common
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,7 +17,6 @@ import androidx.core.content.ContextCompat.startActivity
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
 import com.koleff.kare_android.R
-import com.koleff.kare_android.ui.MainActivity
 import kotlinx.coroutines.tasks.await
 
 
@@ -72,8 +70,8 @@ object NotificationManager {
 //            }
 
             val builder = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_logo)
-                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.ic_logo))
+                .setSmallIcon(R.drawable.logo)
+                .setLargeIcon(BitmapFactory.decodeResource(context.resources, R.drawable.logo))
                 .setContentTitle(title)
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_MAX)

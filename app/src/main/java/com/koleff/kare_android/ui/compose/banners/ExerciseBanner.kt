@@ -82,7 +82,7 @@ fun ExerciseBannerV1(
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopStart),
-            painter = painterResource(id = R.drawable.ic_exercise_banner_effect), //TODO: change to url
+            painter = painterResource(id = R.drawable.background_exercise_banner_effect), //TODO: change to url
             contentDescription = "Background",
             contentScale = ContentScale.Crop
         )
@@ -169,7 +169,7 @@ fun ExerciseBannerV2(
 
             //Parallax effect overflowing into exercise snapshot
             Image(
-                painter = painterResource(R.drawable.ic_exercise_banner_effect),
+                painter = painterResource(R.drawable.background_exercise_banner_effect),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

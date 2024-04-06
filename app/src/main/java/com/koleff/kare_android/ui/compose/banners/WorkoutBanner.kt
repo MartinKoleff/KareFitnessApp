@@ -25,9 +25,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -40,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -62,12 +58,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import kotlin.math.roundToInt
 
 @Composable
@@ -116,7 +110,7 @@ fun WorkoutBanner(
 
             //Hexagon effect overflowing into workout snapshot
             Image(
-                painter = painterResource(R.drawable.ic_workout_banner_effect),
+                painter = painterResource(R.drawable.background_workout_banner),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

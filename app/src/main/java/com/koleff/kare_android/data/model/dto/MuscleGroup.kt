@@ -11,10 +11,10 @@ enum class MuscleGroup(
 ) {
     CHEST(1, "Chest", "", R.drawable.ic_chest),
     BACK(2, "Back", "", R.drawable.ic_back),
-    TRICEPS(3, "Triceps", "", R.drawable.ic_triceps),
+    TRICEPS(3, "Triceps", "", R.drawable.background_triceps),
     BICEPS(4, "Biceps", "", R.drawable.ic_biceps),
-    SHOULDERS(5, "Shoulders", "", R.drawable.ic_shoulder),
-    LEGS(6, "Legs", "", R.drawable.ic_legs),
+    SHOULDERS(5, "Shoulders", "", R.drawable.background_shoulders),
+    LEGS(6, "Legs", "", R.drawable.background_legs),
     ABS(7, "Abs", "", -1),
     CARDIO(8, "Cardio", "", -1),
     FULL_BODY(9, "Full Body", "", -1),
