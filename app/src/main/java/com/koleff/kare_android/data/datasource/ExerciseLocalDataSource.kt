@@ -8,7 +8,9 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
+import com.koleff.kare_android.data.model.response.UserResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseListWrapper
@@ -22,6 +24,7 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.domain.wrapper.UserWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -35,7 +38,63 @@ class ExerciseLocalDataSource @Inject constructor(
     private val exerciseSetDao: ExerciseSetDao
 ) : ExerciseDataSource {
 
-    override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> =
+    override suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>> =
+        flow {
+            //TODO: wire with workoutDao or remove...
+        }
+
+    override suspend fun getExercise(
+        exerciseId: Int,
+        workoutId: Int
+    ): Flow<ResultWrapper<ExerciseWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            try {
+                val data = exerciseDao.getExerciseByExerciseAndWorkoutId(exerciseId, workoutId)
+
+
+                val result = ExerciseWrapper(
+                    ExerciseResponse(data.toExerciseDto())
+                )
+
+                emit(ResultWrapper.Success(result))
+            } catch (e: NoSuchElementException) {
+                emit(
+                    ResultWrapper.ApiError(
+                        error = KareError.EXERCISE_NOT_FOUND
+                    )
+                )
+            }
+        }
+
+    override suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            try {
+                val data = exerciseDao.getExerciseByExerciseAndWorkoutId(
+                    exerciseId,
+                    Constants.CATALOG_EXERCISE_ID
+                )
+
+                val result = ExerciseWrapper(
+                    ExerciseResponse(data.toExerciseDto())
+                )
+
+                emit(ResultWrapper.Success(result))
+            } catch (e: NoSuchElementException) {
+                emit(
+                    ResultWrapper.ApiError(
+                        error = KareError.EXERCISE_NOT_FOUND
+                    )
+                )
+            }
+        }
+
+    override suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -56,28 +115,14 @@ class ExerciseLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> =
-        flow {
-            emit(ResultWrapper.Loading())
-            delay(Constants.fakeDelay)
 
-            val data = exerciseDao.getExerciseById(exerciseId)
-
-            val result = ExerciseWrapper(
-                ExerciseResponse(data.toExerciseDto())
-            )
-
-            emit(ResultWrapper.Success(result))
-        }
-
-
-    override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> =
+    override suspend fun getExerciseDetails(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             //Temporary setting the same description and videoUrl to all ExerciseDetails entities.
-            val data = exerciseDetailsDao.getExerciseDetailsById(exerciseId)
+            val data = exerciseDetailsDao.getExerciseDetailsByExerciseAndWorkoutId(exerciseId, workoutId)
 
             val result = ExerciseDetailsWrapper(
                 ExerciseDetailsResponse(
@@ -97,6 +142,7 @@ class ExerciseLocalDataSource @Inject constructor(
 
     override suspend fun deleteExerciseSet(
         exerciseId: Int,
+        workoutId: Int,
         setId: UUID
     ): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
@@ -105,15 +151,16 @@ class ExerciseLocalDataSource @Inject constructor(
 
             //Update Exercise - ExerciseSet cross ref
             val crossRef = ExerciseSetCrossRef(
-                exerciseId,
-                setId
+                exerciseId = exerciseId,
+                workoutId = workoutId,
+                setId = setId
             )
             exerciseDao.deleteExerciseSetCrossRef(crossRef)
 
             //Update exercise
-            val selectedExerciseWitSets = exerciseDao.getExerciseById(exerciseId)
+            val selectedExerciseWitSets = exerciseDao.getExerciseByExerciseAndWorkoutId(exerciseId, workoutId)
             val updatedSets = selectedExerciseWitSets.sets as MutableList
-            updatedSets.removeAll {it.setId == setId}
+            updatedSets.removeAll { it.setId == setId }
 
             val selectedExerciseDto = selectedExerciseWitSets.exercise.toExerciseDto(updatedSets)
             val result = ExerciseWrapper(
@@ -126,7 +173,8 @@ class ExerciseLocalDataSource @Inject constructor(
         }
 
     override suspend fun addNewExerciseSet(
-        exerciseId: Int
+        exerciseId: Int,
+        workoutId: Int
     ): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -135,9 +183,10 @@ class ExerciseLocalDataSource @Inject constructor(
             val defaultReps = 12
             val defaultWeight = 0.0f
 
-            val selectedExerciseWitSets = exerciseDao.getExerciseById(exerciseId)
+            val selectedExerciseWitSets = exerciseDao.getExerciseByExerciseAndWorkoutId(exerciseId, workoutId)
             val nextSetNumber =
-                selectedExerciseWitSets.sets.map { it.number }.maxOf { it } //Find last set number...
+                selectedExerciseWitSets.sets.map { it.number }
+                    .maxOf { it } //Find last set number...
             val newSet = ExerciseSet(
                 setId = UUID.randomUUID(),
                 number = nextSetNumber,
@@ -150,8 +199,9 @@ class ExerciseLocalDataSource @Inject constructor(
 
             //Update Exercise - ExerciseSet cross ref
             val crossRef = ExerciseSetCrossRef(
-                exerciseId,
-                newSet.setId
+                exerciseId = exerciseId,
+                workoutId = workoutId,
+                setId = newSet.setId
             )
             exerciseDao.insertExerciseSetCrossRef(crossRef)
 

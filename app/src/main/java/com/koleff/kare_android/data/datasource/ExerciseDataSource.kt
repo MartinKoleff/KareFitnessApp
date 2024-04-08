@@ -9,13 +9,17 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 interface ExerciseDataSource {
-    suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
+    suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
 
-    suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>>
+    suspend fun getExercise(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>>
 
-    suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>>
+    suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>>
 
-    suspend fun addNewExerciseSet(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>>
+    suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
 
-    suspend fun deleteExerciseSet(exerciseId: Int, setId: UUID): Flow<ResultWrapper<ExerciseWrapper>>
+    suspend fun getExerciseDetails(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>>
+
+    suspend fun addNewExerciseSet(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>>
+
+    suspend fun deleteExerciseSet(exerciseId: Int, workoutId: Int, setId: UUID): Flow<ResultWrapper<ExerciseWrapper>>
 }
