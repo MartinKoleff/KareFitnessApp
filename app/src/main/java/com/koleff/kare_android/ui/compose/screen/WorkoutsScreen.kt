@@ -270,7 +270,7 @@ fun WorkoutsScreen(
                             NoWorkoutSelectedBanner {
 
                                 //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.navigateToSearchWorkout(-1) //TODO: test
+                                workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
                             }
                         }
                     } else {
@@ -311,7 +311,7 @@ fun WorkoutsScreen(
                                     NoWorkoutSelectedBanner {
 
                                         //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.navigateToSearchWorkout(-1) //TODO: test
+                                        workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
                                     }
                                 } else {
                                     AddWorkoutBanner {

@@ -23,6 +23,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+//TODO: migrate to use cases...
+//TODO: write tests...
+
 @HiltViewModel
 class DoWorkoutViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
