@@ -25,8 +25,8 @@ class ExerciseDBManager @Inject constructor(
             if (hasInitializedDB) return@withContext
 
             for (muscleGroup in MuscleGroup.getSupportedMuscleGroups()) {
-                val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
-                val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup)
+                val exercisesList = ExerciseGenerator.loadExercises(muscleGroup, false)
+                val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup, false)
 
                 exerciseDao.insertAll(exercisesList)
                 exerciseDetailsDao.insertAll(exerciseDetailsList)

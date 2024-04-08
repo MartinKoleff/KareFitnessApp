@@ -66,7 +66,7 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.CHEST,
                     isSelected = false
                 ),
-                exercises = ExerciseGenerator.loadExercises(MuscleGroup.CHEST)
+                exercises = ExerciseGenerator.loadExercises(MuscleGroup.CHEST, isWorkout = true)
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -76,7 +76,7 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.BACK,
                     isSelected = false
                 ),
-                exercises = ExerciseGenerator.loadExercises(MuscleGroup.BACK)
+                exercises = ExerciseGenerator.loadExercises(MuscleGroup.BACK, isWorkout = true)
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -85,7 +85,7 @@ object WorkoutGenerator {
                     description = "Blow your arms with curls",
                     muscleGroup = MuscleGroup.ARMS,
                     isSelected = true
-                ), exercises = ExerciseGenerator.loadExercises(MuscleGroup.ARMS)
+                ), exercises = ExerciseGenerator.loadExercises(MuscleGroup.ARMS, isWorkout = true)
             )
         )
     }
