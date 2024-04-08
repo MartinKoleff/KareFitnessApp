@@ -14,23 +14,34 @@ import javax.inject.Inject
 class ExerciseRepositoryImpl @Inject constructor(
     private val exerciseDataSource: ExerciseDataSource
 ) : ExerciseRepository {
-    override suspend fun getExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
-       return exerciseDataSource.getExercises(muscleGroupId)
+    override suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
+        return exerciseDataSource.getExercises(workoutId)
     }
 
-    override suspend fun getExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
-        return exerciseDataSource.getExercise(exerciseId)
+    override suspend fun getExercise(
+        exerciseId: Int,
+        workoutId: Int
+    ): Flow<ResultWrapper<ExerciseWrapper>> {
+        return exerciseDataSource.getExercise(exerciseId, workoutId)
     }
 
-    override suspend fun getExerciseDetails(exerciseId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> {
-        return exerciseDataSource.getExerciseDetails(exerciseId)
+    override suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
+        return exerciseDataSource.getCatalogExercise(exerciseId)
     }
 
-    override suspend fun deleteExerciseSet(exerciseId: Int, setId: UUID): Flow<ResultWrapper<ExerciseWrapper>> {
-        return exerciseDataSource.deleteExerciseSet(exerciseId, setId)
+    override suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
+        return exerciseDataSource.getCatalogExercises(muscleGroupId)
     }
 
-    override suspend fun addNewExerciseSet(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
-        return exerciseDataSource.addNewExerciseSet(exerciseId)
+    override suspend fun getExerciseDetails(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> {
+        return exerciseDataSource.getExerciseDetails(exerciseId, workoutId)
+    }
+
+    override suspend fun deleteExerciseSet(exerciseId: Int, workoutId: Int, setId: UUID): Flow<ResultWrapper<ExerciseWrapper>> {
+        return exerciseDataSource.deleteExerciseSet(exerciseId, workoutId, setId)
+    }
+
+    override suspend fun addNewExerciseSet(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
+        return exerciseDataSource.addNewExerciseSet(exerciseId, workoutId)
     }
 }
