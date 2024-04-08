@@ -46,8 +46,8 @@ interface ExerciseDao {
     suspend fun deleteAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
 
     @Transaction
-    @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId")
-    fun getExerciseById(exerciseId: Int): ExerciseWithSet
+    @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId AND workoutId = :workoutId")
+    fun getExerciseByExerciseAndWorkoutId(exerciseId: Int, workoutId: Int): ExerciseWithSet
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")

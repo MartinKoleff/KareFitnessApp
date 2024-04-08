@@ -22,6 +22,7 @@ data class ExerciseWithSet(
     fun toExerciseDto(): ExerciseDto {
         return ExerciseDto(
             exerciseId = this.exercise.exerciseId,
+            workoutId = this.exercise.workoutId,
             name = this.exercise.name,
             muscleGroup = this.exercise.muscleGroup,
             machineType = this.exercise.machineType,

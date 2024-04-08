@@ -3,8 +3,10 @@ package com.koleff.kare_android.data.model.dto
 import com.squareup.moshi.Json
 
 data class ExerciseDetailsDto(
-    @field:Json(name = "id")
+    @field:Json(name = "exercise_id")
     val id: Int = -1,
+    @field:Json(name = "workout_id")
+    val workoutId: Int = -1,
     @field:Json(name = "name")
     val name: String = "",
     @field:Json(name = "description")

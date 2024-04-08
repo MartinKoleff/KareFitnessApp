@@ -24,6 +24,6 @@ interface ExerciseDetailsDao {
     suspend fun deleteExerciseDetails(exercise: ExerciseDetails)
 
     @Transaction
-    @Query("SELECT * FROM exercise_details_table WHERE exerciseDetailsId = :exerciseId")
-    fun getExerciseDetailsById(exerciseId: Int): ExerciseDetails
+    @Query("SELECT * FROM exercise_details_table WHERE exerciseDetailsId = :exerciseId AND workoutId = :workoutId")
+    fun getExerciseDetailsByExerciseAndWorkoutId(exerciseId: Int, workoutId: Int): ExerciseDetails
 }

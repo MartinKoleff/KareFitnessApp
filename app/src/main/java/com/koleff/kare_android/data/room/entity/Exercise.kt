@@ -7,11 +7,12 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Entity(
-    tableName = "exercise_table"
+    tableName = "exercise_table",
+    primaryKeys = ["exerciseId", "workoutId"] //Composite key
 )
 data class Exercise(
-    @PrimaryKey(autoGenerate = true)
     val exerciseId: Int,
+    val workoutId: Int,
     val name: String,
     val muscleGroup: MuscleGroup,
     val machineType: MachineType,
@@ -20,6 +21,7 @@ data class Exercise(
     fun toExerciseDto(sets: List<ExerciseSet>): ExerciseDto {
         return ExerciseDto(
             exerciseId = this.exerciseId,
+            workoutId = this.workoutId,
             name = this.name,
             muscleGroup = this.muscleGroup,
             machineType = this.machineType,

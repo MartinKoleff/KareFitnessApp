@@ -8,8 +8,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class ExerciseDto(
-    @field:Json(name = "id")
+    @field:Json(name = "exercise_id")
     val exerciseId: Int = -1,
+    @field:Json(name = "workout_id")
+    val workoutId: Int = -1,
     @field:Json(name = "name")
     val name: String = "",
     @field:Json(name = "muscle_group")
@@ -24,6 +26,7 @@ data class ExerciseDto(
     fun toExercise(): Exercise {
         return Exercise(
             exerciseId = exerciseId,
+            workoutId = workoutId,
             name = name,
             muscleGroup = muscleGroup,
             machineType = machineType,

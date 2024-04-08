@@ -5,9 +5,10 @@ import java.util.UUID
 
 @Entity(
     tableName = "exercise_set_cross_ref",
-    primaryKeys = ["exerciseId", "setId"]
+    primaryKeys = ["exerciseId", "workoutId", "setId"]
 )
 data class ExerciseSetCrossRef(
     val exerciseId: Int,
+    val workoutId: Int,
     val setId: UUID
 )
