@@ -61,13 +61,13 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         get() = _updateWorkoutState
 
     init {
-        getExercise(exerciseId)
+        getExercise(exerciseId, workoutId)
         getWorkoutDetails(workoutId)
     }
 
-    private fun getExercise(exerciseId: Int) {
+    private fun getExercise(exerciseId: Int, workoutId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExerciseUseCase(exerciseId).collect { exerciseState ->
+            exerciseUseCases.getExerciseUseCase(exerciseId, workoutId).collect { exerciseState ->
                 _exerciseState.value = exerciseState
             }
         }

@@ -110,7 +110,7 @@ class SearchExercisesViewModel @Inject constructor(
 
     private fun getExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect { exerciseState ->
+            exerciseUseCases.getCatalogExercisesUseCase(muscleGroupId).collect { exerciseState ->
                 _state.value = exerciseState
 
                 if (_state.value.isSuccessful) {

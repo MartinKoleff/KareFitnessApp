@@ -26,18 +26,19 @@ class ExerciseViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController) {
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
+    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private val _state: MutableStateFlow<ExerciseState> = MutableStateFlow(ExerciseState())
     val state: StateFlow<ExerciseState>
         get() = _state
 
     init {
-        getExercise(exerciseId)
+        getExercise(exerciseId, workoutId)
     }
 
-    private fun getExercise(exerciseId: Int) {
+    private fun getExercise(exerciseId: Int, workoutId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExerciseUseCase(exerciseId).collect { exerciseState ->
+            exerciseUseCases.getExerciseUseCase(exerciseId, workoutId).collect { exerciseState ->
               _state.value = exerciseState
             }
         }

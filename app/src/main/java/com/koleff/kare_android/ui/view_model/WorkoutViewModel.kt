@@ -283,11 +283,12 @@ class WorkoutViewModel @Inject constructor(
     }
 
     //Navigation
-    fun navigateToSearchWorkout(exerciseId: Int) {
+    fun navigateToSearchWorkout(exerciseId: Int, workoutId: Int) {   //TODO: TEST...
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchWorkoutsScreen(
-                    exerciseId = exerciseId
+                    exerciseId = exerciseId,
+                    workoutId = workoutId
                 )
             )
         )

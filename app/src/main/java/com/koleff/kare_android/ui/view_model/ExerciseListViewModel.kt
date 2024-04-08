@@ -46,7 +46,7 @@ class ExerciseListViewModel @Inject constructor(
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
 
     init {
-        getExercises(muscleGroupId)
+        getCatalogExercises(muscleGroupId)
     }
 
 
@@ -82,9 +82,9 @@ class ExerciseListViewModel @Inject constructor(
         }
     }
 
-    private fun getExercises(muscleGroupId: Int) {
+    private fun getCatalogExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect { exerciseState ->
+            exerciseUseCases.getCatalogExercisesUseCase(muscleGroupId).collect { exerciseState ->
                 _state.value = exerciseState
 
                 if (_state.value.isSuccessful) {
