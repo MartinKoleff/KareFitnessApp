@@ -56,12 +56,14 @@ import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
-import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
+import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
+import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
+import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
@@ -421,10 +423,12 @@ object AppModule {
             onSearchExerciseUseCase = OnSearchExerciseUseCase(),
             onFilterExercisesUseCase = OnFilterExercisesUseCase(),
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
-            getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
-            getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
+            getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
+            getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
-            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository)
+            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
+            getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
+            getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
         )
     }
 

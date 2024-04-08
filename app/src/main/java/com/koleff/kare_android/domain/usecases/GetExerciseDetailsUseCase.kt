@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.map
 
 class GetExerciseDetailsUseCase(private val exerciseRepository: ExerciseRepository) {
 
-    suspend operator fun invoke(exerciseId: Int): Flow<ExerciseDetailsState> =
-        exerciseRepository.getExerciseDetails(exerciseId).map { apiResult ->
+    suspend operator fun invoke(exerciseId: Int, workoutId: Int): Flow<ExerciseDetailsState> =
+        exerciseRepository.getExerciseDetails(exerciseId, workoutId).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> ExerciseDetailsState(
                     isError = true,

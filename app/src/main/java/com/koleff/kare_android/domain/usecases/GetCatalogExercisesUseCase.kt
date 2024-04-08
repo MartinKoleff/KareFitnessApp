@@ -9,10 +9,10 @@ import com.koleff.kare_android.domain.repository.ExerciseRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class GetExercisesUseCase(private val exerciseRepository: ExerciseRepository) {
+class GetCatalogExercisesUseCase(private val exerciseRepository: ExerciseRepository) {
 
-    suspend operator fun invoke(workoutId: Int): Flow<ExerciseListState> =
-        exerciseRepository.getExercises(workoutId).map { apiResult ->
+    suspend operator fun invoke(muscleGroupId: Int): Flow<ExerciseListState> =
+        exerciseRepository.getCatalogExercises(muscleGroupId).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> ExerciseListState(
                     isError = true,
@@ -22,7 +22,7 @@ class GetExercisesUseCase(private val exerciseRepository: ExerciseRepository) {
                 is ResultWrapper.Loading -> ExerciseListState(isLoading = true)
 
                 is ResultWrapper.Success -> {
-                    Log.d("GetCatalogExercisesUseCase", "Exercises fetched for workout with id $workoutId.")
+                    Log.d("GetCatalogExercisesUseCase", "Exercises fetched for muscle group ${MuscleGroup.fromId(muscleGroupId).name}.")
 
                     ExerciseListState(
                         isSuccessful = true,

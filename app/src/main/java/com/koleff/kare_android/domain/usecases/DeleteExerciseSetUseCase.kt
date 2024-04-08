@@ -13,8 +13,8 @@ import java.util.UUID
 
 class DeleteExerciseSetUseCase(private val exerciseRepository: ExerciseRepository) {
 
-    suspend operator fun invoke(exerciseId: Int, setId: UUID): Flow<ExerciseState> =
-        exerciseRepository.deleteExerciseSet(exerciseId, setId).map { apiResult ->
+    suspend operator fun invoke(exerciseId: Int, workoutId: Int, setId: UUID): Flow<ExerciseState> =
+        exerciseRepository.deleteExerciseSet(exerciseId, workoutId, setId).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> ExerciseState(
                     isError = true,
