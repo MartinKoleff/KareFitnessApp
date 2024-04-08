@@ -392,18 +392,7 @@ fun SwipeableExerciseBannerPreview() {
 @Composable
 fun ExerciseListPreview() {
     val n = 5
-    val exercisesList: MutableList<ExerciseDto> = mutableListOf()
-
-    repeat(n) { index ->
-        val currentExercise = ExerciseDto(
-            -1,
-            "BARBELL BENCH PRESS $index",
-            muscleGroup = MuscleGroup.fromId(index + 1),
-            MachineType.BARBELL,
-            ""
-        )
-        exercisesList.add(currentExercise)
-    }
+    val exercisesList = MockupDataGenerator.generateExerciseList(n)
 
     ExerciseList(exerciseList = exercisesList){ exercise ->
 
