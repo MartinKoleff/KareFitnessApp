@@ -1,34 +1,29 @@
 package com.koleff.kare_android.exercise
 
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
-import com.koleff.kare_android.data.room.dao.ExerciseDao
-import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
-import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.domain.repository.ExerciseRepository
+import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
+import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
+import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
+import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
-import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
-import com.koleff.kare_android.exercise.data.ExerciseMockupDataSource
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.utils.TestLogger
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
-import io.mockk.mockk
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -36,8 +31,6 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.CsvSource
@@ -54,7 +47,6 @@ class ExerciseUseCasesUnitTest {
     private lateinit var exerciseDao: ExerciseDaoFake
     private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
 
-    private lateinit var exerciseMockupDataSource: ExerciseMockupDataSource
     private lateinit var exerciseFakeDataSource: ExerciseFakeDataSource
     private lateinit var exerciseRepository: ExerciseRepository
 
@@ -105,22 +97,24 @@ class ExerciseUseCasesUnitTest {
             logger = logger
         )
 
-        exerciseMockupDataSource = ExerciseMockupDataSource(isError = isErrorTesting)
         exerciseFakeDataSource = ExerciseFakeDataSource(
             exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao
         )
 
-        exerciseRepository = ExerciseRepositoryImpl(
-            if (useMockupDataSource) exerciseMockupDataSource else exerciseFakeDataSource
-        )
+        exerciseRepository = ExerciseRepositoryImpl(exerciseFakeDataSource)
 
         exerciseUseCases = ExerciseUseCases(
             onSearchExerciseUseCase = OnSearchExerciseUseCase(),
             onFilterExercisesUseCase = OnFilterExercisesUseCase(),
             getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
+            getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
+            getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
+            getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
             getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
-            getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
+            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
+            deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
         )
 
         //Initialize DB
@@ -178,7 +172,7 @@ class ExerciseUseCasesUnitTest {
             val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
 
             val getExercisesState =
-                exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
+                exerciseUseCases.getCatalogExercisesUseCase(muscleGroup.muscleGroupId).toList()
 
             logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
             assertTrue { getExercisesState[0].isLoading }
@@ -229,13 +223,13 @@ class ExerciseUseCasesUnitTest {
     /**
      * Tested functions inside:
      *
-     * GetExerciseUseCase()
+     * GetCatalogExerciseUseCase()
      * exerciseDao.getExerciseById()
      */
     @ParameterizedTest(name = "Fetches exercise with id {0}")
     @ValueSource(ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60])
-    fun `get exercise using GetExerciseUseCase test`(exerciseId: Int) = runTest {
-        val getExerciseState = exerciseUseCases.getExerciseUseCase(exerciseId).toList()
+    fun `get exercise using GetCatalogExerciseUseCase test`(exerciseId: Int) = runTest {
+        val getExerciseState = exerciseUseCases.getCatalogExerciseUseCase(exerciseId).toList()
 
         logger.i(TAG, "Get exercise for exerciseId $exerciseId -> isLoading state raised.")
         assertTrue { getExerciseState[0].isLoading }
@@ -266,11 +260,11 @@ class ExerciseUseCasesUnitTest {
      * GetExerciseDetailsUseCase()
      * exerciseDetailsDao.getExerciseDetailsById()
      */
-    @ParameterizedTest(name = "Fetches exercise details with id {0}")
+    @ParameterizedTest(name = "Fetches exercise details for catalog exercises with id {0}")
     @ValueSource(ints = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60])
     fun `get exercise details using GetExerciseDetailsUseCase test`(exerciseId: Int) = runTest {
         val getExerciseDetailsState =
-            exerciseUseCases.getExerciseDetailsUseCase(exerciseId).toList()
+            exerciseUseCases.getExerciseDetailsUseCase(exerciseId, Constants.CATALOG_EXERCISE_ID).toList()
 
         logger.i(TAG, "Get exercise details for exerciseId $exerciseId -> isLoading state raised.")
         assertTrue { getExerciseDetailsState[0].isLoading }
@@ -332,7 +326,7 @@ class ExerciseUseCasesUnitTest {
         val supportedMuscleGroups = MuscleGroup.getSupportedMuscleGroups()
 
         val getExercisesState =
-            exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
+            exerciseUseCases.getCatalogExercisesUseCase(muscleGroup.muscleGroupId).toList()
 
         logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
         assertTrue { getExercisesState[0].isLoading }
@@ -476,7 +470,7 @@ class ExerciseUseCasesUnitTest {
         logger.i(TAG, "Search text for this test: {$searchText}.")
 
         val getExercisesState =
-            exerciseUseCases.getExercisesUseCase(muscleGroup.muscleGroupId).toList()
+            exerciseUseCases.getCatalogExercisesUseCase(muscleGroup.muscleGroupId).toList()
 
         logger.i(TAG, "Get exercises for muscle group $muscleGroup -> isLoading state raised.")
         assertTrue { getExercisesState[0].isLoading }

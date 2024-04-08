@@ -376,7 +376,7 @@ class WorkoutUseCasesUnitTest {
             val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
-            val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets()
+            val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets().filter { it.workoutId == workout.workoutId }
             logger.i(TAG, "Fetched exercise with sets for the fetched workout: $exercisesWithSets")
 
             val fetchedWorkoutDetailsWithExercisesWithSets = fetchedWorkoutDetails.copy(
@@ -441,7 +441,7 @@ class WorkoutUseCasesUnitTest {
             //Modify workoutDetails
             val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
             val newExercise =
-                MockupDataGenerator.generateExercise(muscleGroup = muscleGroup)
+                MockupDataGenerator.generateExercise(muscleGroup = muscleGroup, workoutId = workoutDetails.workoutId, isWorkout = true)
                     .copy(name = "Test Exercise")
             val modifiedExercises = ArrayList(savedWorkoutDetails.exercises).apply {
                 add(newExercise)
@@ -745,7 +745,7 @@ class WorkoutUseCasesUnitTest {
             val excludedIds = workoutDetails.exercises.map { it.exerciseId }
 
             val exercise =
-                MockupDataGenerator.generateExercise(excludedIds = excludedIds)
+                MockupDataGenerator.generateExercise(excludedIds = excludedIds, workoutId = workoutDetails.workoutId, isWorkout = true)
             logger.i(TAG, "Generated exercise: $exercise.")
 
             //Insert in DB
@@ -810,7 +810,7 @@ class WorkoutUseCasesUnitTest {
                 TAG,
                 "Assert initial workout details before added exercise is the same as the workout after deleted the added exercise."
             )
-            assertTrue { workoutDetailsAfterDelete == workoutDetails }
+            assertTrue { workoutDetailsAfterDelete == workoutDetails } //TODO: exercise set ids are different...
 
             logger.i(
                 TAG,

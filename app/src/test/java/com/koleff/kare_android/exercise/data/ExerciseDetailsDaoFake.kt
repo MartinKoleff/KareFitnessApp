@@ -21,11 +21,14 @@ class ExerciseDetailsDaoFake : ExerciseDetailsDao {
         exerciseDetailsDB.removeAll { it.exerciseDetailsId == exercise.exerciseDetailsId }
     }
 
-    override fun getExerciseDetailsById(exerciseId: Int): ExerciseDetails {
-        return exerciseDetailsDB.first { it.exerciseDetailsId == exerciseId }
+    override fun getExerciseDetailsByExerciseAndWorkoutId(
+        exerciseId: Int,
+        workoutId: Int
+    ): ExerciseDetails {
+        return exerciseDetailsDB.first { it.exerciseDetailsId == exerciseId && it.workoutId == workoutId }
     }
 
-    fun clearDB(){
+    fun clearDB() {
         exerciseDetailsDB.clear()
     }
 }
