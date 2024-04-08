@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import android.util.Log
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
@@ -55,7 +56,7 @@ class WorkoutLocalDataSource @Inject constructor(
             )
 
             //If you are trying to select the current selected workout
-            if(selectedWorkoutInDB?.workoutId == workoutId) {
+            if (selectedWorkoutInDB?.workoutId == workoutId) {
                 emit(ResultWrapper.Success(result))
                 return@flow
             }
@@ -145,7 +146,10 @@ class WorkoutLocalDataSource @Inject constructor(
 
                     val exercises =
                         workoutDetailsWitExercises.exercises.map { exercise ->
-                            val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+                            val sets = exerciseDao.getExerciseByExerciseAndWorkoutId(
+                                exerciseId = exercise.exerciseId,
+                                workoutId = workoutDetailsWitExercises.workoutDetails.workoutDetailsId
+                            ).sets
 
                             exercise.toExerciseDto(sets)
                         } as MutableList
@@ -174,7 +178,10 @@ class WorkoutLocalDataSource @Inject constructor(
             val exercisesWithSetsList = mutableListOf<ExerciseWithSet>()
 
             for (exercise in data.safeExercises) {
-                val exercisesWithSet = exerciseDao.getExerciseById(exercise.exerciseId)
+                val exercisesWithSet = exerciseDao.getExerciseByExerciseAndWorkoutId(
+                    exerciseId = exercise.exerciseId,
+                    workoutId = data.workoutDetails.workoutDetailsId
+                )
 
                 exercisesWithSetsList.add(exercisesWithSet)
             }
@@ -191,16 +198,19 @@ class WorkoutLocalDataSource @Inject constructor(
         }
 
     private fun getWorkoutExercises(workoutId: Int): List<ExerciseDto> {
-        val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
-        workoutDetails ?: run {
+        val workoutDetailsWitExercises = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+        workoutDetailsWitExercises ?: run {
             return emptyList()
         }
 
-        val exercises = workoutDetails.safeExercises
+        val exercises = workoutDetailsWitExercises.safeExercises
 
         val exercisesWithSetsList = mutableListOf<ExerciseWithSet>()
         for (exercise in exercises) {
-            val exercisesWithSet = exerciseDao.getExerciseById(exercise.exerciseId)
+            val exercisesWithSet = exerciseDao.getExerciseByExerciseAndWorkoutId(
+                exerciseId = exercise.exerciseId,
+                workoutId = workoutDetailsWitExercises.workoutDetails.workoutDetailsId
+            )
 
             exercisesWithSetsList.add(exercisesWithSet)
         }
@@ -241,10 +251,17 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             //Contains different exercises
-            val currentDB: List<ExerciseDto> =
+            val currentDB =
                 data.safeExercises.map { exercise ->
-                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
 
+                    val sets = try {
+                        exerciseDao.getExerciseByExerciseAndWorkoutId(
+                            exerciseId = exercise.exerciseId,
+                            workoutId = data.workoutDetails.workoutDetailsId
+                        ).sets
+                    } catch (e: NoSuchElementException) {
+                        emptyList()
+                    }
                     exercise.toExerciseDto(sets)
                 }
 
@@ -333,6 +350,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
                     ExerciseSetCrossRef(
                         exerciseId = exercise.exerciseId,
+                        workoutId = workoutDetails.workoutId,
                         setId = exerciseSet.setId
                     )
                 }
@@ -487,6 +505,11 @@ class WorkoutLocalDataSource @Inject constructor(
             //Exercise - ExerciseSet cross refs
             setupExerciseSetCrossRef(workoutDetailsDto)
 
+            //Add exercises
+            exercises.forEach { exercise ->
+                exerciseDao.insertExercise(exercise.toExercise())
+            }
+
             //Select
             if (workoutDetailsDto.isSelected) {
                 selectWorkout(workoutDetailsDto.workoutId).collect()
@@ -517,11 +540,15 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             //Delete exercise - set cross ref
-            val deletedExercise = exerciseDao.getExerciseById(exerciseId)
+            val deletedExercise = exerciseDao.getExerciseByExerciseAndWorkoutId(
+                exerciseId = exerciseId,
+                workoutId = selectedWorkout.workoutDetails.workoutDetailsId
+            )
             for (set in deletedExercise.sets) {
                 val exerciseSetCrossRef =
                     ExerciseSetCrossRef(
                         exerciseId = exerciseId,
+                        workoutId = workoutId,
                         setId = set.setId
                     )
                 exerciseDao.deleteExerciseSetCrossRef(exerciseSetCrossRef)
@@ -538,11 +565,15 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Update exercise list
             val exerciseEntityList =
-                selectedWorkout.safeExercises.filter { exercise -> exercise.exerciseId != exerciseId }
+                selectedWorkout.safeExercises.filterNot { exercise -> exercise.exerciseId == exerciseId }
 
             val exercisesDtoList: MutableList<ExerciseDto> =
                 exerciseEntityList.map { exercise ->
-                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+                    val sets =
+                        exerciseDao.getExerciseByExerciseAndWorkoutId(
+                            exerciseId = exercise.exerciseId,
+                            workoutId = selectedWorkout.workoutDetails.workoutDetailsId
+                        ).sets
 
                     exercise.toExerciseDto(sets)
                 } as MutableList
@@ -578,16 +609,40 @@ class WorkoutLocalDataSource @Inject constructor(
                 return@flow
             }
 
-            //Add new exercise to workout exercise list
-            val exerciseDtoList = ArrayList(selectedWorkout.safeExercises
-                .map { exercise ->
-                    val sets = exerciseDao.getExerciseById(exercise.exerciseId).sets
+            val exerciseDtoList =
+                selectedWorkout.safeExercises.map { exercise ->
 
+                    val sets = try {
+                        exerciseDao.getExerciseByExerciseAndWorkoutId(
+                            exerciseId = exercise.exerciseId,
+                            workoutId = selectedWorkout.workoutDetails.workoutDetailsId
+                        ).sets
+                    } catch (e: NoSuchElementException) {
+                        emptyList()
+                    }
                     exercise.toExerciseDto(sets)
-                }
-            ).apply {
-                add(exercise)
-            }
+
+//                    try {
+//                        val sets = exerciseDao.getExerciseByExerciseAndWorkoutId(
+//                            exerciseId = exercise.exerciseId,
+//                            workoutId = selectedWorkout.workoutDetails.workoutDetailsId
+//                        ).sets
+//
+//                        exercise.toExerciseDto(sets)
+//                    } catch (e: NoSuchElementException) {
+//                        //New exercise
+//                        Log.d(
+//                            "WorkoutLocalDataSource-AddExercise",
+//                            "Exercise not found in DB.\nExercise: $exercise"
+//                        )
+//                        val defaultSets = MockupDataGenerator.generateExerciseSetsList(4, false)
+//                            .map { it.toExerciseSet() }
+//                        exercise.toExerciseDto(defaultSets)
+//                    }
+                } as MutableList
+
+            //Add new exercise
+            exerciseDtoList.add(exercise)
 
             val exerciseEntityList = exerciseDtoList.map { it.toExercise() }
 
@@ -611,10 +666,14 @@ class WorkoutLocalDataSource @Inject constructor(
                 val exerciseSetCrossRef =
                     ExerciseSetCrossRef(
                         exerciseId = exercise.exerciseId,
+                        workoutId = workoutId,
                         setId = exerciseSet.setId
                     )
                 exerciseDao.insertExerciseSetCrossRef(exerciseSetCrossRef)
             }
+
+            //Insert exercise
+            exerciseDao.insertExercise(exercise.toExercise())
 
             //Update total exercises
             val workout = workoutDao.getWorkoutById(workoutId)
