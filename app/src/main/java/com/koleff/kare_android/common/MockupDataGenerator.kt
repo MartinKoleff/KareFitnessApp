@@ -78,7 +78,7 @@ object MockupDataGenerator {
         val generatedExercise =
             if (isWorkout) catalogExercises[exerciseId - 1] else exercises[exerciseId - 1]
 
-        val generatedWorkoutId = if(isWorkout) workoutId else generatedExercise.workoutId
+        val generatedWorkoutId = if (isWorkout) workoutId else generatedExercise.workoutId
         val generatedExerciseWithSets = generatedExercise.copy(
             workoutId = generatedWorkoutId,
             sets = generateExerciseSetsList(isGenerateSetId = isGenerateSetId)
@@ -93,11 +93,28 @@ object MockupDataGenerator {
         isDistinct: Boolean = false,
         isGenerateSetId: Boolean = true,
         isWorkout: Boolean = false,
-        workoutId: Int = Random.nextInt()
+        workoutId: Int = Random.nextInt(),
+        containIds: List<Int> = emptyList()
     ): List<ExerciseDto> {
         val exercisesList: MutableList<ExerciseDto> = mutableListOf()
 
-        repeat(n) {
+        val generatePreSelectedExercise: Boolean = containIds.isNotEmpty()
+        val totalPreSelectedExercises: Int =
+            if(containIds.isNotEmpty() && containIds.size < n) containIds.size else 0
+
+        if(generatePreSelectedExercise) {
+            repeat(totalPreSelectedExercises) { currentIndex ->
+                val generatedExercise= catalogExercises[containIds[currentIndex] - 1] //Not added in exercises[]
+
+                val generatedWorkoutId = if (isWorkout) workoutId else generatedExercise.workoutId
+                val generatedExerciseUpdated = generatedExercise.copy(
+                    workoutId = generatedWorkoutId
+                )
+                exercisesList.add(generatedExerciseUpdated)
+            }
+        }
+
+        repeat(n - totalPreSelectedExercises) {
             var exercise =
                 generateExercise(
                     muscleGroup = muscleGroup,
@@ -140,7 +157,7 @@ object MockupDataGenerator {
 
         val generatedExercise =
             if (isWorkout) catalogExerciseDetails[exerciseId - 1] else exerciseDetails[exerciseId - 1]
-        val generatedWorkoutId = if(isWorkout) workoutId else generatedExercise.workoutId
+        val generatedWorkoutId = if (isWorkout) workoutId else generatedExercise.workoutId
 
         return generatedExercise.copy(workoutId = generatedWorkoutId)
     }
@@ -228,7 +245,10 @@ object MockupDataGenerator {
         return workout
     }
 
-    fun generateWorkoutDetails(isGenerateSetId: Boolean = true): WorkoutDetailsDto {
+    fun generateWorkoutDetails(
+        isGenerateSetId: Boolean = true,
+        containIds: List<Int> = emptyList()
+    ): WorkoutDetailsDto {
         val workoutId = Random.nextInt(1, 100)
         val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
         val isSelected = Random.nextBoolean()
@@ -237,7 +257,8 @@ object MockupDataGenerator {
             isDistinct = true,
             isGenerateSetId = isGenerateSetId,
             isWorkout = true,
-            workoutId = workoutId
+            workoutId = workoutId,
+            containIds = containIds
         ).sortedBy { it.exerciseId } as MutableList<ExerciseDto>
         val name = workoutNames.random()
 

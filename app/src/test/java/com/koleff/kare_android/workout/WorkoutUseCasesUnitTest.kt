@@ -325,7 +325,7 @@ class WorkoutUseCasesUnitTest {
      *
      * GetWorkoutDetailsUseCase()
      * WorkoutDetailsDao.getWorkoutDetailsById()
-     * ExerciseDao.getExerciseById()
+     * ExerciseDao.getExerciseByExerciseAndWorkoutId()
      * ---------------------
      * CreateCustomWorkoutDetailsUseCase()
      * WorkoutDetailsDao.insertWorkoutDetails()
@@ -524,7 +524,7 @@ class WorkoutUseCasesUnitTest {
      * ----------------------------
      * GetWorkoutDetailsUseCase()
      * WorkoutDetailsDao.getWorkoutDetailsById()
-     * ExerciseDao.getExerciseById()
+     * ExerciseDao.getExerciseByExerciseAndWorkoutId()
      */
     @RepeatedTest(50)
     @DisplayName("Update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase test")
@@ -697,7 +697,7 @@ class WorkoutUseCasesUnitTest {
      * ---------------------------
      * AddExerciseUseCase()
      * WorkoutDetailsDao.getWorkoutDetailsById()
-     * ExerciseDao.getExerciseById()
+     * ExerciseDao.getExerciseByExerciseAndWorkoutId()
      * WorkoutDetailsDao.insertWorkoutDetailsExerciseCrossRef()
      * ExerciseSetDao.saveSet()
      * ExerciseDao.insertExerciseSetCrossRef()
@@ -705,11 +705,11 @@ class WorkoutUseCasesUnitTest {
      * ---------------------------
      * DeleteExerciseUseCase()
      * WorkoutDetailsDao.getWorkoutDetailsById()
-     * ExerciseDao.getExerciseById()
+     * ExerciseDao.getExerciseByExerciseAndWorkoutId()
      * ExerciseDao.deleteExerciseSetCrossRef()
      * ExerciseSetDao.deleteSet()
      * WorkoutDetailsDao.deleteWorkoutDetailsExerciseCrossRef()
-     * ExerciseDao.getExerciseById()
+     * ExerciseDao.getExerciseByExerciseAndWorkoutId()
      * WorkoutDao.getWorkoutById()
      * WorkoutDao.updateWorkout()
      * ---------------------------
