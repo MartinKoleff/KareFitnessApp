@@ -198,11 +198,24 @@ class ExerciseUseCasesUnitTest {
     @AfterEach
     fun tearDown() {
         exerciseDao.clearDB()
-        exerciseDetailsDao.clearDB()
         exerciseSetDao.clearDB()
+        workoutDetailsDao.clearDB()
+        workoutDao.clearDB()
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
+        logger.i(
+            "tearDown",
+            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutDao: ${workoutDao.getWorkoutsOrderedById()}"
+        )
     }
 
     /**
@@ -653,8 +666,6 @@ class ExerciseUseCasesUnitTest {
 
         //TODO: [TEST] OnToggleSearch...
     }
-
-    //TODO: [TEST] add/remove set use cases...
 }
 
 

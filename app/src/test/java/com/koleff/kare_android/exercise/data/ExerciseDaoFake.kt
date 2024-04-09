@@ -177,16 +177,47 @@ class ExerciseDaoFake(
 
         //If there are multiple entries -> remove all
         exerciseWithSetDB.removeAll {
-            it.exercise.exerciseId == exercise.exerciseId
+            it.exercise.exerciseId == exercise.exerciseId &&
+                    it.exercise.workoutId == exercise.workoutId
         }
     }
 
     override suspend fun deleteExerciseSetCrossRef(crossRef: ExerciseSetCrossRef) {
         exerciseSetCrossRefs.remove(crossRef)
+
+        updateExerciseSetDB(crossRef)
+        exerciseSetDao.deleteSet(crossRef.setId)
     }
 
     override suspend fun deleteAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>) {
         exerciseSetCrossRefs.removeAll(crossRefs)
+
+        crossRefs.forEach { crossRef ->
+            updateExerciseSetDB(crossRef)
+            exerciseSetDao.deleteSet(crossRef.setId)
+        }
+    }
+
+    private fun updateExerciseSetDB(crossRef: ExerciseSetCrossRef) {
+        val selectedExercise = exerciseWithSetDB.first {
+            it.exercise.exerciseId == crossRef.exerciseId &&
+                    it.exercise.workoutId == crossRef.workoutId
+        }
+
+        val updatedExerciseSets = selectedExercise.sets.toMutableList()
+            .filterNot { it.setId == crossRef.setId }
+
+        val updatedExercise = ExerciseWithSet(
+            exercise = selectedExercise.exercise,
+            sets = updatedExerciseSets
+        )
+
+        //Remove exercise entry
+        exerciseWithSetDB.removeAll {  it.exercise.exerciseId == crossRef.exerciseId &&
+                it.exercise.workoutId == crossRef.workoutId  }
+
+        //Add updated exercise entry
+        exerciseWithSetDB.add(updatedExercise)
     }
 
     override fun getExerciseByExerciseAndWorkoutId(

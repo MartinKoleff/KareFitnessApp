@@ -149,6 +149,11 @@ class ExerciseLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeSmallDelay)
 
+            //Update exercise
+            val selectedExerciseWitSets = exerciseDao.getExerciseByExerciseAndWorkoutId(exerciseId, workoutId)
+            val updatedSets = selectedExerciseWitSets.sets.toMutableList()
+            updatedSets.removeAll { it.setId == setId }
+
             //Update Exercise - ExerciseSet cross ref
             val crossRef = ExerciseSetCrossRef(
                 exerciseId = exerciseId,
@@ -156,11 +161,6 @@ class ExerciseLocalDataSource @Inject constructor(
                 setId = setId
             )
             exerciseDao.deleteExerciseSetCrossRef(crossRef)
-
-            //Update exercise
-            val selectedExerciseWitSets = exerciseDao.getExerciseByExerciseAndWorkoutId(exerciseId, workoutId)
-            val updatedSets = selectedExerciseWitSets.sets as MutableList
-            updatedSets.removeAll { it.setId == setId }
 
             val selectedExerciseDto = selectedExerciseWitSets.exercise.toExerciseDto(updatedSets)
             val result = ExerciseWrapper(
@@ -206,7 +206,7 @@ class ExerciseLocalDataSource @Inject constructor(
             exerciseDao.insertExerciseSetCrossRef(crossRef)
 
             //Update exercise
-            val updatedSets = selectedExerciseWitSets.sets as MutableList
+            val updatedSets = selectedExerciseWitSets.sets.toMutableList()
             updatedSets.add(newSet)
             val selectedExerciseDto = selectedExerciseWitSets.exercise.toExerciseDto(updatedSets)
             val result = ExerciseWrapper(

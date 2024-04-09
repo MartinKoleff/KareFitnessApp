@@ -33,4 +33,7 @@ interface ExerciseSetDao {
 
     @Delete
     suspend fun deleteSet(exerciseSet: ExerciseSet)
+
+    @Query("DELETE FROM exercise_set_table WHERE setId = :setId")
+    suspend fun deleteSet(setId: UUID)
 }

@@ -38,7 +38,11 @@ class ExerciseSetDaoFake : ExerciseSetDao {
         exerciseSetDB.removeAll { it.setId == exerciseSet.setId }
     }
 
-    fun clearDB(){
+    override suspend fun deleteSet(setId: UUID) {
+        exerciseSetDB.removeAll { it.setId == setId }
+    }
+
+    fun clearDB() {
         exerciseSetDB.clear()
     }
 }
