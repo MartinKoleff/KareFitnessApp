@@ -12,7 +12,7 @@ class TimerUtil(private var totalTime: Int = 0) {
     private var job: Job? = null
     private val timerScope = CoroutineScope(Dispatchers.Main)
 
-    fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
+    suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
         totalTime = totalSeconds
 
         job?.cancel()  //Cancel any existing job to ensure no duplicate timers are running
@@ -33,7 +33,7 @@ class TimerUtil(private var totalTime: Int = 0) {
         job?.cancel()
     }
 
-    fun resumeTimer(updateTime: (ExerciseTime) -> Unit) {
+    suspend fun resumeTimer(updateTime: (ExerciseTime) -> Unit) {
         startTimer(totalTime, updateTime)
     }
 
@@ -41,6 +41,7 @@ class TimerUtil(private var totalTime: Int = 0) {
         totalTime = 0
         job?.cancel()
     }
+
 
     //Used by ExerciseTimer
     companion object {

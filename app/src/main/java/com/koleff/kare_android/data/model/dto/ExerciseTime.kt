@@ -12,4 +12,8 @@ data class ExerciseTime(
     override fun toString(): String{
         return String.format("%02d:%02d:%02d", hours, minutes, seconds)
     }
+
+    fun hasFinished(): Boolean {
+        return this == ExerciseTime(0, 0, 0)
+    }
 }
