@@ -458,6 +458,26 @@ object AppModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun provideDoWorkoutUseCases(
+        doWorkoutRepository: DoWorkoutRepository,
+        exerciseRepository: ExerciseRepository
+    ): DoWorkoutUseCases {
+        return DoWorkoutUseCases(
+            doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
+            selectNextExerciseUseCase = SelectNextExerciseUseCase(doWorkoutRepository),
+            skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
+            updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
+                doWorkoutRepository
+            ),
+            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
+            deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
+            startTimerUseCase = StartTimerUseCase(),
+            resetTimerUseCase = ResetTimerUseCase()
+        )
+    }
+
     /**
      * Shared preferences
      */
