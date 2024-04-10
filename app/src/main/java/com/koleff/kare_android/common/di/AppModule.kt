@@ -13,6 +13,8 @@ import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
+import com.koleff.kare_android.data.datasource.DoWorkoutDataSource
+import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
@@ -27,6 +29,7 @@ import com.koleff.kare_android.data.remote.ExerciseApi
 import com.koleff.kare_android.data.remote.UserApi
 import com.koleff.kare_android.data.remote.WorkoutApi
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
+import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
@@ -41,6 +44,7 @@ import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
+import com.koleff.kare_android.domain.repository.DoWorkoutRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -53,6 +57,8 @@ import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
+import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
@@ -67,7 +73,12 @@ import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
+import com.koleff.kare_android.domain.usecases.SelectNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
+import com.koleff.kare_android.domain.usecases.StartTimerUseCase
+import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -110,7 +121,7 @@ object AppModule {
 //                    .addQueryParameter("access_key", Constants.API_KEY) //if API key is needed
                     .build()
 
-                val requestBuilder  = original.newBuilder()
+                val requestBuilder = original.newBuilder()
                     .method(original.method, original.body)
                     .url(newUrl)
 
@@ -118,7 +129,10 @@ object AppModule {
                 val requestPath = original.url.encodedPath
 
                 //Add token authorization for all requests except auth ones
-                if (!requestPath.endsWith(unauthorizedRequestPaths[0]) && !requestPath.endsWith(unauthorizedRequestPaths[1])) {
+                if (!requestPath.endsWith(unauthorizedRequestPaths[0]) && !requestPath.endsWith(
+                        unauthorizedRequestPaths[1]
+                    )
+                ) {
                     requestBuilder.addHeader("Authorization", "Bearer $accessToken")
                 }
 
@@ -361,6 +375,12 @@ object AppModule {
         else UserRemoteDataSource(userApi, dispatcher)
     }
 
+    @Provides
+    @Singleton
+    fun provideDoWorkoutDataSource(): DoWorkoutDataSource {
+        return DoWorkoutLocalDataSource() //Local for now...
+    }
+
     /**
      * Repositories
      */
@@ -389,8 +409,14 @@ object AppModule {
         return UserRepositoryImpl(userDataSource)
     }
 
+    @Provides
+    @Singleton
+    fun provideDoWorkoutRepository(doWorkoutDataSource: DoWorkoutDataSource): DoWorkoutRepository {
+        return DoWorkoutRepositoryImpl(doWorkoutDataSource)
+    }
+
     /**
-     * Usecases
+     * Use Cases
      */
 
     @Provides
