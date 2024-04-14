@@ -8,4 +8,6 @@
     <string name="text_invalid_exercise">"Invalid exerise found. "</string>
     <string name="text_workout_has_no_exercises">Workout has no exercises.</string>
     <string name="text_exercise_not_found">Exercise was not found.</string>
+    <string name="text_exercise_set_not_found">Exercise set not found.</string>
+    <string name="text_workout_not_found">Workout not found.</string>
 </resources>

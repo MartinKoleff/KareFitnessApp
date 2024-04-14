@@ -104,7 +104,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 val exercise = event.exercise
 
                 viewModelScope.launch(dispatcher) {
-                    workoutUseCases.addExerciseUseCase(
+                    workoutUseCases.submitExerciseUseCase(
                         workoutId = selectedWorkout.workoutId,
                         exercise = exercise
                     ).collect { updateWorkoutState ->

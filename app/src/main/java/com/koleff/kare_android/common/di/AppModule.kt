@@ -78,6 +78,7 @@ import com.koleff.kare_android.domain.usecases.SelectNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
+import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
@@ -436,6 +437,7 @@ object AppModule {
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
             addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+            submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
             deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),

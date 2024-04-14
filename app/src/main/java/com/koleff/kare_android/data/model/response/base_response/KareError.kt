@@ -20,7 +20,9 @@ enum class KareError(
     USER_NOT_FOUND("error_user_not_found", R.string.text_user_not_found, ErrorType.INTERNAL),
     INVALID_EXERCISE("error_invalid_exercise", R.string.text_invalid_exercise, ErrorType.INTERNAL),
     WORKOUT_HAS_NO_EXERCISES("error_workout_has_no_exercises", R.string.text_workout_has_no_exercises, ErrorType.INTERNAL),
-    EXERCISE_NOT_FOUND("error_exercise_not_found", R.string.text_exercise_not_found, ErrorType.INTERNAL);
+    EXERCISE_NOT_FOUND("error_exercise_not_found", R.string.text_exercise_not_found, ErrorType.INTERNAL),
+    EXERCISE_SET_NOT_FOUND("error_exercise_set_not_found", R.string.text_exercise_set_not_found, ErrorType.INTERNAL),
+    WORKOUT_NOT_FOUND("error_workout_not_found", R.string.text_workout_not_found, ErrorType.INTERNAL);
 
 
     companion object {

@@ -35,6 +35,7 @@ import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -173,6 +174,7 @@ class ExerciseUseCasesUnitTest {
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
             addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+            submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
             deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
@@ -664,7 +666,7 @@ class ExerciseUseCasesUnitTest {
             )
         }
 
-        //TODO: [TEST] OnToggleSearch...
+        //TODO: [Test] OnToggleSearch...
     }
 }
 

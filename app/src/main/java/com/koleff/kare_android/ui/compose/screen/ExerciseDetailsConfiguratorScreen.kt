@@ -97,6 +97,8 @@ fun ExerciseDetailsConfiguratorScreen(
     //Dialog callbacks
     val onSubmitExercise: () -> Unit = {
         if (!exerciseState.isLoading) {
+
+            //Replace old exercise with new
             exerciseDetailsConfiguratorViewModel.onExerciseUpdateEvent(
                 OnExerciseUpdateEvent.OnExerciseSubmit(exerciseState.exercise)
             )

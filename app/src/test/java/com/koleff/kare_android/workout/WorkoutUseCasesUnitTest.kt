@@ -25,6 +25,7 @@ import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -142,6 +143,7 @@ class WorkoutUseCasesUnitTest {
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
             addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+            submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
             deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
@@ -783,6 +785,8 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Assert the exercise is added in workout details")
             assertTrue { workoutDetailsAfterAdd.exercises.size == workoutDetails.exercises.size + 1 }
 
+            //TODO: [Test] assert workout.totalExercises has incremented...
+
             //Delete from DB
             val deleteExerciseState = workoutUseCases.deleteExerciseUseCase(
                 workoutId = savedWorkoutDetails.workoutId,
@@ -812,7 +816,7 @@ class WorkoutUseCasesUnitTest {
                 TAG,
                 "Assert initial workout details before added exercise is the same as the workout after deleted the added exercise."
             )
-            assertTrue { workoutDetailsAfterDelete == workoutDetails } //TODO: exercise set ids are different...
+            assertTrue { workoutDetailsAfterDelete == workoutDetails }
 
             logger.i(
                 TAG,
@@ -835,6 +839,9 @@ class WorkoutUseCasesUnitTest {
                 throw exception ?: return@assertThrows
             }
         }
+
+    //TODO: [Test] create workout, submit already existing exercise in workout -> check if exercise is replaced with new exercise...
+    //TODO: [Test] submit new exercise in workout -> check if exercise is added and exercise list is increased...
 
     /**
      * Tested functions inside:
@@ -1054,6 +1061,6 @@ class WorkoutUseCasesUnitTest {
             )
         } || filteredWorkoutList.isEmpty())
 
-        //TODO: [TEST] OnToggleSearch...
+        //TODO: [Test] OnToggleSearch...
     }
 }
