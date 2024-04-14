@@ -35,7 +35,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         ExerciseDetailsExerciseCrossRef::class,
         ExerciseSetCrossRef::class
     ],
-    version = 7,
+    version = 14,
     exportSchema = false,
 )
 abstract class KareDatabase : RoomDatabase() {

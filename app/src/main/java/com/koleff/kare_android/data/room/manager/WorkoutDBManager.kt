@@ -58,7 +58,12 @@ class WorkoutDBManager @Inject constructor(
 
                     //Generate sets
                     val sets =
-                        MockupDataGenerator.generateExerciseSetsList(4, isGenerateSetId = true)
+                        MockupDataGenerator.generateExerciseSetsList(
+                            4,
+                            exerciseId = exercise.exerciseId,
+                            workoutId = exercise.workoutId,
+                            isGenerateSetId = true
+                        )
                     for (set in sets) {
 
                         //Save set

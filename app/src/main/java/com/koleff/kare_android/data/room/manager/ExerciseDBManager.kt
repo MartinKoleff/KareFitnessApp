@@ -34,12 +34,19 @@ class ExerciseDBManager @Inject constructor(
                 //Exercise - ExerciseSet cross refs for each exercise
                 if (hasSets) {
                     for (exercise in exercisesList) {
-                        val exerciseSets = ExerciseGenerator.loadExerciseSets()
+                        val exerciseSets = ExerciseGenerator.loadExerciseSets(
+                            exerciseId = exercise.exerciseId,
+                            workoutId = exercise.workoutId
+                        )
                         exerciseSetDao.insertAllExerciseSets(exerciseSets)
 
                         val totalSets = exerciseSets.size
                         val exerciseSetsCrossRef =
-                            ExerciseGenerator.loadExerciseSetsCrossRefs(exercise, exerciseSets, totalSets)
+                            ExerciseGenerator.loadExerciseSetsCrossRefs(
+                                exercise,
+                                exerciseSets,
+                                totalSets
+                            )
                         exerciseDao.insertAllExerciseSetCrossRef(exerciseSetsCrossRef)
                     }
                 }
