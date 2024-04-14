@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.PermissionManager
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -52,6 +53,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.RestBetweenSetsFooter
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsConfiguratorScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
@@ -107,6 +109,11 @@ fun ExerciseDetailsConfiguratorScreen(
 
     val onDeleteSet: (ExerciseSetDto) -> Unit = { selectedExerciseSet ->
         exerciseDetailsConfiguratorViewModel.deleteSet(selectedExerciseSet)
+    }
+
+    //Switch state
+    var restBetweenSetsIsChecked by remember {
+        mutableStateOf(false)
     }
 
     //Error handling
@@ -203,53 +210,60 @@ fun ExerciseDetailsConfiguratorScreen(
             }
 
             //Exercise sets
-            LazyColumn(
-                modifier = Modifier
-                    .padding(vertical = 24.dp)
-                    .clip(RoundedCornerShape(cornerSize))
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(
-                                Color.DarkGray,
-                                Color.Black,
-                                Color.Black,
-                                Color.Black,
-                                Color.Black
-                            )
+            if (!showLoadingDialog) {
+                LazyColumn(
+                    modifier = Modifier
+                        .padding(vertical = 24.dp)
+                        .clip(RoundedCornerShape(cornerSize))
+                        .background(
+                            brush = Brush.verticalGradient(
+                                listOf(
+                                    Color.DarkGray,
+                                    Color.Black,
+                                    Color.Black,
+                                    Color.Black,
+                                    Color.Black
+                                )
+                            ),
+                            shape = RoundedCornerShape(cornerSize)
                         ),
-                        shape = RoundedCornerShape(cornerSize)
-                    ),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
 
-                //Rows with sets / reps / weight configuration
-                items(exerciseState.exercise.sets.size) { currentSetId ->
-                    val currentSet = exerciseState.exercise.sets[currentSetId]
-                    ExerciseSetRow(
-                        set = currentSet,
-                        onRepsChanged = { newReps ->
-                            currentSet.reps = newReps
+                    //Rows with sets / reps / weight configuration
+                    items(exerciseState.exercise.sets.size) { currentSetId ->
+                        val currentSet = exerciseState.exercise.sets[currentSetId]
+                        ExerciseSetRow(
+                            set = currentSet,
+                            onRepsChanged = { newReps ->
+                                currentSet.reps = newReps
 //                    currentSet.setId = null //When set is changed -> generate new UUID
-                        },
-                        onWeightChanged = { newWeight ->
-                            currentSet.weight = newWeight
+                            },
+                            onWeightChanged = { newWeight ->
+                                currentSet.weight = newWeight
 //                    currentSet.setId = null //When set is changed -> generate new UUID
-                        },
-                        onDelete = {
-                            onDeleteSet(currentSet)
-                        }
-                    )
-                }
+                            },
+                            onDelete = {
+                                onDeleteSet(currentSet)
+                            }
+                        )
+                    }
 
-                //TODO: add new set footer...
-                item {
+                    //TODO: add new set footer...
+                    item {
 
-                }
+                    }
 
-                //TODO: add rest after exercise...
-                item {
-
+                    //Rest after exercise footer
+                    item {
+                        RestBetweenSetsFooter(
+                            isChecked = restBetweenSetsIsChecked,
+                            onCheckedChange = { newState ->
+                                restBetweenSetsIsChecked = newState
+                            }
+                        )
+                    }
                 }
             }
         }

@@ -2,12 +2,18 @@ package com.koleff.kare_android.ui.compose.components
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,10 +23,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.ui.state.CircularTimerStyle
 
 enum class TimeType(val maxTime: Int) {
@@ -72,7 +91,7 @@ fun CircularTimePicker(
                     Text(
                         text = String.format("%02d", num),
                         style = MaterialTheme.typography.overline.copy(
-                            color = Color.Gray,
+                            color = Color.White,
                             fontSize = LocalDensity.current.run { circularTimerStyle.cellTextSize.toSp() }
                         )
                     )
@@ -85,9 +104,181 @@ fun CircularTimePicker(
 @Preview(showBackground = true)
 @Composable
 fun CircularTimePickerPreview() {
-    Row(modifier = Modifier.fillMaxSize()) {
+    val size = CircularTimerStyle().size
+    Row(modifier = Modifier.size(size).background(Color.Black)) {
         CircularTimePicker(TimeType.Hours, initialTime = 5)
         CircularTimePicker(TimeType.Minutes, initialTime = 15)
         CircularTimePicker(TimeType.Seconds, initialTime = 30)
     }
+}
+
+@Composable
+fun CircularTimerFooter(
+    modifier: Modifier = Modifier,
+    circularTimerStyle: CircularTimerStyle = CircularTimerStyle()
+) {
+    val textColor = Color.White
+    val cornerSize = 20.dp
+    Row(
+        modifier = modifier
+            .height(circularTimerStyle.size),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+
+        //Text
+        Text(
+            modifier = Modifier
+                .padding(4.dp),
+            text = "Time:",
+            style = TextStyle(
+                color = textColor,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            ),
+            textAlign = TextAlign.Center,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+
+        //Timer
+        Row(
+            modifier = Modifier
+                .width(300.dp)
+                .height(circularTimerStyle.size)
+                .padding(horizontal = 16.dp)
+                .drawBehind {
+
+                    //Selector
+                    drawRoundRect(
+                        color = Color.Gray,
+                        topLeft = Offset(x = 0.dp.toPx(), y = circularTimerStyle.cellSize.toPx()),
+                        size = Size(
+                            width = this.size.width,
+                            height = circularTimerStyle.cellSize.toPx()
+                        ),
+                        cornerRadius = CornerRadius(x = cornerSize.toPx(), y = cornerSize.toPx()),
+                        colorFilter = ColorFilter.tint(Color.Gray, BlendMode.Screen)
+                    )
+                }
+        ) {
+
+
+            Box(modifier = Modifier.weight(1f)) {
+                CircularTimePicker(TimeType.Minutes, initialTime = 0)
+
+                //Text
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(4.dp),
+                        text = "min.",
+                        style = TextStyle(
+                            color = textColor,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            Box(modifier = Modifier.weight(1f)) {
+                CircularTimePicker(TimeType.Seconds, initialTime = 0)
+
+                //Text
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(4.dp),
+                        text = "sec.",
+                        style = TextStyle(
+                            color = textColor,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun CircularTimerFooterPreview() {
+    CircularTimerFooter(modifier = Modifier.background(Color.Black))
+}
+
+@Composable
+fun RestBetweenSetsFooter(
+    modifier: Modifier = Modifier,
+    onCheckedChange: (Boolean) -> Unit,
+    isChecked: Boolean = false
+) {
+    val textColor = Color.White
+
+    Column(
+        modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+    ) {
+
+        //Toggle switch header
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            //Text
+            Text(
+                modifier = Modifier
+                    .padding(4.dp),
+                text = "Rest between sets:",
+                style = TextStyle(
+                    color = textColor,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            //Switch
+            SwitchButton(isChecked = isChecked, onCheckedChange = onCheckedChange)
+        }
+
+        if (isChecked) {
+            CircularTimerFooter()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun RestBetweenSetsFooterPreview() {
+    RestBetweenSetsFooter(
+        modifier = Modifier.background(Color.Black),
+        onCheckedChange = {},
+        isChecked = true
+    )
+}
+
+@Preview
+@Composable
+fun RestBetweenSetsFooterPreview2() {
+    RestBetweenSetsFooter(
+        modifier = Modifier.background(Color.Black),
+        onCheckedChange = {},
+        isChecked = false
+    )
 }

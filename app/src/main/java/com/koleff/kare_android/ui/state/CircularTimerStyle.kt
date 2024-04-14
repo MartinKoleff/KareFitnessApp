@@ -7,7 +7,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
 data class CircularTimerStyle(
-    val size: Dp = 160.dp,
+    val size: Dp = 120.dp,
     val cellSize: Dp = size / 3,
     val cellTextSize: Dp = cellSize / 2
 )
