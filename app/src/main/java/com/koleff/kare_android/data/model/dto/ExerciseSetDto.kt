@@ -8,6 +8,8 @@ import java.util.UUID
 @Parcelize
 data class ExerciseSetDto(
     var setId: UUID? = null,
+    val workoutId: Int,
+    val exerciseId: Int,
     val number: Int,
     var reps: Int,
     var weight: Float
@@ -16,6 +18,8 @@ data class ExerciseSetDto(
         return ExerciseSet(
             setId = setId ?: UUID.randomUUID(), // Generate new UUID if null
             number = number,
+            workoutId = workoutId,
+            exerciseId = exerciseId,
             reps = reps,
             weight = weight
         )

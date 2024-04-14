@@ -21,7 +21,7 @@ data class ExerciseDto(
     @field:Json(name = "snapshot") //TODO: image...
     val snapshot: String = "",
     @field:Json(name = "sets")
-    val sets: List<ExerciseSetDto> = MockupDataGenerator.generateExerciseSetsList()
+    val sets: List<ExerciseSetDto> = emptyList()
 ): Parcelable{
     fun toExercise(): Exercise {
         return Exercise(

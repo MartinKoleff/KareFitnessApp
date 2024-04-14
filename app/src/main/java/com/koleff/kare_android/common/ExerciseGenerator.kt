@@ -71,7 +71,11 @@ object ExerciseGenerator {
         }
     }
 
-    fun loadExerciseDetails(muscleGroup: MuscleGroup, isWorkout: Boolean, workoutId: Int = 1): List<ExerciseDetails> {
+    fun loadExerciseDetails(
+        muscleGroup: MuscleGroup,
+        isWorkout: Boolean,
+        workoutId: Int = 1
+    ): List<ExerciseDetails> {
         val customWorkoutId =
             if (isWorkout) {
                 if (workoutId != -1) {
@@ -98,10 +102,14 @@ object ExerciseGenerator {
         val exercisesList = mutableListOf<ExerciseDto>()
 
         for (muscleGroup in MuscleGroup.entries) {
-            val exerciseSets = loadExerciseSets()
             val generatedExercises =
                 loadExercises(muscleGroup, isWorkout)
                     .map { exercise ->
+                        val exerciseSets = loadExerciseSets(
+                            exerciseId = exercise.exerciseId,
+                            workoutId = exercise.workoutId
+                        )
+
                         exercise.toExerciseDto(exerciseSets)
                     }
                     .toList()
@@ -161,12 +169,38 @@ object ExerciseGenerator {
         }
     }
 
-    fun loadExerciseSets(): List<ExerciseSet> {
+    fun loadExerciseSets(workoutId: Int, exerciseId: Int): List<ExerciseSet> {
         return listOf(
-            ExerciseSet(UUID.randomUUID(), 1, 12, 0.0f),
-            ExerciseSet(UUID.randomUUID(), 2, 10, 0.0f),
-            ExerciseSet(UUID.randomUUID(), 3, 8, 0.0f),
-            ExerciseSet(UUID.randomUUID(), 4, 1, 50f),
+            ExerciseSet(
+                setId = UUID.randomUUID(),
+                exerciseId = exerciseId,
+                workoutId = workoutId,
+                number = 1,
+                reps = 12,
+                weight = 0.0f
+            ),
+            ExerciseSet(
+                setId = UUID.randomUUID(),
+                exerciseId = exerciseId,
+                workoutId = workoutId,
+                number = 2,
+                reps = 10,
+                weight = 0.0f
+            ),
+            ExerciseSet(
+                setId = UUID.randomUUID(),
+                exerciseId = exerciseId,
+                workoutId = workoutId,
+                number = 3,
+                reps = 8,
+                weight = 0.0f
+            ),
+            ExerciseSet(setId = UUID.randomUUID(),
+                exerciseId = exerciseId,
+                workoutId = workoutId,
+                number = 4,
+                reps = 1,
+                weight = 50f),
         )
     }
 

@@ -79,12 +79,16 @@ object MockupDataGenerator {
             if (isWorkout) catalogExercises[exerciseId - 1] else exercises[exerciseId - 1]
 
         val generatedWorkoutId = if (isWorkout) workoutId else generatedExercise.workoutId
-        val generatedExerciseWithSets = generatedExercise.copy(
+        val generatedExerciseWithSetss = generatedExercise.copy(
             workoutId = generatedWorkoutId,
-            sets = generateExerciseSetsList(isGenerateSetId = isGenerateSetId)
+            sets = generateExerciseSetsList(
+                isGenerateSetId = isGenerateSetId,
+                workoutId = generatedExercise.workoutId,
+                exerciseId = generatedExercise.exerciseId
+            )
         )
 
-        return generatedExerciseWithSets
+        return generatedExerciseWithSetss
     }
 
     fun generateExerciseList(
@@ -100,11 +104,12 @@ object MockupDataGenerator {
 
         val generatePreSelectedExercise: Boolean = containIds.isNotEmpty()
         val totalPreSelectedExercises: Int =
-            if(containIds.isNotEmpty() && containIds.size < n) containIds.size else 0
+            if (containIds.isNotEmpty() && containIds.size < n) containIds.size else 0
 
-        if(generatePreSelectedExercise) {
+        if (generatePreSelectedExercise) {
             repeat(totalPreSelectedExercises) { currentIndex ->
-                val generatedExercise= catalogExercises[containIds[currentIndex] - 1] //Not added in exercises[]
+                val generatedExercise =
+                    catalogExercises[containIds[currentIndex] - 1] //Not added in exercises[]
 
                 val generatedWorkoutId = if (isWorkout) workoutId else generatedExercise.workoutId
                 val generatedExerciseUpdated = generatedExercise.copy(
@@ -190,13 +195,43 @@ object MockupDataGenerator {
 
     fun generateExerciseSetsList(
         n: Int = 4,
+        workoutId: Int,
+        exerciseId: Int,
         isGenerateSetId: Boolean = true
     ): List<ExerciseSetDto> {
         val exerciseSetList = listOf(
-            generateExerciseSet(isGenerateSetId, 1, 12, 50f),
-            generateExerciseSet(isGenerateSetId, 2, 10, 55.5f),
-            generateExerciseSet(isGenerateSetId, 3, 8, 60f),
-            generateExerciseSet(isGenerateSetId, 4, 1, 80f),
+            generateExerciseSet(
+                isGenerateSetId,
+                workoutId = workoutId,
+                exerciseId = exerciseId,
+                number = 1,
+                reps = 12,
+                weight = 50f
+            ),
+            generateExerciseSet(
+                isGenerateSetId,
+                workoutId = workoutId,
+                exerciseId = exerciseId,
+                number = 2,
+                reps = 10,
+                weight = 55.5f
+            ),
+            generateExerciseSet(
+                isGenerateSetId,
+                workoutId = workoutId,
+                exerciseId = exerciseId,
+                number = 3,
+                reps = 8,
+                weight = 60f
+            ),
+            generateExerciseSet(
+                isGenerateSetId,
+                workoutId = workoutId,
+                exerciseId = exerciseId,
+                number = 4,
+                reps = 1,
+                weight = 80f
+            ),
         )
 
         return exerciseSetList
@@ -204,15 +239,19 @@ object MockupDataGenerator {
 
     fun generateExerciseSet(
         isGenerateSetId: Boolean = true,
+        workoutId: Int = -1,
+        exerciseId: Int = -1,
         number: Int = 1,
         reps: Int = 12,
         weight: Float = 50f
     ): ExerciseSetDto {
         return ExerciseSetDto(
-            if (isGenerateSetId) UUID.randomUUID() else null,
-            number,
-            reps,
-            weight
+            setId = if (isGenerateSetId) UUID.randomUUID() else null,
+            workoutId = workoutId,
+            exerciseId = exerciseId,
+            number = number,
+            reps = reps,
+            weight = weight
         )
     }
 
