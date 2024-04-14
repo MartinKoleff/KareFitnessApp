@@ -8,12 +8,10 @@ import androidx.room.Query
 import androidx.room.Transaction
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
-import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
 
 @Dao
 interface ExerciseDao {
@@ -47,17 +45,27 @@ interface ExerciseDao {
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId AND workoutId = :workoutId")
-    fun getExerciseByExerciseAndWorkoutId(exerciseId: Int, workoutId: Int): ExerciseWithSet
+    suspend fun getExercise(exerciseId: Int, workoutId: Int): Exercise?
+
+    @Query("SELECT * FROM exercise_set_table WHERE exerciseId = :exerciseId AND workoutId = :workoutId")
+    suspend fun getSetsForExercise(exerciseId: Int, workoutId: Int): List<ExerciseSet>
+
+    suspend fun getExerciseWithSets(exerciseId: Int, workoutId: Int): ExerciseWithSets {
+        val exercise = getExercise(exerciseId, workoutId)
+        val sets = if (exercise != null) getSetsForExercise(exerciseId, workoutId) else emptyList()
+        return if (exercise != null) ExerciseWithSets(exercise, sets) else
+            throw NoSuchElementException("No exercise found with exerciseId $exerciseId and workoutId $workoutId")
+    }
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")
-    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<ExerciseWithSet>
+    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise>
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId")
-    fun getAllExercises(): List<ExerciseWithSet>
+    fun getAllExercises(): List<Exercise>
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId ASC")
-    fun getExercisesOrderedById(): List<ExerciseWithSet>
+    fun getExercisesOrderedById(): List<Exercise>
 }
