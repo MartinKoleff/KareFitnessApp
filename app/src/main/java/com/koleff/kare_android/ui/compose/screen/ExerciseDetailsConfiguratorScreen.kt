@@ -142,6 +142,7 @@ fun ExerciseDetailsConfiguratorScreen(
     }
 
     val cornerSize = 24.dp
+    val loadingWheelSize = 50.dp
     ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
@@ -176,19 +177,17 @@ fun ExerciseDetailsConfiguratorScreen(
             //Exercise name
             Box(
                 modifier = Modifier
+                    .padding(
+                        top = loadingWheelSize,
+                        bottom = 8.dp,
+                        start = 16.dp,
+                        end = 16.dp
+                    )
                     .fillMaxWidth()
                     .height(50.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    modifier = Modifier.padding(
-                        PaddingValues(
-                            start = 16.dp,
-                            end = 16.dp,
-                            top = 16.dp,
-                            bottom = 8.dp
-                        )
-                    ),
                     text = exerciseState.exercise.name,
                     style = TextStyle(
                         color = Color.White,
@@ -201,61 +200,60 @@ fun ExerciseDetailsConfiguratorScreen(
                 )
             }
 
-            if (showLoadingDialog) {
-                LoadingWheel() //TODO: fix not visible...
-            } else {
-
-                //Exercise sets
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(horizontal = 24.dp)
-                        .clip(RoundedCornerShape(cornerSize))
-                        .background(
-                            brush = Brush.verticalGradient(
-                                listOf(
-                                    Color.DarkGray,
-                                    Color.Black,
-                                    Color.Black,
-                                    Color.Black,
-                                    Color.Black
-                                )
-                            ),
-                            shape = RoundedCornerShape(cornerSize)
+            //Exercise sets
+            LazyColumn(
+                modifier = Modifier
+                    .padding(vertical = 24.dp)
+                    .clip(RoundedCornerShape(cornerSize))
+                    .background(
+                        brush = Brush.verticalGradient(
+                            listOf(
+                                Color.DarkGray,
+                                Color.Black,
+                                Color.Black,
+                                Color.Black,
+                                Color.Black
+                            )
                         ),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+                        shape = RoundedCornerShape(cornerSize)
+                    ),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-                    //Rows with sets / reps / weight configuration
-                    items(exerciseState.exercise.sets.size) { currentSetId ->
-                        val currentSet = exerciseState.exercise.sets[currentSetId]
-                        ExerciseSetRow(
-                            set = currentSet,
-                            onRepsChanged = { newReps ->
-                                currentSet.reps = newReps
+                //Rows with sets / reps / weight configuration
+                items(exerciseState.exercise.sets.size) { currentSetId ->
+                    val currentSet = exerciseState.exercise.sets[currentSetId]
+                    ExerciseSetRow(
+                        set = currentSet,
+                        onRepsChanged = { newReps ->
+                            currentSet.reps = newReps
 //                    currentSet.setId = null //When set is changed -> generate new UUID
-                            },
-                            onWeightChanged = { newWeight ->
-                                currentSet.weight = newWeight
+                        },
+                        onWeightChanged = { newWeight ->
+                            currentSet.weight = newWeight
 //                    currentSet.setId = null //When set is changed -> generate new UUID
-                            },
-                            onDelete = {
-                                onDeleteSet(currentSet)
-                            }
-                        )
-                    }
+                        },
+                        onDelete = {
+                            onDeleteSet(currentSet)
+                        }
+                    )
+                }
 
-                    //TODO: add new set footer...
-                    item {
+                //TODO: add new set footer...
+                item {
 
-                    }
+                }
 
-                    //TODO: add rest after exercise...
-                    item {
+                //TODO: add rest after exercise...
+                item {
 
-                    }
                 }
             }
         }
+    }
+
+    if (showLoadingDialog) {
+        LoadingWheel(innerPadding = PaddingValues(bottom = loadingWheelSize * 2))
     }
 }
