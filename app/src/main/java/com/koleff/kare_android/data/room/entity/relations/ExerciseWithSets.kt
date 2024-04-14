@@ -7,17 +7,8 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 
-//TODO: add workoutId relation...
 data class ExerciseWithSets(
-//    @Embedded
     val exercise: Exercise,
-
-    //Fetches all sets for all exercises in the given workout (if workoutId-workoutId)
-//    @Relation(
-//        parentColumn = "exerciseId",
-//        entityColumn = "exerciseId",
-//        associateBy = Junction(ExerciseSetCrossRef::class)
-//    )
     val sets: List<ExerciseSet>
 
 ) {
