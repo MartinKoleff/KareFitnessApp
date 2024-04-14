@@ -5,9 +5,10 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
+import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercisesWithSets
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.utils.TestLogger
 
@@ -19,9 +20,7 @@ class WorkoutDetailsDaoFake(
 
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
     private val workoutDetailsExerciseCrossRefs = mutableListOf<WorkoutDetailsExerciseCrossRef>()
-    private fun getAllExercises(): List<ExerciseWithSet> {
-        return exerciseDao.getExercisesOrderedById()
-    }
+
 
     private val isInternalLogging = false
 
@@ -117,24 +116,23 @@ class WorkoutDetailsDaoFake(
         val workoutExercisesIndexes = workoutDetailsExerciseCrossRefs
             .map { it.exerciseId }
 
-        val workoutExercises = getAllExercises()
-            .filter { workoutExercisesIndexes.contains(it.exercise.exerciseId) }
-            .map { it.exercise } as MutableList
+        val workoutExercises = exerciseDao.getAllExercises()
+            .filter { workoutExercisesIndexes.contains(it.exerciseId) }
 
         return workoutExercises
     }
 
-    fun getWorkoutExercisesWithSets(): List<ExerciseDto> {
+    suspend fun getWorkoutExercisesWithSets(): List<ExerciseDto> {
         val exercises = getWorkoutExercises()
 
         val exerciseWithSets = exercises
             .map {
-                exerciseDao.getExerciseByExerciseAndWorkoutId(
+                exerciseDao.getExerciseWithSets(
                     it.exerciseId,
                     it.workoutId
                 )
             }
-            .map(ExerciseWithSet::toExerciseDto)
+            .map(ExerciseWithSets::toExerciseDto)
 
         if (isInternalLogging) logger.i(TAG, "Get workout exercises with sets -> $exerciseWithSets")
         return exerciseWithSets
@@ -149,6 +147,19 @@ class WorkoutDetailsDaoFake(
             exercises = workoutExercises
         )
     }
+
+//    override fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercisesWithSets? {
+//        val workoutExercises = getWorkoutExercises().filter { it.workoutId == workoutId }
+//            .map { ExerciseWithSets(exercise = it, sets = emptyList()) }
+//
+//        return WorkoutDetailsWithExercisesWithSets(
+//            workoutDetails =
+//            workoutDetailsDB.firstOrNull {
+//                it.workoutDetails.workoutDetailsId == workoutId
+//            }?.workoutDetails ?: return null,
+//            exercisesWithSets = workoutExercises
+//        )
+//    }
 
     override fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises? {
         val workoutExercises = getWorkoutExercises().filter { it.workoutId == workoutId }

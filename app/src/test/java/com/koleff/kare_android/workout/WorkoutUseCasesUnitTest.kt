@@ -38,6 +38,8 @@ import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -163,7 +165,7 @@ class WorkoutUseCasesUnitTest {
     }
 
     @AfterEach
-    fun tearDown() {
+    fun tearDown() = runTest {
         exerciseDao.clearDB()
         exerciseSetDao.clearDB()
         workoutDetailsDao.clearDB()

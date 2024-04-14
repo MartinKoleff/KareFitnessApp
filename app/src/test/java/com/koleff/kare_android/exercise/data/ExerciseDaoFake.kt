@@ -10,7 +10,7 @@ import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsWithExercise
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSet
+import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
 import com.koleff.kare_android.utils.TestLogger
 
 class ExerciseDaoFake(
@@ -18,7 +18,7 @@ class ExerciseDaoFake(
     private val exerciseDetailsDao: ExerciseDetailsDaoFake,
     private val logger: TestLogger
 ) : ExerciseDao {
-    private val exerciseWithSetDB = mutableListOf<ExerciseWithSet>()
+    private val exerciseWithSetDB = mutableListOf<ExerciseWithSets>()
     private val exerciseDetailsWithExerciseDB = mutableListOf<ExerciseDetailsWithExercise>()
 
     private val exerciseDetailsExerciseCrossRefs =
@@ -48,7 +48,7 @@ class ExerciseDaoFake(
 
         //Add new entry
         exerciseWithSetDB.add(
-            ExerciseWithSet(exercise = exercise, sets = sets)
+            ExerciseWithSets(exercise = exercise, sets = sets)
         )
 
 
@@ -58,8 +58,8 @@ class ExerciseDaoFake(
         )
     }
 
-    private fun updateExerciseDetailsDB(exerciseDetailsId: Int, workoutId: Int) {
-        val exercise = this.getExerciseByExerciseAndWorkoutId(exerciseDetailsId, workoutId).exercise
+    private suspend fun updateExerciseDetailsDB(exerciseDetailsId: Int, workoutId: Int) {
+        val exercise = this.getExerciseWithSets(exerciseDetailsId, workoutId).exercise
         val exerciseDetails = exerciseDetailsDao.getExerciseDetailsByExerciseAndWorkoutId(
             exerciseDetailsId,
             workoutId
@@ -156,8 +156,8 @@ class ExerciseDaoFake(
         }
     }
 
-    private fun updateExerciseWithSets(exerciseId: Int, workoutId: Int) {
-        val exerciseWithNoSets = getExerciseByExerciseAndWorkoutId(exerciseId, workoutId)
+    private suspend fun updateExerciseWithSets(exerciseId: Int, workoutId: Int) {
+        val exerciseWithNoSets = getExerciseWithSets(exerciseId, workoutId)
         val exerciseSets = getExerciseSets(exerciseWithNoSets.exercise)
         val exerciseWithSets = exerciseWithNoSets.copy(
             sets = exerciseSets
@@ -198,6 +198,20 @@ class ExerciseDaoFake(
         }
     }
 
+    override suspend fun getExercise(exerciseId: Int, workoutId: Int): Exercise? {
+        return exerciseWithSetDB.first {
+            it.exercise.exerciseId == exerciseId &&
+                    it.exercise.workoutId == workoutId
+        }.exercise
+    }
+
+    override suspend fun getSetsForExercise(exerciseId: Int, workoutId: Int): List<ExerciseSet> {
+        return exerciseWithSetDB.first {
+            it.exercise.exerciseId == exerciseId &&
+                    it.exercise.workoutId == workoutId
+        }.sets
+    }
+
     private fun updateExerciseSetDB(crossRef: ExerciseSetCrossRef) {
         val selectedExercise = exerciseWithSetDB.first {
             it.exercise.exerciseId == crossRef.exerciseId &&
@@ -207,38 +221,43 @@ class ExerciseDaoFake(
         val updatedExerciseSets = selectedExercise.sets.toMutableList()
             .filterNot { it.setId == crossRef.setId }
 
-        val updatedExercise = ExerciseWithSet(
+        val updatedExercise = ExerciseWithSets(
             exercise = selectedExercise.exercise,
             sets = updatedExerciseSets
         )
 
         //Remove exercise entry
-        exerciseWithSetDB.removeAll {  it.exercise.exerciseId == crossRef.exerciseId &&
-                it.exercise.workoutId == crossRef.workoutId  }
+        exerciseWithSetDB.removeAll {
+            it.exercise.exerciseId == crossRef.exerciseId &&
+                    it.exercise.workoutId == crossRef.workoutId
+        }
 
         //Add updated exercise entry
         exerciseWithSetDB.add(updatedExercise)
     }
 
-    override fun getExerciseByExerciseAndWorkoutId(
-        exerciseId: Int,
-        workoutId: Int
-    ): ExerciseWithSet {
-        return exerciseWithSetDB.first { it.exercise.exerciseId == exerciseId && it.exercise.workoutId == workoutId }
+    override suspend fun getExerciseWithSets(exerciseId: Int, workoutId: Int): ExerciseWithSets {
+        val exercise = getExercise(exerciseId, workoutId)
+        val sets = if (exercise != null) getSetsForExercise(exerciseId, workoutId) else emptyList()
+        return if (exercise != null) ExerciseWithSets(exercise, sets) else
+            throw NoSuchElementException("No exercise found with exerciseId $exerciseId and workoutId $workoutId")
     }
 
-    override fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<ExerciseWithSet> {
+    override fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise> {
         return exerciseWithSetDB
             .filter { it.exercise.muscleGroup == muscleGroup }
-            .sortedBy { it.exercise.exerciseId }
+            .map { it.exercise }
+            .sortedBy { it.exerciseId }
     }
 
-    override fun getExercisesOrderedById(): List<ExerciseWithSet> {
-        return exerciseWithSetDB.sortedBy { it.exercise.exerciseId }
-    }
-
-    override fun getAllExercises(): List<ExerciseWithSet> {
+    override fun getExercisesOrderedById(): List<Exercise> {
         return exerciseWithSetDB
+            .map { it.exercise }
+            .sortedBy { it.exerciseId }
+    }
+
+    override fun getAllExercises(): List<Exercise> {
+        return exerciseWithSetDB.map { it.exercise }
     }
 
     fun clearDB() {

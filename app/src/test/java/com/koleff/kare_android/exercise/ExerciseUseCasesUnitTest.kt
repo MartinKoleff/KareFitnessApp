@@ -196,7 +196,7 @@ class ExerciseUseCasesUnitTest {
     }
 
     @AfterEach
-    fun tearDown() {
+    fun tearDown() = runTest {
         exerciseDao.clearDB()
         exerciseSetDao.clearDB()
         workoutDetailsDao.clearDB()
