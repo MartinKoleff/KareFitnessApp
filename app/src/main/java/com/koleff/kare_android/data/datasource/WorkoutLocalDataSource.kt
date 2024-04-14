@@ -187,7 +187,7 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             val exercisesWithSetsDto: MutableList<ExerciseDto> =
-                exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto) as MutableList<ExerciseDto>
+                exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto).toMutableList()
             val workout = data.workoutDetails.toWorkoutDetailsDto(exercisesWithSetsDto)
 
             val result = WorkoutDetailsWrapper(
@@ -215,9 +215,9 @@ class WorkoutLocalDataSource @Inject constructor(
             exercisesWithSetsList.add(exercisesWithSet)
         }
         val exercisesWithSetsDto: MutableList<ExerciseDto> =
-            exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto) as MutableList<ExerciseDto>
+            exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto).toMutableList()
 
-        return exercisesWithSetsList.map(ExerciseWithSet::toExerciseDto)
+        return exercisesWithSetsDto
     }
 
     //No need for separate deleteWorkoutDetails functionality. When workout is deleted the workout details should be deleted also.

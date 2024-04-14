@@ -42,7 +42,6 @@ class WorkoutDBManager @Inject constructor(
             workoutDao.insertAllWorkoutDetailsWorkoutCrossRef(workoutDetailsWorkoutCrossRefs)
 
             //Exercises
-            //TODO: doubled exercises (maybe also the catalog ones?)
             val exerciseSetsCrossRef = mutableListOf<ExerciseSetCrossRef>()
             val exerciseIdsList = mutableListOf<Int>()
             for (data in workoutDetailsList) {
