@@ -34,17 +34,32 @@ object ExerciseGenerator {
         MuscleGroup.FULL_BODY,
     )
 
-    fun loadExercises(muscleGroup: MuscleGroup, isWorkout: Boolean): List<Exercise> {
+    fun loadExercises(
+        muscleGroup: MuscleGroup,
+        isWorkout: Boolean,
+        workoutId: Int = -1
+    ): List<Exercise> {
+        val customWorkoutId =
+            if (isWorkout) {
+                if (workoutId != -1) {
+                    workoutId
+                } else {
+                    Random.nextInt()
+                }
+            } else {
+                Constants.CATALOG_EXERCISE_ID
+            }
+
         return when (muscleGroup) {
-            MuscleGroup.CHEST -> getChestExercises(isWorkout)
-            MuscleGroup.BACK -> getBackExercises(isWorkout)
-            MuscleGroup.TRICEPS -> getTricepsExercises(isWorkout)
-            MuscleGroup.BICEPS -> getBicepsExercises(isWorkout)
-            MuscleGroup.SHOULDERS -> getShoulderExercises(isWorkout)
-            MuscleGroup.LEGS -> getLegsExercises(isWorkout)
+            MuscleGroup.CHEST -> getChestExercises(customWorkoutId)
+            MuscleGroup.BACK -> getBackExercises(customWorkoutId)
+            MuscleGroup.TRICEPS -> getTricepsExercises(customWorkoutId)
+            MuscleGroup.BICEPS -> getBicepsExercises(customWorkoutId)
+            MuscleGroup.SHOULDERS -> getShoulderExercises(customWorkoutId)
+            MuscleGroup.LEGS -> getLegsExercises(customWorkoutId)
             MuscleGroup.ARMS -> {
-                val bicepsExercises = getBicepsExercises(isWorkout)
-                val tricepsExercises = getTricepsExercises(isWorkout)
+                val bicepsExercises = getBicepsExercises(customWorkoutId)
+                val tricepsExercises = getTricepsExercises(customWorkoutId)
 
                 ArrayList<Exercise>().apply {
                     addAll(bicepsExercises)
@@ -56,14 +71,25 @@ object ExerciseGenerator {
         }
     }
 
-    fun loadExerciseDetails(muscleGroup: MuscleGroup, isWorkout: Boolean): List<ExerciseDetails> {
+    fun loadExerciseDetails(muscleGroup: MuscleGroup, isWorkout: Boolean, workoutId: Int = 1): List<ExerciseDetails> {
+        val customWorkoutId =
+            if (isWorkout) {
+                if (workoutId != -1) {
+                    workoutId
+                } else {
+                    Random.nextInt()
+                }
+            } else {
+                Constants.CATALOG_EXERCISE_ID
+            }
+
         return when (muscleGroup) {
-            MuscleGroup.CHEST -> getChestExerciseDetails(isWorkout)
-            MuscleGroup.BACK -> getBackExerciseDetails(isWorkout)
-            MuscleGroup.TRICEPS -> getTricepsExerciseDetails(isWorkout)
-            MuscleGroup.BICEPS -> getBicepsExerciseDetails(isWorkout)
-            MuscleGroup.SHOULDERS -> getShoulderExerciseDetails(isWorkout)
-            MuscleGroup.LEGS -> getLegsExerciseDetails(isWorkout)
+            MuscleGroup.CHEST -> getChestExerciseDetails(customWorkoutId)
+            MuscleGroup.BACK -> getBackExerciseDetails(customWorkoutId)
+            MuscleGroup.TRICEPS -> getTricepsExerciseDetails(customWorkoutId)
+            MuscleGroup.BICEPS -> getBicepsExerciseDetails(customWorkoutId)
+            MuscleGroup.SHOULDERS -> getShoulderExerciseDetails(customWorkoutId)
+            MuscleGroup.LEGS -> getLegsExerciseDetails(customWorkoutId)
             else -> emptyList()
         }
     }
@@ -144,11 +170,13 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getLegsExerciseDetails(isWorkout: Boolean): List<ExerciseDetails> {
+    private fun getLegsExerciseDetails(
+        customWorkoutId: Int
+    ): List<ExerciseDetails> {
         return listOf(
             ExerciseDetails(
                 exerciseDetailsId = 51,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Squat",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -157,7 +185,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 52,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Bulgarian split squad",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -166,7 +194,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 53,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Smith machine squad",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -175,7 +203,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 54,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Leg extension",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -184,7 +212,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 55,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Kettlebell walking lunges",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -193,7 +221,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 56,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Leg press",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -202,7 +230,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 57,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Prone leg curl",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -211,7 +239,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 58,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Seated calf raises",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -220,7 +248,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 59,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Standing calf raises",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -229,7 +257,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 60,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Barbell standing calf raises",
                 description = description,
                 muscleGroup = MuscleGroup.LEGS,
@@ -239,11 +267,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getLegsExercises(isWorkout: Boolean): List<Exercise> { //TODO: video for all...
+    private fun getLegsExercises(customWorkoutId: Int): List<Exercise> { //TODO: video for all...
         return listOf(
             Exercise(
                 51,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Squat",
                 MuscleGroup.LEGS,
                 MachineType.BARBELL,
@@ -251,7 +279,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 52,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bulgarian split squad",
                 MuscleGroup.LEGS,
                 MachineType.DUMBBELL,
@@ -259,7 +287,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 53,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Smith machine squad",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
@@ -267,7 +295,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 54,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Leg extension",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
@@ -275,7 +303,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 55,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Kettlebell walking lunges",
                 MuscleGroup.LEGS,
                 MachineType.DUMBBELL,
@@ -283,7 +311,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 56,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Leg press",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
@@ -291,7 +319,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 57,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Prone leg curl",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
@@ -299,7 +327,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 58,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Seated calf raises",
                 MuscleGroup.LEGS,
                 MachineType.MACHINE,
@@ -307,7 +335,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 59,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Standing calf raises",
                 MuscleGroup.LEGS,
                 MachineType.CALISTHENICS,
@@ -315,7 +343,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 60,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell standing calf raises",
                 MuscleGroup.LEGS,
                 MachineType.BARBELL,
@@ -324,11 +352,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getShoulderExerciseDetails(isWorkout: Boolean): List<ExerciseDetails> {
+    private fun getShoulderExerciseDetails(customWorkoutId: Int): List<ExerciseDetails> {
         return listOf(
             ExerciseDetails(
                 exerciseDetailsId = 41,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Barbell upright row",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -337,7 +365,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 42,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Dumbbell front raises",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -346,7 +374,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 43,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Dumbbell lateral raises",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -355,7 +383,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 44,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Seated dumbbell shoulder press",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -364,7 +392,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 45,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Barbell shoulder press",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -373,7 +401,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 46,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Face pull",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -382,7 +410,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 47,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Front plate raise",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -391,7 +419,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 48,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "One arm lateral raises at the low pulley cable",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -400,7 +428,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 49,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Reverse pec deck",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -409,7 +437,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 exerciseDetailsId = 50,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 name = "Dumbbell behind the back press",
                 description = description,
                 muscleGroup = MuscleGroup.SHOULDERS,
@@ -419,11 +447,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getShoulderExercises(isWorkout: Boolean): List<Exercise> {
+    private fun getShoulderExercises(customWorkoutId: Int): List<Exercise> {
         return listOf(
             Exercise(
                 41,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell upright row",
                 MuscleGroup.SHOULDERS,
                 MachineType.BARBELL,
@@ -431,7 +459,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 42,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell front raises",
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
@@ -439,7 +467,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 43,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell lateral raises",
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
@@ -447,7 +475,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 44,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Seated dumbbell shoulder press",
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
@@ -455,7 +483,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 45,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell shoulder press",
                 MuscleGroup.SHOULDERS,
                 MachineType.BARBELL,
@@ -463,7 +491,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 46,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Face pull",
                 MuscleGroup.SHOULDERS,
                 MachineType.MACHINE,
@@ -471,7 +499,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 47,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Front plate raise",
                 MuscleGroup.SHOULDERS,
                 MachineType.CALISTHENICS,
@@ -479,7 +507,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 48,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "One arm lateral raises at the low pulley cable",
                 MuscleGroup.SHOULDERS,
                 MachineType.MACHINE,
@@ -487,7 +515,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 49,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Reverse pec deck",
                 MuscleGroup.SHOULDERS,
                 MachineType.MACHINE,
@@ -495,7 +523,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 50,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell behind the back press", //TODO: video...
                 MuscleGroup.SHOULDERS,
                 MachineType.DUMBBELL,
@@ -504,11 +532,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getBicepsExerciseDetails(isWorkout: Boolean): List<ExerciseDetails> {
+    private fun getBicepsExerciseDetails(customWorkoutId: Int): List<ExerciseDetails> {
         return listOf(
             ExerciseDetails(
                 32,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Standing dumbbell biceps curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -517,7 +545,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 33,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Sitting dumbbell biceps curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -526,7 +554,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 34,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell biceps curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -535,7 +563,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 35,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell concentrated curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -544,7 +572,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 36,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -553,7 +581,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 37,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -562,7 +590,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 38,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "One arm dumbbell preacher curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -571,7 +599,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 39,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell preacher curl",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -580,7 +608,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 40,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Reverse grip biceps curl at the low pulley cable",
                 description = description,
                 MuscleGroup.BICEPS,
@@ -590,11 +618,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getBicepsExercises(isWorkout: Boolean): List<Exercise> {
+    private fun getBicepsExercises(customWorkoutId: Int): List<Exercise> {
         return listOf(
             Exercise(
                 32,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Standing dumbbell biceps curl",
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
@@ -602,7 +630,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 33,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Sitting dumbbell biceps curl",
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
@@ -610,7 +638,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 34,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell biceps curl",
                 MuscleGroup.BICEPS,
                 MachineType.BARBELL,
@@ -618,7 +646,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 35,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell concentrated curl",
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
@@ -626,7 +654,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 36,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
@@ -634,7 +662,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 37,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
@@ -642,7 +670,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 38,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "One arm dumbbell preacher curl",
                 MuscleGroup.BICEPS,
                 MachineType.DUMBBELL,
@@ -650,7 +678,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 39,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell preacher curl",
                 MuscleGroup.BICEPS,
                 MachineType.BARBELL,
@@ -658,7 +686,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 40,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Reverse grip biceps curl at the low pulley cable",
                 MuscleGroup.BICEPS,
                 MachineType.MACHINE,
@@ -667,11 +695,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getTricepsExerciseDetails(isWorkout: Boolean): List<ExerciseDetails> {
+    private fun getTricepsExerciseDetails(customWorkoutId: Int): List<ExerciseDetails> {
         return listOf(
             ExerciseDetails(
                 22,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Triceps cable pushdown",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -680,7 +708,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 23,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell triceps kickback",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -689,7 +717,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 24,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Skull crushers",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -698,7 +726,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 25,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dips",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -707,7 +735,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 26,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Machine triceps dips",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -716,7 +744,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 27,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell triceps extension",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -725,7 +753,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 28,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Cable rope triceps pushdown",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -734,7 +762,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 29,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bench dip",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -743,7 +771,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 30,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell standing french press",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -752,7 +780,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 31,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Triceps cable rope extension",
                 description = description,
                 MuscleGroup.TRICEPS,
@@ -762,11 +790,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getTricepsExercises(isWorkout: Boolean): List<Exercise> {
+    private fun getTricepsExercises(customWorkoutId: Int): List<Exercise> {
         return listOf(
             Exercise(
                 22,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Triceps cable pushdown",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
@@ -774,7 +802,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 23,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell triceps kickback",
                 MuscleGroup.TRICEPS,
                 MachineType.DUMBBELL,
@@ -782,7 +810,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 24,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Skull crushers",
                 MuscleGroup.TRICEPS,
                 MachineType.BARBELL,
@@ -790,7 +818,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 25,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dips",
                 MuscleGroup.TRICEPS,
                 MachineType.CALISTHENICS,
@@ -798,7 +826,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 26,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Machine triceps dips",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
@@ -806,7 +834,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 27,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell triceps extension",
                 MuscleGroup.TRICEPS,
                 MachineType.DUMBBELL,
@@ -814,7 +842,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 28,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Cable rope triceps pushdown",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
@@ -822,7 +850,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 29,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bench dip", //TODO: video...
                 MuscleGroup.TRICEPS,
                 MachineType.CALISTHENICS,
@@ -830,7 +858,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 30,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Barbell standing french press", //TODO: video...
                 MuscleGroup.TRICEPS,
                 MachineType.BARBELL,
@@ -838,7 +866,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 31,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Triceps cable rope extension",
                 MuscleGroup.TRICEPS,
                 MachineType.MACHINE,
@@ -847,11 +875,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getBackExerciseDetails(isWorkout: Boolean): List<ExerciseDetails> {
+    private fun getBackExerciseDetails(customWorkoutId: Int): List<ExerciseDetails> {
         return listOf(
             ExerciseDetails(
                 11,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Seated cable rows",
                 description = description,
                 MuscleGroup.BACK,
@@ -860,7 +888,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 12,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Lat pulldown (Wide grip)",
                 description = description,
                 MuscleGroup.BACK,
@@ -869,7 +897,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 13,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Pull ups",
                 description = description,
                 MuscleGroup.BACK,
@@ -878,7 +906,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 14,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bent over barbell row",
                 description = description,
                 MuscleGroup.BACK,
@@ -887,7 +915,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 15,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Deadlift",
                 description = description,
                 MuscleGroup.BACK,
@@ -896,7 +924,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 16,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bent over dumbbell row",
                 description = description,
                 MuscleGroup.BACK,
@@ -905,7 +933,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 17,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Standing lat pulldown",
                 description = description,
                 MuscleGroup.BACK,
@@ -914,7 +942,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 18,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "T-bar row", //Mechkata
                 description = description,
                 MuscleGroup.BACK,
@@ -923,7 +951,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 19,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell Shrugs",
                 description = description,
                 MuscleGroup.BACK,
@@ -932,7 +960,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 20,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Behind the neck lat pulldown",
                 description = description,
                 MuscleGroup.BACK,
@@ -941,7 +969,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 21,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Romanian deadlift",
                 description = description,
                 MuscleGroup.BACK,
@@ -951,11 +979,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getBackExercises(isWorkout: Boolean): List<Exercise> {
+    private fun getBackExercises(customWorkoutId: Int): List<Exercise> {
         return listOf(
             Exercise(
                 11,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Seated cable rows",
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
@@ -963,7 +991,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 12,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Lat pulldown (Wide grip)",
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
@@ -971,7 +999,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 13,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Pull ups",
                 MuscleGroup.BACK,
                 MachineType.CALISTHENICS,
@@ -979,7 +1007,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 14,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bent over barbell row",
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
@@ -987,7 +1015,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 15,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Deadlift", //TODO: video...
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
@@ -995,7 +1023,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 16,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Bent over dumbbell row",
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
@@ -1003,7 +1031,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 17,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Standing lat pulldown",
                 MuscleGroup.BACK,
                 MachineType.MACHINE,
@@ -1011,7 +1039,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 18,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "T-bar row", //Mechkata
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
@@ -1019,7 +1047,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 19,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dumbbell Shrugs",
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
@@ -1027,7 +1055,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 20,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Behind the neck lat pulldown", //TODO: video...
                 MuscleGroup.BACK,
                 MachineType.DUMBBELL,
@@ -1035,7 +1063,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 21,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Romanian deadlift", //TODO: video...
                 MuscleGroup.BACK,
                 MachineType.BARBELL,
@@ -1044,11 +1072,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getChestExerciseDetails(isWorkout: Boolean): List<ExerciseDetails> {
+    private fun getChestExerciseDetails(customWorkoutId: Int): List<ExerciseDetails> {
         return listOf(
             ExerciseDetails(
                 1,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Flat barbell bench press",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1057,7 +1085,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 2,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Incline barbell bench press",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1066,7 +1094,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 3,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Incline barbell bench press",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1075,7 +1103,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 4,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Incline dumbbell bench press",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1084,7 +1112,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 5,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Flat dumbbell bench press",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1093,7 +1121,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 6,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Pec deck fly",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1102,7 +1130,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 7,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Cable chest fly",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1111,7 +1139,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 8,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Hammer strength",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1120,7 +1148,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 9,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dips",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1129,7 +1157,7 @@ object ExerciseGenerator {
             ),
             ExerciseDetails(
                 10,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Push ups",
                 description = description,
                 MuscleGroup.CHEST,
@@ -1139,11 +1167,11 @@ object ExerciseGenerator {
         )
     }
 
-    private fun getChestExercises(isWorkout: Boolean): List<Exercise> {
+    private fun getChestExercises(customWorkoutId: Int): List<Exercise> {
         return listOf(
             Exercise(
                 1,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Flat barbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
@@ -1151,7 +1179,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 2,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Incline barbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
@@ -1159,7 +1187,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 3,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Incline barbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.BARBELL,
@@ -1167,7 +1195,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 4,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Incline dumbbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.DUMBBELL,
@@ -1175,7 +1203,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 5,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Flat dumbbell bench press",
                 MuscleGroup.CHEST,
                 MachineType.DUMBBELL,
@@ -1183,7 +1211,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 6,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Pec deck fly",
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
@@ -1191,7 +1219,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 7,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Cable chest fly",
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
@@ -1199,7 +1227,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 8,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Hammer strength",
                 MuscleGroup.CHEST,
                 MachineType.MACHINE,
@@ -1207,7 +1235,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 9,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Dips",
                 MuscleGroup.CHEST,
                 MachineType.CALISTHENICS,
@@ -1215,7 +1243,7 @@ object ExerciseGenerator {
             ),
             Exercise(
                 10,
-                workoutId = if(isWorkout) Random.nextInt() else Constants.CATALOG_EXERCISE_ID,
+                workoutId = customWorkoutId,
                 "Push ups", //TODO: video...
                 MuscleGroup.CHEST,
                 MachineType.CALISTHENICS,
@@ -1228,7 +1256,13 @@ object ExerciseGenerator {
         val crossRefs: MutableList<ExerciseDetailsExerciseCrossRef> = mutableListOf()
 
         for (i in 1..TOTAL_EXERCISES step 1) {
-            crossRefs.add(ExerciseDetailsExerciseCrossRef(exerciseId = i, exerciseDetailsId = i, workoutId = Constants.CATALOG_EXERCISE_ID))
+            crossRefs.add(
+                ExerciseDetailsExerciseCrossRef(
+                    exerciseId = i,
+                    exerciseDetailsId = i,
+                    workoutId = Constants.CATALOG_EXERCISE_ID
+                )
+            )
         }
 
         return crossRefs

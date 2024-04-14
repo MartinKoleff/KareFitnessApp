@@ -273,13 +273,17 @@ object AppModule {
     fun provideWorkoutDBManager(
         preferences: Preferences,
         workoutDao: WorkoutDao,
-        workoutDetailsDao: WorkoutDetailsDao
+        workoutDetailsDao: WorkoutDetailsDao,
+        exerciseDao: ExerciseDao,
+        exerciseSetDao: ExerciseSetDao
     ): WorkoutDBManager {
         val hasInitializedDB = preferences.hasInitializedWorkoutTable()
 
         return WorkoutDBManager(
             workoutDao = workoutDao,
             workoutDetailsDao = workoutDetailsDao,
+            exerciseDao = exerciseDao,
+            exerciseSetDao = exerciseSetDao,
             hasInitializedDB = hasInitializedDB
         )
     }
