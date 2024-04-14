@@ -5,19 +5,21 @@ import androidx.room.Junction
 import androidx.room.Relation
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.room.entity.Exercise
-import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 
-data class ExerciseWithSet(
-    @Embedded
+//TODO: add workoutId relation...
+data class ExerciseWithSets(
+//    @Embedded
     val exercise: Exercise,
 
-    @Relation(
-        parentColumn = "exerciseId",
-        entityColumn = "setId",
-        associateBy = Junction(ExerciseSetCrossRef::class)
-    )
+    //Fetches all sets for all exercises in the given workout (if workoutId-workoutId)
+//    @Relation(
+//        parentColumn = "exerciseId",
+//        entityColumn = "exerciseId",
+//        associateBy = Junction(ExerciseSetCrossRef::class)
+//    )
     val sets: List<ExerciseSet>
+
 ) {
     fun toExerciseDto(): ExerciseDto {
         return ExerciseDto(

@@ -13,7 +13,7 @@ data class ExerciseDetailsWithExercise(
     @Relation(
         parentColumn = "exerciseDetailsId",
         entityColumn = "exerciseId",
-        associateBy = Junction(ExerciseDetailsExerciseCrossRef::class)
+        entity = Exercise::class
     )
     val exercise: Exercise
 )

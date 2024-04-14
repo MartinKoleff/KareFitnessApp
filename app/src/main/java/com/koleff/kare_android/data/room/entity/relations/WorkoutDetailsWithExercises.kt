@@ -6,14 +6,15 @@ import androidx.room.Relation
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 
-//TODO: exercises are fetched for all workoutIds
 data class WorkoutDetailsWithExercises(
     @Embedded
     val workoutDetails: WorkoutDetails,
 
     @Relation(
         parentColumn = "workoutDetailsId",
-        entityColumn = "workoutId"
+        entityColumn = "workoutId",
+        entity = Exercise::class,
+//        associateBy = Junction(WorkoutDetailsExerciseCrossRef::class) //many to many causes all exercises to be fetched...
     )
     val exercises: List<Exercise>?
 ) {

@@ -1,6 +1,5 @@
 package com.koleff.kare_android.data.room.entity
 
-import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.koleff.kare_android.data.model.dto.ExerciseDto
