@@ -151,29 +151,27 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         }
     }
 
-    //TODO: migrate to use cases...
     //TODO: wire with dialog...
-    fun deleteSet(selectedExerciseSet: ExerciseSetDto) = with(exerciseState.value) {
-        val updatedSets =
-            exercise.sets.filterNot { exerciseSet -> exerciseSet == selectedExerciseSet }
-
-        val updatedExercise = exercise.copy(sets = updatedSets)
-        _exerciseState.value = _exerciseState.value.copy(exercise = updatedExercise)
+    fun deleteSet(selectedExerciseSet: ExerciseSetDto) {
+        viewModelScope.launch(dispatcher) {
+            exerciseUseCases.deleteExerciseSetUseCase(
+                exerciseId = selectedExerciseSet.exerciseId,
+                workoutId = selectedExerciseSet.workoutId,
+                setId = selectedExerciseSet.setId
+            ).collect { deleteSetState ->
+                _exerciseState.value = deleteSetState
+            }
+        }
     }
 
-    fun addNewSet() = with(exerciseState.value) {
-        val defaultReps = 12
-        val nextSetNumber = exercise.sets.map { it.number }.maxOf { it } //Find last set number...
-
-        val updatedSets = exercise.sets as MutableList
-        val newSet = ExerciseSetDto(
-            number = nextSetNumber,
-            reps = defaultReps,
-            weight = 0.0f
-        )
-        updatedSets.add(newSet)
-
-        val updatedExercise = exercise.copy(sets = updatedSets)
-        _exerciseState.value = _exerciseState.value.copy(exercise = updatedExercise)
+    fun addNewSet() {
+        viewModelScope.launch(dispatcher) {
+            exerciseUseCases.addNewExerciseSetUseCase(
+                exerciseId = exerciseId,
+                workoutId = workoutId
+            ).collect { addNewSetState ->
+                _exerciseState.value = addNewSetState
+            }
+        }
     }
 }
