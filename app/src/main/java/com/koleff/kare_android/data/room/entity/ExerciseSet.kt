@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import java.util.UUID
 
+//TODO: rename to exerciseSetTemplate -> this is the structure used to describe the workout. After workout starts it can be changed...
 @Entity(
     tableName = "exercise_set_table",
     foreignKeys = [
