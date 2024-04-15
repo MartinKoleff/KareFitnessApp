@@ -58,6 +58,7 @@ class DoWorkoutViewModel @Inject constructor(
         get() = _countdownTimerState
 
     private val isLogging: Boolean = false
+    private var isCountdownScreen = false
 
     override fun clearError() {
         if (state.value.isError) {
@@ -130,8 +131,8 @@ class DoWorkoutViewModel @Inject constructor(
                             workoutTimer.resetTimer()
                             countdownTimer.resetTimer()
                         } else {
-                            startCountdownTimer()
                             showNextExerciseCountdownScreen()
+                            startCountdownTimer()
                         }
                     }
                 }
@@ -145,6 +146,10 @@ class DoWorkoutViewModel @Inject constructor(
             doWorkoutUseCases.skipNextExerciseUseCase(_state.value.doWorkoutData)
                 .collect { result ->
                     _state.value = result
+
+                    if (result.isSuccessful) {
+                        startCountdownTimer()
+                    }
                 }
         }
     }
@@ -162,11 +167,13 @@ class DoWorkoutViewModel @Inject constructor(
     private fun hideNextExerciseCountdownScreen() {
         val updatedData = _state.value.doWorkoutData.copy(isBetweenExerciseCountdown = false)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
+        isCountdownScreen = false
     }
 
     private fun showNextExerciseCountdownScreen() {
         val updatedData = _state.value.doWorkoutData.copy(isBetweenExerciseCountdown = true)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
+        isCountdownScreen = true
     }
 
     private fun showWorkoutCompletedScreen() {
@@ -191,9 +198,7 @@ class DoWorkoutViewModel @Inject constructor(
                             _workoutTimerState.value.copy(time = result.data.time)
                     }
 
-                    else -> {
-                        //TODO:
-                    }
+                    else -> {}
                 }
             }
 
@@ -217,9 +222,7 @@ class DoWorkoutViewModel @Inject constructor(
                         }
                     }
 
-                    else -> {
-                        //TODO:
-                    }
+                    else -> {}
                 }
             }
         }
@@ -228,10 +231,6 @@ class DoWorkoutViewModel @Inject constructor(
     private fun startWorkoutTimer(
         isInitialCall: Boolean = false
     ) = with(state.value.doWorkoutData) {
-
-        //Hide next exercise countdown screen
-        hideNextExerciseCountdownScreen()
-
         viewModelScope.launch(dispatcher) {
 
             //Reset countdown timer
@@ -245,9 +244,7 @@ class DoWorkoutViewModel @Inject constructor(
                             _countdownTimerState.value.copy(time = result.data.time)
                     }
 
-                    else -> {
-                        //TODO:
-                    }
+                    else -> {}
                 }
             }
 
@@ -259,12 +256,17 @@ class DoWorkoutViewModel @Inject constructor(
             //Start workout timer
             doWorkoutUseCases.startTimerUseCase(
                 timer = workoutTimer,
-                time = countdownTime
+                time = defaultExerciseTime
             ).collect { result ->
                 when (result) {
                     is ResultWrapper.Success -> {
                         _workoutTimerState.value =
                             _workoutTimerState.value.copy(time = result.data.time)
+
+                        //Hide next exercise countdown screen
+                        if (isCountdownScreen || isInitialCall) {
+                            hideNextExerciseCountdownScreen()
+                        }
 
                         //Timer has finished
                         if (workoutTimerState.value.time.hasFinished()) {
@@ -276,9 +278,7 @@ class DoWorkoutViewModel @Inject constructor(
                         }
                     }
 
-                    else -> {
-                        //TODO:
-                    }
+                    else -> {}
                 }
             }
         }
