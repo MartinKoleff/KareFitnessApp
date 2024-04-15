@@ -5,12 +5,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.room.dao.DoWorkoutDataDao
+import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
+import com.koleff.kare_android.data.room.entity.DoWorkoutData
+import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
@@ -30,12 +34,14 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         ExerciseDetails::class,
         ExerciseSet::class,
         User::class,
-        WorkoutDetailsExerciseCrossRef::class,
+        DoWorkoutExerciseSet::class,
+        DoWorkoutData::class,
+        WorkoutDetailsExerciseCrossRef::class, //TODO: wire one to many relations with foreign key tag instead of cross ref used for many to many only...
         WorkoutDetailsWorkoutCrossRef::class,
         ExerciseDetailsExerciseCrossRef::class,
         ExerciseSetCrossRef::class
     ],
-    version = 14,
+    version = 15,
     exportSchema = false,
 )
 abstract class KareDatabase : RoomDatabase() {
@@ -45,6 +51,8 @@ abstract class KareDatabase : RoomDatabase() {
     abstract val workoutDetailsDao: WorkoutDetailsDao
     abstract val exerciseSetDao: ExerciseSetDao
     abstract val userDao: UserDao
+    abstract val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao
+    abstract val doWorkoutDataDao: DoWorkoutDataDao
 
     companion object {
         @Volatile
