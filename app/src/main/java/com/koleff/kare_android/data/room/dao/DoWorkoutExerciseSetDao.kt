@@ -15,13 +15,13 @@ interface DoWorkoutExerciseSetDao {
     suspend fun insertSet(doWorkoutExerciseSet: DoWorkoutExerciseSet): Long
 
     @Update
-    suspend fun updateSet(doWorkoutExerciseSet: DoWorkoutExerciseSet)
+    suspend fun updateSet(doWorkoutExerciseSet: DoWorkoutExerciseSet): Int
 
     @Delete
     suspend fun deleteSet(doWorkoutExerciseSet: DoWorkoutExerciseSet)
 
-    @Query("SELECT * FROM do_workout_exercise_set WHERE workoutDataId = :workoutDataId")
-    suspend fun findSetsByWorkoutData(workoutDataId: Int): List<DoWorkoutExerciseSet>
+    @Query("SELECT * FROM do_workout_exercise_set WHERE workoutPerformanceMetricsId = :workoutPerformanceMetricsId")
+    suspend fun findSetsByWorkoutData(workoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet>
 
     @Query("SELECT * FROM do_workout_exercise_set WHERE instanceId = :instanceId")
     suspend fun findSetById(instanceId: UUID): DoWorkoutExerciseSet?
