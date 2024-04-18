@@ -124,7 +124,6 @@ class ExerciseLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
 
             //Temporary setting the same description and videoUrl to all ExerciseDetails entities.
-            //TODO: returns all sets for all exercises with same exerciseId...
             val data =
                 exerciseDetailsDao.getExerciseDetailsByExerciseAndWorkoutId(exerciseId, workoutId)
 
