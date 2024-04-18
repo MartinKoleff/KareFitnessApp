@@ -15,6 +15,8 @@ import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
 import com.koleff.kare_android.data.datasource.DoWorkoutDataSource
 import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
+import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsDataSource
+import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
@@ -29,10 +31,13 @@ import com.koleff.kare_android.data.remote.ExerciseApi
 import com.koleff.kare_android.data.remote.UserApi
 import com.koleff.kare_android.data.remote.WorkoutApi
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
+import com.koleff.kare_android.data.repository.DoWorkoutPerformanceMetricsRepositoryImpl
 import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
+import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
+import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
@@ -44,6 +49,7 @@ import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.DashboardRepository
+import com.koleff.kare_android.domain.repository.DoWorkoutPerformanceMetricsRepository
 import com.koleff.kare_android.domain.repository.DoWorkoutRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.UserRepository
@@ -265,6 +271,18 @@ object AppModule {
         return kareDatabase.userDao
     }
 
+    @Provides
+    @Singleton
+    fun provideDoWorkoutPerformanceMetricsDao(kareDatabase: KareDatabase): DoWorkoutPerformanceMetricsDao {
+        return kareDatabase.doWorkoutPerformanceMetricsDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideDoWorkoutExerciseSetDao(kareDatabase: KareDatabase): DoWorkoutExerciseSetDao {
+        return kareDatabase.doWorkoutExerciseSetDao
+    }
+
     /**
      * DB Managers
      */
@@ -386,6 +404,19 @@ object AppModule {
         return DoWorkoutLocalDataSource() //Local for now...
     }
 
+    @Provides
+    @Singleton
+    fun provideDoWorkoutPerformanceMetricsDataSource(
+        doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
+        doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao
+    ): DoWorkoutPerformanceMetricsDataSource {
+        return DoWorkoutPerformanceMetricsLocalDataSource(
+            doWorkoutPerformanceMetricsDao = doWorkoutPerformanceMetricsDao,
+            doWorkoutExerciseSetDao = doWorkoutExerciseSetDao
+        ) //Local for now...
+    }
+
+
     /**
      * Repositories
      */
@@ -418,6 +449,13 @@ object AppModule {
     @Singleton
     fun provideDoWorkoutRepository(doWorkoutDataSource: DoWorkoutDataSource): DoWorkoutRepository {
         return DoWorkoutRepositoryImpl(doWorkoutDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideDoWorkoutPerformanceMetricsRepository(doWorkoutPerformanceMetricsDataSource: DoWorkoutPerformanceMetricsDataSource)
+            : DoWorkoutPerformanceMetricsRepository {
+        return DoWorkoutPerformanceMetricsRepositoryImpl(doWorkoutPerformanceMetricsDataSource)
     }
 
     /**
