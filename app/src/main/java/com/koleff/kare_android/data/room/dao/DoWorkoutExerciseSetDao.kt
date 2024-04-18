@@ -7,12 +7,16 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
+import com.koleff.kare_android.data.room.entity.Exercise
 import java.util.UUID
 
 @Dao
 interface DoWorkoutExerciseSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertSet(doWorkoutExerciseSet: DoWorkoutExerciseSet): Long
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAllSets(doWorkoutExerciseSets: List<DoWorkoutExerciseSet>)
 
     @Update
     suspend fun updateSet(doWorkoutExerciseSet: DoWorkoutExerciseSet): Int

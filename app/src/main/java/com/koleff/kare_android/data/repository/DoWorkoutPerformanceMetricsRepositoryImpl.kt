@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsDataSource
+import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.domain.repository.DoWorkoutPerformanceMetricsRepository
 import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsListWrapper
@@ -72,5 +73,13 @@ class DoWorkoutPerformanceMetricsRepositoryImpl(
         return doWorkoutPerformanceMetricsDataSource.updateWorkoutPerformanceMetrics(
             performanceMetrics
         )
+    }
+
+    override suspend fun saveDoWorkoutExerciseSet(exerciseSet: DoWorkoutExerciseSetDto): Flow<ResultWrapper<ServerResponseData>> {
+        return doWorkoutPerformanceMetricsDataSource.saveDoWorkoutExerciseSet(exerciseSet)
+    }
+
+    override suspend fun saveAllDoWorkoutExerciseSet(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>> {
+        return doWorkoutPerformanceMetricsDataSource.saveAllDoWorkoutExerciseSet(exerciseSets)
     }
 }

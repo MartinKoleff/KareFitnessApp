@@ -1,5 +1,6 @@
 package com.koleff.kare_android.domain.repository
 
+import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsListWrapper
 import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsWrapper
@@ -27,4 +28,8 @@ interface DoWorkoutPerformanceMetricsRepository {
     suspend fun deleteDoWorkoutPerformanceMetrics(id: Int): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun updateWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>>
+
+    suspend fun saveDoWorkoutExerciseSet(exerciseSet: DoWorkoutExerciseSetDto): Flow<ResultWrapper<ServerResponseData>>
+
+    suspend fun saveAllDoWorkoutExerciseSet(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>>
 }

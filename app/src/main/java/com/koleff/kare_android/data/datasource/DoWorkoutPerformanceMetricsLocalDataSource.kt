@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.response.DoWorkoutPerformanceMetricsListResponse
 import com.koleff.kare_android.data.model.response.DoWorkoutPerformanceMetricsResponse
@@ -120,7 +121,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
         workoutId: Int,
         start: Date,
         end: Date
-    ): Flow<ResultWrapper<DoWorkoutPerformanceMetricsListWrapper>> =    flow {
+    ): Flow<ResultWrapper<DoWorkoutPerformanceMetricsListWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
@@ -240,6 +241,34 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
                 DoWorkoutPerformanceMetricsResponse(
                     performanceMetrics
                 )
+            )
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun saveDoWorkoutExerciseSet(exerciseSet: DoWorkoutExerciseSetDto): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            doWorkoutExerciseSetDao.insertSet(exerciseSet.toEntity())
+
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun saveAllDoWorkoutExerciseSet(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            doWorkoutExerciseSetDao.insertAllSets(
+                exerciseSets.map { it.toEntity() }
+            )
+
+            val result = ServerResponseData(
+                BaseResponse()
             )
             emit(ResultWrapper.Success(result))
         }
