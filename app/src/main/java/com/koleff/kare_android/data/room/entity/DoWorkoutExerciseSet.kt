@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import java.util.*
 
@@ -10,7 +11,7 @@ import java.util.*
     tableName = "do_workout_exercise_set",
     foreignKeys = [
         ForeignKey(
-            entity = DoWorkoutData::class,
+            entity = DoWorkoutPerformanceMetrics::class,
             parentColumns = ["id"],
             childColumns = ["workoutDataId"],
             onDelete = ForeignKey.CASCADE
@@ -26,12 +27,26 @@ import java.util.*
 data class DoWorkoutExerciseSet(
     @PrimaryKey(autoGenerate = true)
     val instanceId: UUID = UUID.randomUUID(),
-    val workoutDataId: Int,  //Link to DoWorkoutData
+    val workoutPerformanceMetricsId: Int,  //Link to DoWorkoutPerformanceMetrics
     val workoutId: Int,
     val exerciseId: Int,
     val templateSetId: UUID,  //Link to the ExerciseSet -> template
     val reps: Int,
-    val weigh: Float?,
+    val weight: Float?,
     val time: ExerciseTime?,
-    val timestamp: Date  //to record the exact time the workout was completed
-)
+    val date: Date  //to record the exact time the workout was completed
+) {
+    fun toDoWorkoutExerciseSetDto(): DoWorkoutExerciseSetDto {
+        return DoWorkoutExerciseSetDto(
+            instanceId = instanceId,
+            workoutPerformanceMetricsId = workoutPerformanceMetricsId,
+            workoutId = workoutId,
+            exerciseId = exerciseId,
+            templateSetId = templateSetId,
+            reps = reps,
+            weight = weight,
+            time = time,
+            date = date
+        )
+    }
+}
