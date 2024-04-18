@@ -110,7 +110,7 @@ object ExerciseGenerator {
                             workoutId = exercise.workoutId
                         )
 
-                        exercise.toExerciseDto(exerciseSets)
+                        exercise.toDto(exerciseSets)
                     }
                     .toList()
 
@@ -126,7 +126,7 @@ object ExerciseGenerator {
         for (muscleGroup in MuscleGroup.entries) {
             val generatedExerciseDetails =
                 loadExerciseDetails(muscleGroup, isWorkout)
-                    .map(ExerciseDetails::toExerciseDetailsDto)
+                    .map(ExerciseDetails::toDto)
                     .toList()
 
             exercisesDetailsList.addAll(generatedExerciseDetails)

@@ -11,6 +11,8 @@ import java.util.Date
 
 interface DoWorkoutPerformanceMetricsDataSource {
 
+    //DoWorkoutPerformanceMetrics
+
     suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun getAllDoWorkoutPerformanceMetricsById(id: Int, start: Date, end: Date): Flow<ResultWrapper<DoWorkoutPerformanceMetricsListWrapper>>
@@ -28,4 +30,8 @@ interface DoWorkoutPerformanceMetricsDataSource {
     suspend fun deleteDoWorkoutPerformanceMetrics(id: Int): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun updateWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>>
+
+    //DoWorkoutExerciseSet
+
+
 }

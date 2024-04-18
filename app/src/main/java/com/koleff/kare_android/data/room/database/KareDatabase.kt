@@ -4,7 +4,10 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.room.Converters
+import com.koleff.kare_android.data.room.ExerciseTimeConverters
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.ExerciseDao
@@ -41,9 +44,10 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         ExerciseDetailsExerciseCrossRef::class,
         ExerciseSetCrossRef::class
     ],
-    version = 15,
+    version = 16,
     exportSchema = false,
 )
+@TypeConverters(Converters::class, ExerciseTimeConverters::class)
 abstract class KareDatabase : RoomDatabase() {
     abstract val exerciseDao: ExerciseDao
     abstract val exerciseDetailsDao: ExerciseDetailsDao

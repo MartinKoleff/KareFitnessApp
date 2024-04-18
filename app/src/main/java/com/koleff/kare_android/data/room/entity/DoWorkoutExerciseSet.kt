@@ -14,7 +14,7 @@ import java.util.*
         ForeignKey(
             entity = DoWorkoutPerformanceMetrics::class,
             parentColumns = ["id"],
-            childColumns = ["workoutDataId"],
+            childColumns = ["workoutPerformanceMetricsId"],
             onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
@@ -26,7 +26,7 @@ import java.util.*
     ]
 )
 data class DoWorkoutExerciseSet(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     val instanceId: UUID = UUID.randomUUID(),
     val workoutPerformanceMetricsId: Int,  //Link to DoWorkoutPerformanceMetrics
     val workoutId: Int,
