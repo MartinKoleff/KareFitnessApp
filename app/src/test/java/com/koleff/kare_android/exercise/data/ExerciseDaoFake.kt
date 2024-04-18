@@ -5,12 +5,11 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.entity.Exercise
-import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsWithExercise
+import com.koleff.kare_android.data.room.entity.ExerciseDetailsWithExercise
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
+import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 import com.koleff.kare_android.utils.TestLogger
 
 class ExerciseDaoFake(

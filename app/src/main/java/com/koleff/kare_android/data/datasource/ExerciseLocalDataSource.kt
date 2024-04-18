@@ -2,14 +2,10 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.GetExercisesResponse
-import com.koleff.kare_android.data.model.response.UserResponse
-import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
@@ -18,14 +14,8 @@ import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
-import com.koleff.kare_android.data.room.dao.WorkoutDao
-import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
-import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
-import com.koleff.kare_android.domain.wrapper.UserWrapper
-import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -55,7 +45,7 @@ class ExerciseLocalDataSource @Inject constructor(
                 val data = exerciseDao.getExerciseWithSets(exerciseId, workoutId)
 
                 val result = ExerciseWrapper(
-                    ExerciseResponse(data.toExerciseDto())
+                    ExerciseResponse(data.toDto())
                 )
 
                 emit(ResultWrapper.Success(result))
@@ -80,7 +70,7 @@ class ExerciseLocalDataSource @Inject constructor(
                 )
 
                 val result = ExerciseWrapper(
-                    ExerciseResponse(data.toExerciseDto())
+                    ExerciseResponse(data.toDto())
                 )
 
                 emit(ResultWrapper.Success(result))
@@ -108,7 +98,7 @@ class ExerciseLocalDataSource @Inject constructor(
             }
 
             val result = ExerciseListWrapper(
-                GetExercisesResponse(data.map { it.toExerciseDto(sets = emptyList()) })
+                GetExercisesResponse(data.map { it.toDto(sets = emptyList()) })
             )
 
             emit(ResultWrapper.Success(result))
@@ -166,7 +156,7 @@ class ExerciseLocalDataSource @Inject constructor(
             )
             exerciseDao.deleteExerciseSetCrossRef(crossRef)
 
-            val selectedExerciseDto = selectedExerciseWitSets.exercise.toExerciseDto(updatedSets)
+            val selectedExerciseDto = selectedExerciseWitSets.exercise.toDto(updatedSets)
             val result = ExerciseWrapper(
                 ExerciseResponse(
                     exercise = selectedExerciseDto
@@ -215,7 +205,7 @@ class ExerciseLocalDataSource @Inject constructor(
             //Update exercise
             val updatedSets = selectedExerciseWitSets.sets.toMutableList()
             updatedSets.add(newSet)
-            val selectedExerciseDto = selectedExerciseWitSets.exercise.toExerciseDto(updatedSets)
+            val selectedExerciseDto = selectedExerciseWitSets.exercise.toDto(updatedSets)
             val result = ExerciseWrapper(
                 ExerciseResponse(
                     exercise = selectedExerciseDto

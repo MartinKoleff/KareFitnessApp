@@ -11,7 +11,7 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
+import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 
 @Dao
 interface ExerciseDao {

@@ -1,8 +1,7 @@
 package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import com.koleff.kare_android.data.KareDtoExtended
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -26,8 +25,8 @@ data class Exercise(
     val muscleGroup: MuscleGroup,
     val machineType: MachineType,
     val snapshot: String,
-) {
-    fun toExerciseDto(sets: List<ExerciseSet>): ExerciseDto {
+): KareDtoExtended<ExerciseDto, List<ExerciseSet>> {
+    override fun toDto(sets: List<ExerciseSet>): ExerciseDto {
         return ExerciseDto(
             exerciseId = this.exerciseId,
             workoutId = this.workoutId,
@@ -36,7 +35,7 @@ data class Exercise(
             machineType = this.machineType,
             snapshot = this.snapshot,
             sets = sets
-                .map { it.toExerciseSetDto() }
+                .map { it.toDto() }
                 .toList()
         )
     }

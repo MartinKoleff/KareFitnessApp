@@ -1,4 +1,4 @@
-package com.koleff.kare_android.data.room.entity.relations
+package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Embedded
 import androidx.room.Junction

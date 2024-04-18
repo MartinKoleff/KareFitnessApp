@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import com.koleff.kare_android.data.KareDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import java.util.*
@@ -35,8 +36,8 @@ data class DoWorkoutExerciseSet(
     val weight: Float?,
     val time: ExerciseTime?,
     val date: Date  //to record the exact time the workout was completed
-) {
-    fun toDoWorkoutExerciseSetDto(): DoWorkoutExerciseSetDto {
+): KareDto<DoWorkoutExerciseSetDto> {
+    override fun toDto(): DoWorkoutExerciseSetDto {
         return DoWorkoutExerciseSetDto(
             instanceId = instanceId,
             workoutPerformanceMetricsId = workoutPerformanceMetricsId,

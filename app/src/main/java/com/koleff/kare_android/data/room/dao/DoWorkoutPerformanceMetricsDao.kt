@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
-import com.koleff.kare_android.data.room.entity.relations.DoWorkoutPerformanceWithSets
+import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceWithSets
 import java.util.Date
 
 @Dao

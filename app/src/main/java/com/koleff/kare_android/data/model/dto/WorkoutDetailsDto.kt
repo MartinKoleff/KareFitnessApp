@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
-import com.koleff.kare_android.data.model.KareEntity
+import com.koleff.kare_android.data.KareEntity
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.squareup.moshi.Json
 
@@ -17,7 +17,7 @@ data class WorkoutDetailsDto(
     val exercises: MutableList<ExerciseDto> = mutableListOf(),
     @field:Json(name = "is_selected")
     val isSelected: Boolean = false
-): KareEntity<WorkoutDetails>{
+): KareEntity<WorkoutDetails> {
     override fun toEntity(): WorkoutDetails{
         return WorkoutDetails(
             workoutDetailsId = workoutId,

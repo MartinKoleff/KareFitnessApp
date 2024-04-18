@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.koleff.kare_android.data.KareDtoExtended
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
@@ -14,8 +15,8 @@ data class WorkoutDetails(
     val description: String,
     val muscleGroup: MuscleGroup,
     var isSelected: Boolean
-){
-    fun toWorkoutDetailsDto(exercises: MutableList<ExerciseDto>): WorkoutDetailsDto {
+): KareDtoExtended<WorkoutDetailsDto, MutableList<ExerciseDto>> {
+    override fun toDto(exercises: MutableList<ExerciseDto>): WorkoutDetailsDto {
         return WorkoutDetailsDto(
             workoutId = workoutDetailsId,
             name = name,

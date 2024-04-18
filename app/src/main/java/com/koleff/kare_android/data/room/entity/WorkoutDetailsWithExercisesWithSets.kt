@@ -1,9 +1,9 @@
-package com.koleff.kare_android.data.room.entity.relations
+package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
-import com.koleff.kare_android.data.room.entity.WorkoutDetails
+import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 
 data class WorkoutDetailsWithExercisesWithSets(
     @Embedded

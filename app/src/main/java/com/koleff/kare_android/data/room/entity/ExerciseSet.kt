@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.koleff.kare_android.data.KareDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import java.util.UUID
 
@@ -26,8 +27,8 @@ data class ExerciseSet(
     val number: Int,
     val reps: Int,
     val weight: Float,
-) {
-    fun toExerciseSetDto(): ExerciseSetDto {
+): KareDto<ExerciseSetDto> {
+    override fun toDto(): ExerciseSetDto {
         return ExerciseSetDto(
             setId = setId,
             workoutId = workoutId,

@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
-import com.koleff.kare_android.data.model.KareEntity
+import com.koleff.kare_android.data.KareEntity
 import com.koleff.kare_android.data.room.entity.User
 import java.util.UUID
 

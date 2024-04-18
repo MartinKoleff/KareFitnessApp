@@ -1,14 +1,12 @@
 package com.koleff.kare_android.workout.data
 
-import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
-import com.koleff.kare_android.data.room.entity.relations.ExerciseWithSets
+import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercisesWithSets
+import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.utils.TestLogger
 

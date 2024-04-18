@@ -1,4 +1,4 @@
-package com.koleff.kare_android.data.model
+package com.koleff.kare_android.data
 
 interface KareEntity<T> {
 

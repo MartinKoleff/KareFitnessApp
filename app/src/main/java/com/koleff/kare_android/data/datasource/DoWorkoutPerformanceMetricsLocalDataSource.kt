@@ -49,7 +49,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
             val result = DoWorkoutPerformanceMetricsListWrapper(
                 DoWorkoutPerformanceMetricsListResponse(
-                    data.map { it.toDoWorkoutPerformanceMetricsDto() }
+                    data.map { it.toDto() }
                 )
             )
 
@@ -82,7 +82,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
             val result = DoWorkoutPerformanceMetricsWrapper(
                 DoWorkoutPerformanceMetricsResponse(
-                    data.toDoWorkoutPerformanceMetricsDto()
+                    data.toDto()
                 )
             )
 
@@ -102,7 +102,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
                 val result = DoWorkoutPerformanceMetricsListWrapper(
                     DoWorkoutPerformanceMetricsListResponse(
-                        data.map { it.toDoWorkoutPerformanceMetricsDto() }
+                        data.map { it.toDto() }
                     )
                 )
 
@@ -134,7 +134,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
             val result = DoWorkoutPerformanceMetricsListWrapper(
                 DoWorkoutPerformanceMetricsListResponse(
-                    data.map { it.toDoWorkoutPerformanceMetricsDto() }
+                    data.map { it.toDto() }
                 )
             )
 
@@ -159,7 +159,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
                 val result = DoWorkoutPerformanceMetricsListWrapper(
                     DoWorkoutPerformanceMetricsListResponse(
-                        data.map { it.toDoWorkoutPerformanceMetricsDto() }
+                        data.map { it.toDto() }
                     )
                 )
 
@@ -190,7 +190,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
                 val result = DoWorkoutPerformanceMetricsListWrapper(
                     DoWorkoutPerformanceMetricsListResponse(
-                        data.map { it.toDoWorkoutPerformanceMetricsDto() }
+                        data.map { it.toDto() }
                     )
                 )
 
