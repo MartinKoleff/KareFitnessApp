@@ -292,7 +292,7 @@ class WorkoutLocalDataSource @Inject constructor(
             )
             workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 
-            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
+            workoutDetailsDao.updateWorkoutDetails(workoutDetails.toEntity())
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -322,7 +322,7 @@ class WorkoutLocalDataSource @Inject constructor(
         val exerciseSetCrossRefs: List<ExerciseSetCrossRef> =
             workoutDetails.exercises.flatMap { exercise ->
                 exercise.sets.map { set ->
-                    val exerciseSet = set.toExerciseSet()
+                    val exerciseSet = set.toEntity()
 
                     if (set.setId == null) {
 
@@ -379,7 +379,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            workoutDao.updateWorkout(workout.toWorkout())
+            workoutDao.updateWorkout(workout.toEntity())
 
             //Update duplicate data between Workout and WorkoutDetails...
             val workoutDetailsWithExercises =
@@ -412,17 +412,17 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val workout = WorkoutDto()
 
-            val workoutId = workoutDao.insertWorkout(workout.toWorkout()) //Get workout id
+            val workoutId = workoutDao.insertWorkout(workout.toEntity()) //Get workout id
             val workoutName = "Workout $workoutId"
 
             val workoutUpdatedName =
-                workout.copy(workoutId = workoutId.toInt(), name = workoutName).toWorkout()
+                workout.copy(workoutId = workoutId.toInt(), name = workoutName).toEntity()
             workoutDao.updateWorkout(workoutUpdatedName) //Update workout name
 
             val workoutDetails =
                 WorkoutDetailsDto().copy(workoutId = workoutId.toInt(), name = workoutName)
             val workoutDetailsId =
-                workoutDetailsDao.insertWorkoutDetails(workoutDetails.toWorkoutDetails()) //returns 0
+                workoutDetailsDao.insertWorkoutDetails(workoutDetails.toEntity()) //returns 0
 
             //WorkoutDetails - Workout cross refs
             setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
@@ -441,7 +441,7 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeSmallDelay)
 
-            val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //Get workout id
+            val workoutId = workoutDao.insertWorkout(workoutDto.toEntity()) //Get workout id
 
             //Create duplicate WorkoutDetails with no exercises and sets...
             val workoutDetailsDto =
@@ -452,7 +452,7 @@ class WorkoutLocalDataSource @Inject constructor(
                     isSelected = workoutDto.isSelected
                 )
             val workoutDetailsId =
-                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toWorkoutDetails()) //returns 0
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //returns 0
 
             //WorkoutDetails - Workout cross refs
             setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
@@ -477,7 +477,7 @@ class WorkoutLocalDataSource @Inject constructor(
             delay(Constants.fakeSmallDelay)
 
             val workoutDetailsId =
-                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toWorkoutDetails()) //Get workout details id
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //Get workout details id
 
             //Create Workout for the WorkoutDetails...
             val workoutDto =
@@ -489,7 +489,7 @@ class WorkoutLocalDataSource @Inject constructor(
                     totalExercises = workoutDetailsDto.exercises.size,
                     snapshot = "snapshot $workoutDetailsId.png"
                 )
-            val workoutId = workoutDao.insertWorkout(workoutDto.toWorkout()) //returns 0
+            val workoutId = workoutDao.insertWorkout(workoutDto.toEntity()) //returns 0
 
             //WorkoutDetails - Workout cross refs
             setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
@@ -508,7 +508,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Add exercises
             exercises.forEach { exercise ->
-                exerciseDao.insertExercise(exercise.toExercise())
+                exerciseDao.insertExercise(exercise.toEntity())
             }
 
             //Select
@@ -628,7 +628,7 @@ class WorkoutLocalDataSource @Inject constructor(
             //Add new exercise
             exerciseDtoList.add(updatedExercise)
 
-            val exerciseEntityList = exerciseDtoList.map { it.toExercise() }
+            val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
             val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
             val updatedWorkoutDto =
@@ -644,7 +644,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Create exercise - set cross ref
             for (set in exercise.sets) {
-                val exerciseSet = set.toExerciseSet()
+                val exerciseSet = set.toEntity()
                 exerciseSetDao.saveSet(exerciseSet)
 
                 val exerciseSetCrossRef =
@@ -657,7 +657,7 @@ class WorkoutLocalDataSource @Inject constructor(
             }
 
             //Insert exercise
-            exerciseDao.insertExercise(exercise.toExercise())
+            exerciseDao.insertExercise(exercise.toEntity())
 
             //Update total exercises
             val workout = workoutDao.getWorkoutById(workoutId)
@@ -706,14 +706,14 @@ class WorkoutLocalDataSource @Inject constructor(
         //Add new exercise
         exerciseDtoList.add(updatedExercise)
 
-        val exerciseEntityList = exerciseDtoList.map { it.toExercise() }
+        val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
         val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
         val updatedWorkoutDto =
             updatedWorkout.workoutDetails.toWorkoutDetailsDto(exerciseDtoList)
 
         //Insert exercise
-        exerciseDao.insertExercise(exercise.toExercise())
+        exerciseDao.insertExercise(exercise.toEntity())
 
         //Create workout details - exercise cross ref
         val workoutDetailsExerciseCrossRef =
@@ -725,7 +725,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
         //Create exercise - set cross ref
         for (set in exercise.sets) {
-            val exerciseSet = set.toExerciseSet()
+            val exerciseSet = set.toEntity()
             exerciseSetDao.saveSet(exerciseSet)
 
             val exerciseSetCrossRef =

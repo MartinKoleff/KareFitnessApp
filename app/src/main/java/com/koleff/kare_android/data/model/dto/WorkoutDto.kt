@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
+import com.koleff.kare_android.data.model.KareEntity
 import com.koleff.kare_android.data.room.entity.Workout
 import com.squareup.moshi.Json
 
@@ -16,8 +17,8 @@ data class WorkoutDto(
     val totalExercises: Int = 0,
     @field:Json(name = "is_selected")
     val isSelected: Boolean = false,
-) {
-    fun toWorkout(): Workout {
+): KareEntity<Workout> {
+    override fun toEntity(): Workout {
         return Workout(
             workoutId = workoutId,
             name = name,

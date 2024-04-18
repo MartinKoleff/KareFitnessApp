@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.model.dto
 
 import android.os.Parcelable
 import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.data.model.KareEntity
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.squareup.moshi.Json
 import kotlinx.parcelize.Parcelize
@@ -22,8 +23,8 @@ data class ExerciseDto(
     val snapshot: String = "",
     @field:Json(name = "sets")
     val sets: List<ExerciseSetDto> = emptyList()
-): Parcelable{
-    fun toExercise(): Exercise {
+): Parcelable, KareEntity<Exercise> {
+    override fun toEntity(): Exercise {
         return Exercise(
             exerciseId = exerciseId,
             workoutId = workoutId,

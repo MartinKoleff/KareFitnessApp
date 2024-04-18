@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
+import com.koleff.kare_android.data.model.KareEntity
 import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.squareup.moshi.Json
 import java.util.Date
@@ -24,8 +25,8 @@ data class DoWorkoutExerciseSetDto(
     val time: ExerciseTime?,
     @field:Json(name = "date")
     val date: Date  //to record the exact time the workout was completed
-){
-    fun toDoWorkoutExerciseSet(): DoWorkoutExerciseSet {
+) : KareEntity<DoWorkoutExerciseSet> {
+    override fun toEntity(): DoWorkoutExerciseSet {
         return DoWorkoutExerciseSet(
             instanceId = instanceId,
             workoutPerformanceMetricsId = workoutPerformanceMetricsId,

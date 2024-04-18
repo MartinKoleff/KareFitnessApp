@@ -67,7 +67,7 @@ class WorkoutDBManager @Inject constructor(
                     for (set in sets) {
 
                         //Save set
-                        exerciseSetDao.saveSet(set.toExerciseSet())
+                        exerciseSetDao.saveSet(set.toEntity())
 
                         exerciseSetsCrossRef.add(
                             ExerciseSetCrossRef(

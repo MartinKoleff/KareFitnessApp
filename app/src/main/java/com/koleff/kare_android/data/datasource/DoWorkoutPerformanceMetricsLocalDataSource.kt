@@ -28,7 +28,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            doWorkoutPerformanceMetricsDao.insertWorkoutPerformanceMetrics(performanceMetrics.toDoWorkoutPerformanceMetrics())
+            doWorkoutPerformanceMetricsDao.insertWorkoutPerformanceMetrics(performanceMetrics.toEntity())
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -225,7 +225,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             //Update each DoWorkoutExerciseSet
             val exerciseSets = performanceMetrics.doWorkoutExerciseSets
             exerciseSets.forEach { exerciseSet ->
-                val exerciseSetDto = exerciseSet.toDoWorkoutExerciseSet()
+                val exerciseSetDto = exerciseSet.toEntity()
 
                 //No entry in DB -> insert
                 if (doWorkoutExerciseSetDao.updateSet(exerciseSetDto) == 0) {
@@ -234,7 +234,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             }
 
             //Update performance metrics
-            doWorkoutPerformanceMetricsDao.updateWorkoutPerformanceMetrics(performanceMetrics.toDoWorkoutPerformanceMetrics())
+            doWorkoutPerformanceMetricsDao.updateWorkoutPerformanceMetrics(performanceMetrics.toEntity())
 
             val result = DoWorkoutPerformanceMetricsWrapper(
                 DoWorkoutPerformanceMetricsResponse(

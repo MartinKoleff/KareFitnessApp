@@ -302,7 +302,7 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Mocked workout: $workout")
 
         //Insert
-        val id = workoutDao.insertWorkout(workout.toWorkout())
+        val id = workoutDao.insertWorkout(workout.toEntity())
         logger.i(TAG, "Mocked workout inserted successfully. Workout id: $id")
 
         //Fetch
@@ -414,7 +414,7 @@ class WorkoutUseCasesUnitTest {
      * ExerciseSetDao.saveSet(exerciseSet)
      * ExerciseSetDao.updateSet(exerciseSet)
      * ExerciseDao.insertAllExerciseSetCrossRef(exerciseSetCrossRefs)
-     * WorkoutDetailsDao.updateWorkoutDetails(workoutDetails.toWorkoutDetails())
+     * WorkoutDetailsDao.updateWorkoutDetails(workoutDetails.toEntity())
      * ---------------------
      * GetWorkoutUseCase()
      * WorkoutDao.insertWorkout()
