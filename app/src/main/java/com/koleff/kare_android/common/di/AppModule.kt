@@ -59,13 +59,16 @@ import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.DeleteDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
+import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.GetAllDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
@@ -74,17 +77,22 @@ import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
+import com.koleff.kare_android.domain.usecases.SaveAllDoWorkoutExerciseSetUseCase
+import com.koleff.kare_android.domain.usecases.SaveDoWorkoutExerciseSetUseCase
+import com.koleff.kare_android.domain.usecases.SaveDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.SelectNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
+import com.koleff.kare_android.domain.usecases.UpdateDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
@@ -519,6 +527,23 @@ object AppModule {
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             startTimerUseCase = StartTimerUseCase(),
             resetTimerUseCase = ResetTimerUseCase()
+        )
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideDoWorkoutPerformanceMetricsUseCases(
+        doWorkoutPerformanceMetricsRepository: DoWorkoutPerformanceMetricsRepository
+    ): DoWorkoutPerformanceMetricsUseCases {
+        return DoWorkoutPerformanceMetricsUseCases(
+            deleteDoWorkoutPerformanceMetricsUseCase = DeleteDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
+            updateDoWorkoutPerformanceMetricsUseCase = UpdateDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
+            getAllDoWorkoutPerformanceMetricsUseCase = GetAllDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
+            getDoWorkoutPerformanceMetricsUseCase = GetDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
+            saveAllDoWorkoutExerciseSetUseCase = SaveAllDoWorkoutExerciseSetUseCase(doWorkoutPerformanceMetricsRepository),
+            saveDoWorkoutExerciseSetUseCase = SaveDoWorkoutExerciseSetUseCase(doWorkoutPerformanceMetricsRepository),
+            saveDoWorkoutPerformanceMetricsUseCase = SaveDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository)
         )
     }
 
