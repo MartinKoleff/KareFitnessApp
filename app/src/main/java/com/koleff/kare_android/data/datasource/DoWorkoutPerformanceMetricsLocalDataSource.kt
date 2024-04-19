@@ -218,7 +218,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun updateWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> =
+    override suspend fun updateDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
@@ -235,7 +235,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             }
 
             //Update performance metrics
-            doWorkoutPerformanceMetricsDao.updateWorkoutPerformanceMetrics(performanceMetrics.toEntity())
+            doWorkoutPerformanceMetricsDao.updateDoWorkoutPerformanceMetrics(performanceMetrics.toEntity())
 
             val result = DoWorkoutPerformanceMetricsWrapper(
                 DoWorkoutPerformanceMetricsResponse(
@@ -258,7 +258,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveAllDoWorkoutExerciseSet(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun saveAllDoWorkoutExerciseSets(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)

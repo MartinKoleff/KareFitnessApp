@@ -13,16 +13,16 @@ import java.util.UUID
 @Dao
 interface DoWorkoutExerciseSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSet(doWorkoutExerciseSet: DoWorkoutExerciseSet): Long
+    suspend fun insertSet(exerciseSet: DoWorkoutExerciseSet): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllSets(doWorkoutExerciseSets: List<DoWorkoutExerciseSet>)
+    suspend fun insertAllSets(exerciseSets: List<DoWorkoutExerciseSet>)
 
     @Update
-    suspend fun updateSet(doWorkoutExerciseSet: DoWorkoutExerciseSet): Int
+    suspend fun updateSet(exerciseSet: DoWorkoutExerciseSet): Int
 
     @Delete
-    suspend fun deleteSet(doWorkoutExerciseSet: DoWorkoutExerciseSet)
+    suspend fun deleteSet(exerciseSet: DoWorkoutExerciseSet)
 
     @Query("SELECT * FROM do_workout_exercise_set WHERE workoutPerformanceMetricsId = :workoutPerformanceMetricsId")
     suspend fun findSetsByWorkoutData(workoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet>

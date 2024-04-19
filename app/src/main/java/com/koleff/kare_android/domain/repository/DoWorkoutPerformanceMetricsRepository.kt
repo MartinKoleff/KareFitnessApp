@@ -27,9 +27,9 @@ interface DoWorkoutPerformanceMetricsRepository {
 
     suspend fun deleteDoWorkoutPerformanceMetrics(id: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun updateWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>>
+    suspend fun updateDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>>
 
     suspend fun saveDoWorkoutExerciseSet(exerciseSet: DoWorkoutExerciseSetDto): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun saveAllDoWorkoutExerciseSet(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun saveAllDoWorkoutExerciseSets(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>>
 }

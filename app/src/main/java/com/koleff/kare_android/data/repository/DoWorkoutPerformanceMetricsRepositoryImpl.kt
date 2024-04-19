@@ -69,8 +69,8 @@ class DoWorkoutPerformanceMetricsRepositoryImpl(
         return doWorkoutPerformanceMetricsDataSource.deleteDoWorkoutPerformanceMetrics(id)
     }
 
-    override suspend fun updateWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> {
-        return doWorkoutPerformanceMetricsDataSource.updateWorkoutPerformanceMetrics(
+    override suspend fun updateDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> {
+        return doWorkoutPerformanceMetricsDataSource.updateDoWorkoutPerformanceMetrics(
             performanceMetrics
         )
     }
@@ -79,7 +79,7 @@ class DoWorkoutPerformanceMetricsRepositoryImpl(
         return doWorkoutPerformanceMetricsDataSource.saveDoWorkoutExerciseSet(exerciseSet)
     }
 
-    override suspend fun saveAllDoWorkoutExerciseSet(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>> {
-        return doWorkoutPerformanceMetricsDataSource.saveAllDoWorkoutExerciseSet(exerciseSets)
+    override suspend fun saveAllDoWorkoutExerciseSets(exerciseSets: List<DoWorkoutExerciseSetDto>): Flow<ResultWrapper<ServerResponseData>> {
+        return doWorkoutPerformanceMetricsDataSource.saveAllDoWorkoutExerciseSets(exerciseSets)
     }
 }

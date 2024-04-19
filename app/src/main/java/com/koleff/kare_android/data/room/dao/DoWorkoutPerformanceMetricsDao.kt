@@ -14,13 +14,13 @@ import java.util.Date
 @Dao
 interface DoWorkoutPerformanceMetricsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutPerformanceMetrics(doWorkoutPerformanceMetrics: DoWorkoutPerformanceMetrics): Long
+    suspend fun insertWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetrics): Long
 
     @Update
-    suspend fun updateWorkoutPerformanceMetrics(doWorkoutPerformanceMetrics: DoWorkoutPerformanceMetrics)
+    suspend fun updateDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetrics)
 
     @Delete
-    suspend fun deleteWorkoutPerformanceMetrics(doWorkoutPerformanceMetrics: DoWorkoutPerformanceMetrics)
+    suspend fun deleteWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetrics)
 
     @Transaction
     @Query("SELECT * FROM do_workout_performance_metrics d WHERE d.id = :id")
