@@ -25,7 +25,7 @@ interface DoWorkoutExerciseSetDao {
     suspend fun deleteSet(exerciseSet: DoWorkoutExerciseSet)
 
     @Query("SELECT * FROM do_workout_exercise_set WHERE workoutPerformanceMetricsId = :workoutPerformanceMetricsId")
-    suspend fun findSetsByWorkoutData(workoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet>
+    suspend fun findSetByPerformanceMetricsId(workoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet>
 
     @Query("SELECT * FROM do_workout_exercise_set WHERE instanceId = :instanceId")
     suspend fun findSetById(instanceId: UUID): DoWorkoutExerciseSet?

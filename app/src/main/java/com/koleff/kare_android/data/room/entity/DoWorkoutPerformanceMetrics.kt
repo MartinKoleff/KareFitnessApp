@@ -18,7 +18,7 @@ data class DoWorkoutPerformanceMetrics (
 ): KareDtoExtended<DoWorkoutPerformanceMetricsDto, List<DoWorkoutExerciseSetDto>> {
     override fun toDto(doWorkoutExerciseSets: List<DoWorkoutExerciseSetDto>): DoWorkoutPerformanceMetricsDto {
         return DoWorkoutPerformanceMetricsDto(
-            id = id,
+            id = if(id == 0) 0 else id,
             workoutId = workoutId,
             date = date,
             doWorkoutExerciseSets = doWorkoutExerciseSets

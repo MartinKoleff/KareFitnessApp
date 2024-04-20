@@ -7,7 +7,7 @@ import java.util.Date
 
 data class DoWorkoutPerformanceMetricsDto(
     @field:Json(name = "id")
-    val id: Int = -1,
+    val id: Int = 0,
     @field:Json(name = "workout_id")
     val workoutId: Int = -1,
     @field:Json(name = "date")

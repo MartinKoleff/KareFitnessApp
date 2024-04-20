@@ -5,12 +5,16 @@ import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import java.util.UUID
 
-class DoWorkoutExerciseSetDaoFake: DoWorkoutExerciseSetDao {
+class DoWorkoutExerciseSetDaoFake
+    (private val doWorkoutPerformanceMetricsDaoFake: DoWorkoutPerformanceMetricsDaoFake): DoWorkoutExerciseSetDao {
 
     private val exerciseSetDB = mutableListOf<DoWorkoutExerciseSet>()
 
     override suspend fun insertSet(exerciseSet: DoWorkoutExerciseSet): Long {
         exerciseSetDB.add(exerciseSet)
+
+        //Insert DoWorkoutPerformanceMetrics - DoWorkoutExerciseSet cross ref
+        doWorkoutPerformanceMetricsDaoFake.updatePerformanceMetricsAfterSetInsertion(exerciseSet)
 
         return exerciseSetDB.size.toLong() //Mimics auto-generate by returning the size as ID
     }
@@ -39,7 +43,7 @@ class DoWorkoutExerciseSetDaoFake: DoWorkoutExerciseSetDao {
         exerciseSetDB.removeAll { it.instanceId == exerciseSet.instanceId }
     }
 
-    override suspend fun findSetsByWorkoutData(workoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet> {
+    override suspend fun findSetByPerformanceMetricsId(workoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet> {
         return exerciseSetDB.filter { it.workoutPerformanceMetricsId == workoutPerformanceMetricsId }
     }
 
