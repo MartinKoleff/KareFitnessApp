@@ -2,14 +2,10 @@ package com.koleff.kare_android.workout
 
 import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
-import com.koleff.kare_android.data.room.manager.WorkoutDBManager
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
@@ -29,7 +25,6 @@ import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.exercise.ExerciseUseCasesUnitTest
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
@@ -37,10 +32,6 @@ import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
-import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
-import io.mockk.mockk
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -71,7 +62,6 @@ class WorkoutUseCasesUnitTest {
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
 
     private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
-    private lateinit var workoutMockupDataSource: WorkoutMockupDataSource
     private lateinit var workoutRepository: WorkoutRepository
 
     private lateinit var workoutUseCases: WorkoutUseCases
@@ -128,10 +118,8 @@ class WorkoutUseCasesUnitTest {
             exerciseSetDao = exerciseSetDao,
         )
 
-        workoutMockupDataSource = WorkoutMockupDataSource(isError = isErrorTesting)
-
         workoutRepository =
-            WorkoutRepositoryImpl(if (useMockupDataSource) workoutMockupDataSource else workoutFakeDataSource)
+            WorkoutRepositoryImpl(workoutFakeDataSource)
 
         workoutUseCases = WorkoutUseCases(
             getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),

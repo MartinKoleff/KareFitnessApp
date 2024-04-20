@@ -130,7 +130,7 @@ class WorkoutDetailsDaoFake(
                     it.workoutId
                 )
             }
-            .map(ExerciseWithSets::toExerciseDto)
+            .map(ExerciseWithSets::toDto)
 
         if (isInternalLogging) logger.i(TAG, "Get workout exercises with sets -> $exerciseWithSets")
         return exerciseWithSets
