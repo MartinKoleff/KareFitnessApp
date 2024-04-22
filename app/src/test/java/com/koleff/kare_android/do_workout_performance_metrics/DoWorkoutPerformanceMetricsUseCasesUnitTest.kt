@@ -68,8 +68,11 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.RepeatedTest
 import java.util.Date
@@ -235,8 +238,8 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         }
 
         //Workout DB
-        workout1 = MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true)
-        workout2 = MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true)
+        workout1 = MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 1)
+        workout2 = MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 2)
 
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).collect()
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).collect()
@@ -248,7 +251,8 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
         //TODO: same workoutId issue for workout1 and workout2...
         @RepeatedTest(100)
-        fun `save performance metrics using saveDoWorkoutExerciseSetUseCase and fetch using getDoWorkoutPerformanceMetricsUseCase, get all performance metrics using getAllDoWorkoutPerformanceMetricsUseCase`() =
+        @DisplayName("Save performance metrics using saveDoWorkoutExerciseSetUseCase and fetch using getDoWorkoutPerformanceMetricsUseCase, get all performance metrics using getAllDoWorkoutPerformanceMetricsUseCase")
+        fun testSaveAndFetchPerformanceMetrics() =
             runTest {
 
                 //Generate workout performance metrics for generated workout
@@ -399,134 +403,47 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
         @BeforeEach
         fun setup() = runTest {
+            performanceMetricsWorkout1 = preparePerformanceMetrics(workout1)
+            performanceMetricsWorkout2 = preparePerformanceMetrics(workout2)
+        }
 
-            /**
-             * Workout 1 -> DoWorkoutPerformanceMetrics
-             */
-
-            //Save do workout performance metrics for workout 1
-            performanceMetricsWorkout1 = DoWorkoutPerformanceMetricsDto(
+        private suspend fun preparePerformanceMetrics(workoutDetails: WorkoutDetailsDto): DoWorkoutPerformanceMetricsDto {
+            val performanceMetrics = DoWorkoutPerformanceMetricsDto(
                 id = 0,
-                workoutId = workout1.workoutId,
+                workoutId = workoutDetails.workoutId,
                 doWorkoutExerciseSets = emptyList(),
                 date = Date()
             )
 
-            val savePerformanceMetricsState1 =
-                doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
-                    performanceMetricsWorkout1
-                ).toList()
+            doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
+                performanceMetrics
+            ).toList()
 
-            logger.i(
-                TAG,
-                "Save do workout performance metrics for workout 1 -> isLoading state raised."
-            )
-            assertTrue { savePerformanceMetricsState1[0].isLoading }
-
-            logger.i(
-                TAG,
-                "Save do workout performance metrics for workout 1 -> isSuccessful state raised."
-            )
-            assertTrue { savePerformanceMetricsState1[1].isSuccessful }
-
-            //Fetch performance metrics from DB to get auto generated id
-            val getPerformanceMetricsState2 =
+            //Auto generate id in DB
+            val fetchedDBEntry =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutId = performanceMetricsWorkout1.workoutId
-                ).toList()
+                    workoutDetails.workoutId
+                )
+                    .toList()[1]
+                    .doWorkoutPerformanceMetricsList.first()
 
-            logger.i(
-                TAG,
-                "Get do workout performance metrics for workout 1 -> isLoading state raised."
-            )
-            assertTrue { getPerformanceMetricsState2[0].isLoading }
-
-            logger.i(
-                TAG,
-                "Get do workout performance metrics for workout 1 -> isSuccessful state raised."
-            )
-            assertTrue { getPerformanceMetricsState2[1].isSuccessful }
-
-            val fetchedWorkoutPerformanceMetrics2 =
-                getPerformanceMetricsState2[1].doWorkoutPerformanceMetricsList.first()
-            logger.i(
-                TAG,
-                "Fetched do workout performance metrics for workout 1: $fetchedWorkoutPerformanceMetrics2"
-            )
-
-            logger.i(
-                TAG,
-                "Assert auto generate id is working for fetched do workout performance metrics for workout 1."
-            )
-            assertTrue { performanceMetricsWorkout1.copy(id = 1) == fetchedWorkoutPerformanceMetrics2 } //Checking for id auto generating
-            performanceMetricsWorkout1 =
-                fetchedWorkoutPerformanceMetrics2 //Updates auto generated id
-
-            /**
-             * Workout 2 -> DoWorkoutPerformanceMetrics
-             */
-
-            //Save do workout performance metrics for workout 1
-            performanceMetricsWorkout2 = DoWorkoutPerformanceMetricsDto(
-                id = 0,
-                workoutId = workout2.workoutId,
-                doWorkoutExerciseSets = emptyList(),
-                date = Date()
-            )
-
-            val savePerformanceMetricsState2 =
-                doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
-                    performanceMetricsWorkout2
-                ).toList()
-
-            logger.i(
-                TAG,
-                "Save do workout performance metrics for workout 2 -> isLoading state raised."
-            )
-            assertTrue { savePerformanceMetricsState2[0].isLoading }
-
-            logger.i(
-                TAG,
-                "Save do workout performance metrics for workout 2 -> isSuccessful state raised."
-            )
-            assertTrue { savePerformanceMetricsState2[1].isSuccessful }
-
-            //Fetch performance metrics from DB to get auto generated id
-            val getPerformanceMetricsState3 =
-                doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutId = performanceMetricsWorkout2.workoutId
-                ).toList()
-
-            logger.i(
-                TAG,
-                "Get do workout performance metrics for workout 2 -> isLoading state raised."
-            )
-            assertTrue { getPerformanceMetricsState3[0].isLoading }
-
-            logger.i(
-                TAG,
-                "Get do workout performance metrics for workout 2 -> isSuccessful state raised."
-            )
-            assertTrue { getPerformanceMetricsState3[1].isSuccessful }
-
-            val fetchedWorkoutPerformanceMetrics3 =
-                getPerformanceMetricsState3[1].doWorkoutPerformanceMetricsList.first()
-            logger.i(
-                TAG,
-                "Fetched do workout performance metrics for workout 2: $fetchedWorkoutPerformanceMetrics3"
-            )
-
-            logger.i(
-                TAG,
-                "Assert auto generate id is working for fetched do workout performance metrics for workout 2."
-            )
-            assertTrue { performanceMetricsWorkout2.copy(id = 2) == fetchedWorkoutPerformanceMetrics3 } //Checking for id auto generating
-            performanceMetricsWorkout2 =
-                fetchedWorkoutPerformanceMetrics3 //Updates auto generated id
+            return fetchedDBEntry
         }
 
         @RepeatedTest(50)
-        fun `save workout exercise set using saveDoWorkoutExerciseSetUseCase`() = runTest {
+        @DisplayName("validate that do workout performance metrics are set up correctly")
+        fun complexSetup() = runTest {
+            assertNotNull(performanceMetricsWorkout1)
+            assertNotNull(performanceMetricsWorkout2)
+            assertEquals(workout1.workoutId, performanceMetricsWorkout1.workoutId)
+            assertEquals(workout2.workoutId, performanceMetricsWorkout2.workoutId)
+            assertEquals(performanceMetricsWorkout1.id, 1)
+            assertEquals(performanceMetricsWorkout2.id, 2)
+        }
+
+        @RepeatedTest(50)
+        @DisplayName("save workout exercise set using saveDoWorkoutExerciseSetUseCase")
+        fun testSaveWorkoutExerciseSet() = runTest {
 
             //Save workout exercise set for workout 1
             val selectedExercise = workout1.exercises.random()
