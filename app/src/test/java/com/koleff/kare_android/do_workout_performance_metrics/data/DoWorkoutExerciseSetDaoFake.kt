@@ -5,8 +5,9 @@ import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import java.util.UUID
 
-class DoWorkoutExerciseSetDaoFake
-    (private val doWorkoutPerformanceMetricsDaoFake: DoWorkoutPerformanceMetricsDaoFake): DoWorkoutExerciseSetDao {
+class DoWorkoutExerciseSetDaoFake(
+    private val doWorkoutPerformanceMetricsDaoFake: DoWorkoutPerformanceMetricsDaoFake
+): DoWorkoutExerciseSetDao {
 
     private val exerciseSetDB = mutableListOf<DoWorkoutExerciseSet>()
 
