@@ -13,59 +13,94 @@ import kotlinx.coroutines.flow.map
 import java.util.Date
 
 class GetDoWorkoutPerformanceMetricsUseCase(private val repository: DoWorkoutPerformanceMetricsRepository) {
-    suspend operator fun invoke(workoutId: Int): Flow<WorkoutPerformanceMetricsListState> =
-        repository.getDoWorkoutPerformanceMetricsByWorkoutId(workoutId).map { apiResult ->
-            when (apiResult) {
-                is ResultWrapper.ApiError -> {
-                    WorkoutPerformanceMetricsListState(
-                        isError = true,
-                        error = apiResult.error ?: KareError.GENERIC
-                    )
+    suspend operator fun invoke(
+        workoutId: Int,
+        start: Date? = null,
+        end: Date? = null
+    ): Flow<WorkoutPerformanceMetricsListState> =
+        if (start != null && end != null) {
+            repository.getAllDoWorkoutPerformanceMetricsByWorkoutId(workoutId, start, end)
+                .map { apiResult ->
+                    when (apiResult) {
+                        is ResultWrapper.ApiError -> {
+                            WorkoutPerformanceMetricsListState(
+                                isError = true,
+                                error = apiResult.error ?: KareError.GENERIC
+                            )
+                        }
+
+                        is ResultWrapper.Loading -> {
+                            WorkoutPerformanceMetricsListState(isLoading = true)
+                        }
+
+                        is ResultWrapper.Success -> {
+                            Log.d(
+                                "GetDoWorkoutPerformanceMetricsUseCase",
+                                "Workout performance metrics fetched for workoutId $workoutId for the period between $start and $end. Data: ${apiResult.data.data}"
+                            )
+
+                            WorkoutPerformanceMetricsListState(
+                                isSuccessful = true,
+                                doWorkoutPerformanceMetricsList = apiResult.data.data
+                            )
+                        }
+                    }
                 }
+        } else {
+            repository.getDoWorkoutPerformanceMetricsByWorkoutId(workoutId).map { apiResult ->
+                when (apiResult) {
+                    is ResultWrapper.ApiError -> {
+                        WorkoutPerformanceMetricsListState(
+                            isError = true,
+                            error = apiResult.error ?: KareError.GENERIC
+                        )
+                    }
 
-                is ResultWrapper.Loading -> {
-                    WorkoutPerformanceMetricsListState(isLoading = true)
-                }
+                    is ResultWrapper.Loading -> {
+                        WorkoutPerformanceMetricsListState(isLoading = true)
+                    }
 
-                is ResultWrapper.Success -> {
-                    Log.d(
-                        "GetDoWorkoutPerformanceMetricsUseCase",
-                        "Workout performance metrics fetched for workoutId $workoutId. Data: ${apiResult.data.data}"
-                    )
+                    is ResultWrapper.Success -> {
+                        Log.d(
+                            "GetDoWorkoutPerformanceMetricsUseCase",
+                            "Workout performance metrics fetched for workoutId $workoutId. Data: ${apiResult.data.data}"
+                        )
 
-                    WorkoutPerformanceMetricsListState(
-                        isSuccessful = true,
-                        doWorkoutPerformanceMetricsList = apiResult.data.data
-                    )
+                        WorkoutPerformanceMetricsListState(
+                            isSuccessful = true,
+                            doWorkoutPerformanceMetricsList = apiResult.data.data
+                        )
+                    }
                 }
             }
         }
 
-    suspend operator fun invoke(workoutId: Int, start: Date, end: Date): Flow<WorkoutPerformanceMetricsListState> =
-        repository.getAllDoWorkoutPerformanceMetricsByWorkoutId(workoutId, start, end).map { apiResult ->
-            when (apiResult) {
-                is ResultWrapper.ApiError -> {
-                    WorkoutPerformanceMetricsListState(
-                        isError = true,
-                        error = apiResult.error ?: KareError.GENERIC
-                    )
-                }
+    suspend operator fun invoke(performanceMetricsId: Int): Flow<WorkoutPerformanceMetricsState> =
+        repository.getDoWorkoutPerformanceMetricsById(performanceMetricsId)
+            .map { apiResult ->
+                when (apiResult) {
+                    is ResultWrapper.ApiError -> {
+                        WorkoutPerformanceMetricsState(
+                            isError = true,
+                            error = apiResult.error ?: KareError.GENERIC
+                        )
+                    }
 
-                is ResultWrapper.Loading -> {
-                    WorkoutPerformanceMetricsListState(isLoading = true)
-                }
+                    is ResultWrapper.Loading -> {
+                        WorkoutPerformanceMetricsState(isLoading = true)
+                    }
 
-                is ResultWrapper.Success -> {
-                    Log.d(
-                        "GetDoWorkoutPerformanceMetricsUseCase",
-                        "Workout performance metrics fetched for workoutId $workoutId for the period between $start and $end. Data: ${apiResult.data.data}"
-                    )
+                    is ResultWrapper.Success -> {
+                        Log.d(
+                            "GetDoWorkoutPerformanceMetricsUseCase",
+                            "Workout performance metrics fetched for performanceMetricsId $performanceMetricsId."
+                        )
 
-                    WorkoutPerformanceMetricsListState(
-                        isSuccessful = true,
-                        doWorkoutPerformanceMetricsList = apiResult.data.data
-                    )
+                        WorkoutPerformanceMetricsState(
+                            isSuccessful = true,
+                            doWorkoutPerformanceMetrics = apiResult.data.data
+                        )
+                    }
                 }
             }
-        }
 }

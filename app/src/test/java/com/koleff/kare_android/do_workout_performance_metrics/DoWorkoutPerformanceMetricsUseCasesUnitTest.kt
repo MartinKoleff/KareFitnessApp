@@ -6,6 +6,7 @@ import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsLocalD
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.DoWorkoutPerformanceMetricsRepositoryImpl
 import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
@@ -77,6 +78,7 @@ import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.RepeatedTest
 import java.util.Date
 import java.util.UUID
+import kotlin.random.Random
 
 typealias DoWorkoutPerformanceMetricsFakeDataSource = DoWorkoutPerformanceMetricsLocalDataSource
 
@@ -238,8 +240,10 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         }
 
         //Workout DB
-        workout1 = MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 1)
-        workout2 = MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 2)
+        workout1 =
+            MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 1)
+        workout2 =
+            MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 2)
 
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).collect()
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).collect()
@@ -248,8 +252,6 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
     @Nested
     inner class DoWorkoutPerformanceMetricsSimpleTests {
 
-
-        //TODO: same workoutId issue for workout1 and workout2...
         @RepeatedTest(100)
         @DisplayName("Save performance metrics using saveDoWorkoutExerciseSetUseCase and fetch using getDoWorkoutPerformanceMetricsUseCase, get all performance metrics using getAllDoWorkoutPerformanceMetricsUseCase")
         fun testSaveAndFetchPerformanceMetrics() =
@@ -366,13 +368,13 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                     TAG,
                     "Get do workout performance metrics for workout 2 -> isLoading state raised."
                 )
-                assertTrue { savePerformanceMetricsState2[0].isLoading }
+                assertTrue { getPerformanceMetricsState2[0].isLoading }
 
                 logger.i(
                     TAG,
                     "Get do workout performance metrics for workout 2 -> isSuccessful state raised."
                 )
-                assertTrue { savePerformanceMetricsState2[1].isSuccessful }
+                assertTrue { getPerformanceMetricsState2[1].isSuccessful }
 
                 val fetchedWorkoutPerformanceMetrics2 =
                     getPerformanceMetricsState2[1].doWorkoutPerformanceMetricsList.first()
@@ -422,7 +424,9 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             //Auto generate id in DB
             val fetchedDBEntry =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutDetails.workoutId
+                    workoutId = workoutDetails.workoutId,
+                    null,
+                    null
                 )
                     .toList()[1]
                     .doWorkoutPerformanceMetricsList.first()
@@ -445,18 +449,22 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         @DisplayName("save workout exercise set using saveDoWorkoutExerciseSetUseCase")
         fun testSaveWorkoutExerciseSet() = runTest {
 
+            /**
+             * Add single DoWorkoutExerciseSet using SaveDoWorkoutExerciseSetUseCase test
+             */
+
             //Save workout exercise set for workout 1
-            val selectedExercise = workout1.exercises.random()
-            val firstSet = selectedExercise.sets[0]
+            val selectedExerciseWorkout1 = workout1.exercises.random()
+            val firstSetWorkout1 = selectedExerciseWorkout1.sets[0]
             val workoutExerciseSet = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout1.id,
                 workoutId = performanceMetricsWorkout1.workoutId,
-                exerciseId = selectedExercise.exerciseId,
-                templateSetId = firstSet.setId
+                exerciseId = selectedExerciseWorkout1.exerciseId,
+                templateSetId = firstSetWorkout1.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
-                reps = 999,
-                weight = 777f,
+                reps = Random.nextInt(1, 20),
+                weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
                 date = Date()
             )
@@ -476,25 +484,27 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             assertTrue { saveWorkoutExerciseSetState[1].isSuccessful }
 
             //Fetch do workout exercise set for workout 1
-            val fetchWorkoutExerciseSet =
+            val fetchWorkoutExerciseSetsState1 =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    performanceMetricsWorkout1.workoutId
+                    workoutId = performanceMetricsWorkout1.workoutId,
+                    null,
+                    null
                 ).toList()
 
             logger.i(
                 TAG,
                 "Get do workout performance metrics for workout 1 -> isLoading state raised."
             )
-            assertTrue { fetchWorkoutExerciseSet[0].isLoading }
+            assertTrue { fetchWorkoutExerciseSetsState1[0].isLoading }
 
             logger.i(
                 TAG,
                 "Get do workout performance metrics for workout 1 -> isSuccessful state raised."
             )
-            assertTrue { fetchWorkoutExerciseSet[1].isSuccessful }
+            assertTrue { fetchWorkoutExerciseSetsState1[1].isSuccessful }
 
             val fetchedWorkoutPerformanceMetrics =
-                fetchWorkoutExerciseSet[1].doWorkoutPerformanceMetricsList.first()
+                fetchWorkoutExerciseSetsState1[1].doWorkoutPerformanceMetricsList.first()
             logger.i(
                 TAG,
                 "Fetched do workout performance metrics after exercise sets update for workout 1: $fetchedWorkoutPerformanceMetrics"
@@ -509,7 +519,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
             //Save workout exercise set for workout 2
             val selectedExerciseWorkout2 = workout2.exercises.random()
-            val firstSetWorkout2 = selectedExercise.sets[0]
+            val firstSetWorkout2 = selectedExerciseWorkout2.sets[0]
             val workoutExerciseSet2 = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout2.id,
@@ -517,8 +527,8 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 exerciseId = selectedExerciseWorkout2.exerciseId,
                 templateSetId = firstSetWorkout2.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
-                reps = 123,
-                weight = 321f,
+                reps = Random.nextInt(1, 20),
+                weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
                 date = Date()
             )
@@ -538,25 +548,27 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             assertTrue { saveWorkoutExerciseSetState2[1].isSuccessful }
 
             //Fetch do workout exercise set for workout 1
-            val fetchWorkoutExerciseSet2 =
+            val fetchWorkoutExerciseSetsState2 =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    performanceMetricsWorkout2.workoutId
+                    workoutId = performanceMetricsWorkout2.workoutId,
+                    null,
+                    null
                 ).toList()
 
             logger.i(
                 TAG,
                 "Get do workout performance metrics for workout 2 -> isLoading state raised."
             )
-            assertTrue { fetchWorkoutExerciseSet2[0].isLoading }
+            assertTrue { fetchWorkoutExerciseSetsState2[0].isLoading }
 
             logger.i(
                 TAG,
                 "Get do workout performance metrics for workout 2 -> isSuccessful state raised."
             )
-            assertTrue { fetchWorkoutExerciseSet2[1].isSuccessful }
+            assertTrue { fetchWorkoutExerciseSetsState2[1].isSuccessful }
 
             val fetchedWorkoutPerformanceMetrics4 =
-                fetchWorkoutExerciseSet2[1].doWorkoutPerformanceMetricsList.first()
+                fetchWorkoutExerciseSetsState2[1].doWorkoutPerformanceMetricsList.first()
             logger.i(
                 TAG,
                 "Fetched do workout performance metrics after exercise sets update for workout 2: $fetchedWorkoutPerformanceMetrics4"
@@ -564,17 +576,228 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
             logger.i(
                 TAG,
-                "Assert do workout exercise sets are not empty for workout 2-> update has happened"
+                "Assert do workout exercise sets are not empty for workout 2 -> update has happened"
             )
             assertTrue { fetchedWorkoutPerformanceMetrics4.doWorkoutExerciseSets.isNotEmpty() }
 
-            //TODO: Assert workout 1 is not changed after insertion in workout 2...
+            val fetchWorkoutExerciseSetsState3 =
+                doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
+                    workoutId = performanceMetricsWorkout1.workoutId,
+                    null,
+                    null
+                ).toList()
 
-            //TODO: update performance metrics with new set using UpdateDoWorkoutPerformanceMetricsUseCase
+            logger.i(
+                TAG,
+                "Assert workout 1 is not changed after insertion in workout 2"
+            )
+            assertTrue { fetchWorkoutExerciseSetsState3[1].doWorkoutPerformanceMetricsList == fetchWorkoutExerciseSetsState1[1].doWorkoutPerformanceMetricsList }
 
-            //TODO: Add two more sets using SaveAllDoWorkoutExerciseSetUseCase to workout 1 and fetch again
+            /**
+             * update DoWorkoutPerformanceMetrics using UpdateDoWorkoutPerformanceMetricsUseCase test
+             */
 
-            //TODO: delete performance metrics and check if sets are also deleted (after fetch) using DeleteDoWorkoutPerformanceMetricsUseCase
+            val selectedExercise2Workout2 = workout2.exercises.random()
+            val firstSet2Workout2 = selectedExercise2Workout2.sets[0]
+            val workoutExerciseSet3 = DoWorkoutExerciseSetDto(
+                instanceId = UUID.randomUUID(),
+                workoutPerformanceMetricsId = performanceMetricsWorkout2.id,
+                workoutId = performanceMetricsWorkout2.workoutId,
+                exerciseId = selectedExercise2Workout2.exerciseId,
+                templateSetId = firstSet2Workout2.setId
+                    ?: throw IllegalArgumentException("Invalid exercise set id"),
+                reps = Random.nextInt(1, 20),
+                weight = Random.nextInt(1, 200).toFloat(),
+                time = null,
+                date = Date()
+            )
+            logger.i(
+                TAG,
+                "New set to be added to workout 2 do workout performance metrics: $workoutExerciseSet3"
+            )
+
+            val updatedExerciseSets =
+                fetchedWorkoutPerformanceMetrics4.doWorkoutExerciseSets as MutableList
+            updatedExerciseSets.add(workoutExerciseSet3)
+            val updatedDoWorkoutPerformanceMetrics = fetchedWorkoutPerformanceMetrics4.copy(
+                doWorkoutExerciseSets = updatedExerciseSets
+            )
+
+            val updatePerformanceMetricsState =
+                doWorkoutPerformanceMetricsUseCases.updateDoWorkoutPerformanceMetricsUseCase(
+                    updatedDoWorkoutPerformanceMetrics
+                ).toList()
+
+            logger.i(
+                TAG,
+                "Update do workout performance metrics for workout 2 with new do workout exercise set -> isLoading state raised."
+            )
+            assertTrue { updatePerformanceMetricsState[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Update do workout performance metrics for workout 2 with new do workout exercise set -> isSuccessful state raised."
+            )
+            assertTrue { updatePerformanceMetricsState[1].isSuccessful }
+
+            logger.i(
+                TAG,
+                "Do workout performance metrics fetched from DB after update has happened and new set was added: ${updatePerformanceMetricsState[1].doWorkoutPerformanceMetrics}"
+            )
+            logger.i(
+                TAG,
+                "Assert performance metrics for workout 2 have been updated with new do workout exercise set"
+            )
+            assertTrue { updatePerformanceMetricsState[1].doWorkoutPerformanceMetrics == updatedDoWorkoutPerformanceMetrics }
+
+            /**
+             * Add multiple DoWorkoutExerciseSets using SaveAllDoWorkoutExerciseSetUseCase test
+             */
+
+            val selectedExercise2Workout1 = workout1.exercises.random()
+            val firstSet2Workout1 = selectedExercise2Workout1.sets[0]
+            val workoutExerciseSet4 = DoWorkoutExerciseSetDto(
+                instanceId = UUID.randomUUID(),
+                workoutPerformanceMetricsId = performanceMetricsWorkout1.id,
+                workoutId = performanceMetricsWorkout1.workoutId,
+                exerciseId = selectedExercise2Workout1.exerciseId,
+                templateSetId = firstSet2Workout1.setId
+                    ?: throw IllegalArgumentException("Invalid exercise set id"),
+                reps = Random.nextInt(1, 20),
+                weight = Random.nextInt(1, 200).toFloat(),
+                time = null,
+                date = Date()
+            )
+
+            val selectedExercise3Workout1 = workout1.exercises.random()
+            val firstSet3Workout1 = selectedExercise3Workout1.sets[0]
+            val workoutExerciseSet5 = DoWorkoutExerciseSetDto(
+                instanceId = UUID.randomUUID(),
+                workoutPerformanceMetricsId = performanceMetricsWorkout1.id,
+                workoutId = performanceMetricsWorkout1.workoutId,
+                exerciseId = selectedExercise3Workout1.exerciseId,
+                templateSetId = firstSet3Workout1.setId
+                    ?: throw IllegalArgumentException("Invalid exercise set id"),
+                reps = Random.nextInt(1, 20),
+                weight = Random.nextInt(1, 200).toFloat(),
+                time = null,
+                date = Date()
+            )
+
+            val newSetsWorkout1List = listOf(workoutExerciseSet4, workoutExerciseSet5)
+
+            val saveAllSetsState =
+                doWorkoutPerformanceMetricsUseCases.saveAllDoWorkoutExerciseSetUseCase(
+                    newSetsWorkout1List
+                ).toList()
+
+            logger.i(
+                TAG,
+                "Save multiple do workout exercise sets for workout 1 -> isLoading state raised."
+            )
+            assertTrue { saveAllSetsState[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Save multiple do workout exercise sets for workout 1 -> isSuccessful state raised."
+            )
+            assertTrue { saveAllSetsState[1].isSuccessful }
+
+            //Fetch to see the update in workout 1 do workout performance metrics
+            val getPerformanceMetricsState =
+                doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
+                    workoutId = performanceMetricsWorkout1.workoutId,
+                    null,
+                    null
+                ).toList()
+
+            logger.i(
+                TAG,
+                "Get do workout performance metrics for workout 1 after multiple exercise sets insertion -> isLoading state raised."
+            )
+            assertTrue { getPerformanceMetricsState[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Get do workout performance metrics for workout 1 after multiple exercise sets insertion -> isSuccessful state raised."
+            )
+            assertTrue { getPerformanceMetricsState[1].isSuccessful }
+
+            val fetchedWorkoutPerformanceMetrics2 =
+                getPerformanceMetricsState[1].doWorkoutPerformanceMetricsList.first()
+            logger.i(
+                TAG,
+                "Fetched do workout performance metrics for workout 1 after multiple exercise sets insertion: $fetchedWorkoutPerformanceMetrics2"
+            )
+
+            logger.i(
+                TAG,
+                "Assert do workout performance metrics for workout 1 contains the newly added exercise sets."
+            )
+            assertTrue {
+                fetchedWorkoutPerformanceMetrics2.doWorkoutExerciseSets.containsAll(
+                    newSetsWorkout1List
+                )
+            }
+
+            /**
+             * Delete DoWorkoutPerformanceMetrics using DeleteDoWorkoutPerformanceMetricsUseCase test
+             */
+
+            val deletePerformanceMetricsState =
+                doWorkoutPerformanceMetricsUseCases.deleteDoWorkoutPerformanceMetricsUseCase(
+                    performanceMetricsWorkout1.id
+                ).toList()
+
+            logger.i(
+                TAG,
+                "Delete do workout performance metrics for workout 1 -> isLoading state raised."
+            )
+            assertTrue { deletePerformanceMetricsState[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Delete do workout performance metrics for workout 1 -> isSuccessful state raised."
+            )
+            assertTrue { deletePerformanceMetricsState[1].isSuccessful }
+
+            //Fetch do workout performance metrics for deleted workout
+            val getPerformanceMetricsState2 =
+                doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
+                    performanceMetricsId = performanceMetricsWorkout1.id
+                ).toList()
+
+            logger.i(
+                TAG,
+                "Get do workout performance metrics for workout 1 after deletion  -> isLoading state raised."
+            )
+            assertTrue { getPerformanceMetricsState2[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Get do workout performance metrics for workout 1 after multiple exercise sets insertion -> isError state raised."
+            )
+            assertTrue { getPerformanceMetricsState2[1].isError }
+            logger.i(
+                TAG,
+                "Assert error is KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND"
+            )
+            assertTrue { getPerformanceMetricsState2[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
+
+            //Check if do workout exercise sets are also deleted
+            logger.i(
+                TAG,
+                "Assert do workout exercise sets are deleted for do workout performance metrics for workout 1 with id ${performanceMetricsWorkout1.id}"
+            )
+            val exerciseSetsAfterDelete =
+                doWorkoutPerformanceMetricsMediator.findSetByPerformanceMetricsId(
+                    performanceMetricsWorkout1.id
+                )
+            assertTrue {
+                exerciseSetsAfterDelete.isEmpty()
+            }
         }
     }
+
+    //TODO: [TEST] delete do workout performance metrics with invalid id
 }
