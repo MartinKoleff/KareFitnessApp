@@ -131,7 +131,14 @@ class DoWorkoutPerformanceMetricsMediator(
     }
 
     override suspend fun insertAllSets(exerciseSets: List<DoWorkoutExerciseSet>) {
-        exerciseSetDB.addAll(exerciseSets)
+//        exerciseSetDB.addAll(exerciseSets)
+
+        //Insert DoWorkoutPerformanceMetrics - DoWorkoutExerciseSet cross refs
+        exerciseSets.forEach { exerciseSet ->
+            exerciseSetDB.add(exerciseSet)
+
+            updatePerformanceMetricsAfterSetInsertion(exerciseSet)
+        }
     }
 
     override suspend fun updateSet(exerciseSet: DoWorkoutExerciseSet): Int {

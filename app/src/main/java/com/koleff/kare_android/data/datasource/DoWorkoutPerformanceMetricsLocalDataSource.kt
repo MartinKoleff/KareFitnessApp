@@ -212,6 +212,12 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
             doWorkoutPerformanceMetricsDao.deleteWorkoutPerformanceMetricsById(id)
 
+            //Delete DoWorkoutExerciseSets for the DoWorkoutPerformanceMetrics
+            val exerciseSets = doWorkoutExerciseSetDao.findSetByPerformanceMetricsId(id)
+            exerciseSets.forEach { exerciseSet ->
+                doWorkoutExerciseSetDao.deleteSet(exerciseSet)
+            }
+
             val result = ServerResponseData(
                 BaseResponse()
             )

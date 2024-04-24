@@ -12,7 +12,7 @@ data class DoWorkoutState(
     override val isLoading: Boolean = false,
     override val isError: Boolean = false,
     override val error: KareError = KareError.GENERIC
-): BaseState(isSuccessful, isLoading, isError, error)
+) : BaseState(isSuccessful, isLoading, isError, error)
 
 data class DoWorkoutData(
     val currentExercise: ExerciseDto = ExerciseDto(),
@@ -29,11 +29,24 @@ data class DoWorkoutData(
     var isNextExercise: Boolean = false,
     var isRestCountdown: Boolean = false
 ){
+) {
     val currentSet: ExerciseSetDto
         get() = currentExercise.sets.getOrNull(currentSetNumber - 1)
-        ?: ExerciseSetDto(number = -1, reps = -1, weight = -1f)
+            ?: ExerciseSetDto(
+                number = -1,
+                workoutId = currentExercise.workoutId,
+                exerciseId = currentExercise.exerciseId,
+                reps = -1,
+                weight = -1f
+            )
 
     val nextSet: ExerciseSetDto
         get() = currentExercise.sets.getOrNull(nextSetNumber - 1)
-        ?: ExerciseSetDto(number = -1, reps = -1, weight = -1f)
+            ?: ExerciseSetDto(
+                number = -1,
+                workoutId = currentExercise.workoutId,
+                exerciseId = currentExercise.exerciseId,
+                reps = -1,
+                weight = -1f
+            )
 }

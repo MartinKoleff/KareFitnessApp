@@ -10,6 +10,7 @@ import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.Exercise
 import java.util.UUID
 
+typealias DoWorkoutExerciseSetId = Int
 @Dao
 interface DoWorkoutExerciseSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -19,7 +20,7 @@ interface DoWorkoutExerciseSetDao {
     suspend fun insertAllSets(exerciseSets: List<DoWorkoutExerciseSet>)
 
     @Update
-    suspend fun updateSet(exerciseSet: DoWorkoutExerciseSet): Int
+    suspend fun updateSet(exerciseSet: DoWorkoutExerciseSet): DoWorkoutExerciseSetId
 
     @Delete
     suspend fun deleteSet(exerciseSet: DoWorkoutExerciseSet)

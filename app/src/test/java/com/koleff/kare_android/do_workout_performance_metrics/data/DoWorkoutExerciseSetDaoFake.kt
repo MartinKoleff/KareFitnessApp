@@ -22,6 +22,11 @@ class DoWorkoutExerciseSetDaoFake(
 
     override suspend fun insertAllSets(exerciseSets: List<DoWorkoutExerciseSet>) {
         exerciseSetDB.addAll(exerciseSets)
+
+        //Insert DoWorkoutPerformanceMetrics - DoWorkoutExerciseSet cross ref
+        exerciseSets.forEach { exerciseSet ->
+            doWorkoutPerformanceMetricsDaoFake.updatePerformanceMetricsAfterSetInsertion(exerciseSet)
+        }
     }
 
     override suspend fun updateSet(exerciseSet: DoWorkoutExerciseSet): Int {
