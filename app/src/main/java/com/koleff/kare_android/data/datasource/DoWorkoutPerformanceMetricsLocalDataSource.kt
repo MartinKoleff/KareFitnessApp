@@ -101,6 +101,8 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
                         workoutId
                     )
 
+                if(data.isNotEmpty()) throw NoSuchElementException()
+
                 val result = DoWorkoutPerformanceMetricsListWrapper(
                     DoWorkoutPerformanceMetricsListResponse(
                         data.map { it.toDto() }

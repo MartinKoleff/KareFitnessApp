@@ -395,6 +395,94 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 )
                 assertTrue { getPerformanceMetricsState2[1].doWorkoutPerformanceMetricsList.size == 1 }
             }
+
+
+        @RepeatedTest(50)
+        @DisplayName("Delete invalid performance metrics using DeleteDoWorkoutExerciseSetUseCase")
+        fun testDeleteInvalidPerformanceMetrics() =
+            runTest {
+                val deletePerformanceMetricsState =
+                    doWorkoutPerformanceMetricsUseCases.deleteDoWorkoutPerformanceMetricsUseCase(
+                        -1
+                    ).toList()
+
+                logger.i(
+                    TAG,
+                    "Delete do workout performance metrics for invalid workout -> isLoading state raised."
+                )
+                assertTrue { deletePerformanceMetricsState[0].isLoading }
+
+
+                logger.i(
+                    TAG,
+                    "Delete do workout performance metrics for invalid workout -> isSuccess state raised. [Silent failure action]"
+                )
+                assertTrue { deletePerformanceMetricsState[1].isSuccessful }
+                
+//                logger.i(
+//                    TAG,
+//                    "Delete do workout performance metrics for invalid workout -> isError state raised."
+//                )
+//                assertTrue { deletePerformanceMetricsState[1].isError }
+//                assertTrue { deletePerformanceMetricsState[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
+            }
+
+        @RepeatedTest(50)
+        @DisplayName("Fetch invalid performance metrics using GetDoWorkoutExerciseSetUseCase")
+        fun testFetchInvalidPerformanceMetrics() =
+            runTest {
+                val fetchPerformanceMetricsState =
+                    doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
+                        workoutId = -1,
+                        null,
+                        null
+                    ).toList()
+
+                logger.i(
+                    TAG,
+                    "Fetch do workout performance metrics for invalid workout via workoutId -> isLoading state raised."
+                )
+                assertTrue { fetchPerformanceMetricsState[0].isLoading }
+
+                logger.i(
+                    TAG,
+                    "Fetch do workout performance metrics for invalid workout via workoutId -> isSuccessful state raised."
+                )
+                assertTrue { fetchPerformanceMetricsState[1].isSuccessful }
+
+                logger.i(TAG, "Assert do workout performance metrics list is empty.")
+                assertTrue { fetchPerformanceMetricsState[1].doWorkoutPerformanceMetricsList.isEmpty() }
+
+//                logger.i(
+//                    TAG,
+//                    "Fetch do workout performance metrics for invalid workout via workoutId -> isError state raised."
+//                )
+//                assertTrue { fetchPerformanceMetricsState[1].isError }
+//                assertTrue { fetchPerformanceMetricsState[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
+
+                val fetchPerformanceMetricsState2 =
+                    doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
+                        performanceMetricsId = -1
+                    ).toList()
+
+                logger.i(
+                    TAG,
+                    "Fetch do workout performance metrics for invalid workout via performanceMetricsId -> isLoading state raised."
+                )
+                assertTrue { fetchPerformanceMetricsState2[0].isLoading }
+
+                logger.i(
+                    TAG,
+                    "Fetch do workout performance metrics for invalid workout via performanceMetricsId -> isError state raised."
+                )
+                assertTrue { fetchPerformanceMetricsState2[1].isError }
+
+                logger.i(
+                    TAG,
+                    "Assert error is KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND."
+                )
+                assertTrue { fetchPerformanceMetricsState2[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
+            }
     }
 
     @Nested
@@ -446,7 +534,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         }
 
         @RepeatedTest(50)
-        @DisplayName("save workout exercise set using saveDoWorkoutExerciseSetUseCase")
+        @DisplayName("save, saveAll, update and delete DoWorkoutExerciseSet and DoWorkoutPerformanceMetrics using use cases")
         fun testSaveWorkoutExerciseSet() = runTest {
 
             /**
@@ -798,6 +886,4 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             }
         }
     }
-
-    //TODO: [TEST] delete do workout performance metrics with invalid id
 }
