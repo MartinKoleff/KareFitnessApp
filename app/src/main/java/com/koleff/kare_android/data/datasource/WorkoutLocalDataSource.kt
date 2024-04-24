@@ -109,13 +109,20 @@ class WorkoutLocalDataSource @Inject constructor(
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val data = workoutDao.getWorkoutById(workoutId)
-
+        try {
+            val data = workoutDao.getWorkoutById(workoutId)
         val result = WorkoutWrapper(
             WorkoutResponse(data.toDto())
         )
 
         emit(ResultWrapper.Success(result))
+        } catch (e: NoSuchElementException) {
+            emit(
+                ResultWrapper.ApiError(
+                    error = KareError.WORKOUT_NOT_FOUND
+                )
+            )
+        }
     }
 
     override suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> = flow {

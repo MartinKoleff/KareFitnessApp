@@ -4,6 +4,7 @@ import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -88,7 +89,7 @@ class WorkoutUseCasesUnitTest {
                 "",
                 " "
             )
-           return searchTexts.map { text ->
+            return searchTexts.map { text ->
                 Arguments.of(text)
             }.stream()
         }
@@ -149,7 +150,7 @@ class WorkoutUseCasesUnitTest {
             hasInitializedDB = false
         )
 
-        exerciseDBManager.initializeExerciseTable{
+        exerciseDBManager.initializeExerciseTable {
             logger.i(TAG, "DB initialized successfully!")
         }
     }
@@ -193,7 +194,9 @@ class WorkoutUseCasesUnitTest {
     @DisplayName("Create workout using CreateNewWorkoutUseCase test")
     fun `create workout using CreateNewWorkoutUseCase test`() =
         runTest {
-            val workouts = workoutDao.getWorkoutsOrderedById()
+
+            //Create workout on empty DB
+            val workouts = workoutUseCases.getAllWorkoutsUseCase().toList()[1].workoutList
             val workoutsInDB = workouts.size
 
             val createWorkoutState =
@@ -205,7 +208,8 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Create workout -> isSuccessful state raised.")
             assertTrue { createWorkoutState[1].isSuccessful }
 
-            val workoutsAfterCreate = workoutDao.getWorkoutsOrderedById()
+            val workoutsAfterCreate =
+                workoutUseCases.getAllWorkoutsUseCase().toList()[1].workoutList
             val workoutsInDBAfterCreate = workoutsAfterCreate.size
 
             logger.i(TAG, "Assert new workout is created")
@@ -245,17 +249,37 @@ class WorkoutUseCasesUnitTest {
             )
             assert(createdWorkoutDetails?.workoutDetails?.name == "Workout $workoutsInDBAfterCreate")
 
-            //TODO: create workout when there is already workout in DB...
+            //Create workout when there is already workout in DB...
+            val createWorkoutState2 =
+                workoutUseCases.createNewWorkoutUseCase().toList()
+
+            logger.i(TAG, "Create workout -> isLoading state raised.")
+            assertTrue { createWorkoutState2[0].isLoading }
+
+            logger.i(TAG, "Create workout -> isSuccessful state raised.")
+            assertTrue { createWorkoutState2[1].isSuccessful }
+
+            val workoutsAfterCreate2 =
+                workoutUseCases.getAllWorkoutsUseCase().toList()[1].workoutList
+            val workoutsInDBAfterCreate2 = workoutsAfterCreate2.size
+
+            logger.i(TAG, "Assert new workout is created on not empty DB")
+            assert(workoutsInDB + 2 == workoutsInDBAfterCreate2)
         }
 
     /**
      * Tested functions inside:
      *
+     * CreateCustomWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * ----------------
      * GetAllWorkoutsUseCase()
      * WorkoutDao.getWorkoutsOrderedById()
      * WorkoutDao.insertWorkout()
      */
-    @Test
+    @RepeatedTest(50)
     @DisplayName("Get workouts using GetAllWorkoutsUseCase test")
     fun `get workouts using GetAllWorkoutsUseCase test`() = runTest {
 
@@ -271,12 +295,52 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Assert workout DB is initially empty.")
         assertTrue(getWorkoutsState[1].workoutList.isEmpty())
 
-        //TODO: insert 2 workouts and fetch again...
+        //Insert 2 workouts and fetch again...
+        val workout1 = MockupDataGenerator.generateWorkout(isSelected = false)
+        logger.i(TAG, "Mocked workout 1: $workout1")
+
+        val workout2 = MockupDataGenerator.generateWorkout(isSelected = false)
+        logger.i(TAG, "Mocked workout 2: $workout2")
+
+        val workoutList = listOf(workout1, workout2)
+
+        val createCustomWorkoutState = workoutUseCases.createCustomWorkoutUseCase(workout1).toList()
+
+        logger.i(TAG, "Create custom workout 1 -> isLoading state raised.")
+        assertTrue { createCustomWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Create custom workout 1 -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutState[1].isSuccessful }
+
+        val createCustomWorkoutState2 =
+            workoutUseCases.createCustomWorkoutUseCase(workout2).toList()
+
+        logger.i(TAG, "Create custom workout 2 -> isLoading state raised.")
+        assertTrue { createCustomWorkoutState2[0].isLoading }
+
+        logger.i(TAG, "Create custom workout 2 -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutState2[1].isSuccessful }
+
+        val getWorkoutsState2 = workoutUseCases.getAllWorkoutsUseCase().toList()
+
+        logger.i(TAG, "Get workouts after insert -> isLoading state raised.")
+        assertTrue { getWorkoutsState2[0].isLoading }
+
+        logger.i(TAG, "Get workouts after insert -> isSuccessful state raised.")
+        assertTrue { getWorkoutsState2[1].isSuccessful }
+
+        assertTrue { getWorkoutsState2[1].workoutList.size == 2 }
+        assertTrue { getWorkoutsState2[1].workoutList.containsAll(workoutList) }
     }
 
     /**
      * Tested functions inside:
      *
+     * CreateCustomWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * --------------------------
      * GetWorkoutUseCase()
      * WorkoutDao.insertWorkout()
      * WorkoutDao.getWorkoutById()
@@ -290,11 +354,11 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Mocked workout: $workout")
 
         //Insert
-        val id = workoutDao.insertWorkout(workout.toEntity())
+        val id = workoutUseCases.createCustomWorkoutUseCase(workout).toList()[1].workout.workoutId
         logger.i(TAG, "Mocked workout inserted successfully. Workout id: $id")
 
         //Fetch
-        val getWorkoutState = workoutUseCases.getWorkoutUseCase(id.toInt())
+        val getWorkoutState = workoutUseCases.getWorkoutUseCase(id)
             .toList() //Calls getWorkoutById internally...
 
         logger.i(TAG, "Get workout -> isLoading state raised.")
@@ -310,7 +374,30 @@ class WorkoutUseCasesUnitTest {
         assertTrue(fetchedWorkout == workout)
     }
 
-    //TODO: [Test] get workout using GetWorkoutUseCase -> Throw error for invalid ID test
+    /**
+     * Tested functions inside:
+     *
+     * GetWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.getWorkoutById()
+     */
+    @RepeatedTest(50)
+    @DisplayName("Get invalid workout using GetWorkoutUseCase test")
+    fun `get invalid workout using GetWorkoutUseCase test`() = runTest {
+
+        //Fetch
+        val getWorkoutState = workoutUseCases.getWorkoutUseCase(-1)
+            .toList()
+
+        logger.i(TAG, "Get workout -> isLoading state raised.")
+        assertTrue { getWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Get workout -> isError state raised.")
+        assertTrue { getWorkoutState[1].isError }
+
+        logger.i(TAG, "Assert error is KareError.WORKOUT_NOT_FOUND.")
+        assertTrue { getWorkoutState[1].error == KareError.WORKOUT_NOT_FOUND }
+    }
 
     /**
      * Tested functions inside:
@@ -368,7 +455,8 @@ class WorkoutUseCasesUnitTest {
             val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
-            val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets().filter { it.workoutId == workout.workoutId }
+            val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets()
+                .filter { it.workoutId == workout.workoutId }
             logger.i(TAG, "Fetched exercise with sets for the fetched workout: $exercisesWithSets")
 
             val fetchedWorkoutDetailsWithExercisesWithSets = fetchedWorkoutDetails.copy(
@@ -433,7 +521,11 @@ class WorkoutUseCasesUnitTest {
             //Modify workoutDetails
             val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
             val newExercise =
-                MockupDataGenerator.generateExercise(muscleGroup = muscleGroup, workoutId = workoutDetails.workoutId, isWorkout = true)
+                MockupDataGenerator.generateExercise(
+                    muscleGroup = muscleGroup,
+                    workoutId = workoutDetails.workoutId,
+                    isWorkout = true
+                )
                     .copy(name = "Test Exercise")
             val modifiedExercises = ArrayList(savedWorkoutDetails.exercises).apply {
                 add(newExercise)
@@ -687,6 +779,10 @@ class WorkoutUseCasesUnitTest {
      * ExerciseSetDao.updateSet()
      * ExerciseDao.insertAllExerciseSetCrossRef()
      * ---------------------------
+     * GetWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.getWorkoutById()
+     * ---------------------------
      * AddExerciseUseCase()
      * WorkoutDetailsDao.getWorkoutDetailsById()
      * ExerciseDao.getExerciseByExerciseAndWorkoutId()
@@ -737,7 +833,11 @@ class WorkoutUseCasesUnitTest {
             val excludedIds = workoutDetails.exercises.map { it.exerciseId }
 
             val exercise =
-                MockupDataGenerator.generateExercise(excludedIds = excludedIds, workoutId = workoutDetails.workoutId, isWorkout = true)
+                MockupDataGenerator.generateExercise(
+                    excludedIds = excludedIds,
+                    workoutId = workoutDetails.workoutId,
+                    isWorkout = true
+                )
             logger.i(TAG, "Generated exercise: $exercise.")
 
             //Insert in DB
@@ -773,7 +873,20 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Assert the exercise is added in workout details")
             assertTrue { workoutDetailsAfterAdd.exercises.size == workoutDetails.exercises.size + 1 }
 
-            //TODO: [Test] assert workout.totalExercises has incremented...
+            //Check for totalExercises increment
+            val getWorkoutState = workoutUseCases.getWorkoutUseCase(workoutDetails.workoutId)
+                .toList()
+
+            logger.i(TAG, "Get workout -> isLoading state raised.")
+            assertTrue { getWorkoutState[0].isLoading }
+
+            logger.i(TAG, "Get workout -> isSuccessful state raised.")
+            assertTrue { getWorkoutState[1].isSuccessful }
+
+            val fetchedWorkout = getWorkoutState[1].workout
+            logger.i(TAG, "Fetched workout: $fetchedWorkout")
+            logger.i(TAG, "Assert totalExercises in workout has incremented")
+            assertTrue { fetchedWorkout.totalExercises == workoutDetailsAfterAdd.exercises.size }
 
             //Delete from DB
             val deleteExerciseState = workoutUseCases.deleteExerciseUseCase(
@@ -828,8 +941,144 @@ class WorkoutUseCasesUnitTest {
             }
         }
 
-    //TODO: [Test] create workout, submit already existing exercise in workout -> check if exercise is replaced with new exercise...
-    //TODO: [Test] submit new exercise in workout -> check if exercise is added and exercise list is increased...
+
+    /**
+     * Tested functions inside:
+     *
+     * CreateCustomWorkoutDetailsUseCase()
+     * WorkoutDetailsDao.insertWorkoutDetails()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+     * WorkoutDetailsDao.insertAllWorkoutDetailsExerciseCrossRef()
+     * ExerciseSetDao.saveSet()
+     * ExerciseSetDao.updateSet()
+     * ExerciseDao.insertAllExerciseSetCrossRef()
+     * ---------------------------
+     * GetWorkoutUseCase()
+     * WorkoutDao.insertWorkout()
+     * WorkoutDao.getWorkoutById()
+     * --------------------------
+     * SubmitExerciseUseCase()
+     * WorkoutDetailsDao.getWorkoutDetailsById()
+     * ExerciseDao.getSetsForExercise()
+     * ExerciseDao.insertExercise()
+     * WorkoutDetailsDao.insertWorkoutDetailsExerciseCrossRef()
+     * ExerciseSetDao.saveSet()
+     * ExerciseDao.insertExerciseSetCrossRef()
+     * WorkoutDao.updateWorkout()
+     */
+    @RepeatedTest(50)
+    @DisplayName("Submit exercise using SubmitExerciseUseCase test")
+    fun `submit exercise using SubmitExerciseUseCase`() = runTest {
+
+        //Generate workout details
+        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+        logger.i(
+            TAG,
+            "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
+        )
+        logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
+
+        //Save workout details to DB
+        val createCustomWorkoutDetailsState =
+            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+        logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+        assertTrue { createCustomWorkoutDetailsState[0].isLoading }
+
+        logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
+
+        val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
+
+        //Generate exercise that is in the DB with different ExerciseSets and submit
+        val selectedExercise = savedWorkoutDetails.exercises.random()
+            .copy(sets = emptyList())
+        logger.i(TAG, "Selected exercise that is already in workout to be submitted: $selectedExercise")
+
+        val submitExerciseState = workoutUseCases.submitExerciseUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exercise = selectedExercise
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Submit exercise that is already in workout to workout details ${workoutDetails.name} -> isLoading state raised."
+        )
+        assertTrue { submitExerciseState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Submit exercise that is already in workout to workout details ${workoutDetails.name} -> isSuccessful state raised."
+        )
+        assertTrue { submitExerciseState[1].isSuccessful }
+
+        logger.i(
+            TAG,
+            "Assert exercise size is not changed. Exercise list after submit: ${submitExerciseState[1].workoutDetails.exercises.size}."
+        )
+        assertTrue { submitExerciseState[1].workoutDetails.exercises.size == savedWorkoutDetails.exercises.size }
+
+        //Generate exercise that is not already in the workoutDetails.exercise list
+        val excludedIds = workoutDetails.exercises.map { it.exerciseId }
+
+        val exercise =
+            MockupDataGenerator.generateExercise(
+                excludedIds = excludedIds,
+                workoutId = workoutDetails.workoutId,
+                isWorkout = true
+            )
+        logger.i(TAG, "Generated exercise: $exercise.")
+
+        //Insert in DB
+        val submitExerciseState2 = workoutUseCases.submitExerciseUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exercise = exercise
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Submit exercise to workout details ${workoutDetails.name} -> isLoading state raised."
+        )
+        assertTrue { submitExerciseState2[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Submit exercise to workout details ${workoutDetails.name} -> isSuccessful state raised."
+        )
+        assertTrue { submitExerciseState2[1].isSuccessful }
+
+        logger.i(
+            TAG,
+            "Assert exercise sets data is not lost."
+        )
+        assertTrue { submitExerciseState2[1].workoutDetails.exercises.map { it.sets }.isNotEmpty() }
+
+        val workoutDetailsAfterSubmit = submitExerciseState2[1].workoutDetails
+        logger.i(
+            TAG,
+            "Workout details after new exercise was added: $workoutDetailsAfterSubmit\n. Exercises list: ${workoutDetailsAfterSubmit.exercises}"
+        )
+
+        logger.i(TAG, "Assert the exercise is added in workout details")
+        assertTrue { workoutDetailsAfterSubmit.exercises.size == workoutDetails.exercises.size + 1 }
+
+        //Check for totalExercises increment
+        val getWorkoutState = workoutUseCases.getWorkoutUseCase(workoutDetails.workoutId)
+            .toList()
+
+        logger.i(TAG, "Get workout -> isLoading state raised.")
+        assertTrue { getWorkoutState[0].isLoading }
+
+        logger.i(TAG, "Get workout -> isSuccessful state raised.")
+        assertTrue { getWorkoutState[1].isSuccessful }
+
+        val fetchedWorkout = getWorkoutState[1].workout
+        logger.i(TAG, "Fetched workout: $fetchedWorkout")
+        logger.i(TAG, "Assert totalExercises in workout has incremented")
+        assertTrue { fetchedWorkout.totalExercises == workoutDetailsAfterSubmit.exercises.size }
+    }
 
     /**
      * Tested functions inside:
@@ -915,7 +1164,10 @@ class WorkoutUseCasesUnitTest {
                 "Test 3 -> get selected workout after created a new one and DB contains selected workout."
             )
 
-            val workout2 = MockupDataGenerator.generateWorkout(isSelected = true, excludedIds = listOf(workout.workoutId))
+            val workout2 = MockupDataGenerator.generateWorkout(
+                isSelected = true,
+                excludedIds = listOf(workout.workoutId)
+            )
             logger.i(TAG, "Mocked workout 2: $workout2")
 
             //Insert another selected workout in DB
