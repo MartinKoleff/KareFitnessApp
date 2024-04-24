@@ -110,6 +110,10 @@ buildscript {
     //https://github.com/junit-team/junit5/
     ext.junit_jupiter_version = "5.10.2"
 
+
+    //https://junit.org/junit5/docs/current/user-guide/#junit-platform-suite-engine
+    ext.junit_jupiter_platform_version = "1.10.2"
+
     // region http://robolectric.org/getting-started/
     ext.robolectric_junit_version = "4.13.2"
 
