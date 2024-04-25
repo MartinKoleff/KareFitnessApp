@@ -1,6 +1,7 @@
 package com.koleff.kare_android.domain.usecases
 
-import com.koleff.kare_android.common.TimerUtil
+import com.koleff.kare_android.common.timer.DoWorkoutTimer
+import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.response.TimerResponse
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
@@ -12,7 +13,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 
 class StartTimerUseCase() {
     suspend operator fun invoke(
-        timer: TimerUtil,
+        timer: DoWorkoutTimer,
         time: ExerciseTime
     ): Flow<ResultWrapper<TimerWrapper>> = flow {
         val channel =

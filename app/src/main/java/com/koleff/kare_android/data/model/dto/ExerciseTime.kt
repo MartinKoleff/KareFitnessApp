@@ -16,4 +16,13 @@ data class ExerciseTime(
     fun hasFinished(): Boolean {
         return this == ExerciseTime(0, 0, 0)
     }
+
+    companion object{
+        fun fromSeconds(seconds: Int): ExerciseTime {
+            val hours = seconds / 3600
+            val minutes = (seconds % 3600) / 60
+            val secs = seconds % 60
+            return ExerciseTime(hours, minutes, secs)
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.timer
 
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import kotlinx.coroutines.CoroutineScope
@@ -8,11 +8,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-class TimerUtil(private var totalTime: Int = 0) {
+open class TimerUtil(private var totalTime: Int = 0): DoWorkoutTimer {
     private var job: Job? = null
     private val timerScope = CoroutineScope(Dispatchers.Main)
 
-    suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
+    override suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
         totalTime = totalSeconds
 
         job?.cancel()  //Cancel any existing job to ensure no duplicate timers are running
@@ -29,15 +29,15 @@ class TimerUtil(private var totalTime: Int = 0) {
         }
     }
 
-    fun pauseTimer() {
+    override fun pauseTimer() {
         job?.cancel()
     }
 
-    suspend fun resumeTimer(updateTime: (ExerciseTime) -> Unit) {
+    override suspend fun resumeTimer(updateTime: (ExerciseTime) -> Unit) {
         startTimer(totalTime, updateTime)
     }
 
-    fun resetTimer() {
+    override fun resetTimer() {
         totalTime = 0
         job?.cancel()
     }

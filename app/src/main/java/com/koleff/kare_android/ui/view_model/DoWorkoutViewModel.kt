@@ -3,17 +3,12 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.TimerUtil
+import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseTime
-import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
-import com.koleff.kare_android.ui.state.DoWorkoutData
 import com.koleff.kare_android.ui.state.DoWorkoutState
 import com.koleff.kare_android.ui.state.TimerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +17,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
