@@ -5,7 +5,7 @@ buildscript {
     ext.kotlin_version = "1.9.22" //2.0.0-Beta4 not compatible with ksp_version
 
     //https://developer.android.com/build/releases/gradle-plugin
-    ext.gradle_version = "8.2.2"
+    ext.gradle_version = '8.3.2'
 
     //https://developer.android.com/build/migrate-to-ksp#groovy
     //https://github.com/google/ksp/releases
