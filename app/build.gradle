@@ -24,16 +24,6 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
-        //Enable tests.
-        testOptions {
-            unitTests.all {
-                useJUnitPlatform()
-            }
-
-            unitTests.returnDefaultValues = true
-            unitTests.includeAndroidResources = true
-        }
-
         vectorDrawables {
             useSupportLibrary true
         }
@@ -43,6 +33,16 @@ android {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
+        }
+
+        //Enable tests.
+        testOptions {
+            unitTests.all {
+                useJUnitPlatform()
+            }
+
+            unitTests.returnDefaultValues = true
+            unitTests.includeAndroidResources = true
         }
     }
 
@@ -189,6 +189,7 @@ dependencies {
     //JUnit 4
 //    testImplementation "junit:junit:$robolectric_junit_version"
 //    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
+//    testImplementation ("org.junit.platform:junit-platform-runner:$junit_jupiter_platform_version")
 
     //AndroidX Testing
     androidTestImplementation "androidx.test:core:$test_core_version"
@@ -208,7 +209,6 @@ dependencies {
 
     //JUnit platform
     testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
-    testImplementation ("org.junit.platform:junit-platform-runner:$junit_jupiter_platform_version")
 
     //Mockk
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"

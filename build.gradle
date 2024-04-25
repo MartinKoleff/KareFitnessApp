@@ -154,4 +154,5 @@ plugins {
     id 'com.google.gms.google-services' version "$google_services_version" apply false
     id 'com.google.devtools.ksp' version "$ksp_version" apply false
     id("com.google.firebase.crashlytics") version "$firebase_crashlytics_version" apply false
+//    id("de.mannodermaus.android-junit5") version "1.10.0.0"
 }
