@@ -524,7 +524,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
         @RepeatedTest(50)
         @DisplayName("validate that do workout performance metrics are set up correctly")
-        fun complexSetup() = runTest {
+        fun validateComplexSetup() = runTest {
             assertNotNull(performanceMetricsWorkout1)
             assertNotNull(performanceMetricsWorkout2)
             assertEquals(workout1.workoutId, performanceMetricsWorkout1.workoutId)
