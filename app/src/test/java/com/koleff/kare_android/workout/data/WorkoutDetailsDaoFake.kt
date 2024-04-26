@@ -103,25 +103,34 @@ class WorkoutDetailsDaoFake(
     }
 
     override fun getWorkoutDetailsOrderedById(): List<WorkoutDetailsWithExercises> {
-        val workoutExercises = getWorkoutExercises()
-
         return workoutDetailsDB.sortedBy { it.workoutDetails.workoutDetailsId }.map {
-            WorkoutDetailsWithExercises(it.workoutDetails, workoutExercises)
+            WorkoutDetailsWithExercises(it.workoutDetails, getWorkoutExercises(it.workoutDetails.workoutDetailsId))
         }
     }
 
-    private fun getWorkoutExercises(): List<Exercise> {
+    private fun getWorkoutExercises(workoutId: Int): List<Exercise> {
         val workoutExercisesIndexes = workoutDetailsExerciseCrossRefs
             .map { it.exerciseId }
 
         val workoutExercises = exerciseDao.getAllExercises()
-            .filter { workoutExercisesIndexes.contains(it.exerciseId) }
+            .filter { exercise -> workoutExercisesIndexes.contains(exercise.exerciseId) }
+            .filter { exercise -> exercise.workoutId == workoutId }
+
+        return workoutExercises
+    }
+
+    private fun getAllExercises(): List<Exercise>{
+        val workoutExercisesIndexes = workoutDetailsExerciseCrossRefs
+            .map { it.exerciseId }
+
+        val workoutExercises = exerciseDao.getAllExercises()
+            .filter { exercise -> workoutExercisesIndexes.contains(exercise.exerciseId) }
 
         return workoutExercises
     }
 
     suspend fun getWorkoutExercisesWithSets(): List<ExerciseDto> {
-        val exercises = getWorkoutExercises()
+        val exercises = getAllExercises()
 
         val exerciseWithSets = exercises
             .map {
@@ -137,11 +146,13 @@ class WorkoutDetailsDaoFake(
     }
 
     override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
-        val workoutExercises = getWorkoutExercises()
 
-        return workoutDetailsDB.firstOrNull {
+        val selectedWorkout = workoutDetailsDB.firstOrNull {
             it.workoutDetails.isSelected
-        }?.copy(
+        } ?: return null
+
+        val workoutExercises = getWorkoutExercises(selectedWorkout.workoutDetails.workoutDetailsId)
+        return selectedWorkout.copy(
             exercises = workoutExercises
         )
     }
@@ -160,7 +171,7 @@ class WorkoutDetailsDaoFake(
 //    }
 
     override fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises? {
-        val workoutExercises = getWorkoutExercises().filter { it.workoutId == workoutId }
+        val workoutExercises = getWorkoutExercises(workoutId)
 
         return workoutDetailsDB.firstOrNull {
             it.workoutDetails.workoutDetailsId == workoutId
