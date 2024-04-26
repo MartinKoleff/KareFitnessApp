@@ -7,7 +7,7 @@ import kotlinx.coroutines.*
 class TimerUtilFake : DoWorkoutTimer {
     private var job: Job? = null
     private var timeLeft = 0
-    private val scope = CoroutineScope(Dispatchers.IO)
+    private val scope = CoroutineScope(Dispatchers.IO) //No Dispatchers.Main in testing...
 
     override suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
         timeLeft = totalSeconds

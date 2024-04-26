@@ -145,26 +145,28 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val data = workoutDetailsDao.getWorkoutDetailsOrderedById()
 
+            val updatedData = data.map { workoutDetailsWitExercises ->
+
+                //Null safety
+                workoutDetailsWitExercises.exercises ?: return@flow
+
+                val exercises =
+                    workoutDetailsWitExercises.exercises.map { exercise ->
+                        val sets = exerciseDao.getSetsForExercise(
+                            exerciseId = exercise.exerciseId,
+                            workoutId = workoutDetailsWitExercises.workoutDetails.workoutDetailsId
+                        )
+
+                        exercise.toDto(sets)
+                    } as MutableList
+
+                workoutDetailsWitExercises.workoutDetails.toDto(
+                    exercises
+                )
+            }
+
             val result = WorkoutDetailsListWrapper(
-                WorkoutDetailsListResponse(data.map { workoutDetailsWitExercises ->
-
-                    //Null safety
-                    workoutDetailsWitExercises.exercises ?: return@flow
-
-                    val exercises =
-                        workoutDetailsWitExercises.exercises.map { exercise ->
-                            val sets = exerciseDao.getSetsForExercise(
-                                exerciseId = exercise.exerciseId,
-                                workoutId = workoutDetailsWitExercises.workoutDetails.workoutDetailsId
-                            )
-
-                            exercise.toDto(sets)
-                        } as MutableList
-
-                    workoutDetailsWitExercises.workoutDetails.toDto(
-                        exercises
-                    )
-                })
+                WorkoutDetailsListResponse(updatedData)
             )
 
             emit(ResultWrapper.Success(result))
