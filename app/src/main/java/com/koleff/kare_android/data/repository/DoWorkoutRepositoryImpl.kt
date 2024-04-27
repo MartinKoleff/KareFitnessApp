@@ -29,7 +29,7 @@ class DoWorkoutRepositoryImpl @Inject constructor(
         return doWorkoutDataSource.skipNextExercise(currentDoWorkoutData)
     }
 
-    override suspend fun updateExerciseSetsAfterTimerUseCase(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {
-        return doWorkoutDataSource.updateExerciseSetsAfterTimerUseCase(currentDoWorkoutData)
+    override suspend fun updateExerciseSetsAfterTimer(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {
+        return doWorkoutDataSource.updateExerciseSetsAfterTimer(currentDoWorkoutData)
     }
 }

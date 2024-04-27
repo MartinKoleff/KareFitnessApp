@@ -18,5 +18,5 @@ interface DoWorkoutDataSource {
         currentDoWorkoutData: DoWorkoutData
     ): Flow<ResultWrapper<DoWorkoutWrapper>>
 
-    suspend fun updateExerciseSetsAfterTimerUseCase(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>>
+    suspend fun updateExerciseSetsAfterTimer(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>>
 }
