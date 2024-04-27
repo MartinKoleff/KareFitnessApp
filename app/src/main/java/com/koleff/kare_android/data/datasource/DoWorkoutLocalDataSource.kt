@@ -53,7 +53,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                             nextExercise = nextExercise,
                             nextSetNumber = nextSetNumber,
                             workout = workoutDetailsDto,
-                            isBetweenExerciseCountdown = true
+                            isBetweenExerciseCountdown = false
                         )
                     )
                 )
@@ -169,6 +169,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                     nextExercise = nextExercise,
                     nextSetNumber = nextSetNumber,
                     isNextExercise = false,
+                    isBetweenExerciseCountdown = false,
                     isWorkoutCompleted = isWorkoutCompleted
                 )
 
