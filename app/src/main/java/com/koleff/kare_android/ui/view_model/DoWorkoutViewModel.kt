@@ -111,8 +111,10 @@ class DoWorkoutViewModel @Inject constructor(
         Log.d("DoWorkoutViewModel", "Select next exercise requested.")
 
         //Workout completed
-        if (_state.value.doWorkoutData.isWorkoutCompleted) {
-            showWorkoutCompletedScreen()
+        if (_state.value.doWorkoutData.isWorkoutCompleted || _state.value.doWorkoutData.nextSetNumber == -1) { //No next set...
+            val updatedData = _state.value.doWorkoutData.copy(isWorkoutCompleted = true)
+            _state.value = _state.value.copy(doWorkoutData = updatedData)
+            hideNextExerciseCountdownScreen()
 
             //Stop timers...
             workoutTimer.resetTimer()
@@ -132,7 +134,7 @@ class DoWorkoutViewModel @Inject constructor(
                     _state.value = result
 
                     if (result.isSuccessful) {
-                        startCountdownTimer()
+                        selectNextExercise()
                     }
                 }
         }

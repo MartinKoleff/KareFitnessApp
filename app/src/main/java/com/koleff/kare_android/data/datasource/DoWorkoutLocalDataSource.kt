@@ -159,8 +159,10 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                     "Next set number: $nextSetNumber"
                 )
 
+                //No current exercise or no next set and no current set -> workout is completed
                 val isWorkoutCompleted =
-                    currentExercise == ExerciseDto() //No current exercise -> workout is completed...
+                    currentExercise == ExerciseDto()
+                            || (currentSetNumber == -1 && nextSetNumber == -1)
                 val updatedData = this.copy(
                     currentExercise = currentExercise,
                     currentSetNumber = currentSetNumber,

@@ -41,12 +41,21 @@ data class DoWorkoutData(
             )
 
     val nextSet: ExerciseSetDto
-        get() = currentExercise.sets.getOrNull(nextSetNumber - 1)
-            ?: ExerciseSetDto(
+        get() = if (currentSetNumber == currentExercise.sets.size && nextSetNumber <= currentSetNumber)
+            nextExercise.sets.getOrNull(nextSetNumber - 1) ?: ExerciseSetDto(
                 number = -1,
                 workoutId = currentExercise.workoutId,
                 exerciseId = currentExercise.exerciseId,
                 reps = -1,
                 weight = -1f
             )
+        else
+            currentExercise.sets.getOrNull(nextSetNumber - 1) ?: ExerciseSetDto(
+                number = -1,
+                workoutId = currentExercise.workoutId,
+                exerciseId = currentExercise.exerciseId,
+                reps = -1,
+                weight = -1f
+            )
+
 }
