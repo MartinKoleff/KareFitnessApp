@@ -188,7 +188,13 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 modifier = screenModifier,
                 screenTitle = currentExercise.name,
                 onExitWorkoutAction = onExitWorkoutAction,
-                onNextExerciseAction = { doWorkoutViewModel.skipNextExercise() }
+                onNextExerciseAction = {
+
+                    //Disable skip next exercise button when NextExerciseCountdownScreen is visible
+                    if(!state.doWorkoutData.isBetweenExerciseCountdown) {
+                        doWorkoutViewModel.skipNextExercise()
+                    }
+                }
             ) {
 
                 //Video player...
