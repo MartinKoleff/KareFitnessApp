@@ -3,7 +3,7 @@ package com.koleff.kare_android.domain.usecases
 data class DoWorkoutUseCases(
     val doWorkoutInitialSetupUseCase: DoWorkoutInitialSetupUseCase,
     val selectNextExerciseUseCase: SelectNextExerciseUseCase,
-    val skipNextExerciseUseCase: SkipNextExerciseUseCase,
+    val skipNextSetUseCase: SkipNextSetUseCase,
     val updateExerciseSetsAfterTimerUseCase: UpdateExerciseSetsAfterTimerUseCase,
     val addNewExerciseSetUseCase: AddNewExerciseSetUseCase,
     val deleteExerciseSetUseCase: DeleteExerciseSetUseCase,

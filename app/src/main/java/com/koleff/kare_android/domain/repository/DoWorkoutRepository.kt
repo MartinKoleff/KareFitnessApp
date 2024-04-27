@@ -14,7 +14,7 @@ interface DoWorkoutRepository {
         currentDoWorkoutData: DoWorkoutData
     ): Flow<ResultWrapper<DoWorkoutWrapper>>
 
-    suspend fun skipNextExercise(
+    suspend fun skipNextSet(
         currentDoWorkoutData: DoWorkoutData
     ): Flow<ResultWrapper<DoWorkoutWrapper>>
 

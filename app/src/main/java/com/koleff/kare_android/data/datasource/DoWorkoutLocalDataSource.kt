@@ -188,7 +188,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
             }
         }
 
-    override suspend fun skipNextExercise(
+    override suspend fun skipNextSet(
         currentDoWorkoutData: DoWorkoutData
     ): Flow<ResultWrapper<DoWorkoutWrapper>> = flow {
         updateExerciseSetsAfterTimer(currentDoWorkoutData).collect { result ->

@@ -136,7 +136,7 @@ class DoWorkoutViewModel @Inject constructor(
     //If called from the button update current set and next set directly...
     fun skipNextExercise() {
         viewModelScope.launch(dispatcher) {
-            doWorkoutUseCases.skipNextExerciseUseCase(_state.value.doWorkoutData)
+            doWorkoutUseCases.skipNextSetUseCase(_state.value.doWorkoutData)
                 .collect { result ->
                     _state.value = result
 

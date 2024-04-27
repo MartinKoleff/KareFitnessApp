@@ -23,10 +23,10 @@ class DoWorkoutRepositoryImpl @Inject constructor(
         return doWorkoutDataSource.selectNextExercise(currentDoWorkoutData)
     }
 
-    override suspend fun skipNextExercise(
+    override suspend fun skipNextSet(
         currentDoWorkoutData: DoWorkoutData
     ): Flow<ResultWrapper<DoWorkoutWrapper>> {
-        return doWorkoutDataSource.skipNextExercise(currentDoWorkoutData)
+        return doWorkoutDataSource.skipNextSet(currentDoWorkoutData)
     }
 
     override suspend fun updateExerciseSetsAfterTimer(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {

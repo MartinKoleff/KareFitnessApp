@@ -89,7 +89,7 @@ import com.koleff.kare_android.domain.usecases.SaveDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.SelectNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
+import com.koleff.kare_android.domain.usecases.SkipNextSetUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateDoWorkoutPerformanceMetricsUseCase
@@ -519,7 +519,7 @@ object AppModule {
         return DoWorkoutUseCases(
             doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
             selectNextExerciseUseCase = SelectNextExerciseUseCase(doWorkoutRepository),
-            skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
+            skipNextSetUseCase = SkipNextSetUseCase(doWorkoutRepository),
             updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
                 doWorkoutRepository
             ),
