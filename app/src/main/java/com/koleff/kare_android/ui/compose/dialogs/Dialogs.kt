@@ -121,17 +121,24 @@ fun SuccessDialog(
 ) {
     AlertDialog(
         title = {
-            Text(
-                text = title,
-                style = TextStyle(
-                    color = Color.Black,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = title,
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         },
         text = {
             if (description.isNotEmpty()) {
@@ -346,6 +353,28 @@ fun EnableNotificationsDialog(
         onClick = onClick,
         onDismiss = onDismiss,
         callDismissOnConfirm = false
+    )
+}
+
+@Composable
+fun WorkoutCompletedDialog(
+    workoutName: String,
+    onClick: () -> Unit,
+) {
+    SuccessDialog(
+        title = "$workoutName completed successfully!",
+        onDismiss = onClick,
+        onClick = onClick
+    )
+}
+
+@Preview
+@Composable
+fun WorkoutCompletedDialogPreview(
+) {
+    WorkoutCompletedDialog(
+        workoutName = "Blow your arms workout",
+        onClick = {}
     )
 }
 

@@ -71,6 +71,7 @@ import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 
@@ -109,6 +110,10 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         mutableStateOf(state.isLoading)
     }
 
+    var showWorkoutCompletedDialog by remember {
+        mutableStateOf(false)
+    }
+
     //Wait for data on initialization
     var showErrorDialog by remember {
         mutableStateOf(false)
@@ -135,6 +140,9 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         showNextExerciseCountdown = state.doWorkoutData.isBetweenExerciseCountdown
         workoutTimerInitialState = workoutTimerState
         Log.d("DoWorkoutScreen", "Show next exercise: $showNextExerciseCountdown")
+
+        showWorkoutCompletedDialog = state.doWorkoutData.isWorkoutCompleted
+        Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
     }
 
     //Error dialog
@@ -142,6 +150,14 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         error?.let {
             ErrorDialog(it, onErrorDialogDismiss)
         }
+    }
+
+    //Workout completed dialog
+    if(showWorkoutCompletedDialog){
+        WorkoutCompletedDialog(
+            workoutName = state.doWorkoutData.workout.name,
+            onClick = onExitWorkoutAction
+        )
     }
 
     //Blur for Android 12+ / Lower alpha for < Android 12  when NextExerciseCountdownScreen is displayed...
