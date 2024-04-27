@@ -564,6 +564,9 @@ class WorkoutLocalDataSource @Inject constructor(
                 exerciseSetDao.deleteSet(set)
             }
 
+            //Delete exercise
+            exerciseDao.deleteExercise(deletedExercise.exercise)
+
             //Delete workout details - exercise cross ref
             val workoutDetailsExerciseCrossRef =
                 WorkoutDetailsExerciseCrossRef(

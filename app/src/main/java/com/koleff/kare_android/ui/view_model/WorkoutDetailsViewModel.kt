@@ -98,6 +98,11 @@ class WorkoutDetailsViewModel @Inject constructor(
             workoutUseCases.deleteExerciseUseCase(workoutId, exerciseId)
                 .collect { deleteExerciseState ->
                     _deleteExerciseState.value = deleteExerciseState
+
+                    //Update main state
+                    _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                        workoutDetails = deleteExerciseState.workoutDetails
+                    )
                 }
 
             Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
