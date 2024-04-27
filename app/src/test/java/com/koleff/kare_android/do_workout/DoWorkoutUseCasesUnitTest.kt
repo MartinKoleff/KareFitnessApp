@@ -599,7 +599,6 @@ class DoWorkoutUseCasesUnitTest {
                 selectNextExerciseData.nextExercise
             )
 
-
             logger.i(
                 TAG,
                 "Assert workout is not completed."
@@ -647,6 +646,54 @@ class DoWorkoutUseCasesUnitTest {
                 TAG,
                 "Do workout initial setup data: $doWorkoutInitialSetupData"
             )
+
+            logger.i(
+                TAG,
+                "Assert current exercise has not changed."
+            )
+            val firstExercise = updatedWorkoutDetails.exercises.first()
+            assertEquals(
+                firstExercise,
+                doWorkoutInitialSetupData.currentExercise
+            )
+
+            logger.i(
+                TAG,
+                "Assert currentSet is first set."
+            )
+            val firstSet = updatedWorkoutDetails.exercises.first().sets[0]
+            assertEquals(firstSet, doWorkoutInitialSetupData.currentExercise.sets[1])
+
+            logger.i(
+                TAG,
+                "Assert currentSetNumber is 1"
+            )
+            assertEquals(1, doWorkoutInitialSetupData.currentSetNumber)
+
+            logger.i(
+                TAG,
+                "Assert nextSet is second set"
+            )
+            val secondSet = updatedWorkoutDetails.exercises.first().sets[1]
+            assertEquals(secondSet, doWorkoutInitialSetupData.nextSet)
+
+            logger.i(
+                TAG,
+                "Assert nextSetNumber is 2"
+            )
+            assertEquals(2, doWorkoutInitialSetupData.nextSetNumber)
+
+            logger.i(
+                TAG,
+                "Assert there is no next exercise."
+            )
+            assertEquals(ExerciseDto(), doWorkoutInitialSetupData.nextExercise)
+
+            logger.i(
+                TAG,
+                "Assert workout is not completed."
+            )
+            assertTrue { !doWorkoutInitialSetupData.isWorkoutCompleted }
         }
 
     /**
@@ -1078,10 +1125,30 @@ class DoWorkoutUseCasesUnitTest {
                 "Do workout initial setup data: $doWorkoutInitialSetupData"
             )
 
-            //TODO: nextSet should be -1
-            //TODO: currentSet should be 1
-            //TODO: currentExercise should be the exercise (the only one)
-            //TODO: nextExercise should be ExerciseDto()
+            logger.i(
+                TAG,
+                "Assert there is no nextSetNumber"
+            )
+            assertTrue { doWorkoutInitialSetupData.nextSetNumber == -1 }
+
+
+            logger.i(
+                TAG,
+                "Assert currentSetNumber is 1 (the only set)"
+            )
+            assertTrue { doWorkoutInitialSetupData.currentSetNumber == 1 }
+
+            logger.i(
+                TAG,
+                "Assert current exercise is the first exercise (and the only) exercise in workout details"
+            )
+            assertTrue { doWorkoutInitialSetupData.currentExercise == updatedWorkoutDetails.exercises.first() }
+
+            logger.i(
+                TAG,
+                "Assert there is no next exercise"
+            )
+            assertTrue { doWorkoutInitialSetupData.nextExercise == ExerciseDto() }
         }
 
     /**
@@ -1166,13 +1233,208 @@ class DoWorkoutUseCasesUnitTest {
             assertTrue { selectNextExerciseData.isWorkoutCompleted }
         }
 
-    //TODO: [TEST] UpdateExerciseSetsAfterTimerUseCase test where currentExercise has no sets from initial setup?
-    //TODO: [TEST] UpdateExerciseSetsAfterTimerUseCase test with 3 exercises where middle exercise has no sets
-    //TODO: [TEST] UpdateExerciseSetsAfterTimerUseCase test with 3 exercises where last 2 exercises have no sets -> if workout is finished...
+    /**
+     * Missing sets tests
+     */
+    @RepeatedTest(50)
+    fun `first exercise has no sets validation using DoWorkoutInitialSetupUseCase`() = runTest {
+        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+        logger.i(
+            TAG,
+            "Workout details: $workoutDetails"
+        )
+
+        val firstExercise = workoutDetails.exercises.first().copy(
+            sets = mutableListOf()
+        )
+        val updatedExercises = workoutDetails.exercises
+            .filter { it.exerciseId != firstExercise.exerciseId }
+            .toMutableList()
+        updatedExercises.add(firstExercise)
+        updatedExercises.sortBy { it.exerciseId }
+
+        val updatedWorkoutDetails =
+            workoutDetails.copy(exercises = updatedExercises) //First exercise with no sets, the rest with default count of sets
+        logger.i(
+            TAG,
+            "Updated workout details: $updatedWorkoutDetails"
+        )
+
+        val doWorkoutInitialSetupState =
+            doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isSuccessful state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
+
+        val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
+        logger.i(
+            TAG,
+            "Do workout initial setup data: $doWorkoutInitialSetupData"
+        )
+
+        logger.i(
+            TAG,
+            "Assert nextSetNumber is 2 -> the second set of next exercise"
+        )
+        assertTrue { doWorkoutInitialSetupData.nextSetNumber == 2 }
+
+
+        logger.i(
+            TAG,
+            "Assert currentSetNumber is 1 -> the first set of next exercise"
+        )
+        assertTrue { doWorkoutInitialSetupData.currentSetNumber == 1 }
+
+        logger.i(
+            TAG,
+            "Assert current exercise is the second exercise in workout details"
+        )
+        assertTrue { doWorkoutInitialSetupData.currentExercise == updatedWorkoutDetails.exercises[1] }
+
+        logger.i(
+            TAG,
+            "Assert next exercise is the third exercise in workout details"
+        )
+        assertTrue { doWorkoutInitialSetupData.nextExercise == updatedWorkoutDetails.exercises[2] }
+
+        logger.i(
+            TAG,
+            "Assert workout is not completed."
+        )
+        assertTrue { !doWorkoutInitialSetupData.isWorkoutCompleted }
+    }
+
+    @RepeatedTest(50)
+    fun `first two exercises have no sets validation using DoWorkoutInitialSetupUseCase`() = runTest {
+        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+        logger.i(
+            TAG,
+            "Workout details: $workoutDetails"
+        )
+
+        val firstExercise = workoutDetails.exercises[0].copy(
+            sets = mutableListOf()
+        )
+        val secondExercise = workoutDetails.exercises[1].copy(
+            sets = mutableListOf()
+        )
+        val updatedExercises = workoutDetails.exercises
+            .filter { it.exerciseId != firstExercise.exerciseId && it.exerciseId != secondExercise.exerciseId}
+            .toMutableList()
+        updatedExercises.add(firstExercise)
+        updatedExercises.add(secondExercise)
+        updatedExercises.sortBy { it.exerciseId }
+
+        val updatedWorkoutDetails =
+            workoutDetails.copy(exercises = updatedExercises) //First two exercises have no sets, the rest with default count of sets
+        logger.i(
+            TAG,
+            "Updated workout details: $updatedWorkoutDetails"
+        )
+
+        val doWorkoutInitialSetupState =
+            doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isSuccessful state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
+
+        val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
+        logger.i(
+            TAG,
+            "Do workout initial setup data: $doWorkoutInitialSetupData"
+        )
+
+        logger.i(
+            TAG,
+            "Assert nextSetNumber is 2 -> the second set of next exercise"
+        )
+        assertTrue { doWorkoutInitialSetupData.nextSetNumber == 2 }
+
+
+        logger.i(
+            TAG,
+            "Assert currentSetNumber is 1 -> the first set of next exercise"
+        )
+        assertTrue { doWorkoutInitialSetupData.currentSetNumber == 1 }
+
+        logger.i(
+            TAG,
+            "Assert current exercise is the third exercise in workout details"
+        )
+        assertTrue { doWorkoutInitialSetupData.currentExercise == updatedWorkoutDetails.exercises[2] }
+
+        logger.i(
+            TAG,
+            "Assert next exercise is the fourth exercise in workout details"
+        )
+        assertTrue { doWorkoutInitialSetupData.nextExercise == updatedWorkoutDetails.exercises[3] }
+
+        logger.i(
+            TAG,
+            "Assert workout is not completed."
+        )
+        assertTrue { !doWorkoutInitialSetupData.isWorkoutCompleted }
+    }
 
     /**
      * Invalid data tests
      */
+
+    @RepeatedTest(50)
+    fun `all exercises have no sets validation using DoWorkoutInitialSetupUseCase`() = runTest {
+        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+        logger.i(
+            TAG,
+            "Workout details: $workoutDetails"
+        )
+
+        val updatedExercises = workoutDetails.exercises.map { exercise ->
+            exercise.copy(sets = mutableListOf())
+        }.toMutableList()
+
+        val updatedWorkoutDetails =
+            workoutDetails.copy(exercises = updatedExercises) //All exercises have no sets
+        logger.i(
+            TAG,
+            "Updated workout details: $updatedWorkoutDetails"
+        )
+
+        val doWorkoutInitialSetupState =
+            doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isError state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[1].isError }
+
+        logger.i(
+            TAG,
+            "Assert error is KareError.WORKOUT_HAS_NO_EXERCISES"
+        )
+        assertTrue { doWorkoutInitialSetupState[1].error == KareError.WORKOUT_HAS_NO_EXERCISES }
+    }
 
     @RepeatedTest(50)
     fun `select next exercise with invalid data using SelectNextExerciseUseCase test`() = runTest {
