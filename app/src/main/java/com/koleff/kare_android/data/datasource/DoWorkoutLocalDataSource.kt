@@ -90,7 +90,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
     ): Int {
         if (currentNextSetNumber == -1) return -1 //Invalid workout
 
-        if (currentExercise.sets.size > currentNextSetNumber + 1) return currentNextSetNumber + 1
+        if (currentExercise.sets.size >= currentNextSetNumber + 1) return currentNextSetNumber + 1
         if (nextExercise.sets.isNotEmpty()) return 1
 
         val remainingExercises = allExercises.dropWhile { it != nextExercise }
