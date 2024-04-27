@@ -109,26 +109,17 @@ class DoWorkoutViewModel @Inject constructor(
 
     private fun selectNextExercise() {
         Log.d("DoWorkoutViewModel", "Select next exercise requested.")
-        viewModelScope.launch(dispatcher) {
-            doWorkoutUseCases.selectNextExerciseUseCase(_state.value.doWorkoutData)
-                .collect { result ->
-                    _state.value = result
 
-                    if (result.isSuccessful) {
+        //Workout completed
+        if (_state.value.doWorkoutData.isWorkoutCompleted) {
+            showWorkoutCompletedScreen()
 
-                        //Workout completed
-                        if (result.doWorkoutData.isWorkoutCompleted) {
-                            showWorkoutCompletedScreen()
-
-                            //Stop timers...
-                            workoutTimer.resetTimer()
-                            countdownTimer.resetTimer()
-                        } else {
-                            showNextExerciseCountdownScreen()
-                            startCountdownTimer()
-                        }
-                    }
-                }
+            //Stop timers...
+            workoutTimer.resetTimer()
+            countdownTimer.resetTimer()
+        } else {
+            showNextExerciseCountdownScreen()
+            startCountdownTimer()
         }
     }
 
@@ -136,7 +127,7 @@ class DoWorkoutViewModel @Inject constructor(
     //If called from the button update current set and next set directly...
     fun skipNextExercise() {
         viewModelScope.launch(dispatcher) {
-            doWorkoutUseCases.skipNextSetUseCase(_state.value.doWorkoutData)
+            doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(_state.value.doWorkoutData)
                 .collect { result ->
                     _state.value = result
 
@@ -224,6 +215,7 @@ class DoWorkoutViewModel @Inject constructor(
     private fun startWorkoutTimer(
         isInitialCall: Boolean = false
     ) = with(state.value.doWorkoutData) {
+
         viewModelScope.launch(dispatcher) {
 
             //Reset countdown timer

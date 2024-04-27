@@ -42,9 +42,7 @@ import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
-import com.koleff.kare_android.domain.usecases.SelectNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.SkipNextSetUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
@@ -186,8 +184,6 @@ class DoWorkoutUseCasesUnitTest {
             doWorkoutRepository = DoWorkoutRepositoryImpl(doWorkoutFakeDataSource)
             doWorkoutUseCases = DoWorkoutUseCases(
                 doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
-                selectNextExerciseUseCase = SelectNextExerciseUseCase(doWorkoutRepository),
-                skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
                 updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
                     doWorkoutRepository
                 ),
@@ -1434,25 +1430,6 @@ class DoWorkoutUseCasesUnitTest {
             "Assert error is KareError.WORKOUT_HAS_NO_EXERCISES"
         )
         assertTrue { doWorkoutInitialSetupState[1].error == KareError.WORKOUT_HAS_NO_EXERCISES }
-    }
-
-    @RepeatedTest(50)
-    fun `select next exercise with invalid data using SelectNextExerciseUseCase test`() = runTest {
-        val invalidDoWorkoutData = DoWorkoutData()
-        val updateNextExerciseState =
-            doWorkoutUseCases.selectNextExerciseUseCase(invalidDoWorkoutData).toList()
-
-        logger.i(
-            TAG,
-            "Update next exercise -> isError state raised."
-        )
-        assertTrue { updateNextExerciseState[0].isError }
-
-        logger.i(
-            TAG,
-            "Assert error is KareError.INVALID_EXERCISE"
-        )
-        assertTrue { updateNextExerciseState[0].error == KareError.INVALID_EXERCISE }
     }
 
     @RepeatedTest(50)

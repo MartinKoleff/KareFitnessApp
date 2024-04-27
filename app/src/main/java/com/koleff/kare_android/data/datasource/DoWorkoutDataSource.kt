@@ -10,13 +10,5 @@ interface DoWorkoutDataSource {
 
     suspend fun initialSetup(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<DoWorkoutWrapper>>
 
-    suspend fun selectNextExercise(
-        currentDoWorkoutData: DoWorkoutData
-    ): Flow<ResultWrapper<DoWorkoutWrapper>>
-
-    suspend fun skipNextSet(
-        currentDoWorkoutData: DoWorkoutData
-    ): Flow<ResultWrapper<DoWorkoutWrapper>>
-
     suspend fun updateExerciseSetsAfterTimer(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>>
 }
