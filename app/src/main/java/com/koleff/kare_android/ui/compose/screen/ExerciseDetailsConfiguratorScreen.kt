@@ -51,6 +51,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.room.entity.ExerciseSet
+import com.koleff.kare_android.ui.compose.components.AddNewSetFooter
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.RestBetweenSetsFooter
@@ -109,6 +110,10 @@ fun ExerciseDetailsConfiguratorScreen(
 
     val onDeleteSet: (ExerciseSetDto) -> Unit = { selectedExerciseSet ->
         exerciseDetailsConfiguratorViewModel.deleteSet(selectedExerciseSet)
+    }
+
+    val onAddNewSetAction: () -> Unit = {
+        exerciseDetailsConfiguratorViewModel.addNewSet()
     }
 
     //Switch state
@@ -238,11 +243,9 @@ fun ExerciseDetailsConfiguratorScreen(
                             set = currentSet,
                             onRepsChanged = { newReps ->
                                 currentSet.reps = newReps
-//                    currentSet.setId = null //When set is changed -> generate new UUID
                             },
                             onWeightChanged = { newWeight ->
                                 currentSet.weight = newWeight
-//                    currentSet.setId = null //When set is changed -> generate new UUID
                             },
                             onDelete = {
                                 onDeleteSet(currentSet)
@@ -250,9 +253,9 @@ fun ExerciseDetailsConfiguratorScreen(
                         )
                     }
 
-                    //TODO: add new set footer...
+                    //Add new set footer
                     item {
-
+                        AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
                     }
 
                     //Rest after exercise footer

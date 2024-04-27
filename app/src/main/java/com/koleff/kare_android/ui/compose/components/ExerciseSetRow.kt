@@ -122,7 +122,7 @@ fun ExerciseSetRowFooter(
             .height(imageSize),
         contentAlignment = Alignment.Center
     ) {
-        HorizontalDivider(thickness = 5.dp, color = dividerColor)
+        HorizontalDivider(thickness = 2.dp, color = dividerColor)
 
         Box(
             modifier = Modifier
@@ -285,30 +285,49 @@ fun ExerciseSetWeightTextFieldPreview() {
 
 @Composable
 fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
+    val height = 50.dp
+    val cornerSize = 24.dp
+    val color = Color.Black
+    val strokeColor = Color.White
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(height)
             .padding(horizontal = 32.dp)
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(1.dp, color = strokeColor),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                color = color,
+                shape = RoundedCornerShape(cornerSize)
+            )
             .clickable { onAddNewSetAction() },
-        horizontalArrangement = Arrangement.SpaceEvenly) {
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
         Image(
-            painter = painterResource(R.drawable.ic_vector_add),
+            painter = painterResource(R.drawable.ic_vector_add_green),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .fillMaxSize()
+                .size(height)
                 .graphicsLayer { alpha = 0.80f }
         )
 
         Text(
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+            ,
             text = "Add new set",
             style = TextStyle(
                 color = Color.White,
-                fontSize = 16.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold
             ),
-            textAlign = TextAlign.End,
+            textAlign = TextAlign.Start,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
