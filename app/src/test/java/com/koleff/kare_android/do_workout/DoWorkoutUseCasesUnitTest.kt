@@ -56,6 +56,7 @@ import com.koleff.kare_android.exercise.ExerciseFakeDataSource
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
+import com.koleff.kare_android.ui.state.DoWorkoutData
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutFakeDataSource
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
@@ -67,6 +68,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -75,136 +77,156 @@ import org.junit.jupiter.api.RepeatedTest
 typealias DoWorkoutFakeDataSource = DoWorkoutLocalDataSource
 
 class DoWorkoutUseCasesUnitTest {
-    private lateinit var exerciseDBManager: ExerciseDBManager
-
-    private lateinit var exerciseSetDao: ExerciseSetDaoFake
-    private lateinit var exerciseDao: ExerciseDaoFake
-    private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
-    private lateinit var workoutDao: WorkoutDaoFake
-    private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
-
-    private lateinit var exerciseFakeDataSource: ExerciseFakeDataSource
-    private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
-    private lateinit var doWorkoutFakeDataSource: DoWorkoutFakeDataSource
-
-    private lateinit var exerciseRepository: ExerciseRepository
-    private lateinit var workoutRepository: WorkoutRepository
-    private lateinit var doWorkoutRepository: DoWorkoutRepository
-
-    private lateinit var exerciseUseCases: ExerciseUseCases
-    private lateinit var workoutUseCases: WorkoutUseCases
-    private lateinit var doWorkoutUseCases: DoWorkoutUseCases
-
-    private lateinit var timer: TimerUtilFake
-
-    private val useMockupDataSource = false
-    private val isErrorTesting = false
-
-    private val isLogging = true
-    private lateinit var logger: TestLogger
 
     companion object {
         private const val TAG = "DoWorkoutUseCaseUnitText"
-    }
 
-    @BeforeEach
-    fun setup() = runBlocking {
-        logger = TestLogger(isLogging)
+        private lateinit var exerciseDBManager: ExerciseDBManager
 
-        //Exercise
-        exerciseSetDao = ExerciseSetDaoFake()
-        exerciseDetailsDao = ExerciseDetailsDaoFake()
-        exerciseDao = ExerciseDaoFake(
-            exerciseSetDao = exerciseSetDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            logger = logger
-        )
+        private lateinit var exerciseSetDao: ExerciseSetDaoFake
+        private lateinit var exerciseDao: ExerciseDaoFake
+        private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
+        private lateinit var workoutDao: WorkoutDaoFake
+        private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
 
-        exerciseFakeDataSource = ExerciseFakeDataSource(
-            exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseSetDao = exerciseSetDao
-        )
+        private lateinit var exerciseFakeDataSource: ExerciseFakeDataSource
+        private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
+        private lateinit var doWorkoutFakeDataSource: DoWorkoutFakeDataSource
 
-        exerciseRepository = ExerciseRepositoryImpl(exerciseFakeDataSource)
+        private lateinit var exerciseRepository: ExerciseRepository
+        private lateinit var workoutRepository: WorkoutRepository
+        private lateinit var doWorkoutRepository: DoWorkoutRepository
 
-        exerciseUseCases = ExerciseUseCases(
-            onSearchExerciseUseCase = OnSearchExerciseUseCase(),
-            onFilterExercisesUseCase = OnFilterExercisesUseCase(),
-            getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
-            getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
-            getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
-            getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
-            getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
-            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
-            deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
-        )
+        private lateinit var exerciseUseCases: ExerciseUseCases
+        private lateinit var workoutUseCases: WorkoutUseCases
+        private lateinit var doWorkoutUseCases: DoWorkoutUseCases
 
-        //Workout
-        workoutDao = WorkoutDaoFake()
-        workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
+        private lateinit var timer: TimerUtilFake
 
-        workoutFakeDataSource = WorkoutFakeDataSource(
-            workoutDao = workoutDao,
-            exerciseDao = exerciseDao,
-            workoutDetailsDao = workoutDetailsDao,
-            exerciseSetDao = exerciseSetDao,
-        )
+        private val useMockupDataSource = false
+        private val isErrorTesting = false
 
-        workoutRepository =
-            WorkoutRepositoryImpl(workoutFakeDataSource)
+        private val isLogging = true
+        private lateinit var logger: TestLogger
 
-        workoutUseCases = WorkoutUseCases(
-            getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
-            getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
-            getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
-            updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
-            updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
-            onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
-            deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
-            addExerciseUseCase = AddExerciseUseCase(workoutRepository),
-            submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
-            deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
-            selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
-            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
-            getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
-            createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
-            createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
-        )
+        private var hasInitializedWorkoutDetails = false
+        @JvmStatic
+        @BeforeAll
+        fun initialSetup(): Unit = runBlocking {
+            logger = TestLogger(isLogging)
 
-        //Do workout
-        doWorkoutFakeDataSource = DoWorkoutFakeDataSource()
-        doWorkoutRepository = DoWorkoutRepositoryImpl(doWorkoutFakeDataSource)
-        doWorkoutUseCases = DoWorkoutUseCases(
-            doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
-            selectNextExerciseUseCase = SelectNextExerciseUseCase(doWorkoutRepository),
-            skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
-            updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
-                doWorkoutRepository
-            ),
-            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
-            deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
-            startTimerUseCase = StartTimerUseCase(),
-            resetTimerUseCase = ResetTimerUseCase()
-        )
+            //Exercise
+            exerciseSetDao = ExerciseSetDaoFake()
+            exerciseDetailsDao = ExerciseDetailsDaoFake()
+            exerciseDao = ExerciseDaoFake(
+                exerciseSetDao = exerciseSetDao,
+                exerciseDetailsDao = exerciseDetailsDao,
+                logger = logger
+            )
 
-        //Initialize DB
-        exerciseDBManager = ExerciseDBManager(
-            exerciseSetDao = exerciseSetDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseDao = exerciseDao,
-            hasInitializedDB = false
-        )
+            exerciseFakeDataSource = ExerciseFakeDataSource(
+                exerciseDao = exerciseDao,
+                exerciseDetailsDao = exerciseDetailsDao,
+                exerciseSetDao = exerciseSetDao
+            )
 
-        exerciseDBManager.initializeExerciseTable {
-            logger.i(TAG, "DB initialized successfully!")
+            exerciseRepository = ExerciseRepositoryImpl(exerciseFakeDataSource)
+
+            exerciseUseCases = ExerciseUseCases(
+                onSearchExerciseUseCase = OnSearchExerciseUseCase(),
+                onFilterExercisesUseCase = OnFilterExercisesUseCase(),
+                getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
+                getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
+                getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
+                getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
+                getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
+                addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
+                deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
+            )
+
+            //Workout
+            workoutDao = WorkoutDaoFake()
+            workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
+
+            workoutFakeDataSource = WorkoutFakeDataSource(
+                workoutDao = workoutDao,
+                exerciseDao = exerciseDao,
+                workoutDetailsDao = workoutDetailsDao,
+                exerciseSetDao = exerciseSetDao,
+            )
+
+            workoutRepository =
+                WorkoutRepositoryImpl(workoutFakeDataSource)
+
+            workoutUseCases = WorkoutUseCases(
+                getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
+                getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
+                getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
+                getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
+                updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+                updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
+                onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
+                deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+                addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+                submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
+                deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
+                selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
+                deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
+                getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
+                createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
+                createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
+            )
+
+            //Do workout
+            doWorkoutFakeDataSource = DoWorkoutFakeDataSource()
+            doWorkoutRepository = DoWorkoutRepositoryImpl(doWorkoutFakeDataSource)
+            doWorkoutUseCases = DoWorkoutUseCases(
+                doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
+                selectNextExerciseUseCase = SelectNextExerciseUseCase(doWorkoutRepository),
+                skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
+                updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
+                    doWorkoutRepository
+                ),
+                addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
+                deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
+                startTimerUseCase = StartTimerUseCase(),
+                resetTimerUseCase = ResetTimerUseCase()
+            )
+
+            timer = TimerUtilFake()
+
+            //Initialize DB
+            exerciseDBManager = ExerciseDBManager(
+                exerciseSetDao = exerciseSetDao,
+                exerciseDetailsDao = exerciseDetailsDao,
+                exerciseDao = exerciseDao,
+                hasInitializedDB = false
+            )
+
+            exerciseDBManager.initializeExerciseTable {
+                logger.i(TAG, "DB initialized successfully!")
+            }
+
+            //Initialize 2 workout details used in tests
+            if (!hasInitializedWorkoutDetails) {
+
+                logger.i(TAG, "Workout details created successfully!")
+                hasInitializedWorkoutDetails = true
+
+                //Generate random workout details
+                val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+                workoutUseCases.createCustomWorkoutDetailsUseCase(
+                    workoutDetails
+                ).toList()
+
+                val workoutDetails2 = MockupDataGenerator.generateWorkoutDetails()
+                workoutUseCases.createCustomWorkoutDetailsUseCase(
+                    workoutDetails2
+                ).toList()
+            }
         }
-
-        timer = TimerUtilFake()
     }
-
 
     @RepeatedTest(50)
     fun `add set using AddNewExerciseSetUseCase and remove set using DeleteExerciseSetUseCase`() =
@@ -389,69 +411,137 @@ class DoWorkoutUseCasesUnitTest {
             assertTrue { resetTime == defaultTime }
         }
 
+    @RepeatedTest(5)
+    @DisplayName("validate that do workout is set up correctly")
+    fun validateComplexSetup() = runTest {
+        val workoutDB =
+            workoutUseCases.getAllWorkoutDetailsUseCase().toList()[1].workoutDetailsList
 
-    @Nested
-    inner class DoWorkoutComplexTests {
+        logger.i(TAG, "Assert workout DB contains 2 workouts: Workout DB: $workoutDB.")
+        assertTrue { workoutDB.size == 2 }
 
-        //TODO: unify setups...
-        @BeforeEach
-        fun setup() = runTest {
+        val workoutExercises = workoutDB.map { it.exercises }
+        logger.i(
+            TAG,
+            "Assert workout DB contains exercises for each workout: Workout exercises: $workoutExercises."
+        )
 
-            //Generate random workout details
-            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
-            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
-
-            val workoutDetails2 = MockupDataGenerator.generateWorkoutDetails()
-            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails2).toList()
+        workoutExercises.forEach { exercises ->
+            assertTrue(exercises.isNotEmpty(), "The list of exercises should not be empty")
         }
+    }
 
-        @RepeatedTest(5)
-        @DisplayName("validate that do workout is set up correctly")
-        fun validateComplexSetup() = runTest {
-            val workoutDB =
-                workoutUseCases.getAllWorkoutDetailsUseCase().toList()[1].workoutDetailsList
+    @RepeatedTest(50)
+    fun `initial setup using DoWorkoutInitialSetupUseCase test`() = runTest {
 
-            logger.i(TAG, "Assert workout DB contains 2 workouts: Workout DB: $workoutDB.")
-            assertTrue { workoutDB.size == 2 }
+        //Get workout details
+        val randomWorkoutDetails = workoutUseCases.getAllWorkoutDetailsUseCase()
+            .toList()[1].workoutDetailsList.random()
+        logger.i(TAG, "Selected workout details for the test: $randomWorkoutDetails")
 
-            val workoutExercises = workoutDB.map { it.exercises }
+        //Validation before test
+        logger.i(TAG, "Assert selected workout details has more than 1 exercise")
+        assertTrue { randomWorkoutDetails.exercises.size > 1 }
+
+        logger.i(TAG, "Assert first exercise has more than 1 set")
+        assertTrue { randomWorkoutDetails.exercises.first().sets.size > 1 }
+
+        //Do workout initial setup
+        val doWorkoutInitialSetupState =
+            doWorkoutUseCases.doWorkoutInitialSetupUseCase(randomWorkoutDetails).toList()
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${randomWorkoutDetails.workoutId} -> isLoading state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Do workout initial setup for workout details with id ${randomWorkoutDetails.workoutId} -> isSuccessful state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
+
+        val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
+        logger.i(
+            TAG,
+            "Do workout initial setup data: $doWorkoutInitialSetupData"
+        )
+
+        logger.i(
+            TAG,
+            "Assert initially isWorkoutCompleted is false"
+        )
+        assertTrue { !doWorkoutInitialSetupData.isWorkoutCompleted }
+
+        logger.i(
+            TAG,
+            "Assert workout details are not changed"
+        )
+        assertTrue { doWorkoutInitialSetupData.workout == randomWorkoutDetails }
+
+        logger.i(
+            TAG,
+            "Assert current set is first set for the first exercise of the workout details"
+        )
+        val firstExerciseFirstSet = randomWorkoutDetails.exercises.first().sets.first()
+        assertTrue { doWorkoutInitialSetupData.currentSet == firstExerciseFirstSet }
+
+        logger.i(
+            TAG,
+            "Assert next set is second set for the first exercise of the workout details"
+        )
+        val firstExerciseSecondSet = randomWorkoutDetails.exercises.first().sets[1]
+        assertTrue { doWorkoutInitialSetupData.nextSet == firstExerciseSecondSet }
+
+        logger.i(
+            TAG,
+            "Assert current exercise is the same as the first exercise of the workout details"
+        )
+        val firstExercise = randomWorkoutDetails.exercises.first()
+        assertTrue { doWorkoutInitialSetupData.currentExercise == firstExercise }
+
+        logger.i(
+            TAG,
+            "Assert next exercise is the same as the second exercise of the workout details"
+        )
+        val secondExercise = randomWorkoutDetails.exercises[1]
+        assertTrue { doWorkoutInitialSetupData.nextExercise == secondExercise }
+    }
+
+    //TODO: Update next exercise -> normal case test...
+
+    @RepeatedTest(50)
+    fun `initial setup for workout with 1 exercise using DoWorkoutInitialSetupUseCase test`() =
+        runTest {
+            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
             logger.i(
                 TAG,
-                "Assert workout DB contains exercises for each workout: Workout exercises: $workoutExercises."
+                "Workout details: $workoutDetails"
             )
 
-            workoutExercises.forEach { exercises ->
-                assertTrue(exercises.isNotEmpty(), "The list of exercises should not be empty")
-            }
-        }
+            val updatedExercises = mutableListOf(workoutDetails.exercises.first())
 
-        @RepeatedTest(50)
-        fun `initial setup using DoWorkoutInitialSetupUseCase test`() = runTest {
+            logger.i(TAG, "Assert exercise has more than 1 set")
+            assertTrue { updatedExercises.first().sets.size > 1 }
 
-            //Get workout details
-            val randomWorkoutDetails = workoutUseCases.getAllWorkoutDetailsUseCase()
-                .toList()[1].workoutDetailsList.random()
-            logger.i(TAG, "Selected workout details for the test: $randomWorkoutDetails")
-
-            //Validation before test
-            logger.i(TAG, "Assert selected workout details has more than 1 exercise")
-            assertTrue { randomWorkoutDetails.exercises.size > 1 }
-
-            logger.i(TAG, "Assert first exercise has more than 1 set")
-            assertTrue { randomWorkoutDetails.exercises.first().sets.size > 1 }
-
-            //Do workout initial setup
-            val doWorkoutInitialSetupState =
-                doWorkoutUseCases.doWorkoutInitialSetupUseCase(randomWorkoutDetails).toList()
+            val updatedWorkoutDetails =
+                workoutDetails.copy(exercises = updatedExercises) //Only 1 exercise
             logger.i(
                 TAG,
-                "Do workout initial setup for workout details with id ${randomWorkoutDetails.workoutId} -> isLoading state raised."
+                "Updated workout details: $updatedWorkoutDetails"
+            )
+
+            val doWorkoutInitialSetupState =
+                doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
+            logger.i(
+                TAG,
+                "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
             )
             assertTrue { doWorkoutInitialSetupState[0].isLoading }
 
             logger.i(
                 TAG,
-                "Do workout initial setup for workout details with id ${randomWorkoutDetails.workoutId} -> isSuccessful state raised."
+                "Do workout initial setup for workout details with id ${workoutDetails.workoutId} -> isSuccessful state raised."
             )
             assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
 
@@ -460,122 +550,19 @@ class DoWorkoutUseCasesUnitTest {
                 TAG,
                 "Do workout initial setup data: $doWorkoutInitialSetupData"
             )
-
-            logger.i(
-                TAG,
-                "Assert initially isWorkoutCompleted is false"
-            )
-            assertTrue { !doWorkoutInitialSetupData.isWorkoutCompleted}
-
-            logger.i(
-                TAG,
-                "Assert workout details are not changed"
-            )
-            assertTrue { doWorkoutInitialSetupData.workout == randomWorkoutDetails }
-
-            logger.i(
-                TAG,
-                "Assert current set is first set for the first exercise of the workout details"
-            )
-            val firstExerciseFirstSet = randomWorkoutDetails.exercises.first().sets.first()
-            assertTrue { doWorkoutInitialSetupData.currentSet == firstExerciseFirstSet }
-
-            logger.i(
-                TAG,
-                "Assert next set is second set for the first exercise of the workout details"
-            )
-            val firstExerciseSecondSet = randomWorkoutDetails.exercises.first().sets[1]
-            assertTrue { doWorkoutInitialSetupData.nextSet == firstExerciseSecondSet }
-
-            logger.i(
-                TAG,
-                "Assert current exercise is the same as the first exercise of the workout details"
-            )
-            val firstExercise = randomWorkoutDetails.exercises.first()
-            assertTrue { doWorkoutInitialSetupData.currentExercise == firstExercise }
-
-            logger.i(
-                TAG,
-                "Assert next exercise is the same as the second exercise of the workout details"
-            )
-            val secondExercise = randomWorkoutDetails.exercises[1]
-            assertTrue { doWorkoutInitialSetupData.nextExercise == secondExercise }
         }
 
-        //TODO: select next exercise -> normal case test...
-
-        @RepeatedTest(50)
-        fun `initial setup with invalid data using DoWorkoutInitialSetupUseCase test`() = runTest {
-            val invalidWorkoutDetails = WorkoutDetailsDto()
-            logger.i(
-                TAG,
-                "Invalid workout details: $invalidWorkoutDetails"
-            )
-
-            val doWorkoutInitialSetupState =
-                doWorkoutUseCases.doWorkoutInitialSetupUseCase(invalidWorkoutDetails).toList()
-            logger.i(
-                TAG,
-                "Do workout initial setup with invalid workout details -> isLoading state raised."
-            )
-            assertTrue { doWorkoutInitialSetupState[0].isLoading }
-
-            logger.i(
-                TAG,
-                "Do workout initial setup with invalid workout details -> isError state raised."
-            )
-            assertTrue { doWorkoutInitialSetupState[1].isError }
-
-            logger.i(
-                TAG,
-                "Assert error is KareError.WORKOUT_HAS_NO_EXERCISES"
-            )
-            assertTrue { doWorkoutInitialSetupState[1].error == KareError.WORKOUT_HAS_NO_EXERCISES }
-        }
-
-        @RepeatedTest(50)
-        fun `initial setup for workout with 1 exercise using DoWorkoutInitialSetupUseCase test`() =
-            runTest {
-                val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
-                logger.i(
-                    TAG,
-                    "Workout details: $workoutDetails"
-                )
-
-                val updatedExercises = mutableListOf(workoutDetails.exercises.first())
-
-                logger.i(TAG, "Assert exercise has more than 1 set")
-                assertTrue { updatedExercises.first().sets.size > 1 }
-
-                val updatedWorkoutDetails = workoutDetails.copy(exercises = updatedExercises) //Only 1 exercise
-                logger.i(
-                    TAG,
-                    "Updated workout details: $updatedWorkoutDetails"
-                )
-
-                val doWorkoutInitialSetupState =
-                    doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
-                logger.i(
-                    TAG,
-                    "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
-                )
-                assertTrue { doWorkoutInitialSetupState[0].isLoading }
-
-                logger.i(
-                    TAG,
-                    "Do workout initial setup for workout details with id ${workoutDetails.workoutId} -> isSuccessful state raised."
-                )
-                assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
-
-                val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
-                logger.i(
-                    TAG,
-                    "Do workout initial setup data: $doWorkoutInitialSetupData"
-                )
-            }
-
-        @RepeatedTest(50)
-        fun `select next exercise for workout with 1 exercise using SelectNextExerciseUseCase test`() = runTest{
+    /**
+     * After Update next exercise for workout with 1 exercise with 1 set case:
+     * - Current exercise stays the same
+     * - Current set becomes next set (from initial setup)
+     * - Next exercise stays the same
+     * - Assert next set is 3rd set (if there are 3 sets) -> otherwise 1st set of nextExercise...
+     * - Workout is not completed
+     */
+    @RepeatedTest(50)
+    fun `update next exercise for workout with 1 exercise using UpdateExerciseSetsAfterTimerUseCase test`() =
+        runTest {
             val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
             logger.i(
                 TAG,
@@ -583,7 +570,8 @@ class DoWorkoutUseCasesUnitTest {
             )
 
             val updatedExercises = mutableListOf(workoutDetails.exercises.first())
-            val updatedWorkoutDetails = workoutDetails.copy(exercises = updatedExercises) //1 exercise with multiple sets
+            val updatedWorkoutDetails =
+                workoutDetails.copy(exercises = updatedExercises) //1 exercise with multiple sets
             logger.i(
                 TAG,
                 "Updated workout details: $updatedWorkoutDetails"
@@ -600,31 +588,30 @@ class DoWorkoutUseCasesUnitTest {
                 "Do workout initial setup data: $doWorkoutInitialSetupData"
             )
 
-            val selectNextExerciseState = doWorkoutUseCases.selectNextExerciseUseCase(doWorkoutInitialSetupData).toList()
+            val updateNextExerciseState =
+                doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(doWorkoutInitialSetupData)
+                    .toList()
 
             logger.i(
                 TAG,
-                "Select next exercise -> isSuccessful state raised."
+                "Update next exercise -> isSuccessful state raised."
             )
-            assertTrue { selectNextExerciseState[0].isSuccessful }
+            assertTrue { updateNextExerciseState[0].isSuccessful }
 
-            val selectNextExerciseData = selectNextExerciseState[0].doWorkoutData
+            val selectNextExerciseData = updateNextExerciseState[0].doWorkoutData
             logger.i(
                 TAG,
-                "Select next exercise data: $selectNextExerciseData"
+                "Update next exercise data: $selectNextExerciseData"
             )
-
-            logger.i(
-                TAG,
-                "Assert workout is not completed."
-            )
-            assertTrue { !selectNextExerciseData.isWorkoutCompleted }
 
             logger.i(
                 TAG,
                 "Assert current exercise has not changed."
             )
-            assertEquals(updatedWorkoutDetails.exercises.first(), selectNextExerciseData.currentExercise) //doWorkoutInitialSetupData.currentExercise
+            assertEquals(
+                updatedWorkoutDetails.exercises.first(),
+                selectNextExerciseData.currentExercise
+            ) //doWorkoutInitialSetupData.currentExercise
 
             logger.i(
                 TAG,
@@ -652,20 +639,43 @@ class DoWorkoutUseCasesUnitTest {
                 "Assert there is no next exercise."
             )
             assertEquals(ExerciseDto(), selectNextExerciseData.nextExercise)
+
+
+            logger.i(
+                TAG,
+                "Assert workout is not completed."
+            )
+            assertTrue { !selectNextExerciseData.isWorkoutCompleted }
         }
 
-        @RepeatedTest(50)
-        fun `select next exercise for workout with 2 exercises with 1 set each using SelectNextExerciseUseCase test`() = runTest{
+
+    /**
+     * After update next exercise for workout with 2 exercises with 1 set each case:
+     * - Current exercise becomes next exercise (from initial setup)
+     * - Current set becomes next set (first set of next exercise)
+     * - No next exercise
+     * - No next set
+     * - Workout is not completed
+     */
+    @RepeatedTest(50)
+    fun `update next exercise for workout with 2 exercises with 1 set each using UpdateExerciseSetsAfterTimerUseCase test`() =
+        runTest {
             val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
             logger.i(
                 TAG,
                 "Workout details: $workoutDetails"
             )
 
+            logger.i(
+                TAG,
+                "Assert workout details has at least 2 exercises"
+            )
+            assertTrue { workoutDetails.exercises.size > 1 }
+
             val firstExercise = workoutDetails.exercises.first()
             val secondExercise = workoutDetails.exercises[1]
-            val updatedSetsFirstExercise =  mutableListOf(firstExercise.sets.first())
-            val updatedSetsSecondExercise =  mutableListOf(secondExercise.sets.first())
+            val updatedSetsFirstExercise = mutableListOf(firstExercise.sets.first())
+            val updatedSetsSecondExercise = mutableListOf(secondExercise.sets.first())
 
             val updatedExercises = mutableListOf(
                 firstExercise.copy(
@@ -676,7 +686,8 @@ class DoWorkoutUseCasesUnitTest {
                 )
             )
 
-            val updatedWorkoutDetails = workoutDetails.copy(exercises = updatedExercises) //2 exercises with 1 set each
+            val updatedWorkoutDetails =
+                workoutDetails.copy(exercises = updatedExercises) //2 exercises with 1 set each
             val doWorkoutInitialSetupState =
                 doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
             val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
@@ -685,37 +696,37 @@ class DoWorkoutUseCasesUnitTest {
                 "Do workout initial setup data: $doWorkoutInitialSetupData"
             )
 
-            val selectNextExerciseState = doWorkoutUseCases.selectNextExerciseUseCase(doWorkoutInitialSetupData).toList()
+            val updateNextExerciseState =
+                doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(doWorkoutInitialSetupData)
+                    .toList()
 
             logger.i(
                 TAG,
-                "Select next exercise -> isSuccessful state raised."
+                "Update next exercise -> isSuccessful state raised."
             )
-            assertTrue { selectNextExerciseState[0].isSuccessful }
+            assertTrue { updateNextExerciseState[0].isSuccessful }
 
-            val selectNextExerciseData = selectNextExerciseState[0].doWorkoutData
+            val selectNextExerciseData = updateNextExerciseState[0].doWorkoutData
             logger.i(
                 TAG,
-                "Select next exercise data: $selectNextExerciseData"
+                "Update next exercise data: $selectNextExerciseData"
             )
 
-            //TODO:
-            // Assert currentExercise is nextExercise
-            // No next exercise
-            // No next set
+            logger.i(
+                TAG,
+                "Assert current exercise has changed to initial setup nextExercise."
+            )
+            assertEquals(
+                doWorkoutInitialSetupData.nextExercise,
+                selectNextExerciseData.currentExercise
+            )
 
-            //This is done in UpdateExerciseSetsAfterTimerUseCase on isNextExercise raised...
+            //Only raised by SelectNextExerciseUseCase
 //            logger.i(
 //                TAG,
-//                "Assert current exercise has changed to initial setup nextExercise."
+//                "Assert isNextExercise flag is raised."
 //            )
-//            assertEquals(doWorkoutInitialSetupData.nextExercise, selectNextExerciseData.currentExercise)
-
-            logger.i(
-                TAG,
-                "Assert isNextExercise flag is raised."
-            )
-            assertTrue(selectNextExerciseData.isNextExercise) //This raises the flag for UpdateExerciseSetsAfterTimerUseCase
+//            assertTrue(selectNextExerciseData.isNextExercise) //This raises the flag for UpdateExerciseSetsAfterTimerUseCase
 
             logger.i(
                 TAG,
@@ -728,7 +739,7 @@ class DoWorkoutUseCasesUnitTest {
                 TAG,
                 "Assert there is no nextSet"
             )
-            //TODO: ...
+            assertEquals(-1, selectNextExerciseData.nextSetNumber)
 
             logger.i(
                 TAG,
@@ -744,50 +755,9 @@ class DoWorkoutUseCasesUnitTest {
             assertTrue { !selectNextExerciseData.isWorkoutCompleted }
         }
 
-        @RepeatedTest(50)
-        fun `initial setup for workout with 1 set using DoWorkoutInitialSetupUseCase test`() =
-            runTest {
-                val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
-                logger.i(
-                    TAG,
-                    "Workout details: $workoutDetails"
-                )
-
-                val firstExercise = workoutDetails.exercises.first()
-                val updatedSets =  mutableListOf(firstExercise.sets.first())
-                val updatedExercises = mutableListOf(firstExercise.copy(
-                    sets = updatedSets
-                ))
-
-                val updatedWorkoutDetails = workoutDetails.copy(exercises = updatedExercises) //Only 1 exercise with 1 set
-                logger.i(
-                    TAG,
-                    "Updated workout details: $updatedWorkoutDetails"
-                )
-
-                val doWorkoutInitialSetupState =
-                    doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
-                logger.i(
-                    TAG,
-                    "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
-                )
-                assertTrue { doWorkoutInitialSetupState[0].isLoading }
-
-                logger.i(
-                    TAG,
-                    "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isSuccessful state raised."
-                )
-                assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
-
-                val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
-                logger.i(
-                    TAG,
-                    "Do workout initial setup data: $doWorkoutInitialSetupData"
-                )
-            }
-
-        @RepeatedTest(50)
-        fun `select next exercise for workout with 1 set using SelectNextExerciseUseCase test`() = runTest{
+    @RepeatedTest(50)
+    fun `initial setup for workout with 1 set using DoWorkoutInitialSetupUseCase test`() =
+        runTest {
             val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
             logger.i(
                 TAG,
@@ -795,12 +765,73 @@ class DoWorkoutUseCasesUnitTest {
             )
 
             val firstExercise = workoutDetails.exercises.first()
-            val updatedSets =  mutableListOf(firstExercise.sets.first())
-            val updatedExercises = mutableListOf(firstExercise.copy(
-                sets = updatedSets
-            ))
+            val updatedSets = mutableListOf(firstExercise.sets.first())
+            val updatedExercises = mutableListOf(
+                firstExercise.copy(
+                    sets = updatedSets
+                )
+            )
 
-            val updatedWorkoutDetails = workoutDetails.copy(exercises = updatedExercises) //Only 1 exercise with 1 set
+            val updatedWorkoutDetails =
+                workoutDetails.copy(exercises = updatedExercises) //Only 1 exercise with 1 set
+            logger.i(
+                TAG,
+                "Updated workout details: $updatedWorkoutDetails"
+            )
+
+            val doWorkoutInitialSetupState =
+                doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
+            logger.i(
+                TAG,
+                "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isLoading state raised."
+            )
+            assertTrue { doWorkoutInitialSetupState[0].isLoading }
+
+            logger.i(
+                TAG,
+                "Do workout initial setup for workout details with id ${updatedWorkoutDetails.workoutId} -> isSuccessful state raised."
+            )
+            assertTrue { doWorkoutInitialSetupState[1].isSuccessful }
+
+            val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
+            logger.i(
+                TAG,
+                "Do workout initial setup data: $doWorkoutInitialSetupData"
+            )
+
+            //TODO: nextSet should be -1
+            //TODO: currentSet should be 1
+            //TODO: currentExercise should be the exercise (the only one)
+            //TODO: nextExercise should be ExerciseDto()
+        }
+
+    /**
+     * After update next exercise for workout with 1 exercise with 1 set case:
+     * - No current exercise
+     * - No current set
+     * - No next exercise
+     * - No next set
+     * - Workout is completed
+     */
+    @RepeatedTest(50)
+    fun `update next exercise for workout with 1 set using UpdateExerciseSetsAfterTimerUseCase test`() =
+        runTest {
+            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+            logger.i(
+                TAG,
+                "Workout details: $workoutDetails"
+            )
+
+            val firstExercise = workoutDetails.exercises.first()
+            val updatedSets = mutableListOf(firstExercise.sets.first())
+            val updatedExercises = mutableListOf(
+                firstExercise.copy(
+                    sets = updatedSets
+                )
+            )
+
+            val updatedWorkoutDetails =
+                workoutDetails.copy(exercises = updatedExercises) //Only 1 exercise with 1 set
             val doWorkoutInitialSetupState =
                 doWorkoutUseCases.doWorkoutInitialSetupUseCase(updatedWorkoutDetails).toList()
             val doWorkoutInitialSetupData = doWorkoutInitialSetupState[1].doWorkoutData
@@ -809,25 +840,21 @@ class DoWorkoutUseCasesUnitTest {
                 "Do workout initial setup data: $doWorkoutInitialSetupData"
             )
 
-            val selectNextExerciseState = doWorkoutUseCases.selectNextExerciseUseCase(doWorkoutInitialSetupData).toList()
+            val updateNextExerciseState =
+                doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(doWorkoutInitialSetupData)
+                    .toList()
 
             logger.i(
                 TAG,
-                "Select next exercise -> isSuccessful state raised."
+                "Update next exercise -> isSuccessful state raised."
             )
-            assertTrue { selectNextExerciseState[0].isSuccessful }
+            assertTrue { updateNextExerciseState[0].isSuccessful }
 
-            val selectNextExerciseData = selectNextExerciseState[0].doWorkoutData
+            val selectNextExerciseData = updateNextExerciseState[0].doWorkoutData
             logger.i(
                 TAG,
-                "Select next exercise data: $selectNextExerciseData"
+                "Update next exercise data: $selectNextExerciseData"
             )
-
-            //TODO:
-            // No current exercise
-            // No current set
-            // No next exercise
-            // No next set
 
             logger.i(
                 TAG,
@@ -837,21 +864,15 @@ class DoWorkoutUseCasesUnitTest {
 
             logger.i(
                 TAG,
-                "Assert isNextExercise flag is raised."
-            )
-            assertTrue(selectNextExerciseData.isNextExercise) //This raises the flag for UpdateExerciseSetsAfterTimerUseCase
-
-            logger.i(
-                TAG,
                 "Assert there is no currentSet"
             )
-            //TODO: ...
+            assertTrue(selectNextExerciseData.currentSetNumber == -1)
 
             logger.i(
                 TAG,
                 "Assert there is no nextSet"
             )
-            //TODO: ...
+            assertTrue(selectNextExerciseData.nextSetNumber == -1)
 
             logger.i(
                 TAG,
@@ -866,6 +887,71 @@ class DoWorkoutUseCasesUnitTest {
             assertTrue { selectNextExerciseData.isWorkoutCompleted }
         }
 
-        //TODO: invalid selectNextExercise test...
+    @RepeatedTest(50)
+    fun `select next exercise with invalid data using SelectNextExerciseUseCase test`() = runTest {
+        val invalidDoWorkoutData = DoWorkoutData()
+        val updateNextExerciseState =
+            doWorkoutUseCases.selectNextExerciseUseCase(invalidDoWorkoutData).toList()
+
+        logger.i(
+            TAG,
+            "Update next exercise -> isError state raised."
+        )
+        assertTrue { updateNextExerciseState[0].isError }
+
+        logger.i(
+            TAG,
+            "Assert error is KareError.INVALID_WORKOUT"
+        )
+        assertTrue { updateNextExerciseState[0].error == KareError.INVALID_WORKOUT }
+    }
+
+    @RepeatedTest(50)
+    fun `update next exercise with invalid data using UpdateExerciseSetsAfterTimerUseCase test`() =
+        runTest {
+            val invalidDoWorkoutData = DoWorkoutData()
+            val updateNextExerciseState =
+                doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(invalidDoWorkoutData).toList()
+
+            logger.i(
+                TAG,
+                "Update next exercise -> isError state raised."
+            )
+            assertTrue { updateNextExerciseState[0].isError }
+
+            logger.i(
+                TAG,
+                "Assert error is KareError.INVALID_EXERCISE"
+            )
+            assertTrue { updateNextExerciseState[0].error == KareError.INVALID_EXERCISE }
+        }
+
+    @RepeatedTest(50)
+    fun `initial setup with invalid data using DoWorkoutInitialSetupUseCase test`() = runTest {
+        val invalidWorkoutDetails = WorkoutDetailsDto()
+        logger.i(
+            TAG,
+            "Invalid workout details: $invalidWorkoutDetails"
+        )
+
+        val doWorkoutInitialSetupState =
+            doWorkoutUseCases.doWorkoutInitialSetupUseCase(invalidWorkoutDetails).toList()
+        logger.i(
+            TAG,
+            "Do workout initial setup with invalid workout details -> isLoading state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Do workout initial setup with invalid workout details -> isError state raised."
+        )
+        assertTrue { doWorkoutInitialSetupState[1].isError }
+
+        logger.i(
+            TAG,
+            "Assert error is KareError.WORKOUT_HAS_NO_EXERCISES"
+        )
+        assertTrue { doWorkoutInitialSetupState[1].error == KareError.WORKOUT_HAS_NO_EXERCISES }
     }
 }
