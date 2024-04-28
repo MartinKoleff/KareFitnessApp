@@ -20,6 +20,7 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,11 +40,49 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.MockupDataGenerator
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
 import com.koleff.kare_android.ui.compose.screen.HorizontalLineWithText
 
 @Composable
-fun ExerciseDataSheet(exercise: ExerciseDto) {
+fun ExerciseDataSheet(
+    exercise: ExerciseDto,
+    onExerciseDataChange: (ExerciseProgressDto) -> Unit
+) {
+    var sets by remember {
+        mutableStateOf(
+            exercise.sets.map {
+                ExerciseSetProgressDto(
+                    baseSet = it,
+                    isDone = false
+                )
+            }
+        )
+    }
+
+    //When a set is changed, update the list of sets.
+    fun handleSetChange(updatedSet: ExerciseSetProgressDto) {
+
+        //Updates
+        sets = sets.map {
+            if (it.baseSet.setId == updatedSet.baseSet.setId) updatedSet else it
+        }
+
+        //Callback
+        onExerciseDataChange(
+            ExerciseProgressDto(
+                exerciseId = exercise.exerciseId,
+                workoutId = exercise.workoutId,
+                name = exercise.name,
+                muscleGroup = exercise.muscleGroup,
+                machineType = exercise.machineType,
+                snapshot = exercise.snapshot,
+                sets = sets,
+            )
+        )
+    }
+
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
@@ -70,10 +109,12 @@ fun ExerciseDataSheet(exercise: ExerciseDto) {
                 .height(screenHeight / 4)
         ) {
 
-
-            //TODO: add when last set has data typed in to add new row...
+            //TODO: add functionality when last set has data typed in to add new row...
             items(exercise.sets.size) { setId ->
-                ExerciseDataSheetRow(set = exercise.sets[setId])
+                ExerciseDataSheetRow(
+                    set = exercise.sets[setId],
+                    onSetChange = ::handleSetChange
+                )
             }
         }
     }
@@ -157,7 +198,27 @@ fun ExerciseDataSheetTitleRow() {
 }
 
 @Composable
-fun ExerciseDataSheetRow(set: ExerciseSetDto) {
+fun ExerciseDataSheetRow(
+    set: ExerciseSetDto,
+    onSetChange: (ExerciseSetProgressDto) -> Unit
+) {
+    var reps by remember { mutableStateOf(set.reps.toString()) }
+    var weight by remember { mutableStateOf(set.weight.toString()) }
+    var isDone by remember { mutableStateOf(false) }
+
+    //On data change -> callback called and updates up the ladder via state hoisting
+    LaunchedEffect(reps, weight, isDone) {
+        onSetChange(
+            ExerciseSetProgressDto(
+                baseSet = set.copy(
+                    reps = reps.toIntOrNull() ?: set.reps,
+                    weight = weight.toFloatOrNull() ?: set.weight
+                ),
+                isDone = isDone
+            )
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -183,8 +244,6 @@ fun ExerciseDataSheetRow(set: ExerciseSetDto) {
         )
 
         //Reps
-        val repsText = set.reps.toString()
-        var reps by remember { mutableStateOf(repsText) }
         ExerciseDataSheetTextField(
             modifier = Modifier
                 .padding(4.dp)
@@ -192,12 +251,12 @@ fun ExerciseDataSheetRow(set: ExerciseSetDto) {
             text = reps,
             onValueChange = {
                 reps = it
+
+                //Calls launched effect...
             }
         )
 
         //Weight
-        val weightText = set.weight.toString()
-        var weight by remember { mutableStateOf(weightText) }
         ExerciseDataSheetTextField(
             modifier = Modifier
                 .padding(4.dp)
@@ -205,11 +264,12 @@ fun ExerciseDataSheetRow(set: ExerciseSetDto) {
             text = weight,
             onValueChange = {
                 weight = it
+
+                //Calls launched effect...
             }
         )
 
         //Checkbox
-        val isDoneState = remember { mutableStateOf(false) }
         Checkbox(
             modifier = Modifier
                 .weight(1f),
@@ -217,8 +277,12 @@ fun ExerciseDataSheetRow(set: ExerciseSetDto) {
                 checkedColor = Color.Green,
                 uncheckedColor = Color.White //Checkbox border
             ),
-            checked = isDoneState.value,
-            onCheckedChange = { isDoneState.value = it }
+            checked = isDone,
+            onCheckedChange = {
+                isDone = it
+
+                //Calls launched effect...
+            }
         )
     }
 }
@@ -256,19 +320,24 @@ fun ExerciseDataSheetTextField(
 @Composable
 fun ExerciseDataSheetRowPreview() {
     val exerciseSet = MockupDataGenerator.generateExerciseSet()
-    ExerciseDataSheetRow(exerciseSet)
+    val onSetChanged: (ExerciseSetProgressDto) -> Unit = { set ->
+
+    }
+    ExerciseDataSheetRow(exerciseSet, onSetChanged)
 }
 
 @Preview
 @Composable
 fun ExerciseDataSheetPreview() {
     val exercise = MockupDataGenerator.generateExercise()
+    val onExerciseDataChange: (ExerciseProgressDto) -> Unit = {
 
+    }
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter
     ) {
-        ExerciseDataSheet(exercise)
+        ExerciseDataSheet(exercise, onExerciseDataChange)
     }
 }
 

@@ -63,6 +63,7 @@ import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -182,7 +183,11 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         ExerciseDataSheetModal2(
             exercise = currentExercise,
             currentSetNumber = currentSetNumber,
-            defaultTotalSets = state.doWorkoutData.defaultTotalSets
+            defaultTotalSets = state.doWorkoutData.defaultTotalSets,
+            isNextExercise = state.doWorkoutData.isNextExercise,
+            onSaveExerciseData = { exerciseData ->
+                doWorkoutViewModel.addDoWorkoutExerciseSet(exerciseData)
+            }
         ) { exerciseDataSheetPaddingValues ->
             DoWorkoutScaffold(
                 modifier = screenModifier,
@@ -198,6 +203,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             ) {
 
                 //Video player...
+                //TODO: video player of current exercise...
 
                 //Exercise Timer, weight and reps
                 Box(
@@ -370,14 +376,18 @@ fun DoWorkoutFooterWithModal(
     timeLeft: ExerciseTime,
     exercise: ExerciseDto,
     currentSetNumber: Int, //Used for CurrentExerciseInfoRow
-    defaultTotalSets: Int //Used for CurrentExerciseInfoRow
+    defaultTotalSets: Int, //Used for CurrentExerciseInfoRow
+    isNextExercise: Boolean,
+    onSaveExerciseData: (ExerciseProgressDto) -> Unit
 ) {
     val currentSet = exercise.sets[currentSetNumber - 1]
 
     ExerciseDataSheetModal2(
         exercise = exercise,
         currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets
+        defaultTotalSets = defaultTotalSets,
+        isNextExercise = isNextExercise,
+        onSaveExerciseData = onSaveExerciseData
     ) {
 
         //Footer
@@ -409,13 +419,18 @@ fun DoWorkoutFooterWithModalPreview() {
     val onTimePassed: (ExerciseTime) -> Unit = {
 
     }
+    val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {
+
+    }
 
     DoWorkoutFooterWithModal(
         totalTime = time,
         timeLeft = timeLeft,
         exercise = exercise,
         currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets
+        defaultTotalSets = defaultTotalSets,
+        isNextExercise = false,
+        onSaveExerciseData = onSaveExerciseData
     )
 }
 
@@ -579,12 +594,40 @@ fun ExerciseDataSheetModal2(
     exercise: ExerciseDto,
     currentSetNumber: Int,
     defaultTotalSets: Int,
+    isNextExercise: Boolean = false,
+    onSaveExerciseData: (ExerciseProgressDto) -> Unit,
     content: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
     val sheetPeekHeight = 88.dp
+
+    var updatedExerciseWithProgressSets by remember {
+        mutableStateOf(
+            ExerciseProgressDto(
+                exerciseId = exercise.exerciseId,
+                workoutId = exercise.workoutId,
+                name = exercise.name,
+                muscleGroup = exercise.muscleGroup,
+                machineType = exercise.machineType,
+                snapshot = exercise.snapshot,
+                sets = emptyList(),
+            )
+        )
+    }
+
+    //Sets are inserted in exercise internally
+    val onExerciseDataChange: (ExerciseProgressDto) -> Unit = { updatedExercise ->
+        updatedExerciseWithProgressSets = updatedExercise
+    }
+
+    //Save data before changing the exercise in ExerciseDataSheet
+    LaunchedEffect(isNextExercise) {
+        if(isNextExercise){
+            onSaveExerciseData(updatedExerciseWithProgressSets)
+        }
+    }
 
     val scaffoldState = rememberBottomSheetScaffoldState()
     BottomSheetScaffold(
@@ -598,7 +641,7 @@ fun ExerciseDataSheetModal2(
                 defaultTotalSets = defaultTotalSets
             )
 
-            ExerciseDataSheet(exercise = exercise)
+            ExerciseDataSheet(exercise = exercise, onExerciseDataChange = onExerciseDataChange)
         },
         sheetDragHandle = {
             GrabHandle()
@@ -692,10 +735,13 @@ fun ExerciseDataSheetModal2Preview() {
     val exercise = MockupDataGenerator.generateExercise()
     val currentSetNumber = 1
     val defaultTotalSets = 4
+    val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {}
     ExerciseDataSheetModal2(
         exercise = exercise,
         currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets
+        defaultTotalSets = defaultTotalSets,
+        isNextExercise = false,
+        onSaveExerciseData = onSaveExerciseData
     ) {
         Box(
             modifier = Modifier
