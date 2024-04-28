@@ -98,7 +98,7 @@ class GetDoWorkoutPerformanceMetricsUseCase(private val repository: DoWorkoutPer
 
                         WorkoutPerformanceMetricsState(
                             isSuccessful = true,
-                            doWorkoutPerformanceMetrics = apiResult.data.data
+                            doWorkoutPerformanceMetrics = apiResult.data.doWorkoutPerformanceMetrics
                         )
                     }
                 }

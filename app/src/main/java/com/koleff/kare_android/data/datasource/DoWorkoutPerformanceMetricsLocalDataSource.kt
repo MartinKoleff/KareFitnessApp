@@ -24,15 +24,17 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
     private val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
     private val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao
 ) : DoWorkoutPerformanceMetricsDataSource {
-    override suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            doWorkoutPerformanceMetricsDao.insertWorkoutPerformanceMetrics(performanceMetrics.toEntity())
+            val id = doWorkoutPerformanceMetricsDao.insertWorkoutPerformanceMetrics(performanceMetrics.toEntity()).toInt()
 
-            val result = ServerResponseData(
-                BaseResponse()
+            val result = DoWorkoutPerformanceMetricsWrapper(
+                DoWorkoutPerformanceMetricsResponse(
+                    performanceMetrics.copy(id = id)
+                )
             )
             emit(ResultWrapper.Success(result))
         }

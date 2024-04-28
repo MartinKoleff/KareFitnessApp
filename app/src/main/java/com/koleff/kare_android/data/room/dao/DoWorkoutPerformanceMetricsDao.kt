@@ -11,10 +11,12 @@ import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceWithSets
 import java.util.Date
 
+typealias DoWorkoutPerformanceMetricsId = Long
+
 @Dao
 interface DoWorkoutPerformanceMetricsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetrics): Long
+    suspend fun insertWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetrics): DoWorkoutPerformanceMetricsId
 
     @Update
     suspend fun updateDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetrics)

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.flow
 import java.util.Date
 
 interface DoWorkoutPerformanceMetricsDataSource {
-    suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>>
 
     suspend fun getAllDoWorkoutPerformanceMetricsById(id: Int, start: Date, end: Date): Flow<ResultWrapper<DoWorkoutPerformanceMetricsListWrapper>>
 

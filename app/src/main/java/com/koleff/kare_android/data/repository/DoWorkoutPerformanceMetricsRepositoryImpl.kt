@@ -14,7 +14,7 @@ import java.util.Date
 class DoWorkoutPerformanceMetricsRepositoryImpl(
     private val doWorkoutPerformanceMetricsDataSource: DoWorkoutPerformanceMetricsDataSource
 ) : DoWorkoutPerformanceMetricsRepository {
-    override suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> {
         return doWorkoutPerformanceMetricsDataSource.saveDoWorkoutPerformanceMetrics(
             performanceMetrics
         )

@@ -5,5 +5,5 @@ import com.koleff.kare_android.domain.wrapper.ServerResponseData
 
 class DoWorkoutPerformanceMetricsWrapper(doWorkoutPerformanceMetricsResponse: DoWorkoutPerformanceMetricsResponse) :
     ServerResponseData(doWorkoutPerformanceMetricsResponse) {
-    val data = doWorkoutPerformanceMetricsResponse.data
+    val doWorkoutPerformanceMetrics = doWorkoutPerformanceMetricsResponse.data
 }
