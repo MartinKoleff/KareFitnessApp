@@ -57,7 +57,7 @@ object AuthenticationModule {
         userDao: UserDao,
         credentialsAuthenticator: CredentialsAuthenticator
     ): AuthenticationDataSource {
-        val useRemoteAPI = true //temporary testing authentication with remote API and other functionalities with local impl.
+        val useRemoteAPI = false //Temporary testing authentication with remote API and other functionalities with local impl.
 
         return if (!useRemoteAPI) AuthenticationLocalDataSource(
             userDao = userDao,
