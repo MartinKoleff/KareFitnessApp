@@ -171,9 +171,6 @@ class ExerciseLocalDataSource @Inject constructor(
         workoutId: Int
     ): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
-            emit(ResultWrapper.Loading())
-            delay(Constants.fakeSmallDelay)
-
             val defaultReps = 12
             val defaultWeight = 0.0f
 
@@ -181,7 +178,7 @@ class ExerciseLocalDataSource @Inject constructor(
                 exerciseDao.getExerciseWithSets(exerciseId, workoutId)
             val nextSetNumber =
                 selectedExerciseWitSets.sets.map { it.number }
-                    .maxOf { it } //Find last set number...
+                    .maxOf { it } + 1 //Find last set number...
             val newSet = ExerciseSet(
                 setId = UUID.randomUUID(),
                 workoutId = selectedExerciseWitSets.exercise.workoutId,

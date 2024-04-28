@@ -164,7 +164,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         }
     }
 
-    fun addNewSet() {
+    fun addNewSet() { //TODO: remove loading and fix new set number to be + 1
         viewModelScope.launch(dispatcher) {
             exerciseUseCases.addNewExerciseSetUseCase(
                 exerciseId = exerciseId,
