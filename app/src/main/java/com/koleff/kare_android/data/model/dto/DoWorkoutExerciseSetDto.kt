@@ -21,6 +21,8 @@ data class DoWorkoutExerciseSetDto(
     val reps: Int,
     @field:Json(name = "weight")
     val weight: Float?,
+    @field:Json(name = "isDone")
+    val isDone: Boolean,
     @field:Json(name = "time")
     val time: ExerciseTime?,
     @field:Json(name = "date")
@@ -35,6 +37,7 @@ data class DoWorkoutExerciseSetDto(
             templateSetId = templateSetId,
             reps = reps,
             weight = weight,
+            isDone = isDone,
             time = time,
             date = date
         )

@@ -34,6 +34,7 @@ data class DoWorkoutExerciseSet(
     val templateSetId: UUID,  //Link to the ExerciseSet -> template
     val reps: Int,
     val weight: Float?,
+    val isDone: Boolean,
     val time: ExerciseTime?,
     val date: Date  //to record the exact time the workout was completed
 ): KareDto<DoWorkoutExerciseSetDto> {
@@ -46,6 +47,7 @@ data class DoWorkoutExerciseSet(
             templateSetId = templateSetId,
             reps = reps,
             weight = weight,
+            isDone = isDone,
             time = time,
             date = date
         )

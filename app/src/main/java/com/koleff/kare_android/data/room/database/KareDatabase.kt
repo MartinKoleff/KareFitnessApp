@@ -44,7 +44,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         ExerciseDetailsExerciseCrossRef::class,
         ExerciseSetCrossRef::class
     ],
-    version = 16,
+    version = 17,
     exportSchema = false,
 )
 @TypeConverters(Converters::class, ExerciseTimeConverters::class)

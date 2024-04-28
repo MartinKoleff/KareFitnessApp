@@ -8,7 +8,7 @@ import java.util.UUID
 
 @Parcelize
 data class ExerciseSetDto(
-    var setId: UUID? = null,
+    var setId: UUID? = null, //TODO: migrate to non nullable
     val workoutId: Int,
     val exerciseId: Int,
     val number: Int,

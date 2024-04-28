@@ -554,6 +554,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 reps = Random.nextInt(1, 20),
                 weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
+                isDone = false,
                 date = Date()
             )
 
@@ -618,6 +619,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 reps = Random.nextInt(1, 20),
                 weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
+                isDone = false,
                 date = Date()
             )
 
@@ -697,6 +699,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 reps = Random.nextInt(1, 20),
                 weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
+                isDone = false,
                 date = Date()
             )
             logger.i(
@@ -754,6 +757,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 reps = Random.nextInt(1, 20),
                 weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
+                isDone = false,
                 date = Date()
             )
 
@@ -769,6 +773,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 reps = Random.nextInt(1, 20),
                 weight = Random.nextInt(1, 200).toFloat(),
                 time = null,
+                isDone = false,
                 date = Date()
             )
 
