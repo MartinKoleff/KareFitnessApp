@@ -89,9 +89,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
     //Navigation Callbacks
     val onExitWorkoutAction = {
-        doWorkoutViewModel.onNavigationEvent(
-            NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard)
-        )
+        doWorkoutViewModel.exitWorkout()
     }
 
     //Observe selectNextExercise
@@ -147,10 +145,12 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     //Workout completed dialog
-    if(showWorkoutCompletedDialog){
+    if (showWorkoutCompletedDialog) {
         WorkoutCompletedDialog(
             workoutName = state.doWorkoutData.workout.name,
-            onClick = onExitWorkoutAction
+            onClick = {
+                doWorkoutViewModel.navigateToDashboard()
+            }
         )
     }
 

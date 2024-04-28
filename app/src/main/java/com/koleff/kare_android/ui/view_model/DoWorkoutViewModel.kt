@@ -393,4 +393,29 @@ class DoWorkoutViewModel @Inject constructor(
 
         return doWorkoutExerciseSets
     }
+
+    //Used only when canceling workout
+    fun exitWorkout() {
+
+        //Delete create workout
+        val performanceMetrics = saveDoWorkoutPerformanceMetricsState.value.doWorkoutPerformanceMetrics
+        viewModelScope.launch(dispatcher) {
+            doWorkoutPerformanceMetricsUseCases.deleteDoWorkoutPerformanceMetricsUseCase(
+                performanceMetrics.id
+            ).collect{ result ->
+
+                if(result.isSuccessful){
+                    Log.d("DoWorkoutViewModel", "DoWorkoutPerformanceMetrics with id ${performanceMetrics.id} was deleted successfully!")
+                }
+            }
+        }
+
+        //Navigate back
+        navigateToDashboard()
+    }
+
+    //Used when workout is completed
+    fun navigateToDashboard() {
+        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
+    }
 }
