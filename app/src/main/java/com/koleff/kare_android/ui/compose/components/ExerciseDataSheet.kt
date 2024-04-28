@@ -22,6 +22,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -202,88 +203,94 @@ fun ExerciseDataSheetRow(
     set: ExerciseSetDto,
     onSetChange: (ExerciseSetProgressDto) -> Unit
 ) {
-    var reps by remember { mutableStateOf(set.reps.toString()) }
-    var weight by remember { mutableStateOf(set.weight.toString()) }
-    var isDone by remember { mutableStateOf(false) }
 
-    //On data change -> callback called and updates up the ladder via state hoisting
-    LaunchedEffect(reps, weight, isDone) {
-        onSetChange(
-            ExerciseSetProgressDto(
-                baseSet = set.copy(
-                    reps = reps.toIntOrNull() ?: set.reps,
-                    weight = weight.toFloatOrNull() ?: set.weight
-                ),
-                isDone = isDone
+    //Forcing Re-composition on set change -> new exercise in ExerciseDataSheet
+    key(set.setId) {
+        var reps by remember { mutableStateOf(set.reps.toString()) }
+        var weight by remember { mutableStateOf(set.weight.toString()) }
+        var isDone by remember { mutableStateOf(false) }
+
+        //On data change -> callback called and updates up the ladder via state hoisting
+        LaunchedEffect(reps, weight, isDone) {
+            onSetChange(
+                ExerciseSetProgressDto(
+                    baseSet = set.copy(
+                        reps = reps.toIntOrNull() ?: set.reps,
+                        weight = weight.toFloatOrNull() ?: set.weight
+                    ),
+                    isDone = isDone
+                )
             )
-        )
-    }
+        }
 
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)
-            .padding(horizontal = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        //Set number
-        Text(
+        Row(
             modifier = Modifier
-                .padding(4.dp)
-                .weight(0.5f),
-            text = set.number.toString(),
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            textAlign = TextAlign.Center,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+                .fillMaxWidth()
+                .height(60.dp)
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
 
-        //Reps
-        ExerciseDataSheetTextField(
-            modifier = Modifier
-                .padding(4.dp)
-                .weight(1.5f),
-            text = reps,
-            onValueChange = {
-                reps = it
+            //Set number
+            Text(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.5f),
+                text = set.number.toString(),
+                style = TextStyle(
+                    color = Color.White,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Bold
+                ),
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
 
-                //Calls launched effect...
-            }
-        )
+            //Reps
+            ExerciseDataSheetTextField(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(1.5f),
+                text = reps,
+                onValueChange = {
+                    reps = it
 
-        //Weight
-        ExerciseDataSheetTextField(
-            modifier = Modifier
-                .padding(4.dp)
-                .weight(1.5f),
-            text = weight,
-            onValueChange = {
-                weight = it
+                    //Calls launched effect...
+                }
+            )
 
-                //Calls launched effect...
-            }
-        )
+            //Weight
+            ExerciseDataSheetTextField(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(1.5f),
+                text = weight,
+                onValueChange = {
+                    weight = it
 
-        //Checkbox
-        Checkbox(
-            modifier = Modifier
-                .weight(1f),
-            colors = CheckboxDefaults.colors(
-                checkedColor = Color.Green,
-                uncheckedColor = Color.White //Checkbox border
-            ),
-            checked = isDone,
-            onCheckedChange = {
-                isDone = it
+                    //Calls launched effect...
+                }
+            )
 
-                //Calls launched effect...
-            }
-        )
+            //TODO: reset states...
+
+            //Checkbox
+            Checkbox(
+                modifier = Modifier
+                    .weight(1f),
+                colors = CheckboxDefaults.colors(
+                    checkedColor = Color.Green,
+                    uncheckedColor = Color.White //Checkbox border
+                ),
+                checked = isDone,
+                onCheckedChange = {
+                    isDone = it
+
+                    //Calls launched effect...
+                }
+            )
+        }
     }
 }
 

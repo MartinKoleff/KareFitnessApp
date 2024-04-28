@@ -5,7 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
@@ -136,6 +138,11 @@ class DoWorkoutViewModel @Inject constructor(
     }
 
     private fun createDoWorkoutPerformanceMetrics() = with(state.value.doWorkoutData) {
+        Log.d(
+            "DoWorkoutViewModel",
+            "Creating do workout performance metrics for workout with id ${workout.workoutId}."
+        )
+
         val performanceMetrics = DoWorkoutPerformanceMetricsDto(
             id = 0, //Auto-generate
             workoutId = workout.workoutId,
@@ -146,10 +153,17 @@ class DoWorkoutViewModel @Inject constructor(
         viewModelScope.launch(dispatcher) {
             doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
                 performanceMetrics
-            )
-                .collect { result ->
-                    _saveDoWorkoutPerformanceMetricsState.value = result
+            ).collect { result ->
+                _saveDoWorkoutPerformanceMetricsState.value = result
+
+                if (result.isSuccessful) {
+                    Log.d(
+                        "DoWorkoutViewModel",
+                        "Do workout performance metrics for workout with id ${workout.workoutId} created!" +
+                                "\nDo workout performance metrics: ${result.doWorkoutPerformanceMetrics}"
+                    )
                 }
+            }
         }
     }
 
@@ -190,12 +204,6 @@ class DoWorkoutViewModel @Inject constructor(
     }
 
     private fun updateExerciseSetsAfterTimer() {
-
-//        //Add do workout exercise sets for the current exercise before change
-//        if (state.value.doWorkoutData.isNextExercise) {
-//            addDoWorkoutExerciseSets()
-//        }
-
         viewModelScope.launch(dispatcher) {
             doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(_state.value.doWorkoutData)
                 .collect { result ->
@@ -331,17 +339,32 @@ class DoWorkoutViewModel @Inject constructor(
     //On workout exited -> delete
 
     private fun saveDoWorkoutExerciseSets() {
+        Log.d(
+            "DoWorkoutViewModel",
+            "Saving all DoWorkoutExerciseSets. All sets for do workout performance metrics: $doWorkoutExerciseSets"
+        )
+
         viewModelScope.launch(dispatcher) {
             doWorkoutPerformanceMetricsUseCases.saveAllDoWorkoutExerciseSetUseCase(
                 doWorkoutExerciseSets
             ).collect { result ->
                 _saveDoWorkoutExerciseSetsState.value = result
+
+                if (result.isSuccessful) {
+                    Log.d(
+                        "DoWorkoutViewModel",
+                        "Saving all DoWorkoutExerciseSets to DB successful!"
+                    )
+                }
             }
         }
     }
 
     fun addDoWorkoutExerciseSet(exerciseData: ExerciseProgressDto) {
-        Log.d("DoWorkoutViewModel", "Adding DoWorkoutExerciseSets to DB for exercise with id: ${exerciseData.exerciseId}")
+        Log.d(
+            "DoWorkoutViewModel",
+            "Adding DoWorkoutExerciseSets to DB for exercise with id: ${exerciseData.exerciseId}"
+        )
         Log.d("DoWorkoutViewModel", "DoWorkoutExerciseSets before parsing: ${exerciseData.sets}")
 
         //Parse to DoWorkoutExerciseSets

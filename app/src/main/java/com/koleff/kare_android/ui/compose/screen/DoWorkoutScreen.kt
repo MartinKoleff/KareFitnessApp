@@ -80,15 +80,8 @@ import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 @Composable
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val state by doWorkoutViewModel.state.collectAsState()
-
     val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
-    val currentExercise = state.doWorkoutData.currentExercise
-    val currentSetNumber = state.doWorkoutData.currentSetNumber
-    val currentSet = state.doWorkoutData.currentSet
-    val nextExercise = state.doWorkoutData.nextExercise
-    val nextSetNumber = state.doWorkoutData.nextSetNumber
-    val nextSet = state.doWorkoutData.nextSet
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -181,8 +174,8 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
         //Above all screens
         ExerciseDataSheetModal2(
-            exercise = currentExercise,
-            currentSetNumber = currentSetNumber,
+            exercise = state.doWorkoutData.currentExercise,
+            currentSetNumber = state.doWorkoutData.currentSetNumber,
             defaultTotalSets = state.doWorkoutData.defaultTotalSets,
             isNextExercise = state.doWorkoutData.isNextExercise,
             onSaveExerciseData = { exerciseData ->
@@ -191,12 +184,12 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         ) { exerciseDataSheetPaddingValues ->
             DoWorkoutScaffold(
                 modifier = screenModifier,
-                screenTitle = currentExercise.name,
+                screenTitle = state.doWorkoutData.currentExercise.name,
                 onExitWorkoutAction = onExitWorkoutAction,
                 onNextExerciseAction = {
 
                     //Disable skip next exercise button when NextExerciseCountdownScreen is visible
-                    if(!state.doWorkoutData.isBetweenExerciseCountdown) {
+                    if (!state.doWorkoutData.isBetweenExerciseCountdown) {
                         doWorkoutViewModel.skipNextExercise()
                     }
                 }
@@ -215,7 +208,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                     DoWorkoutFooter(
                         totalTime = workoutTimerInitialState.time,
                         timeLeft = workoutTimerState.time,
-                        currentSet = currentSet
+                        currentSet = state.doWorkoutData.currentSet
                     )
                 }
             }
@@ -228,8 +221,8 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 )
 
                 NextExerciseCountdownScreen(
-                    nextExercise = if (state.doWorkoutData.isNextExercise) nextExercise else currentExercise,
-                    currentSetNumber = nextSetNumber,
+                    nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise else state.doWorkoutData.currentExercise,
+                    currentSetNumber = state.doWorkoutData.nextSetNumber,
                     countdownTime = countdownTimerState.time,
                     defaultTotalSets = state.doWorkoutData.defaultTotalSets,
                     countdownNumberPadding = PaddingValues(
@@ -624,7 +617,7 @@ fun ExerciseDataSheetModal2(
 
     //Save data before changing the exercise in ExerciseDataSheet
     LaunchedEffect(isNextExercise) {
-        if(isNextExercise){
+        if (isNextExercise) {
             onSaveExerciseData(updatedExerciseWithProgressSets)
         }
     }
