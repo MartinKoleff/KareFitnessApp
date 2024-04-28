@@ -168,7 +168,6 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                     currentSetNumber = currentSetNumber,
                     nextExercise = nextExercise,
                     nextSetNumber = nextSetNumber,
-                    isNextExercise = false,
                     isBetweenExerciseCountdown = false,
                     isWorkoutCompleted = isWorkoutCompleted
                 )

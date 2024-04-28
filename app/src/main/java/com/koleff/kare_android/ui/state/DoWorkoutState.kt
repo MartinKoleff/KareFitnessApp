@@ -26,9 +26,7 @@ data class DoWorkoutData(
     val restTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 30),
     val isWorkoutCompleted: Boolean = false,
     var isBetweenExerciseCountdown: Boolean = false,
-    var isNextExercise: Boolean = false,
     var isRestCountdown: Boolean = false
-){
 ) {
     val currentSet: ExerciseSetDto
         get() = currentExercise.sets.getOrNull(currentSetNumber - 1)
@@ -58,4 +56,6 @@ data class DoWorkoutData(
                 weight = -1f
             )
 
+    val isNextExercise: Boolean //Used for UI only...
+        get() = currentSetNumber == currentExercise.sets.size
 }
