@@ -159,7 +159,7 @@ class DoWorkoutViewModel @Inject constructor(
                 if (result.isSuccessful) {
                     Log.d(
                         "DoWorkoutViewModel",
-                        "Do workout performance metrics for workout with id ${workout.workoutId} created!" +
+                        "Do workout performance metrics with id ${result.doWorkoutPerformanceMetrics.id} for workout with id ${workout.workoutId} created!" +
                                 "\nDo workout performance metrics: ${result.doWorkoutPerformanceMetrics}"
                     )
                 }
@@ -406,12 +406,16 @@ class DoWorkoutViewModel @Inject constructor(
 
                 if(result.isSuccessful){
                     Log.d("DoWorkoutViewModel", "DoWorkoutPerformanceMetrics with id ${performanceMetrics.id} was deleted successfully!")
+
+                    //Navigate back
+                    navigateToDashboard()
+                }else if(result.isError){
+
+                    //Navigate back
+                    navigateToDashboard()
                 }
             }
         }
-
-        //Navigate back
-        navigateToDashboard()
     }
 
     //Used when workout is completed

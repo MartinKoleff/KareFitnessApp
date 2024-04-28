@@ -211,9 +211,6 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
 
     override suspend fun deleteDoWorkoutPerformanceMetrics(id: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
-            emit(ResultWrapper.Loading())
-            delay(Constants.fakeDelay)
-
             doWorkoutPerformanceMetricsDao.deleteWorkoutPerformanceMetricsById(id)
 
             //Delete DoWorkoutExerciseSets for the DoWorkoutPerformanceMetrics
