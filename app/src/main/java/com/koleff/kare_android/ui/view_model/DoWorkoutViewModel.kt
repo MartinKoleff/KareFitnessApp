@@ -6,9 +6,17 @@ import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
+import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
+import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
+import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
+import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.state.DoWorkoutPerformanceMetricsState
 import com.koleff.kare_android.ui.state.DoWorkoutState
 import com.koleff.kare_android.ui.state.TimerState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,6 +26,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,6 +36,7 @@ class DoWorkoutViewModel @Inject constructor(
     private val navigationController: NavigationController,
     private val workoutUseCases: WorkoutUseCases,
     private val doWorkoutUseCases: DoWorkoutUseCases,
+    private val doWorkoutPerformanceMetricsUseCases: DoWorkoutPerformanceMetricsUseCases,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) :
     BaseViewModel(navigationController) {
@@ -52,6 +63,19 @@ class DoWorkoutViewModel @Inject constructor(
 
     private val isLogging: Boolean = false
     private var isCountdownScreen = false
+
+    //List of all do workout exercise sets filled during the workout completion...
+    private val doWorkoutExerciseSets: MutableList<DoWorkoutExerciseSetDto> = mutableListOf()
+
+    private val _saveDoWorkoutExerciseSetsState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val saveDoWorkoutExerciseSetsState: StateFlow<BaseState>
+        get() = _saveDoWorkoutExerciseSetsState
+
+    private val _saveDoWorkoutPerformanceMetricsState: MutableStateFlow<DoWorkoutPerformanceMetricsState> =
+        MutableStateFlow(DoWorkoutPerformanceMetricsState())
+    val saveDoWorkoutPerformanceMetricsState: StateFlow<DoWorkoutPerformanceMetricsState>
+        get() = _saveDoWorkoutPerformanceMetricsState
 
     override fun clearError() {
         if (state.value.isError) {
@@ -94,6 +118,10 @@ class DoWorkoutViewModel @Inject constructor(
 
                             //Start workout timer
                             if (setupResult.isSuccessful) {
+
+                                //Create do workout performance metrics
+                                createDoWorkoutPerformanceMetrics()
+
                                 startWorkoutTimer(isInitialCall = true)
                             }
                         }
@@ -107,6 +135,24 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
+    private fun createDoWorkoutPerformanceMetrics() = with(state.value.doWorkoutData) {
+        val performanceMetrics = DoWorkoutPerformanceMetricsDto(
+            id = 0, //Auto-generate
+            workoutId = workout.workoutId,
+            date = Date(), //Current date of starting the workout
+            doWorkoutExerciseSets = emptyList() //Will be filled as the workout continues...
+        )
+
+        viewModelScope.launch(dispatcher) {
+            doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
+                performanceMetrics
+            )
+                .collect { result ->
+                    _saveDoWorkoutPerformanceMetricsState.value = result
+                }
+        }
+    }
+
     private fun selectNextExercise() {
         Log.d("DoWorkoutViewModel", "Select next exercise requested.")
 
@@ -115,6 +161,9 @@ class DoWorkoutViewModel @Inject constructor(
             val updatedData = _state.value.doWorkoutData.copy(isWorkoutCompleted = true)
             _state.value = _state.value.copy(doWorkoutData = updatedData)
             hideNextExerciseCountdownScreen()
+
+            //Save do workout performance metrics
+            saveDoWorkoutExerciseSets()
 
             //Stop timers...
             workoutTimer.resetTimer()
@@ -141,6 +190,12 @@ class DoWorkoutViewModel @Inject constructor(
     }
 
     private fun updateExerciseSetsAfterTimer() {
+
+//        //Add do workout exercise sets for the current exercise before change
+//        if (state.value.doWorkoutData.isNextExercise) {
+//            addDoWorkoutExerciseSets()
+//        }
+
         viewModelScope.launch(dispatcher) {
             doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(_state.value.doWorkoutData)
                 .collect { result ->
@@ -269,5 +324,50 @@ class DoWorkoutViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    //Every exercise change -> add current do workout performance metrics to list
+    //On workout finish -> save
+    //On workout exited -> delete
+
+    private fun saveDoWorkoutExerciseSets() {
+        viewModelScope.launch(dispatcher) {
+            doWorkoutPerformanceMetricsUseCases.saveAllDoWorkoutExerciseSetUseCase(
+                doWorkoutExerciseSets
+            ).collect { result ->
+                _saveDoWorkoutExerciseSetsState.value = result
+            }
+        }
+    }
+
+    fun addDoWorkoutExerciseSet(exerciseData: ExerciseProgressDto) {
+        Log.d("DoWorkoutViewModel", "Adding DoWorkoutExerciseSets to DB for exercise with id: ${exerciseData.exerciseId}")
+        Log.d("DoWorkoutViewModel", "DoWorkoutExerciseSets before parsing: ${exerciseData.sets}")
+
+        //Parse to DoWorkoutExerciseSets
+        val exerciseSets = parseExerciseSets(exerciseData.sets)
+        Log.d("DoWorkoutViewModel", "DoWorkoutExerciseSets after parsing: $exerciseSets")
+
+        //Add to list
+        doWorkoutExerciseSets.addAll(exerciseSets)
+    }
+
+    private fun parseExerciseSets(setsWithProgress: List<ExerciseSetProgressDto>): List<DoWorkoutExerciseSetDto> {
+        val doWorkoutExerciseSets = setsWithProgress.map { setWithProgress ->
+            DoWorkoutExerciseSetDto(
+                templateSetId = setWithProgress.baseSet.setId
+                    ?: throw IllegalArgumentException("Template set id should not be null"),
+                workoutPerformanceMetricsId = saveDoWorkoutPerformanceMetricsState.value.doWorkoutPerformanceMetrics.id,
+                exerciseId = setWithProgress.baseSet.exerciseId,
+                workoutId = setWithProgress.baseSet.workoutId,
+                reps = setWithProgress.baseSet.reps,
+                weight = setWithProgress.baseSet.weight,
+                isDone = setWithProgress.isDone,
+                time = null,
+                date = Date() //Time of adding... TODO: make it time of starting the set...
+            )
+        }
+
+        return doWorkoutExerciseSets
     }
 }
