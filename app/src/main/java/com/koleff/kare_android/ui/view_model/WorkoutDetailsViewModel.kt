@@ -10,12 +10,14 @@ import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.HasUpdated
+import com.koleff.kare_android.ui.state.WorkoutConfigurationState
 import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -69,6 +71,11 @@ class WorkoutDetailsViewModel @Inject constructor(
     val createWorkoutState: StateFlow<WorkoutState>
         get() = _createWorkoutState
 
+    private var _updateWorkoutConfigurationState: MutableStateFlow<WorkoutConfigurationState> =
+        MutableStateFlow(WorkoutConfigurationState())
+    val updateWorkoutConfigurationState: StateFlow<BaseState>
+        get() = _updateWorkoutConfigurationState
+
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
 
     private val isNewWorkout = savedStateHandle.get<String>("is_new_workout").toBoolean()
@@ -80,7 +87,7 @@ class WorkoutDetailsViewModel @Inject constructor(
         //Invalid id handling
         if (workoutId != -1) {
             getWorkoutDetails(workoutId)
-        }else if(isNewWorkout){
+        } else if (isNewWorkout) {
             createNewWorkout()
         }
     }
@@ -148,12 +155,16 @@ class WorkoutDetailsViewModel @Inject constructor(
             _updateWorkoutDetailsState.value = WorkoutDetailsState()
         }
 
-        if(startWorkoutState.value.isError){
+        if (startWorkoutState.value.isError) {
             _startWorkoutState.value = BaseState()
         }
 
-        if(createWorkoutState.value.isError){
+        if (createWorkoutState.value.isError) {
             _createWorkoutState.value = WorkoutState()
+        }
+
+        if (updateWorkoutConfigurationState.value.isError) {
+            _updateWorkoutConfigurationState.value = WorkoutConfigurationState()
         }
     }
 
@@ -235,6 +246,25 @@ class WorkoutDetailsViewModel @Inject constructor(
 
         //Reset state
         savedStateHandle["isNewWorkout"] = false
+    }
+
+
+    fun updateWorkoutConfiguration(configuration: WorkoutConfigurationDto) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.updateWorkoutConfigurationUseCase(configuration).collect { result ->
+                _updateWorkoutConfigurationState.value = result
+
+                //Update workout configuration in workout details
+                if (result.isSuccessful) {
+                    val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
+                        configuration = result.workoutConfiguration
+                    )
+
+                    _getWorkoutDetailsState.value =
+                        _getWorkoutDetailsState.value.copy(workoutDetails = updatedWorkoutDetails)
+                }
+            }
+        }
     }
 
     override fun onNavigateToDashboard() {
