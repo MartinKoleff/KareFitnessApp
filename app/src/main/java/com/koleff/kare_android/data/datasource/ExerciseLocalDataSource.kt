@@ -139,8 +139,6 @@ class ExerciseLocalDataSource @Inject constructor(
         setId: UUID
     ): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
-            emit(ResultWrapper.Loading())
-            delay(Constants.fakeSmallDelay)
 
             //Update exercise
             val selectedExerciseWitSets =

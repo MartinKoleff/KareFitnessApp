@@ -265,14 +265,11 @@ class DoWorkoutUseCasesUnitTest {
                     workoutDetails.workoutId
                 ).toList()
 
-            logger.i(TAG, "Add new exercise set -> isLoading state raised.")
-            assertTrue { addNewSetState[0].isLoading }
-
             logger.i(TAG, "Add new exercise set -> isSuccessful state raised.")
-            assertTrue { addNewSetState[1].isSuccessful }
+            assertTrue { addNewSetState[0].isSuccessful }
 
             logger.i(TAG, "Assert new exercise set was added.")
-            assertTrue { addNewSetState[1].exercise.sets.size == selectedExercise.sets.size + 1 }
+            assertTrue { addNewSetState[0].exercise.sets.size == selectedExercise.sets.size + 1 }
 
             //Fetch the exercise from DB to see the changes
             val getExerciseState =
@@ -300,7 +297,7 @@ class DoWorkoutUseCasesUnitTest {
             assertTrue { fetchedExercise.sets.size == selectedExercise.sets.size + 1 }
 
             logger.i(TAG, "Assert the same set was added as the payload.")
-            assertTrue { fetchedExercise.sets.last() == addNewSetState[1].exercise.sets.last() }
+            assertTrue { fetchedExercise.sets.last() == addNewSetState[0].exercise.sets.last() }
 
             //Remove set
             val removeSetState =
@@ -311,17 +308,14 @@ class DoWorkoutUseCasesUnitTest {
                         ?: throw NoSuchElementException("Invalid exercise set")
                 ).toList()
 
-            logger.i(TAG, "Delete exercise set -> isLoading state raised.")
-            assertTrue { removeSetState[0].isLoading }
-
             logger.i(TAG, "Delete exercise set -> isSuccessful state raised.")
-            assertTrue { removeSetState[1].isSuccessful }
+            assertTrue { removeSetState[0].isSuccessful }
 
             logger.i(TAG, "Exercise set was deleted.")
-            assertTrue { removeSetState[1].exercise.sets.size == selectedExercise.sets.size }
+            assertTrue { removeSetState[0].exercise.sets.size == selectedExercise.sets.size }
 
             logger.i(TAG, "Assert first exercise set was deleted.")
-            assertTrue { !removeSetState[1].exercise.sets.contains(selectedExercise.sets[0]) }
+            assertTrue { !removeSetState[0].exercise.sets.contains(selectedExercise.sets[0]) }
 
             //Fetch the exercise from DB to see the changes
             val getExerciseState2 =
