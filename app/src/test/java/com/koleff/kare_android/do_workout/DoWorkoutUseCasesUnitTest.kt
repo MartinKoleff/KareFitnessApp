@@ -66,6 +66,7 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
@@ -86,7 +87,7 @@ class DoWorkoutUseCasesUnitTest {
         private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
         private lateinit var workoutDao: WorkoutDaoFake
         private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
-        private lateinit var workoutConfiguratorDao: WorkoutConfigurationDaoFake
+        private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
 
         private lateinit var exerciseFakeDataSource: ExerciseFakeDataSource
         private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
@@ -147,14 +148,14 @@ class DoWorkoutUseCasesUnitTest {
             //Workout
             workoutDao = WorkoutDaoFake()
             workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-            workoutConfiguratorDao = WorkoutConfigurationDaoFake()
+            workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
 
             workoutFakeDataSource = WorkoutFakeDataSource(
                 workoutDao = workoutDao,
                 exerciseDao = exerciseDao,
                 workoutDetailsDao = workoutDetailsDao,
                 exerciseSetDao = exerciseSetDao,
-                workoutConfigurationDao = workoutConfiguratorDao
+                workoutConfigurationDao = workoutConfigurationDao
             )
 
             workoutRepository =
@@ -230,6 +231,34 @@ class DoWorkoutUseCasesUnitTest {
                 ).toList()
             }
         }
+    }
+
+    @AfterEach
+    fun tearDown() = runTest {
+        exerciseDao.clearDB()
+        exerciseSetDao.clearDB()
+        workoutDetailsDao.clearDB()
+        workoutDao.clearDB()
+        workoutConfigurationDao.clearDB()
+
+        logger.i("tearDown", "DB cleared!")
+        logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
+        logger.i(
+            "tearDown",
+            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutDao: ${workoutDao.getWorkoutsOrderedById()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutConfigurationDao: ${workoutConfigurationDao.getAllWorkoutConfigurations()}"
+        )
     }
 
     @RepeatedTest(50)

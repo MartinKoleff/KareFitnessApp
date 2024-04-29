@@ -9,6 +9,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.do_workout_performance_metrics.DoWorkoutPerformanceMetricsUseCasesUnitTest
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
@@ -157,7 +158,7 @@ class ExerciseUseCasesUnitTest {
         //Workout
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-        workoutConfigurationDao = WorkoutConfigurationDaoFake()
+        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
 
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
@@ -213,6 +214,7 @@ class ExerciseUseCasesUnitTest {
         exerciseSetDao.clearDB()
         workoutDetailsDao.clearDB()
         workoutDao.clearDB()
+        workoutConfigurationDao.clearDB()
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
@@ -227,6 +229,10 @@ class ExerciseUseCasesUnitTest {
         logger.i(
             "tearDown",
             "WorkoutDao: ${workoutDao.getWorkoutsOrderedById()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutConfigurationDao: ${workoutConfigurationDao.getAllWorkoutConfigurations()}"
         )
     }
 

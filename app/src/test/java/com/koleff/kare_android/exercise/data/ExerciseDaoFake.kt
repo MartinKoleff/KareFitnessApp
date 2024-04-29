@@ -50,7 +50,6 @@ class ExerciseDaoFake(
             ExerciseWithSets(exercise = exercise, sets = sets)
         )
 
-
         if (isInternalLogging) logger.i(
             TAG,
             "Inserted exercise sets in DB for exercise ${exercise.exerciseId}: $sets"
