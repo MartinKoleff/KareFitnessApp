@@ -1,10 +1,14 @@
 package com.koleff.kare_android.data.model.dto
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class ExerciseTime(
     val hours: Int,
     val minutes: Int,
     val seconds: Int
-){
+) : Parcelable {
     fun toSeconds(): Int{
         return (hours * 60 * 60) + (minutes * 60) + seconds
     }

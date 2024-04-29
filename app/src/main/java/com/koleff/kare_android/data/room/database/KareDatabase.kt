@@ -14,6 +14,7 @@ import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.UserDao
+import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
@@ -23,6 +24,7 @@ import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.User
 import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
@@ -39,12 +41,13 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         User::class,
         DoWorkoutExerciseSet::class,
         DoWorkoutPerformanceMetrics::class,
+        WorkoutConfiguration::class,
         WorkoutDetailsExerciseCrossRef::class, //TODO: wire one to many relations with foreign key tag instead of cross ref used for many to many only...
         WorkoutDetailsWorkoutCrossRef::class,
         ExerciseDetailsExerciseCrossRef::class,
         ExerciseSetCrossRef::class
     ],
-    version = 17,
+    version = 18,
     exportSchema = false,
 )
 @TypeConverters(Converters::class, ExerciseTimeConverters::class)
@@ -57,6 +60,7 @@ abstract class KareDatabase : RoomDatabase() {
     abstract val userDao: UserDao
     abstract val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao
     abstract val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao
+    abstract val workoutConfigurationDao: WorkoutConfigurationDao
 
     companion object {
         @Volatile
