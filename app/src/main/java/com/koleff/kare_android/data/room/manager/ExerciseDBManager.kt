@@ -3,11 +3,16 @@ package com.koleff.kare_android.data.room.manager
 import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
+import com.koleff.kare_android.data.room.dao.WorkoutDao
+import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
+import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import kotlinx.coroutines.Dispatchers
@@ -18,11 +23,31 @@ class ExerciseDBManager @Inject constructor(
     private val exerciseDao: ExerciseDao,
     private val exerciseDetailsDao: ExerciseDetailsDao,
     private val exerciseSetDao: ExerciseSetDao,
+    private val workoutDao: WorkoutDao,
+    private val workoutDetailsDao: WorkoutDetailsDao,
     private val hasInitializedDB: Boolean
 ) {
     suspend fun initializeExerciseTable(hasSets: Boolean = true, onDBInitialized: () -> Unit) =
         withContext(Dispatchers.IO) {
             if (hasInitializedDB) return@withContext
+
+            //Catalog workout and workout details placeholders
+            val catalogPlaceholderWorkout =
+                Workout(777, "Catalog", MuscleGroup.NONE, "default_snapshot.png", MuscleGroup.getTotalExercises(MuscleGroup.ALL), false)
+            workoutDao.insertWorkout(
+                catalogPlaceholderWorkout
+            )
+            val catalogPlaceholderWorkoutDetails =
+                WorkoutDetails(
+                    workoutDetailsId = 777,
+                    name = "Catalog",
+                    description = "",
+                    muscleGroup = MuscleGroup.NONE,
+                    isSelected = false
+                )
+            workoutDetailsDao.insertWorkoutDetails(
+                catalogPlaceholderWorkoutDetails
+            )
 
             for (muscleGroup in MuscleGroup.getSupportedMuscleGroups()) {
                 val exercisesList = ExerciseGenerator.loadExercises(muscleGroup, false)

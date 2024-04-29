@@ -330,7 +330,9 @@ object AppModule {
         preferences: Preferences,
         exerciseDao: ExerciseDao,
         exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseSetDao: ExerciseSetDao
+        exerciseSetDao: ExerciseSetDao,
+        workoutDao: WorkoutDao,
+        workoutDetailsDao: WorkoutDetailsDao
     ): ExerciseDBManager {
         val hasInitializedDB = preferences.hasInitializedExerciseTable()
 
@@ -338,6 +340,8 @@ object AppModule {
             exerciseDao = exerciseDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseSetDao = exerciseSetDao,
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
             hasInitializedDB = hasInitializedDB
         )
     }
