@@ -165,8 +165,12 @@ class WorkoutLocalDataSource @Inject constructor(
                         exercise.toDto(sets)
                     } as MutableList
 
+                val configuration =
+                    workoutDetailsWitExercises.configuration?.toDto() ?: WorkoutConfigurationDto()
+
                 workoutDetailsWitExercises.workoutDetails.toDto(
-                    exercises
+                    exercises = exercises,
+                    configuration = configuration
                 )
             }
 
@@ -202,7 +206,11 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val exercisesWithSetsDto: MutableList<ExerciseDto> =
                 exercisesWithSetsList.map(ExerciseWithSets::toDto).toMutableList()
-            val workout = data.workoutDetails.toDto(exercisesWithSetsDto)
+            val configuration = data.configuration?.toDto() ?: WorkoutConfigurationDto()
+            val workout = data.workoutDetails.toDto(
+                exercises = exercisesWithSetsDto,
+                configuration = configuration
+            )
 
             val result = WorkoutDetailsWrapper(
                 WorkoutDetailsResponse(workout)
@@ -596,8 +604,12 @@ class WorkoutLocalDataSource @Inject constructor(
                 } as MutableList
 
             val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
+            val configuration = selectedWorkout.configuration?.toDto() ?: WorkoutConfigurationDto()
             val updatedWorkoutDto =
-                updatedWorkout.workoutDetails.toDto(exercisesDtoList)
+                updatedWorkout.workoutDetails.toDto(
+                    exercises = exercisesDtoList,
+                    configuration = configuration
+                )
 
             //Update total exercises
             val workout = workoutDao.getWorkoutById(workoutId)
@@ -647,8 +659,12 @@ class WorkoutLocalDataSource @Inject constructor(
             val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
             val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
+            val configuration = selectedWorkout.configuration?.toDto() ?: WorkoutConfigurationDto()
             val updatedWorkoutDto =
-                updatedWorkout.workoutDetails.toDto(exerciseDtoList)
+                updatedWorkout.workoutDetails.toDto(
+                    exercises = exerciseDtoList,
+                    configuration = configuration
+                )
 
             //Create workout details - exercise cross ref
             val workoutDetailsExerciseCrossRef =
@@ -725,8 +741,12 @@ class WorkoutLocalDataSource @Inject constructor(
         val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
         val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
+        val configuration = selectedWorkout.configuration?.toDto() ?: WorkoutConfigurationDto()
         val updatedWorkoutDto =
-            updatedWorkout.workoutDetails.toDto(exerciseDtoList)
+            updatedWorkout.workoutDetails.toDto(
+                exercises = exerciseDtoList,
+                configuration = configuration
+            )
 
         //Insert exercise
         exerciseDao.insertExercise(exercise.toEntity())
@@ -789,7 +809,18 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            workoutConfigurationDao.updateWorkoutConfiguration(workoutConfiguration.toEntity())
+            //Check for entry
+            try {
+
+                //Checking if entry is in DB -> update
+                workoutConfigurationDao.getWorkoutConfiguration(workoutConfiguration.workoutId)
+                    ?: throw NoSuchElementException("Workout configuration not found in DB.")
+
+                workoutConfigurationDao.updateWorkoutConfiguration(workoutConfiguration.toEntity())
+            } catch (e: NoSuchElementException) {
+                workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity()) //Entry is not in DB -> save
+            }
+
             val result = ServerResponseData(
                 BaseResponse()
             )
@@ -797,12 +828,14 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun saveWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<WorkoutConfigurationWrapper>>  =
+    override suspend fun saveWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<WorkoutConfigurationWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val id = workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
+            val id =
+                workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
+                    .toInt()
 
             val result = WorkoutConfigurationWrapper(
                 WorkoutConfigurationResponse(workoutConfiguration)
@@ -810,6 +843,7 @@ class WorkoutLocalDataSource @Inject constructor(
 
             emit(ResultWrapper.Success(result))
         }
+
     override suspend fun deleteWorkoutConfiguration(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())

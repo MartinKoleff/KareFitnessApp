@@ -2,6 +2,7 @@ package com.koleff.kare_android.common
 
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
@@ -66,7 +67,8 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.CHEST,
                     isSelected = false
                 ),
-                exercises = ExerciseGenerator.loadExercises(MuscleGroup.CHEST, isWorkout = true, workoutId = 1)
+                exercises = ExerciseGenerator.loadExercises(MuscleGroup.CHEST, isWorkout = true, workoutId = 1),
+                configuration = null
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -76,7 +78,8 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.BACK,
                     isSelected = false
                 ),
-                exercises = ExerciseGenerator.loadExercises(MuscleGroup.BACK, isWorkout = true, workoutId = 2)
+                exercises = ExerciseGenerator.loadExercises(MuscleGroup.BACK, isWorkout = true, workoutId = 2),
+                configuration = null
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -85,7 +88,8 @@ object WorkoutGenerator {
                     description = "Blow your arms with curls",
                     muscleGroup = MuscleGroup.ARMS,
                     isSelected = true
-                ), exercises = ExerciseGenerator.loadExercises(MuscleGroup.ARMS, isWorkout = true, workoutId = 3)
+                ), exercises = ExerciseGenerator.loadExercises(MuscleGroup.ARMS, isWorkout = true, workoutId = 3),
+                configuration = null
             )
         )
     }

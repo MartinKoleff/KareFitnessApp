@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.koleff.kare_android.data.KareDto
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 
 data class WorkoutDetailsWithExercises(
@@ -14,7 +15,13 @@ data class WorkoutDetailsWithExercises(
         entityColumn = "workoutId",
         entity = Exercise::class,
     )
-    val exercises: List<Exercise>?
+    val exercises: List<Exercise>?,
+
+    @Relation(
+        parentColumn = "workoutDetailsId",
+        entityColumn = "workoutId"
+    )
+    val configuration: WorkoutConfiguration?,
 ) : KareDto<WorkoutDetailsDto> {
     val safeExercises: List<Exercise>
         get() = exercises ?: emptyList()
@@ -28,7 +35,8 @@ data class WorkoutDetailsWithExercises(
             exercises = (exercises?.map {
                 it.toDto(sets = emptyList())
             } ?: emptyList()).toMutableList(),
-            isSelected = workoutDetails.isSelected
+            isSelected = workoutDetails.isSelected,
+            configuration = configuration?.toDto() ?: WorkoutConfigurationDto() //Default configuration if there is no in DB...
         )
     }
 }
