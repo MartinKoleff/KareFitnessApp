@@ -42,6 +42,7 @@ import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.UserDao
+import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.database.KareDatabase
@@ -287,6 +288,12 @@ object AppModule {
     @Singleton
     fun provideDoWorkoutExerciseSetDao(kareDatabase: KareDatabase): DoWorkoutExerciseSetDao {
         return kareDatabase.doWorkoutExerciseSetDao
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutConfigurationDao(kareDatabase: KareDatabase): WorkoutConfigurationDao {
+        return kareDatabase.workoutConfigurationDao
     }
 
     /**
