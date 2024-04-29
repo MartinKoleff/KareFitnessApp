@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import java.util.Locale
 
@@ -405,7 +405,7 @@ fun WarningDialogPreview() {
 @Preview
 @Composable
 fun SelectWorkoutDialogPreview() {
-    val workout = MockupDataGenerator.generateWorkout()
+    val workout = MockupDataGeneratorV2.generateWorkout()
     val selectWord = if (workout.isSelected) "De-select" else "Select"
 
     WarningDialog(
@@ -420,7 +420,7 @@ fun SelectWorkoutDialogPreview() {
 @Preview
 @Composable
 fun DeselectWorkoutDialogPreview() {
-    val workout = MockupDataGenerator.generateWorkout().copy(isSelected = true)
+    val workout = MockupDataGeneratorV2.generateWorkout().copy(isSelected = true)
     val selectWord = if (workout.isSelected) "De-select" else "Select"
 
     WarningDialog(

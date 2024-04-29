@@ -1,21 +1,16 @@
 package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -39,18 +34,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.common.PermissionManager
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.ui.compose.components.AddNewSetFooter
 import com.koleff.kare_android.ui.compose.components.ExerciseSetRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
@@ -59,8 +49,6 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.state.BaseState
-import com.koleff.kare_android.ui.state.ExerciseState
-import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
 
 @Composable

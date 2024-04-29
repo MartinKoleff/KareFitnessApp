@@ -39,12 +39,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
 import com.koleff.kare_android.ui.compose.screen.HorizontalLineWithText
+import kotlin.random.Random
 
 @Composable
 fun ExerciseDataSheet(
@@ -326,7 +327,10 @@ fun ExerciseDataSheetTextField(
 @Preview
 @Composable
 fun ExerciseDataSheetRowPreview() {
-    val exerciseSet = MockupDataGenerator.generateExerciseSet()
+    val exerciseSet = MockupDataGeneratorV2.generateExerciseSet(
+        workoutId = Random.nextInt(1, 100),
+        exerciseId = Random.nextInt(1, 100)
+    )
     val onSetChanged: (ExerciseSetProgressDto) -> Unit = { set ->
 
     }
@@ -336,7 +340,7 @@ fun ExerciseDataSheetRowPreview() {
 @Preview
 @Composable
 fun ExerciseDataSheetPreview() {
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
     val onExerciseDataChange: (ExerciseProgressDto) -> Unit = {
 
     }

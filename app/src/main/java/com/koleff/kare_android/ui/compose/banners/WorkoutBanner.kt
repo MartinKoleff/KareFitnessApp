@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import kotlin.math.roundToInt
@@ -511,7 +511,7 @@ fun WorkoutListPreview() {
 @Preview
 @Composable
 fun WorkoutBannerPreview() {
-    val workout = MockupDataGenerator.generateWorkout()
+    val workout = MockupDataGeneratorV2.generateWorkout()
 
     WorkoutBanner(
         modifier = Modifier
@@ -525,7 +525,7 @@ fun WorkoutBannerPreview() {
 @Preview
 @Composable
 fun SwipeableWorkoutBannerPreview() {
-    val workout = MockupDataGenerator.generateWorkout()
+    val workout = MockupDataGeneratorV2.generateWorkout()
 
     SwipeableWorkoutBanner(
         modifier = Modifier

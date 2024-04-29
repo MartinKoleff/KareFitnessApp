@@ -46,8 +46,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
+import kotlin.random.Random
 
 @Composable
 fun ExerciseSetRow(
@@ -239,8 +240,12 @@ fun ExerciseSetRowFooterPreview() {
     val onDelete: (ExerciseSetDto) -> Unit = {
 
     }
+    val exerciseSet = MockupDataGeneratorV2.generateExerciseSet(
+        workoutId = Random.nextInt(1, 100),
+        exerciseId = Random.nextInt(1, 100)
+    )
     ExerciseSetRowFooter(
-        setToDelete = MockupDataGenerator.generateExerciseSet(),
+        setToDelete = exerciseSet,
         onDelete = onDelete
     )
 }
@@ -345,7 +350,10 @@ fun AddNewSetFooterPreview() {
 @Preview
 @Composable
 fun ExerciseSetRowPreview() {
-    val exerciseSet = MockupDataGenerator.generateExerciseSet()
+    val exerciseSet = MockupDataGeneratorV2.generateExerciseSet(
+        workoutId = Random.nextInt(1, 100),
+        exerciseId = Random.nextInt(1, 100)
+    )
     ExerciseSetRow(
         set = exerciseSet,
         onWeightChanged = {},

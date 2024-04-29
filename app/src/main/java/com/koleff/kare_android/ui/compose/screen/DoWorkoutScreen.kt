@@ -58,7 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
@@ -75,6 +75,7 @@ import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
+import kotlin.random.Random
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -249,7 +250,7 @@ fun NextExerciseCountdownScreen(
     countdownNumberPadding: PaddingValues = PaddingValues(vertical = 12.dp, horizontal = 6.dp)
 ) {
     val alpha = 0.5f
-    val motivationalQuote = MockupDataGenerator.generateMotivationalQuote()
+    val motivationalQuote = MockupDataGeneratorV2.generateMotivationalQuote()
     val totalSets = if (nextExercise.sets.isNotEmpty()) nextExercise.sets.size else defaultTotalSets
     Column(
         modifier = Modifier
@@ -333,7 +334,7 @@ fun NextExerciseCountdownScreen(
 @Preview
 @Composable
 fun NextExerciseCountdownScreenPreview() {
-    val nextExercise = MockupDataGenerator.generateExercise()
+    val nextExercise = MockupDataGeneratorV2.generateExercise()
     val currentSetNumber = 2
     val countdownTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10)
     val defaultTotalSets = 4
@@ -405,7 +406,7 @@ fun DoWorkoutFooterWithModal(
 fun DoWorkoutFooterWithModalPreview() {
     val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
     val timeLeft = ExerciseTime(hours = 0, minutes = 1, seconds = 15)
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
     val currentSetNumber = 1
     val defaultTotalSets = 4
     val workoutTimer = TimerUtil(time.toSeconds())
@@ -535,7 +536,10 @@ fun DoWorkoutFooter(
 fun DoWorkoutFooterPreview() {
     val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
     val timeLeft = ExerciseTime(hours = 0, minutes = 1, seconds = 15)
-    val currentSet = MockupDataGenerator.generateExerciseSet()
+    val currentSet = MockupDataGeneratorV2.generateExerciseSet(
+        workoutId = Random.nextInt(1, 100),
+        exerciseId = Random.nextInt(1, 100)
+    )
     val workoutTimer = TimerUtil(time.toSeconds())
     val onTimePassed: (ExerciseTime) -> Unit = {
 
@@ -712,7 +716,7 @@ fun CurrentExerciseInfoRow(
 @Preview
 @Composable
 fun CurrentExerciseInfoRowInfoRowPreview() {
-    val currentExercise = MockupDataGenerator.generateExercise()
+    val currentExercise = MockupDataGeneratorV2.generateExercise()
     val currentSetNumber = 1
     val defaultTotalSets = 4
     CurrentExerciseInfoRow(
@@ -725,7 +729,7 @@ fun CurrentExerciseInfoRowInfoRowPreview() {
 @Preview
 @Composable
 fun ExerciseDataSheetModal2Preview() {
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
     val currentSetNumber = 1
     val defaultTotalSets = 4
     val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {}

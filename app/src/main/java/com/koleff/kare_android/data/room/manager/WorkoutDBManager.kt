@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.room.manager
 
 import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.WorkoutGenerator
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
@@ -57,11 +57,11 @@ class WorkoutDBManager @Inject constructor(
 
                     //Generate sets
                     val sets =
-                        MockupDataGenerator.generateExerciseSetsList(
+                        MockupDataGeneratorV2.generateExerciseSetsList(
                             4,
                             exerciseId = exercise.exerciseId,
                             workoutId = exercise.workoutId,
-                            isGenerateSetId = true
+                            enableSetIdGeneration = true
                         )
                     for (set in sets) {
 

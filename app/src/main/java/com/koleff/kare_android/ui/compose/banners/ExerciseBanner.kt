@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -342,7 +342,7 @@ fun SwipeableExerciseBanner(
 @Preview
 @Composable
 fun ExerciseBannerV1AndV2ComparingPreview() {
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
 
     Column(
         Modifier
@@ -376,7 +376,7 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
 @Preview
 @Composable
 fun SwipeableExerciseBannerPreview() {
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
 
     SwipeableExerciseBanner(
         modifier = Modifier
@@ -392,7 +392,7 @@ fun SwipeableExerciseBannerPreview() {
 @Composable
 fun ExerciseListPreview() {
     val n = 5
-    val exercisesList = MockupDataGenerator.generateExerciseList(n)
+    val exercisesList = MockupDataGeneratorV2.generateExerciseList(n)
 
     ExerciseList(exerciseList = exercisesList){ exercise ->
 
