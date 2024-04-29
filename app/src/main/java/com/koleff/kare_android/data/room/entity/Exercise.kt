@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import com.koleff.kare_android.data.KareDtoExtended
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
@@ -9,14 +10,20 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 @Entity(
     tableName = "exercise_table",
     primaryKeys = ["exerciseId", "workoutId"],  //Composite key
-//    foreignKeys = [
-//        ForeignKey(
-//            entity = Workout::class,
-//            parentColumns = ["workoutId"],
-//            childColumns = ["workoutId"],
-//            onDelete = ForeignKey.CASCADE
-//        )
-//    ]
+    foreignKeys = [
+        ForeignKey(
+            entity = Workout::class,
+            parentColumns = ["workoutId"],
+            childColumns = ["workoutId"],
+            onDelete = ForeignKey.CASCADE
+        ),
+        ForeignKey(
+            entity = WorkoutDetails::class,
+            parentColumns = ["workoutDetailsId"],
+            childColumns = ["workoutId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class Exercise(
     val exerciseId: Int,
