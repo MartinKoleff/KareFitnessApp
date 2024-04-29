@@ -250,6 +250,9 @@ class WorkoutLocalDataSource @Inject constructor(
 
             workoutDao.deleteWorkout(workoutId)
             workoutDetailsDao.deleteWorkoutDetails(workoutId)
+            workoutConfigurationDao.deleteWorkoutConfiguration(workoutId)
+
+            //TODO: [Test] if exerciseSet - workoutDetails cross ref is also deleted...
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -850,6 +853,7 @@ class WorkoutLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
 
             workoutConfigurationDao.deleteWorkoutConfiguration(workoutId)
+
             val result = ServerResponseData(
                 BaseResponse()
             )

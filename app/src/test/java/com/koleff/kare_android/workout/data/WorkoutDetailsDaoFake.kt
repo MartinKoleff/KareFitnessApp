@@ -204,6 +204,7 @@ class WorkoutDetailsDaoFake(
         workoutDetailsExerciseCrossRefs.clear()
     }
 
+    //Called when WorkoutConfiguration was inserted/updated
     fun updateWorkoutConfiguration(configuration: WorkoutConfiguration) {
         val index = workoutDetailsDB.map {
             it.workoutDetails
@@ -212,6 +213,21 @@ class WorkoutDetailsDaoFake(
         //WorkoutConfiguration found
         if(index != -1){
             workoutDetailsDB[index] = workoutDetailsDB[index].copy(configuration = configuration)
+        }else{
+
+            //No workout found for workout configuration
+        }
+    }
+
+    //Called when WorkoutConfiguration was deleted
+    fun deleteWorkoutConfiguration(workoutId: Int) {
+        val index = workoutDetailsDB.map {
+            it.workoutDetails
+        }.indexOfFirst { it.workoutDetailsId == workoutId }
+
+        //WorkoutConfiguration found
+        if(index != -1){
+            workoutDetailsDB[index] = workoutDetailsDB[index].copy(configuration = null)
         }else{
 
             //No workout found for workout configuration

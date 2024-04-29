@@ -743,6 +743,9 @@ class WorkoutUseCasesUnitTest {
         val savedWorkout = createCustomWorkoutState[1].workout
         logger.i(TAG, "Saved workout: $savedWorkout")
 
+        //TODO: test if ExerciseSet-WorkoutDetails cross refs are also deleted...
+        //TODO: test if WorkoutConfiguration is also deleted
+
         //Delete workout
         val deleteWorkoutState =
             workoutUseCases.deleteWorkoutUseCase(savedWorkout.workoutId).toList()
@@ -1286,10 +1289,10 @@ class WorkoutUseCasesUnitTest {
             //TODO: [Test] select current selected workout and fetch...
         }
 
-    //TODO: [Test] create workout, fetch it from DB, check workout configuration to be default,
-    // create workout configuration for workout, save and fetch workout to see if it has updated,
-    // delete workout configuration and check if back to default...
 
+    /**
+     *
+     */
     @RepeatedTest(50)
     fun `create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest{
 
@@ -1349,6 +1352,25 @@ class WorkoutUseCasesUnitTest {
 
         logger.i(TAG, "Assert workout configuration has changed. Workout configuration: ${fetchedWorkoutDetails2.configuration}")
         assertTrue { fetchedWorkoutDetails2.configuration == getWorkoutConfigurationState[1].workoutConfiguration }
+
+        //Delete workout configuration
+        val deleteWorkoutConfigurationState = workoutUseCases.deleteWorkoutConfigurationUseCase(savedWorkoutDetails.workoutId).toList()
+
+        logger.i(TAG, "Delete workout configuration -> isLoading state raised.")
+        assertTrue { deleteWorkoutConfigurationState[0].isLoading }
+
+        logger.i(TAG, "Delete workout configuration -> isSuccessful state raised.")
+        assertTrue { deleteWorkoutConfigurationState[1].isSuccessful }
+
+        //Fetch workout
+        val getWorkoutDetailsState3 =
+            workoutUseCases.getWorkoutDetailsUseCase(savedWorkoutDetails.workoutId).toList()
+
+        val fetchedWorkoutDetails3 = getWorkoutDetailsState3[1].workoutDetails
+        logger.i(TAG, "Fetched workout details 3: $fetchedWorkoutDetails3")
+
+        logger.i(TAG, "Assert workout configuration is default after delete. Workout configuration: ${fetchedWorkoutDetails3.configuration}")
+        assertTrue {fetchedWorkoutDetails3.configuration == WorkoutConfigurationDto() }
     }
 
     @ParameterizedTest(name = "OnSearchWorkouts for search text {0}")

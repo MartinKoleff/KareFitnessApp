@@ -44,10 +44,16 @@ class WorkoutConfigurationDaoFake(
 
     override suspend fun deleteWorkoutConfiguration(configuration: WorkoutConfiguration) {
         workoutConfigurationDB.remove(configuration)
+
+        //Update workoutDetailsDao DB...
+        workoutDetailsDao.deleteWorkoutConfiguration(configuration.workoutId)
     }
 
-    override suspend fun deleteWorkoutConfiguration(workoutConfigurationId: Int) {
-        workoutConfigurationDB.removeAll {it.workoutId == workoutConfigurationId }
+    override suspend fun deleteWorkoutConfiguration(workoutId: Int) {
+        workoutConfigurationDB.removeAll {it.workoutId == workoutId }
+
+        //Update workoutDetailsDao DB...
+        workoutDetailsDao.deleteWorkoutConfiguration(workoutId)
     }
 
     fun clearDB(){
