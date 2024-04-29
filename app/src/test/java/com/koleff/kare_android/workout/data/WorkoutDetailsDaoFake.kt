@@ -1,12 +1,16 @@
 package com.koleff.kare_android.workout.data
 
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
+import com.koleff.kare_android.data.room.dao.WorkoutDetailsId
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.ExerciseWithSets
+import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
+import com.koleff.kare_android.data.room.entity.WorkoutWithConfig
 import com.koleff.kare_android.exercise.data.ExerciseDaoFake
 import com.koleff.kare_android.utils.TestLogger
 
@@ -28,11 +32,12 @@ class WorkoutDetailsDaoFake(
 
 
     //Assuming there is already a workout in the workoutDB -> no need for autoincrement -> id is verified
-    override suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): Long {
+    override suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): WorkoutDetailsId {
         workoutDetailsDB.add(
             WorkoutDetailsWithExercises(
                 workoutDetails = workoutDetails,
-                exercises = emptyList()
+                exercises = emptyList(),
+                configuration = null
             )
         )
 
@@ -82,11 +87,13 @@ class WorkoutDetailsDaoFake(
         //WorkoutDetails found
         if (index != -1) {
             val exercises = workoutDetailsDB[index].exercises
+            val configuration = workoutDetailsDB[index].configuration
 
             //Replace workout
             workoutDetailsDB[index] = WorkoutDetailsWithExercises(
                 workoutDetails = workout,
-                exercises = exercises
+                exercises = exercises,
+                configuration = configuration
             )
         } else {
 
@@ -104,8 +111,18 @@ class WorkoutDetailsDaoFake(
 
     override fun getWorkoutDetailsOrderedById(): List<WorkoutDetailsWithExercises> {
         return workoutDetailsDB.sortedBy { it.workoutDetails.workoutDetailsId }.map {
-            WorkoutDetailsWithExercises(it.workoutDetails, getWorkoutExercises(it.workoutDetails.workoutDetailsId))
+            WorkoutDetailsWithExercises(
+                workoutDetails = it.workoutDetails,
+                exercises = getWorkoutExercises(it.workoutDetails.workoutDetailsId),
+                configuration = getWorkoutConfiguration(it.workoutDetails.workoutDetailsId)
+            )
         }
+    }
+
+    private fun getWorkoutConfiguration(workoutId: Int): WorkoutConfiguration? {
+        return workoutDetailsDB
+            .map { it.configuration }
+            .firstOrNull { it?.workoutId == workoutId }
     }
 
     private fun getWorkoutExercises(workoutId: Int): List<Exercise> {
@@ -119,7 +136,7 @@ class WorkoutDetailsDaoFake(
         return workoutExercises
     }
 
-    private fun getAllExercises(): List<Exercise>{
+    private fun getAllExercises(): List<Exercise> {
         val workoutExercisesIndexes = workoutDetailsExerciseCrossRefs
             .map { it.exerciseId }
 
@@ -172,16 +189,32 @@ class WorkoutDetailsDaoFake(
 
     override fun getWorkoutDetailsById(workoutId: Int): WorkoutDetailsWithExercises? {
         val workoutExercises = getWorkoutExercises(workoutId)
+        val configuration = getWorkoutConfiguration(workoutId)
 
         return workoutDetailsDB.firstOrNull {
             it.workoutDetails.workoutDetailsId == workoutId
         }?.copy(
-            exercises = workoutExercises
+            exercises = workoutExercises,
+            configuration = configuration
         )
     }
 
     fun clearDB() {
         workoutDetailsDB.clear()
         workoutDetailsExerciseCrossRefs.clear()
+    }
+
+    fun updateWorkoutConfiguration(configuration: WorkoutConfiguration) {
+        val index = workoutDetailsDB.map {
+            it.workoutDetails
+        }.indexOfFirst { it.workoutDetailsId == configuration.workoutId }
+
+        //WorkoutConfiguration found
+        if(index != -1){
+            workoutDetailsDB[index] = workoutDetailsDB[index].copy(configuration = configuration)
+        }else{
+
+            //No workout found for workout configuration
+        }
     }
 }

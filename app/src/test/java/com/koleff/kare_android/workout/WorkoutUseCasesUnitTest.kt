@@ -4,6 +4,8 @@ import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseTime
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
@@ -64,7 +66,7 @@ class WorkoutUseCasesUnitTest {
 
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
-    private lateinit var workoutConfigurationDao: WorkoutConfigurationDao
+    private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
     private lateinit var exerciseDao: ExerciseDaoFake
     private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
@@ -118,7 +120,7 @@ class WorkoutUseCasesUnitTest {
 
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-        workoutConfigurationDao = WorkoutConfigurationDaoFake()
+        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
         
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
@@ -174,6 +176,7 @@ class WorkoutUseCasesUnitTest {
         exerciseSetDao.clearDB()
         workoutDetailsDao.clearDB()
         workoutDao.clearDB()
+        workoutConfigurationDao.clearDB()
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
@@ -188,6 +191,10 @@ class WorkoutUseCasesUnitTest {
         logger.i(
             "tearDown",
             "WorkoutDao: ${workoutDao.getWorkoutsOrderedById()}"
+        )
+        logger.i(
+            "tearDown",
+            "WorkoutConfigurationDao: ${workoutConfigurationDao.getAllWorkoutConfigurations()}"
         )
     }
 
@@ -1278,6 +1285,71 @@ class WorkoutUseCasesUnitTest {
             //TODO: [Test] select workout with workoutID not in DB and fetch...
             //TODO: [Test] select current selected workout and fetch...
         }
+
+    //TODO: [Test] create workout, fetch it from DB, check workout configuration to be default,
+    // create workout configuration for workout, save and fetch workout to see if it has updated,
+    // delete workout configuration and check if back to default...
+
+    @RepeatedTest(50)
+    fun `create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest{
+
+        //Generate workout details and workout
+        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+        logger.i(TAG, "Mocked workout details: $workoutDetails")
+
+        //Insert workout to generate WorkoutDetails in DB
+        val createCustomWorkoutDetailsState =
+            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+        val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
+
+        //Fetch workout
+        val getWorkoutDetailsState =
+            workoutUseCases.getWorkoutDetailsUseCase(savedWorkoutDetails.workoutId).toList()
+
+        val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
+
+        logger.i(TAG, "Assert workout configuration is default. Workout configuration: ${fetchedWorkoutDetails.configuration}")
+        assertTrue {fetchedWorkoutDetails.configuration == WorkoutConfigurationDto() }
+
+        val updatedWorkoutConfiguration = WorkoutConfigurationDto(
+            workoutId = workoutDetails.workoutId,
+            cooldownTime = ExerciseTime(0, 0, 30)
+        )
+
+        //Update workout configuration
+        val updateWorkoutConfigurationState = workoutUseCases.updateWorkoutConfigurationUseCase(updatedWorkoutConfiguration).toList()
+
+        logger.i(TAG, "Update workout configuration -> isLoading state raised.")
+        assertTrue { updateWorkoutConfigurationState[0].isLoading }
+
+        logger.i(TAG, "Update workout configuration -> isSuccessful state raised.")
+        assertTrue { updateWorkoutConfigurationState[1].isSuccessful }
+
+        //Fetch workout configuration
+        val getWorkoutConfigurationState = workoutUseCases.getWorkoutConfigurationUseCase(workoutId = workoutDetails.workoutId).toList()
+
+        logger.i(TAG, "Get workout configuration -> isLoading state raised.")
+        assertTrue { getWorkoutConfigurationState[0].isLoading }
+
+        logger.i(TAG, "Get workout configuration -> isSuccessful state raised.")
+        assertTrue { getWorkoutConfigurationState[1].isSuccessful }
+
+        logger.i(TAG, "Assert workout configuration has updated. Workout configuration from DB: ${getWorkoutConfigurationState[1].workoutConfiguration}")
+        assertTrue {getWorkoutConfigurationState[1].workoutConfiguration == updatedWorkoutConfiguration}
+
+        //Fetch workout
+        val getWorkoutDetailsState2 =
+            workoutUseCases.getWorkoutDetailsUseCase(savedWorkoutDetails.workoutId).toList()
+
+        val fetchedWorkoutDetails2 = getWorkoutDetailsState2[1].workoutDetails
+        logger.i(TAG, "Fetched workout details 2: $fetchedWorkoutDetails2")
+
+        logger.i(TAG, "Assert workout configuration has changed. Workout configuration: ${fetchedWorkoutDetails2.configuration}")
+        assertTrue { fetchedWorkoutDetails2.configuration == getWorkoutConfigurationState[1].workoutConfiguration }
+    }
 
     @ParameterizedTest(name = "OnSearchWorkouts for search text {0}")
     @MethodSource("provideSearchTexts")
