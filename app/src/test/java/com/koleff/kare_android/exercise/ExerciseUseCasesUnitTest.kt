@@ -2,7 +2,7 @@ package com.koleff.kare_android.exercise
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -46,10 +46,9 @@ import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutFakeDataSource
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
+import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
-import com.koleff.kare_android.workout.data.WorkoutMockupDataSource
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -74,6 +73,7 @@ class ExerciseUseCasesUnitTest {
     private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
+    private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
 
     private lateinit var exerciseFakeDataSource: ExerciseFakeDataSource
     private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
@@ -153,12 +153,14 @@ class ExerciseUseCasesUnitTest {
         //Workout
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
+        workoutConfigurationDao = WorkoutConfigurationDaoFake()
 
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
             workoutDetailsDao = workoutDetailsDao,
             exerciseSetDao = exerciseSetDao,
+            workoutConfigurationDao = workoutConfigurationDao
         )
 
         workoutRepository =
@@ -356,7 +358,7 @@ class ExerciseUseCasesUnitTest {
 
         //Generate Workout -> include pre-selected exercise in workout details exercise list...
         val workoutDetails =
-            MockupDataGenerator.generateWorkoutDetails(containIds = listOf(exerciseId))
+            MockupDataGeneratorV2.generateWorkoutDetails(preSelectedExerciseIds = listOf(exerciseId))
         logger.i(TAG, "Mocked workout details: $workoutDetails")
 
         //Insert Workout in DB

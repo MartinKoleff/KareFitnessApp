@@ -1,18 +1,14 @@
 package com.koleff.kare_android.do_workout_performance_metrics
 
-import com.koleff.kare_android.common.MockupDataGenerator
-import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsDataSource
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsLocalDataSource
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.DoWorkoutPerformanceMetricsRepositoryImpl
-import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
-import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutExerciseSetDaoFake
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutPerformanceMetricsDaoFake
@@ -62,12 +58,11 @@ import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutFakeDataSource
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
+import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -84,7 +79,6 @@ typealias DoWorkoutPerformanceMetricsFakeDataSource = DoWorkoutPerformanceMetric
 
 class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
-
     companion object {
         private lateinit var exerciseDBManager: ExerciseDBManager
 
@@ -93,6 +87,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
         private lateinit var workoutDao: WorkoutDaoFake
         private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
+        private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
         private lateinit var doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDaoFake
         private lateinit var doWorkoutExerciseSetDao: DoWorkoutExerciseSetDaoFake
         private lateinit var doWorkoutPerformanceMetricsMediator: DoWorkoutPerformanceMetricsMediator
@@ -156,12 +151,13 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         //Workout
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-
+        workoutConfigurationDao = WorkoutConfigurationDaoFake()
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
             workoutDetailsDao = workoutDetailsDao,
             exerciseSetDao = exerciseSetDao,
+            workoutConfigurationDao = workoutConfigurationDao
         )
 
         workoutRepository =
@@ -241,9 +237,9 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
         //Workout DB
         workout1 =
-            MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 1)
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true).copy(workoutId = 1)
         workout2 =
-            MockupDataGenerator.generateWorkoutDetails(isGenerateSetId = true).copy(workoutId = 2)
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true).copy(workoutId = 2)
 
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).collect()
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).collect()

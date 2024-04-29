@@ -1,11 +1,12 @@
 package com.koleff.kare_android.workout
 
 import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
+import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
@@ -31,6 +32,7 @@ import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.utils.TestLogger
+import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
 import kotlinx.coroutines.flow.last
@@ -58,6 +60,7 @@ class WorkoutUseCasesUnitTest {
 
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
+    private lateinit var workoutConfigurationDao: WorkoutConfigurationDao
     private lateinit var exerciseDao: ExerciseDaoFake
     private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
@@ -111,12 +114,14 @@ class WorkoutUseCasesUnitTest {
 
         workoutDao = WorkoutDaoFake()
         workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-
+        workoutConfigurationDao = WorkoutConfigurationDaoFake()
+        
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
             workoutDetailsDao = workoutDetailsDao,
             exerciseSetDao = exerciseSetDao,
+            workoutConfigurationDao = workoutConfigurationDao
         )
 
         workoutRepository =
@@ -296,10 +301,10 @@ class WorkoutUseCasesUnitTest {
         assertTrue(getWorkoutsState[1].workoutList.isEmpty())
 
         //Insert 2 workouts and fetch again...
-        val workout1 = MockupDataGenerator.generateWorkout(isSelected = false)
+        val workout1 = MockupDataGeneratorV2.generateWorkout(isSelected = false)
         logger.i(TAG, "Mocked workout 1: $workout1")
 
-        val workout2 = MockupDataGenerator.generateWorkout(isSelected = false)
+        val workout2 = MockupDataGeneratorV2.generateWorkout(isSelected = false)
         logger.i(TAG, "Mocked workout 2: $workout2")
 
         val workoutList = listOf(workout1, workout2)
@@ -350,7 +355,7 @@ class WorkoutUseCasesUnitTest {
     fun `get workout using GetWorkoutUseCase test`() = runTest {
 
         //Generate workout
-        val workout = MockupDataGenerator.generateWorkout()
+        val workout = MockupDataGeneratorV2.generateWorkout()
         logger.i(TAG, "Mocked workout: $workout")
 
         //Insert
@@ -421,7 +426,7 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             //Generate workout details and workout
-            val data = MockupDataGenerator.generateWorkoutAndWorkoutDetails(isGenerateSetId = true)
+            val data = MockupDataGeneratorV2.generateWorkoutAndWorkoutDetails(enableSetIdGeneration = true)
 
             val workout = data.first
             logger.i(TAG, "Mocked workout: $workout")
@@ -502,7 +507,7 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             //Generate WorkoutDetails
-            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+            val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
             logger.i(TAG, "Mocked workout details: $workoutDetails")
 
             //Insert WorkoutDetails in DB
@@ -521,10 +526,9 @@ class WorkoutUseCasesUnitTest {
             //Modify workoutDetails
             val muscleGroup = ExerciseGenerator.SUPPORTED_MUSCLE_GROUPS.random()
             val newExercise =
-                MockupDataGenerator.generateExercise(
+                MockupDataGeneratorV2.generateExercise(
                     muscleGroup = muscleGroup,
-                    workoutId = workoutDetails.workoutId,
-                    isWorkout = true
+                    workoutId = workoutDetails.workoutId
                 )
                     .copy(name = "Test Exercise")
             val modifiedExercises = ArrayList(savedWorkoutDetails.exercises).apply {
@@ -616,7 +620,7 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             //Generate Workout
-            val workout = MockupDataGenerator.generateWorkout()
+            val workout = MockupDataGeneratorV2.generateWorkout()
             logger.i(TAG, "Mocked workout: $workout")
 
             //Insert Workout in DB
@@ -709,7 +713,7 @@ class WorkoutUseCasesUnitTest {
     fun `delete workout using DeleteWorkoutUseCase test`() = runTest {
 
         //Generate Workout
-        val workout = MockupDataGenerator.generateWorkout()
+        val workout = MockupDataGeneratorV2.generateWorkout()
         logger.i(TAG, "Mocked workout: $workout")
 
         //Insert Workout in DB
@@ -809,7 +813,7 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             //Generate workout details
-            val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+            val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
             logger.i(
                 TAG,
                 "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
@@ -833,10 +837,9 @@ class WorkoutUseCasesUnitTest {
             val excludedIds = workoutDetails.exercises.map { it.exerciseId }
 
             val exercise =
-                MockupDataGenerator.generateExercise(
+                MockupDataGeneratorV2.generateExercise(
                     excludedIds = excludedIds,
-                    workoutId = workoutDetails.workoutId,
-                    isWorkout = true
+                    workoutId = workoutDetails.workoutId
                 )
             logger.i(TAG, "Generated exercise: $exercise.")
 
@@ -972,7 +975,7 @@ class WorkoutUseCasesUnitTest {
     fun `submit exercise using SubmitExerciseUseCase`() = runTest {
 
         //Generate workout details
-        val workoutDetails = MockupDataGenerator.generateWorkoutDetails()
+        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
         logger.i(
             TAG,
             "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
@@ -1024,10 +1027,9 @@ class WorkoutUseCasesUnitTest {
         val excludedIds = workoutDetails.exercises.map { it.exerciseId }
 
         val exercise =
-            MockupDataGenerator.generateExercise(
+            MockupDataGeneratorV2.generateExercise(
                 excludedIds = excludedIds,
-                workoutId = workoutDetails.workoutId,
-                isWorkout = true
+                workoutId = workoutDetails.workoutId
             )
         logger.i(TAG, "Generated exercise: $exercise.")
 
@@ -1126,7 +1128,7 @@ class WorkoutUseCasesUnitTest {
             assertNull(selectedWorkout)
 
             //Generate workout
-            val workout = MockupDataGenerator.generateWorkout(isSelected = true)
+            val workout = MockupDataGeneratorV2.generateWorkout(isSelected = true)
             logger.i(TAG, "Mocked workout: $workout")
 
             //Insert Workout in DB
@@ -1164,7 +1166,7 @@ class WorkoutUseCasesUnitTest {
                 "Test 3 -> get selected workout after created a new one and DB contains selected workout."
             )
 
-            val workout2 = MockupDataGenerator.generateWorkout(
+            val workout2 = MockupDataGeneratorV2.generateWorkout(
                 isSelected = true,
                 excludedIds = listOf(workout.workoutId)
             )
@@ -1276,7 +1278,7 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Search text for this test: {$searchText}.")
 
         //Generate workout list
-        val workoutList = MockupDataGenerator.generateWorkoutList(5)
+        val workoutList = MockupDataGeneratorV2.generateWorkoutList(5)
 
         val event = OnSearchWorkoutEvent.OnSearchTextChange(searchText, workoutList)
         val onSearchState = workoutUseCases.onSearchWorkoutUseCase(event).last()
