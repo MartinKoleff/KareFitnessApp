@@ -13,17 +13,21 @@ import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.CreateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
+import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
+import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -144,7 +148,11 @@ class WorkoutUseCasesUnitTest {
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
             createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
             createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
+            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
+            getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
+            createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
+            updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
+            deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
         )
 
         //Initialize DB

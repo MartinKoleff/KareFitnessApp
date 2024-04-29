@@ -60,9 +60,11 @@ import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.CreateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
+import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
@@ -81,6 +83,7 @@ import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
+import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
@@ -93,6 +96,7 @@ import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.UpdateDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
+import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -381,13 +385,16 @@ object AppModule {
         exerciseDao: ExerciseDao,
         workoutDetailsDao: WorkoutDetailsDao,
         exerciseSetDao: ExerciseSetDao,
+        workoutConfigurationDao: WorkoutConfigurationDao,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
         return if (useLocalDataSource) WorkoutLocalDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
             workoutDetailsDao = workoutDetailsDao,
-            exerciseSetDao = exerciseSetDao
+            exerciseSetDao = exerciseSetDao,
+            workoutConfigurationDao = workoutConfigurationDao
+
         )
         else WorkoutRemoteDataSource(workoutApi, dispatcher)
     }
@@ -495,7 +502,11 @@ object AppModule {
             getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
             createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
             createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository)
+            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
+            getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
+            createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
+            updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
+            deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
         )
     }
 
