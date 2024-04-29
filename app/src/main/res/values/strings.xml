@@ -12,4 +12,5 @@
     <string name="text_workout_not_found">Workout not found.</string>
     <string name="text_do_workout_performance_metrics_not_found">Workout performance metrics not found.</string>
     <string name="text_invalid_workout">Invalid workout.</string>
+    <string name="text_workout_configuration_not_found">Workout configuration not found.</string>
 </resources>

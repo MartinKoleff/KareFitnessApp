@@ -24,10 +24,12 @@ enum class KareError(
     EXERCISE_NOT_FOUND("error_exercise_not_found", R.string.text_exercise_not_found, ErrorType.INTERNAL),
     EXERCISE_SET_NOT_FOUND("error_exercise_set_not_found", R.string.text_exercise_set_not_found, ErrorType.INTERNAL),
     WORKOUT_NOT_FOUND("error_workout_not_found", R.string.text_workout_not_found, ErrorType.INTERNAL),
-    DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND("error_do_workout_performance_metrics_not_found", R.string.text_do_workout_performance_metrics_not_found, ErrorType.INTERNAL);
+    DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND("error_do_workout_performance_metrics_not_found", R.string.text_do_workout_performance_metrics_not_found, ErrorType.INTERNAL),
+    WORKOUT_CONFIGURATION_NOT_FOUND("error_workout_configuration_not_found", R.string.text_workout_configuration_not_found, ErrorType.INTERNAL);
 
 
     companion object {
+
 
         fun fromErrorCode(errorCode: String?): KareError =
             values().find { it.errorCode == errorCode } ?: GENERIC

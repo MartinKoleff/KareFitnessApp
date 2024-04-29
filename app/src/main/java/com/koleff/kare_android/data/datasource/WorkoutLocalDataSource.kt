@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.datasource
 import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
@@ -10,6 +11,7 @@ import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.WorkoutResponse
 import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
+import com.koleff.kare_android.data.model.response.WorkoutConfigurationResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
@@ -19,6 +21,7 @@ import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
+import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.entity.Workout
@@ -28,6 +31,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExercise
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
@@ -39,7 +43,8 @@ class WorkoutLocalDataSource @Inject constructor(
     private val workoutDao: WorkoutDao,
     private val exerciseDao: ExerciseDao,
     private val workoutDetailsDao: WorkoutDetailsDao,
-    private val exerciseSetDao: ExerciseSetDao
+    private val exerciseSetDao: ExerciseSetDao,
+    private val workoutConfigurationDao: WorkoutConfigurationDao
 ) : WorkoutDataSource {
     override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
@@ -111,11 +116,11 @@ class WorkoutLocalDataSource @Inject constructor(
 
         try {
             val data = workoutDao.getWorkoutById(workoutId)
-        val result = WorkoutWrapper(
-            WorkoutResponse(data.toDto())
-        )
+            val result = WorkoutWrapper(
+                WorkoutResponse(data.toDto())
+            )
 
-        emit(ResultWrapper.Success(result))
+            emit(ResultWrapper.Success(result))
         } catch (e: NoSuchElementException) {
             emit(
                 ResultWrapper.ApiError(
@@ -759,4 +764,62 @@ class WorkoutLocalDataSource @Inject constructor(
 
         emit(ResultWrapper.Success(result))
     }
+
+    override suspend fun getWorkoutConfiguration(workoutId: Int): Flow<ResultWrapper<WorkoutConfigurationWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val data = workoutConfigurationDao.getWorkoutConfiguration(workoutId)
+            data ?: run {
+                emit(ResultWrapper.ApiError(KareError.WORKOUT_CONFIGURATION_NOT_FOUND))
+                return@flow
+            }
+
+            val result = WorkoutConfigurationWrapper(
+                WorkoutConfigurationResponse(data.toDto())
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+
+    override suspend fun updateWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            workoutConfigurationDao.updateWorkoutConfiguration(workoutConfiguration.toEntity())
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun saveWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<WorkoutConfigurationWrapper>>  =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val id = workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
+
+            val result = WorkoutConfigurationWrapper(
+                WorkoutConfigurationResponse(workoutConfiguration)
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
+    override suspend fun deleteWorkoutConfiguration(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            workoutConfigurationDao.deleteWorkoutConfiguration(workoutId)
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
+            emit(ResultWrapper.Success(result))
+        }
 }
