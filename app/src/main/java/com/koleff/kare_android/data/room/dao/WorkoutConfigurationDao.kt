@@ -18,7 +18,7 @@ interface WorkoutConfigurationDao {
     @Query("SELECT * FROM workout_configuration_table WHERE workoutId = :workoutId")
     suspend fun getWorkoutConfiguration(workoutId: Int): WorkoutConfiguration?
 
-    @Update
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateWorkoutConfiguration(configuration: WorkoutConfiguration)
 
     @Delete

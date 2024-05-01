@@ -13,7 +13,6 @@ data class WorkoutConfigurationDto(
 ): Parcelable, KareEntity<WorkoutConfiguration>{
     override fun toEntity(): WorkoutConfiguration {
         return WorkoutConfiguration(
-            id = 0, //Auto-generate in DB
             workoutId = workoutId,
             cooldownTime = cooldownTime
         )

@@ -18,7 +18,7 @@ data class WorkoutDetailsDto(
     @field:Json(name = "is_selected")
     val isSelected: Boolean = false,
     @field:Json(name = "configuration")
-    val configuration: WorkoutConfigurationDto = WorkoutConfigurationDto(),
+    val configuration: WorkoutConfigurationDto = WorkoutConfigurationDto()
 ): KareEntity<WorkoutDetails> {
     override fun toEntity(): WorkoutDetails{
         return WorkoutDetails(

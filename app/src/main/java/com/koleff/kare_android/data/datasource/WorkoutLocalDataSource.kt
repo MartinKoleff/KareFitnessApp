@@ -166,7 +166,9 @@ class WorkoutLocalDataSource @Inject constructor(
                     } as MutableList
 
                 val configuration =
-                    workoutDetailsWitExercises.configuration?.toDto() ?: WorkoutConfigurationDto()
+                    workoutDetailsWitExercises.configuration?.toDto() ?: WorkoutConfigurationDto(
+                        workoutId = workoutDetailsWitExercises.workoutDetails.workoutDetailsId
+                    )
 
                 workoutDetailsWitExercises.workoutDetails.toDto(
                     exercises = exercises,
@@ -206,7 +208,9 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val exercisesWithSetsDto: MutableList<ExerciseDto> =
                 exercisesWithSetsList.map(ExerciseWithSets::toDto).toMutableList()
-            val configuration = data.configuration?.toDto() ?: WorkoutConfigurationDto()
+            val configuration = data.configuration?.toDto() ?: WorkoutConfigurationDto(
+                workoutId = data.workoutDetails.workoutDetailsId
+            )
             val workout = data.workoutDetails.toDto(
                 exercises = exercisesWithSetsDto,
                 configuration = configuration
@@ -299,7 +303,6 @@ class WorkoutLocalDataSource @Inject constructor(
                 Log.d("UpdateWorkoutDetails", "New exercises: $newExercises")
 
                 val exerciseIds = newExercises.map { it.exerciseId }
-
 
                 setupWorkoutDetailsExerciseCrossRefs(workoutId, exerciseIds)
 
@@ -472,8 +475,9 @@ class WorkoutLocalDataSource @Inject constructor(
                 WorkoutDetailsDto().copy(
                     workoutId = workoutId.toInt(),
                     name = workoutDto.name,
+                    description = "",
                     muscleGroup = workoutDto.muscleGroup,
-                    isSelected = workoutDto.isSelected
+                    isSelected = workoutDto.isSelected,
                 )
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //returns 0
@@ -481,9 +485,11 @@ class WorkoutLocalDataSource @Inject constructor(
             //WorkoutDetails - Workout cross refs
             setupWorkoutDetailsWorkoutCrossRef(workoutId.toInt(), workoutDetailsId.toInt())
 
+            workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity())
+
             //Select
             if (workoutDto.isSelected) {
-                selectWorkout(workoutDto.workoutId).collect()
+                selectWorkout(workoutDto.workoutId).collect() //Await...
             }
 
             val result = WorkoutWrapper(
@@ -557,9 +563,9 @@ class WorkoutLocalDataSource @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val selectedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+            val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
-            selectedWorkout ?: run {
+            data ?: run {
                 emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
                 return@flow
             }
@@ -593,21 +599,23 @@ class WorkoutLocalDataSource @Inject constructor(
 
             //Update exercise list
             val exerciseEntityList =
-                selectedWorkout.safeExercises.filterNot { exercise -> exercise.exerciseId == exerciseId }
+                data.safeExercises.filterNot { exercise -> exercise.exerciseId == exerciseId }
 
             val exercisesDtoList: MutableList<ExerciseDto> =
                 exerciseEntityList.map { exercise ->
                     val sets =
                         exerciseDao.getSetsForExercise(
                             exerciseId = exercise.exerciseId,
-                            workoutId = selectedWorkout.workoutDetails.workoutDetailsId
+                            workoutId = data.workoutDetails.workoutDetailsId
                         )
 
                     exercise.toDto(sets)
                 } as MutableList
 
-            val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
-            val configuration = selectedWorkout.configuration?.toDto() ?: WorkoutConfigurationDto()
+            val updatedWorkout = data.copy(exercises = exerciseEntityList)
+            val configuration = data.configuration?.toDto() ?: WorkoutConfigurationDto(
+                workoutId = data.workoutDetails.workoutDetailsId
+            )
             val updatedWorkoutDto =
                 updatedWorkout.workoutDetails.toDto(
                     exercises = exercisesDtoList,
@@ -635,15 +643,15 @@ class WorkoutLocalDataSource @Inject constructor(
             delay(Constants.fakeDelay)
             val updatedExercise = exercise.copy(workoutId = workoutId)
 
-            val selectedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+            val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
-            selectedWorkout ?: run {
+            data ?: run {
                 emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
                 return@flow
             }
 
             val exerciseDtoList =
-                selectedWorkout.safeExercises.map { exercise ->
+                data.safeExercises.map { exercise ->
 
                     val sets = try {
                         exerciseDao.getSetsForExercise(
@@ -661,8 +669,10 @@ class WorkoutLocalDataSource @Inject constructor(
 
             val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
-            val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
-            val configuration = selectedWorkout.configuration?.toDto() ?: WorkoutConfigurationDto()
+            val updatedWorkout = data.copy(exercises = exerciseEntityList)
+            val configuration = data.configuration?.toDto() ?: WorkoutConfigurationDto(
+                workoutId = data.workoutDetails.workoutDetailsId
+            )
             val updatedWorkoutDto =
                 updatedWorkout.workoutDetails.toDto(
                     exercises = exerciseDtoList,
@@ -714,15 +724,15 @@ class WorkoutLocalDataSource @Inject constructor(
         delay(Constants.fakeDelay)
         val updatedExercise = exercise.copy(workoutId = workoutId)
 
-        val selectedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+        val data = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
-        selectedWorkout ?: run {
+        data ?: run {
             emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
             return@flow
         }
 
         val exerciseDtoList =
-            selectedWorkout.safeExercises.map { exercise ->
+            data.safeExercises.map { exercise ->
 
                 val sets = try {
                     exerciseDao.getSetsForExercise(
@@ -743,8 +753,10 @@ class WorkoutLocalDataSource @Inject constructor(
 
         val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
-        val updatedWorkout = selectedWorkout.copy(exercises = exerciseEntityList)
-        val configuration = selectedWorkout.configuration?.toDto() ?: WorkoutConfigurationDto()
+        val updatedWorkout = data.copy(exercises = exerciseEntityList)
+        val configuration = data.configuration?.toDto() ?: WorkoutConfigurationDto(
+            workoutId = data.workoutDetails.workoutDetailsId
+        )
         val updatedWorkoutDto =
             updatedWorkout.workoutDetails.toDto(
                 exercises = exerciseDtoList,

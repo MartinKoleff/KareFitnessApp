@@ -20,8 +20,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
     ]
 )
 data class WorkoutConfiguration(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    @PrimaryKey(autoGenerate = false)
     val workoutId: Int,
     var cooldownTime: ExerciseTime
 ): KareDto<WorkoutConfigurationDto>{
