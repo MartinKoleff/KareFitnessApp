@@ -11,6 +11,7 @@ import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
 import com.koleff.kare_android.do_workout.data.TimerUtilFake
+import com.koleff.kare_android.do_workout_performance_metrics.DoWorkoutPerformanceMetricsUseCasesUnitTest
 import com.koleff.kare_android.domain.repository.DoWorkoutRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -148,7 +149,8 @@ class DoWorkoutUseCasesUnitTest {
             //Workout
             workoutDao = WorkoutDaoFake()
             workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-            workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
+            workoutConfigurationDao =
+                WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
 
             workoutFakeDataSource = WorkoutFakeDataSource(
                 workoutDao = workoutDao,
@@ -178,11 +180,19 @@ class DoWorkoutUseCasesUnitTest {
                 getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
                 createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
                 createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(
+                    workoutRepository
+                ),
                 getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
-                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
-                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(
+                    workoutRepository
+                ),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(
+                    workoutRepository
+                ),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(
+                    workoutRepository
+                )
             )
 
             //Do workout
@@ -206,6 +216,8 @@ class DoWorkoutUseCasesUnitTest {
                 exerciseSetDao = exerciseSetDao,
                 exerciseDetailsDao = exerciseDetailsDao,
                 exerciseDao = exerciseDao,
+                workoutDao = workoutDao,
+                workoutDetailsDao = workoutDetailsDao,
                 hasInitializedDB = false
             )
 
@@ -266,7 +278,8 @@ class DoWorkoutUseCasesUnitTest {
         runTest {
 
             //Generate workout details and workout
-            val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+            val workoutDetails =
+                MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
             logger.i(TAG, "Mocked workout details: $workoutDetails")
 
             //Insert workout to generate WorkoutDetails in DB

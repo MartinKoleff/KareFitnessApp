@@ -162,6 +162,8 @@ class WorkoutUseCasesUnitTest {
             exerciseSetDao = exerciseSetDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseDao = exerciseDao,
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
             hasInitializedDB = false
         )
 
@@ -743,8 +745,8 @@ class WorkoutUseCasesUnitTest {
         val savedWorkout = createCustomWorkoutState[1].workout
         logger.i(TAG, "Saved workout: $savedWorkout")
 
-        //TODO: test if ExerciseSet-WorkoutDetails cross refs are also deleted...
-        //TODO: test if WorkoutConfiguration is also deleted
+        //TODO: [Test] if ExerciseSet-WorkoutDetails cross refs are also deleted...
+        //TODO: [Test] if WorkoutConfiguration is also deleted
 
         //Delete workout
         val deleteWorkoutState =

@@ -238,6 +238,8 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             exerciseSetDao = exerciseSetDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseDao = exerciseDao,
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
             hasInitializedDB = false
         )
 

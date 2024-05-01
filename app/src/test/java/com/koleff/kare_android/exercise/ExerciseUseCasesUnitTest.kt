@@ -9,6 +9,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.do_workout.DoWorkoutUseCasesUnitTest
 import com.koleff.kare_android.do_workout_performance_metrics.DoWorkoutPerformanceMetricsUseCasesUnitTest
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
@@ -200,6 +201,8 @@ class ExerciseUseCasesUnitTest {
             exerciseSetDao = exerciseSetDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseDao = exerciseDao,
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
             hasInitializedDB = false
         )
 
