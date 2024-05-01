@@ -63,6 +63,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
@@ -72,6 +73,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
+import com.koleff.kare_android.ui.compose.dialogs.WorkoutConfigurationDialog
 import com.koleff.kare_android.ui.state.AnimatedToolbarState
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
@@ -160,6 +162,12 @@ fun WorkoutDetailsScreen(
         showEditWorkoutNameDialog = false
     }
 
+    val onUpdateWorkoutConfiguration: (WorkoutConfigurationDto) -> Unit = { configuration ->
+        workoutDetailsViewModel.updateWorkoutConfiguration(configuration)
+
+        showWorkoutConfigureDialog = false
+    }
+
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
     val onErrorDialogDismiss = {
@@ -237,6 +245,16 @@ fun WorkoutDetailsScreen(
         )
     }
 
+
+    if (showWorkoutConfigureDialog) {
+        WorkoutConfigurationDialog(
+            workoutConfiguration = workoutDetailsState.workoutDetails.configuration,
+            onSave = onUpdateWorkoutConfiguration,
+            onDismiss = {
+                showWorkoutConfigureDialog = false
+            }
+        )
+    }
 
     //Pull to refresh
     val pullRefreshState = rememberPullRefreshState(
