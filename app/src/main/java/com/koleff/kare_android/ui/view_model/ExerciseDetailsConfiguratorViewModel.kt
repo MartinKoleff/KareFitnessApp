@@ -99,7 +99,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 }
             }
 
-            is OnExerciseUpdateEvent.OnExerciseSubmit -> {
+            is OnExerciseUpdateEvent.OnExerciseSubmit -> { //TODO: not working...
                 selectedWorkout = selectedWorkoutState.value.workoutDetails
                 val exercise = event.exercise
 
@@ -163,8 +163,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
             }
         }
     }
-
-    fun addNewSet() { //TODO: remove loading and fix new set number to be + 1
+    fun addNewSet() {
         viewModelScope.launch(dispatcher) {
             exerciseUseCases.addNewExerciseSetUseCase(
                 exerciseId = exerciseId,

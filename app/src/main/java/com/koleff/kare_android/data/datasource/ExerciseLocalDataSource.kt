@@ -146,6 +146,9 @@ class ExerciseLocalDataSource @Inject constructor(
             val updatedSets = selectedExerciseWitSets.sets.toMutableList()
             updatedSets.removeAll { it.setId == setId }
 
+            //Remove set
+            exerciseSetDao.deleteSet(setId)
+
             //Update Exercise - ExerciseSet cross ref
             val crossRef = ExerciseSetCrossRef(
                 exerciseId = exerciseId,
@@ -153,6 +156,14 @@ class ExerciseLocalDataSource @Inject constructor(
                 setId = setId
             )
             exerciseDao.deleteExerciseSetCrossRef(crossRef)
+
+            //Update set numbers sequence
+            updatedSets.forEachIndexed { index, _ ->
+                val updatedSet = updatedSets[index].copy(number = index + 1)
+
+                updatedSets[index] = updatedSet
+                exerciseSetDao.updateSet(updatedSet)
+            }
 
             val selectedExerciseDto = selectedExerciseWitSets.exercise.toDto(updatedSets)
             val result = ExerciseWrapper(
