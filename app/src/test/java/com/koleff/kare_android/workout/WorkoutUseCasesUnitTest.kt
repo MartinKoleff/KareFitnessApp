@@ -2,7 +2,7 @@ package com.koleff.kare_android.workout
 
 import com.koleff.kare_android.common.ExerciseGenerator
 import com.koleff.kare_android.common.MockupDataGeneratorV2
-import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
+import com.koleff.kare_android.data.datasource.WorkoutLocalDataSourceV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
@@ -32,14 +32,14 @@ import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.exercise.data.ExerciseDaoFake
+import com.koleff.kare_android.exercise.data.ExerciseDaoFakeV2
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
-import com.koleff.kare_android.workout.data.WorkoutDaoFake
-import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
+import com.koleff.kare_android.workout.data.WorkoutDaoFakeV2
+import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFakeV2
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -58,15 +58,15 @@ import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
 
-typealias WorkoutFakeDataSource = WorkoutLocalDataSource
+typealias WorkoutFakeDataSource = WorkoutLocalDataSourceV2
 
 class WorkoutUseCasesUnitTest {
     private lateinit var exerciseDBManager: ExerciseDBManagerV2
 
-    private lateinit var workoutDao: WorkoutDaoFake
-    private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
+    private lateinit var workoutDao: WorkoutDaoFakeV2
+    private lateinit var workoutDetailsDao: WorkoutDetailsDaoFakeV2
     private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
-    private lateinit var exerciseDao: ExerciseDaoFake
+    private lateinit var exerciseDao: ExerciseDaoFakeV2
     private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
 
@@ -109,18 +109,14 @@ class WorkoutUseCasesUnitTest {
     fun setup() = runBlocking {
         logger = TestLogger(isLogging)
 
-        exerciseSetDao = ExerciseSetDaoFake()
+        //DAOs
+        workoutDetailsDao = WorkoutDetailsDaoFakeV2()
+        exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
+        exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
         exerciseDetailsDao = ExerciseDetailsDaoFake()
-        exerciseDao = ExerciseDaoFake(
-            exerciseSetDao = exerciseSetDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            logger = logger
-        )
+        workoutDao = WorkoutDaoFakeV2()
+        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
 
-        workoutDao = WorkoutDaoFake()
-        workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
-        
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
@@ -184,10 +180,6 @@ class WorkoutUseCasesUnitTest {
         logger.i(
             "tearDown",
             "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}"
-        )
-        logger.i(
-            "tearDown",
-            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}"
         )
         logger.i(
             "tearDown",
@@ -476,20 +468,8 @@ class WorkoutUseCasesUnitTest {
             val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
-            val exercisesWithSets = workoutDetailsDao.getWorkoutExercisesWithSets()
-                .filter { it.workoutId == workout.workoutId }
-            logger.i(TAG, "Fetched exercise with sets for the fetched workout: $exercisesWithSets")
-
-            val fetchedWorkoutDetailsWithExercisesWithSets = fetchedWorkoutDetails.copy(
-                exercises = exercisesWithSets as MutableList<ExerciseDto>
-            )
-            logger.i(
-                TAG,
-                "Fetched workout details with exercises with sets: $fetchedWorkoutDetailsWithExercisesWithSets"
-            )
-
             logger.i(TAG, "Assert fetched workout details is the same as inserted one.")
-            assertTrue(fetchedWorkoutDetailsWithExercisesWithSets == workoutDetails)
+            assertTrue(fetchedWorkoutDetails == workoutDetails)
         }
 
 

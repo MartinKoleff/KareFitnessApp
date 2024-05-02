@@ -57,14 +57,14 @@ import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.ExerciseFakeDataSource
-import com.koleff.kare_android.exercise.data.ExerciseDaoFake
+import com.koleff.kare_android.exercise.data.ExerciseDaoFakeV2
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutFakeDataSource
 import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
-import com.koleff.kare_android.workout.data.WorkoutDaoFake
-import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFake
+import com.koleff.kare_android.workout.data.WorkoutDaoFakeV2
+import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFakeV2
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
@@ -88,10 +88,10 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         private lateinit var exerciseDBManager: ExerciseDBManagerV2
 
         private lateinit var exerciseSetDao: ExerciseSetDaoFake
-        private lateinit var exerciseDao: ExerciseDaoFake
+        private lateinit var exerciseDao: ExerciseDaoFakeV2
         private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
-        private lateinit var workoutDao: WorkoutDaoFake
-        private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
+        private lateinit var workoutDao: WorkoutDaoFakeV2
+        private lateinit var workoutDetailsDao: WorkoutDetailsDaoFakeV2
         private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
         private lateinit var doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDaoFake
         private lateinit var doWorkoutExerciseSetDao: DoWorkoutExerciseSetDaoFake
@@ -124,15 +124,16 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
     fun setup() = runTest {
         logger = TestLogger(isLogging)
 
-        //Exercise
-        exerciseSetDao = ExerciseSetDaoFake()
+        //DAOs
+        workoutDetailsDao = WorkoutDetailsDaoFakeV2()
+        exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
+        exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
         exerciseDetailsDao = ExerciseDetailsDaoFake()
-        exerciseDao = ExerciseDaoFake(
-            exerciseSetDao = exerciseSetDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            logger = logger
-        )
+        workoutDao = WorkoutDaoFakeV2()
+        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
 
+
+        //Exercise
         exerciseFakeDataSource = ExerciseFakeDataSource(
             exerciseDao = exerciseDao,
             exerciseDetailsDao = exerciseDetailsDao,
@@ -153,9 +154,6 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         )
 
         //Workout
-        workoutDao = WorkoutDaoFake()
-        workoutDetailsDao = WorkoutDetailsDaoFake(exerciseDao = exerciseDao, logger = logger)
-        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao = workoutDetailsDao)
         workoutFakeDataSource = WorkoutFakeDataSource(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
@@ -268,10 +266,6 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         logger.i(
             "tearDown",
             "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutDetailsOrderedById()}"
-        )
-        logger.i(
-            "tearDown",
-            "WorkoutDetailsDao: ${workoutDetailsDao.getWorkoutExercisesWithSets()}"
         )
         logger.i(
             "tearDown",
