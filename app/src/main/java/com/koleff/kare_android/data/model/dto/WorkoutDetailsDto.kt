@@ -14,7 +14,7 @@ data class WorkoutDetailsDto(
     @field:Json(name = "muscle_group")
     val muscleGroup: MuscleGroup = MuscleGroup.NONE,
     @field:Json(name = "exercises")
-    val exercises: MutableList<ExerciseDto> = mutableListOf(),
+    val exercises: List<ExerciseDto> = mutableListOf(),
     @field:Json(name = "is_selected")
     val isSelected: Boolean = false,
     @field:Json(name = "configuration")

@@ -192,18 +192,26 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 return@flow
             }
 
+            //Add sets to all exercises
+            val workoutDetails = workoutDetailsWithExercises.toDto()
+            val updatedExercisesWithSets = workoutDetails.exercises.map { exercise ->
+                exerciseDao.getExerciseWithSets(
+                    exerciseId = exercise.exerciseId,
+                    workoutId = exercise.workoutId
+                ).toDto()
+            }
+            val updatedWorkoutDetails = workoutDetails.copy(exercises = updatedExercisesWithSets)
+
             val result = WorkoutDetailsWrapper(
-                WorkoutDetailsResponse(
-                    workoutDetailsWithExercises.toDto()
-                )
+                WorkoutDetailsResponse(updatedWorkoutDetails)
             )
 
             emit(ResultWrapper.Success(result))
         }
 
 
-    //TODO: [Test] if exerciseSet - workoutDetails cross ref is also deleted... -> App Inspector
-    //No need for separate deleteWorkoutDetails functionality. When workout is deleted the workout details should be deleted also.
+    //No need for separate deleteWorkoutDetails functionality.
+    //When workout is deleted the workout details should be deleted also.
     override suspend fun deleteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -267,7 +275,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    private suspend fun updateExercises(exercises: MutableList<ExerciseDto>, workoutId: Int) {
+    private suspend fun updateExercises(exercises: List<ExerciseDto>, workoutId: Int) {
 
         //Fetch exercises from DB
         val exercisesInDB = workoutDetailsDao.getWorkoutDetailsById(workoutId)?.exercises
@@ -374,7 +382,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    //TODO: [Test] if cross refs are automatically made -> workout - workoutDetails...
     override suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -404,7 +411,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         }
 
 
-    //TODO: [Test] if cross refs are automatically made -> workout - workoutDetails...
     override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -440,11 +446,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    //TODO: test if cross refs are automatically made:
-    // [Test] Workout - WorkoutDetails cross refs
-    // [Test] Exercise - WorkoutDetails cross refs
-    // [Test] Exercise - ExerciseSet cross refs
-    // [Test] Exercises are added...
     override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -489,8 +490,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    //TODO: test if sets are also deleted
-    // test if WorkoutDetails - Exercise cross refs are removed
+
     override suspend fun deleteExercise(
         workoutId: Int,
         exerciseId: Int
@@ -506,7 +506,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 )
 
                 exerciseDao.deleteExercise(deletedExercise.exercise)
-            }catch (e: NoSuchElementException){
+            } catch (e: NoSuchElementException) {
 
                 //Exercise not found
                 emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
@@ -514,15 +514,25 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             }
 
             //Fetch workout details after exercise was deleted
-            val updatedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+            val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
-            updatedWorkout ?: run {
+            workoutDetails ?: run {
                 emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
                 return@flow
             }
 
+            //Add sets to all exercises
+            val updatedWorkoutDetails = workoutDetails.toDto()
+            val updatedExercisesWithSets = updatedWorkoutDetails.exercises.map { exercise ->
+                exerciseDao.getExerciseWithSets(
+                    exerciseId = exercise.exerciseId,
+                    workoutId = exercise.workoutId
+                ).toDto()
+            }
+            val updatedWorkoutDetailsWithSets = updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
+
             val result = WorkoutDetailsWrapper(
-                WorkoutDetailsResponse(updatedWorkout.toDto())
+                WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
             )
 
             emit(ResultWrapper.Success(result))
@@ -545,17 +555,25 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             )
 
             //Fetch workout details after exercise was inserted
-            val updatedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+            val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
-            updatedWorkout ?: run {
-                emit(ResultWrapper.ApiError(KareError.WORKOUT_DETAILS_NOT_FOUND))
+            workoutDetails ?: run {
+                emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
                 return@flow
             }
 
+            //Add sets to all exercises
+            val updatedWorkoutDetails = workoutDetails.toDto()
+            val updatedExercisesWithSets = updatedWorkoutDetails.exercises.map { exercise ->
+                exerciseDao.getExerciseWithSets(
+                    exerciseId = exercise.exerciseId,
+                    workoutId = exercise.workoutId
+                ).toDto()
+            }
+            val updatedWorkoutDetailsWithSets = updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
+
             val result = WorkoutDetailsWrapper(
-                WorkoutDetailsResponse(
-                    updatedWorkout.toDto()
-                )
+                WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
             )
 
             emit(ResultWrapper.Success(result))
@@ -604,24 +622,32 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     set.toEntity()
                 }
             )
-        }catch (e: NoSuchElementException){
+        } catch (e: NoSuchElementException) {
 
             //Exercise not found
             emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
             return@flow
         }
 
-        val updatedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+        val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
-        updatedWorkout ?: run {
-            emit(ResultWrapper.ApiError(KareError.WORKOUT_DETAILS_NOT_FOUND))
+        workoutDetails ?: run {
+            emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
             return@flow
         }
 
+        //Add sets to all exercises
+        val updatedWorkoutDetails = workoutDetails.toDto()
+        val updatedExercisesWithSets = updatedWorkoutDetails.exercises.map { exercise ->
+            exerciseDao.getExerciseWithSets(
+                exerciseId = exercise.exerciseId,
+                workoutId = exercise.workoutId
+            ).toDto()
+        }
+        val updatedWorkoutDetailsWithSets = updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
+
         val result = WorkoutDetailsWrapper(
-            WorkoutDetailsResponse(
-                updatedWorkout.toDto()
-            )
+            WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
         )
 
         emit(ResultWrapper.Success(result))
