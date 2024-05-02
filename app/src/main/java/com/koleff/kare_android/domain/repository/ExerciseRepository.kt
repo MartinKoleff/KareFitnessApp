@@ -10,8 +10,6 @@ import java.util.UUID
 
 interface ExerciseRepository {
 
-    suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
-
     suspend fun getExercise(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>>
 
     suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>>

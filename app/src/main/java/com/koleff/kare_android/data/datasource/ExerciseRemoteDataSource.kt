@@ -22,11 +22,6 @@ class ExerciseRemoteDataSource @Inject constructor(
     private val exerciseApi: ExerciseApi,
     @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ExerciseDataSource {
-    override suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
-        val body = FetchExercisesByWorkoutIdRequest(workoutId)
-
-        return Network.executeApiCall(dispatcher, { ExerciseListWrapper(exerciseApi.getExercises(body)) })
-    }
 
     override suspend fun getExercise(
         exerciseId: Int,

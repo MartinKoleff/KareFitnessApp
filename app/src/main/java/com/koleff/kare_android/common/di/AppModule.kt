@@ -82,7 +82,6 @@ import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
-import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
@@ -525,7 +524,6 @@ object AppModule {
             getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
-            getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
             getExerciseUseCase = GetExerciseUseCase(exerciseRepository)
         )
     }

@@ -10,6 +10,4 @@ data class ExerciseUseCases(
     val deleteExerciseSetUseCase: DeleteExerciseSetUseCase,
     val addNewExerciseSetUseCase: AddNewExerciseSetUseCase,
     val getExerciseUseCase: GetExerciseUseCase,
-    val getExercisesUseCase: GetExercisesUseCase
-    
 )

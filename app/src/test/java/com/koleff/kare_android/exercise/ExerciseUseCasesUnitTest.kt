@@ -31,7 +31,6 @@ import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
-import com.koleff.kare_android.domain.usecases.GetExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
@@ -151,7 +150,6 @@ class ExerciseUseCasesUnitTest {
             getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
             getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
             getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
-            getExercisesUseCase = GetExercisesUseCase(exerciseRepository),
             addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
         )

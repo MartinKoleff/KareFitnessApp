@@ -14,9 +14,6 @@ import javax.inject.Inject
 class ExerciseRepositoryImpl @Inject constructor(
     private val exerciseDataSource: ExerciseDataSource
 ) : ExerciseRepository {
-    override suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
-        return exerciseDataSource.getExercises(workoutId)
-    }
 
     override suspend fun getExercise(
         exerciseId: Int,

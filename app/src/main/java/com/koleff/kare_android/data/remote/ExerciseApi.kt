@@ -23,9 +23,6 @@ interface ExerciseApi {
         @Body body: FetchExerciseRequest
     ): ExerciseResponse
 
-    @GET("api/v1/exercise/getexercises/{exercise_id}") //TODO: update endpoint...
-    suspend fun getExercises(@Body body: FetchExercisesByWorkoutIdRequest): GetExercisesResponse
-
     @GET("api/v1/exercise/getexercise/{workout_id}") //TODO: update endpoint...
     suspend fun getExercise(@Body body: FetchExerciseRequest): ExerciseResponse
 
