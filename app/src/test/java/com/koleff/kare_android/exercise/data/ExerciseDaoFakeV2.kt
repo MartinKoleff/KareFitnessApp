@@ -1,15 +1,16 @@
 package com.koleff.kare_android.exercise.data
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.ExerciseWithSets
-import java.util.UUID
+import com.koleff.kare_android.workout.data.ExerciseChangeListener
 
-class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
+class ExerciseDaoFakeV2(
+    private val exerciseChangeListener: ExerciseChangeListener
+) : ExerciseDao, ExerciseSetChangeListener {
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSets>()
 
     private val isInternalLogging = false
@@ -37,6 +38,7 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
                 sets = emptyList() //New exercises have no sets...
             )
         )
+        exerciseChangeListener.onExerciseAdded(exercise)
     }
 
     override suspend fun insertAllExercises(exercises: List<Exercise>) {
@@ -47,7 +49,10 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
 
     override suspend fun updateExercise(exercise: Exercise) {
         val exercisePosition =
-            exerciseWithSetDB.indexOfFirst { it.exercise.exerciseId == exercise.exerciseId } //Get position
+            exerciseWithSetDB.indexOfFirst {
+                it.exercise.exerciseId == exercise.exerciseId &&
+                        it.exercise.workoutId == exercise.workoutId
+            } //Get position
 
         //Valid exercise
         if (exercisePosition != -1) {
@@ -56,6 +61,7 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
                 exercise = exercise,
                 sets = exerciseSetsInDB
             )
+            exerciseChangeListener.onExerciseUpdated(exercise)
         }
     }
 
@@ -66,6 +72,7 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
             it.exercise.exerciseId == exercise.exerciseId &&
                     it.exercise.workoutId == exercise.workoutId
         }
+        exerciseChangeListener.onExerciseDeleted(exercise)
     }
 
     override suspend fun getExercise(exerciseId: Int, workoutId: Int): Exercise? {
@@ -79,14 +86,12 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
         return exerciseWithSetDB.firstOrNull {
             it.exercise.exerciseId == exerciseId &&
                     it.exercise.workoutId == workoutId
-        }?.sets ?: throw NoSuchElementException("No sets found for exercise with exerciseId $exerciseId and workoutId $workoutId")
+        }?.sets
+            ?: throw NoSuchElementException("No sets found for exercise with exerciseId $exerciseId and workoutId $workoutId")
     }
 
     override suspend fun getExerciseWithSets(exerciseId: Int, workoutId: Int): ExerciseWithSets {
-        val exercise = getExercise(exerciseId, workoutId)
-        val sets = if (exercise != null) getSetsForExercise(exerciseId, workoutId) else emptyList()
-        return if (exercise != null) ExerciseWithSets(exercise, sets) else
-            throw NoSuchElementException("No exercise found with exerciseId $exerciseId and workoutId $workoutId")
+        return super.getExerciseWithSets(exerciseId, workoutId)
     }
 
     override fun getCatalogExercises(workoutId: Int, muscleGroup: MuscleGroup): List<Exercise> {
@@ -119,7 +124,10 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
 
     override fun onSetAdded(exerciseSet: ExerciseSet) {
         val exercisePosition =
-            exerciseWithSetDB.indexOfFirst { it.exercise.exerciseId == exerciseSet.exerciseId } //Get position
+            exerciseWithSetDB.indexOfFirst {
+                it.exercise.exerciseId == exerciseSet.exerciseId &&
+                        it.exercise.workoutId == exerciseSet.workoutId
+            } //Get position
 
         //Valid exercise
         if (exercisePosition != -1) {
@@ -135,7 +143,10 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
 
     override fun onSetUpdated(exerciseSet: ExerciseSet) {
         val exercisePosition =
-            exerciseWithSetDB.indexOfFirst { it.exercise.exerciseId == exerciseSet.exerciseId } //Get position
+            exerciseWithSetDB.indexOfFirst {
+                it.exercise.exerciseId == exerciseSet.exerciseId &&
+                        it.exercise.workoutId == exerciseSet.workoutId
+            } //Get position
 
         //Valid exercise
         if (exercisePosition != -1) {
@@ -146,7 +157,7 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
                 updatedSets.indexOfFirst { it.setId == exerciseSet.setId } //Get position
 
             //Valid set
-            if(setPosition != -1){
+            if (setPosition != -1) {
                 updatedSets[setPosition] = exerciseSet
             }
             val updatedExercise = exercise.copy(sets = updatedSets)
@@ -157,7 +168,10 @@ class ExerciseDaoFakeV2 : ExerciseDao, ExerciseSetChangeListener {
 
     override fun onSetDeleted(exerciseSet: ExerciseSet) {
         val exercisePosition =
-            exerciseWithSetDB.indexOfFirst { it.exercise.exerciseId == exerciseSet.exerciseId } //Get position
+            exerciseWithSetDB.indexOfFirst {
+                it.exercise.exerciseId == exerciseSet.exerciseId &&
+                        it.exercise.workoutId == exerciseSet.workoutId
+            } //Get position
 
         //Valid exercise
         if (exercisePosition != -1) {
