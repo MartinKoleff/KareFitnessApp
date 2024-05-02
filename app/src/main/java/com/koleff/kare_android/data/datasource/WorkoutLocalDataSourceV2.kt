@@ -251,8 +251,13 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 updateExercises(workoutDetails.exercises, workoutDetails.workoutId)
             } catch (e: IllegalArgumentException) {
 
-                //No DB entry
+                //Workout not found
                 emit(ResultWrapper.ApiError(KareError.INVALID_WORKOUT))
+                return@flow
+            } catch (e: NoSuchElementException) {
+
+                //Exercise not found
+                emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
                 return@flow
             }
 
@@ -278,14 +283,19 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             if (existsInDB) {
 
                 //Fetch DB entry
-                val exerciseInDB =
-                    exerciseDao.getExerciseWithSets(exercise.exerciseId, exercise.workoutId).toDto()
+                try {
+                    val exerciseInDB =
+                        exerciseDao.getExerciseWithSets(exercise.exerciseId, exercise.workoutId)
+                            .toDto()
 
-                updateExercise(
-                    setsInDB = exerciseInDB.sets.map { set -> set.toEntity() },
-                    newExercise = exercise.toEntity(),
-                    newSets = exercise.sets.map { set -> set.toEntity() }
-                )
+                    updateExercise(
+                        setsInDB = exerciseInDB.sets.map { set -> set.toEntity() },
+                        newExercise = exercise.toEntity(),
+                        newSets = exercise.sets.map { set -> set.toEntity() }
+                    )
+                } catch (e: NoSuchElementException) {
+                    throw NoSuchElementException("Exercise not found")
+                }
             } else {
 
                 insertExercise(
@@ -489,11 +499,19 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val deletedExercise = exerciseDao.getExerciseWithSets(
-                exerciseId = exerciseId,
-                workoutId = workoutId
-            )
-            exerciseDao.deleteExercise(deletedExercise.exercise)
+            try {
+                val deletedExercise = exerciseDao.getExerciseWithSets(
+                    exerciseId = exerciseId,
+                    workoutId = workoutId
+                )
+
+                exerciseDao.deleteExercise(deletedExercise.exercise)
+            }catch (e: NoSuchElementException){
+
+                //Exercise not found
+                emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
+                return@flow
+            }
 
             //Fetch workout details after exercise was deleted
             val updatedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
@@ -573,18 +591,25 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 //        val updatedExercise = exercise.copy(workoutId = workoutId)
 //        exercisesInDB.add(exercisePosition, updatedExercise)
 
-        val exerciseWithSetsInDB = exerciseDao.getExerciseWithSets(
-            exerciseId = exercise.exerciseId,
-            workoutId = exercise.workoutId
-        )
+        try {
+            val exerciseWithSetsInDB = exerciseDao.getExerciseWithSets(
+                exerciseId = exercise.exerciseId,
+                workoutId = exercise.workoutId
+            )
 
-        updateExercise(
-            setsInDB = exerciseWithSetsInDB.sets,
-            newExercise = exercise.toEntity(),
-            newSets = exercise.sets.map { set ->
-                set.toEntity()
-            }
-        )
+            updateExercise(
+                setsInDB = exerciseWithSetsInDB.sets,
+                newExercise = exercise.toEntity(),
+                newSets = exercise.sets.map { set ->
+                    set.toEntity()
+                }
+            )
+        }catch (e: NoSuchElementException){
+
+            //Exercise not found
+            emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
+            return@flow
+        }
 
         val updatedWorkout = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
