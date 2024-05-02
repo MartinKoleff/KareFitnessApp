@@ -11,10 +11,10 @@ import com.koleff.kare_android.workout.data.ExerciseChangeListener
 class ExerciseDaoFakeV2(
     private val exerciseChangeListener: ExerciseChangeListener
 ) : ExerciseDao, ExerciseSetChangeListener {
+
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSets>()
 
     private val isInternalLogging = false
-
     companion object {
         private const val TAG = "ExerciseDaoFake"
     }
@@ -179,6 +179,25 @@ class ExerciseDaoFakeV2(
 
             val updatedSets = exercise.sets.toMutableList()
             updatedSets.removeAll { it.setId == exerciseSet.setId }
+            val updatedExercise = exercise.copy(sets = updatedSets)
+
+            exerciseWithSetDB[exercisePosition] = updatedExercise
+        }
+    }
+
+    override fun onSetsDeleted(exerciseId: Int, workoutId: Int) {
+        val exercisePosition =
+            exerciseWithSetDB.indexOfFirst {
+                it.exercise.exerciseId == exerciseId &&
+                        it.exercise.workoutId == workoutId
+            } //Get position
+
+        //Valid exercise
+        if (exercisePosition != -1) {
+            val exercise = exerciseWithSetDB[exercisePosition]
+
+            val updatedSets = exercise.sets.toMutableList()
+            updatedSets.removeAll { it.exerciseId == exerciseId && it.workoutId == workoutId }
             val updatedExercise = exercise.copy(sets = updatedSets)
 
             exerciseWithSetDB[exercisePosition] = updatedExercise

@@ -6,13 +6,19 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
+import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
 
-class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeListener, ExerciseChangeListener {
+class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeListener, ExerciseChangeListener,
+    WorkoutDetailsChangeListener {
 
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
+    private lateinit var exerciseSetChangeListener: ExerciseSetChangeListener
+
+    fun setExerciseSetChangeListener(listener: ExerciseSetChangeListener) {
+        this.exerciseSetChangeListener = listener
+    }
 
     private val isInternalLogging = false
-
     companion object {
         private const val TAG = "WorkoutDetailsDaoFakeV2"
     }
@@ -37,7 +43,7 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
 
     override suspend fun deleteWorkoutDetails(workoutId: Int) {
         workoutDetailsDB.removeAll {
-             it.workoutDetails.workoutDetailsId == workoutId
+            it.workoutDetails.workoutDetailsId == workoutId
         }
     }
 
@@ -96,9 +102,9 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }.indexOfFirst { it.workoutDetailsId == configuration.workoutId }
 
         //WorkoutConfiguration found
-        if(index != -1){
+        if (index != -1) {
             workoutDetailsDB[index] = workoutDetailsDB[index].copy(configuration = configuration)
-        }else{
+        } else {
 
             //No workout found for workout configuration
         }
@@ -110,9 +116,9 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }.indexOfFirst { it.workoutDetailsId == workoutId }
 
         //WorkoutConfiguration found
-        if(index != -1){
+        if (index != -1) {
             workoutDetailsDB[index] = workoutDetailsDB[index].copy(configuration = null)
-        }else{
+        } else {
 
             //No workout found for workout configuration
         }
@@ -124,14 +130,11 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }
 
         //WorkoutDetails found
-        if(index != -1){
+        if (index != -1) {
             val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
             updatedExercises.add(exercise)
 
             workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
-        }else{
-
-            //No workout found
         }
     }
 
@@ -141,20 +144,17 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }
 
         //WorkoutDetails found
-        if(index != -1){
+        if (index != -1) {
             val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
 
             val exerciseIndex = updatedExercises.indexOfFirst {
                 it.exerciseId == exercise.exerciseId
             }
 
-            if(exerciseIndex != -1){
+            if (exerciseIndex != -1) {
                 updatedExercises[exerciseIndex] = exercise
                 workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
             }
-        }else{
-
-            //No workout found
         }
     }
 
@@ -164,18 +164,31 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }
 
         //WorkoutDetails found
-        if(index != -1){
+        if (index != -1) {
             val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
             updatedExercises.removeAll { it.exerciseId == exercise.exerciseId }
+            exerciseSetChangeListener.onSetsDeleted(exercise.exerciseId, exercise.workoutId)
 
             workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
-        }else{
+        }
+    }
 
-            //No workout found
+    override fun onExercisesDeleted(workoutId: Int) {
+        val exercisesToDelete = workoutDetailsDB
+            .filter { it.workoutDetails.workoutDetailsId == workoutId }
+            .map { it.exercises }
+            .firstOrNull() ?: emptyList()
+
+        exercisesToDelete.forEach { exercise ->
+            onExerciseDeleted(exercise)
         }
     }
 
     fun clearDB() {
         workoutDetailsDB.clear()
+    }
+
+    override fun onWorkoutDetailsDeleted(workoutId: Int) {
+        workoutDetailsDB.removeAll { it.workoutDetails.workoutDetailsId == workoutId }
     }
 }

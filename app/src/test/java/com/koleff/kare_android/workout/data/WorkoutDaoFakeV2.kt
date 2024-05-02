@@ -4,8 +4,14 @@ import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
+import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
 
-class WorkoutDaoFakeV2 : WorkoutDao {
+class WorkoutDaoFakeV2(
+    private val exerciseChangeListener: ExerciseChangeListener,
+    private val exerciseSetChangeListener: ExerciseSetChangeListener, //TODO: nest in exerciseChangeListener...
+    private val workoutDetailsChangeListener: WorkoutDetailsChangeListener,
+    private val workoutConfigurationChangeListener: WorkoutConfigurationChangeListener
+) : WorkoutDao {
 
     private var workoutsDB = mutableListOf<Workout>()
 
@@ -29,6 +35,11 @@ class WorkoutDaoFakeV2 : WorkoutDao {
 
         //If there are multiple entries -> remove all
         workoutsDB.removeAll { it.workoutId == workoutId }
+
+        //Delete workout details, exercises, sets, workout configuration...
+        exerciseChangeListener.onExercisesDeleted(workoutId)
+        workoutConfigurationChangeListener.onWorkoutConfigurationDeleted(workoutId)
+        workoutDetailsChangeListener.onWorkoutDetailsDeleted(workoutId)
     }
 
     override suspend fun updateWorkout(workout: Workout) {
