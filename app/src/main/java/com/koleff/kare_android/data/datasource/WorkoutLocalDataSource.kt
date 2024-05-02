@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.datasource
 import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
@@ -24,6 +25,7 @@ import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
+import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.ExerciseWithSets
@@ -746,10 +748,26 @@ class WorkoutLocalDataSource @Inject constructor(
             } as MutableList
 
         //Remove exercise current entry
+        val exerciseDbEntry = exerciseDtoList.firstOrNull { it.exerciseId == exercise.exerciseId }
+        val deletedSets = findMissingSets(exerciseDbEntry?.sets ?: emptyList(), exercise.sets) //Sets to delete...
+
+        val positionOldEntry = exerciseDtoList.indexOfFirst{ it.exerciseId == exercise.exerciseId } //Get position of removed exercise...
         exerciseDtoList.removeAll { it.exerciseId == exercise.exerciseId }
 
+        //Delete Exercise - ExerciseSet cross refs of deleted sets
+        for (set in deletedSets) {
+            val exerciseSetCrossRef =
+                ExerciseSetCrossRef(
+                    exerciseId = exercise.exerciseId,
+                    workoutId = workoutId,
+                    setId = set.setId ?: continue
+                )
+            exerciseDao.deleteExerciseSetCrossRef(exerciseSetCrossRef)
+            exerciseSetDao.deleteSet(set.toEntity())
+        }
+
         //Add new exercise
-        exerciseDtoList.add(updatedExercise)
+        exerciseDtoList.add(positionOldEntry, updatedExercise) //Add new exercise to deleted position...
 
         val exerciseEntityList = exerciseDtoList.map { it.toEntity() }
 
@@ -798,6 +816,11 @@ class WorkoutLocalDataSource @Inject constructor(
         )
 
         emit(ResultWrapper.Success(result))
+    }
+
+    private fun findMissingSets(oldSets: List<ExerciseSetDto>, newSets: List<ExerciseSetDto>): List<ExerciseSetDto> {
+        val oldSetIds = oldSets.map { it.setId }.toSet()  //Convert to set for faster lookup
+        return newSets.filter { it.setId !in oldSetIds }  //Filter new sets to find ones not in old set ids
     }
 
     override suspend fun getWorkoutConfiguration(workoutId: Int): Flow<ResultWrapper<WorkoutConfigurationWrapper>> =
