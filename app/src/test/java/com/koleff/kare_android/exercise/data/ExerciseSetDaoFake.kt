@@ -6,7 +6,7 @@ import java.util.UUID
 
 class ExerciseSetDaoFake(
     private val exerciseSetChangeListener: ExerciseSetChangeListener
-) : ExerciseSetDao {
+) : ExerciseSetDao{
 
     private val exerciseSetDB = mutableListOf<ExerciseSet>()
 

@@ -119,9 +119,15 @@ class DoWorkoutUseCasesUnitTest {
             //DAOs
             workoutDetailsDao = WorkoutDetailsDaoFakeV2()
             exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
+            workoutDetailsDao.setExerciseSetChangeListener(exerciseDao)
             exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
             exerciseDetailsDao = ExerciseDetailsDaoFake()
-            workoutDao = WorkoutDaoFakeV2()
+            workoutDao = WorkoutDaoFakeV2(
+                exerciseChangeListener = workoutDetailsDao,
+                exerciseSetChangeListener = exerciseDao,
+                workoutConfigurationChangeListener = workoutDetailsDao,
+                workoutDetailsChangeListener = workoutDetailsDao
+            )
             workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
 
             //Exercise

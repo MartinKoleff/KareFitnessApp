@@ -112,9 +112,15 @@ class WorkoutUseCasesUnitTest {
         //DAOs
         workoutDetailsDao = WorkoutDetailsDaoFakeV2()
         exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
+        workoutDetailsDao.setExerciseSetChangeListener(exerciseDao)
         exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
         exerciseDetailsDao = ExerciseDetailsDaoFake()
-        workoutDao = WorkoutDaoFakeV2()
+        workoutDao = WorkoutDaoFakeV2(
+            exerciseChangeListener = workoutDetailsDao,
+            exerciseSetChangeListener = exerciseDao,
+            workoutConfigurationChangeListener = workoutDetailsDao,
+            workoutDetailsChangeListener = workoutDetailsDao
+        )
         workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
 
         workoutFakeDataSource = WorkoutFakeDataSource(
@@ -205,7 +211,7 @@ class WorkoutUseCasesUnitTest {
      */
     @Test
     @DisplayName("Create workout using CreateNewWorkoutUseCase test")
-    fun `create workout using CreateNewWorkoutUseCase test`() =
+    fun `Create workout using CreateNewWorkoutUseCase test`() =
         runTest {
 
             //Create workout on empty DB
