@@ -99,7 +99,7 @@ object MockupDataGeneratorV2 {
             workoutId = workoutId,
             sets = generateExerciseSetsList(
                 enableSetIdGeneration = enableSetIdGeneration,
-                workoutId = generatedExercise.workoutId,
+                workoutId = workoutId,
                 exerciseId = generatedExercise.exerciseId
             )
         )
@@ -120,11 +120,12 @@ object MockupDataGeneratorV2 {
         //Handle pre-selected exercises
         preSelectedExerciseIds.take(n).forEach { exerciseId ->
             catalogExercises.getOrNull(exerciseId - 1)?.let { exercise ->
-                exercisesList.add(
-                    exercise.copy(
-                        workoutId = workoutId
-                    )
-                )
+                val updatedSets = exercise.sets.map { set ->
+                    set.copy(workoutId = workoutId)
+                }
+
+                val updatedExercise = exercise.copy(workoutId = workoutId, sets = updatedSets)
+                exercisesList.add(updatedExercise)
             }
         }
 
