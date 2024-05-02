@@ -20,8 +20,8 @@ import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
 fun SearchExercisesList(
     modifier: Modifier,
     exerciseList: List<ExerciseDto>,
-    workoutId: Int,
-    navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit,
+    workoutId: Int, //Used for navigateToExerciseDetailsConfigurator -> Deprecated
+    navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit, //Deprecated
     onSubmitExercise: (ExerciseDto) -> Unit
 ) {
     LazyColumn(modifier = modifier) {

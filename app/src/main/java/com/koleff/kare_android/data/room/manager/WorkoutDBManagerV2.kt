@@ -51,8 +51,10 @@ class WorkoutDBManagerV2 @Inject constructor(
                         )
 
                     //Save set
-                    sets.forEach { set ->
-                        exerciseSetDao.saveSet(set.toEntity())
+                    sets
+                        .map { it.toEntity() }
+                        .forEach { set ->
+                        exerciseSetDao.insertExerciseSet(set)
                     }
                 }
             }

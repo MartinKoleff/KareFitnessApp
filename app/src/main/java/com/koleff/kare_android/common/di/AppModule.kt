@@ -18,13 +18,13 @@ import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsDataSource
 import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsLocalDataSource
 import com.koleff.kare_android.data.datasource.ExerciseDataSource
-import com.koleff.kare_android.data.datasource.ExerciseLocalDataSource
+import com.koleff.kare_android.data.datasource.ExerciseLocalDataSourceV2
 import com.koleff.kare_android.data.datasource.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
 import com.koleff.kare_android.data.datasource.UserRemoteDataSource
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
-import com.koleff.kare_android.data.datasource.WorkoutLocalDataSource
+import com.koleff.kare_android.data.datasource.WorkoutLocalDataSourceV2
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.remote.ExerciseApi
@@ -371,7 +371,7 @@ object AppModule {
         exerciseDetailsDao: ExerciseDetailsDao,
         exerciseSetDao: ExerciseSetDao
     ): ExerciseDataSource {
-        return if (useLocalDataSource) ExerciseLocalDataSource(
+        return if (useLocalDataSource) ExerciseLocalDataSourceV2(
             exerciseDao = exerciseDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseSetDao = exerciseSetDao
@@ -391,7 +391,7 @@ object AppModule {
         workoutConfigurationDao: WorkoutConfigurationDao,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
-        return if (useLocalDataSource) WorkoutLocalDataSource(
+        return if (useLocalDataSource) WorkoutLocalDataSourceV2(
             workoutDao = workoutDao,
             exerciseDao = exerciseDao,
             workoutDetailsDao = workoutDetailsDao,

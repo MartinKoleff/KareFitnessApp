@@ -18,7 +18,7 @@ interface WorkoutDao {
     suspend fun insertWorkout(workout: Workout): WorkoutId
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(workouts: List<Workout>)
+    suspend fun insertAllWorkouts(workouts: List<Workout>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllWorkoutDetailsWorkoutCrossRef(crossRefs: List<WorkoutDetailsWorkoutCrossRef>)

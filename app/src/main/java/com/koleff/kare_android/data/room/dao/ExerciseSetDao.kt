@@ -19,7 +19,7 @@ interface ExerciseSetDao {
     suspend fun insertExerciseSet(exerciseSet: ExerciseSet)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllExerciseSets(sets: List<ExerciseSet>)
+    suspend fun insertAllExerciseSets(exerciseSets: List<ExerciseSet>)
 
     @Update
     suspend fun updateSet(exerciseSet: ExerciseSet)

@@ -21,7 +21,6 @@ interface WorkoutDetailsDao {
     suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): WorkoutDetailsId
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllDetails(workoutDetailsList: List<WorkoutDetails>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
@@ -34,6 +33,7 @@ interface WorkoutDetailsDao {
 
     @Delete
     suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
+    suspend fun insertAllWorkoutDetails(workoutDetailsList: List<WorkoutDetails>)
 
     @Query("DELETE FROM workout_details_table WHERE workoutDetailsId = :workoutId")
     suspend fun deleteWorkoutDetails(workoutId: Int)
