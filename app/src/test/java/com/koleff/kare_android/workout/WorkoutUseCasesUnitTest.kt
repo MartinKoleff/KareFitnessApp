@@ -8,8 +8,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
@@ -62,7 +61,7 @@ import java.util.stream.Stream
 typealias WorkoutFakeDataSource = WorkoutLocalDataSource
 
 class WorkoutUseCasesUnitTest {
-    private lateinit var exerciseDBManager: ExerciseDBManager
+    private lateinit var exerciseDBManager: ExerciseDBManagerV2
 
     private lateinit var workoutDao: WorkoutDaoFake
     private lateinit var workoutDetailsDao: WorkoutDetailsDaoFake
@@ -158,7 +157,7 @@ class WorkoutUseCasesUnitTest {
         )
 
         //Initialize DB
-        exerciseDBManager = ExerciseDBManager(
+        exerciseDBManager = ExerciseDBManagerV2(
             exerciseSetDao = exerciseSetDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseDao = exerciseDao,
@@ -1100,6 +1099,9 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Fetched workout: $fetchedWorkout")
         logger.i(TAG, "Assert totalExercises in workout has incremented")
         assertTrue { fetchedWorkout.totalExercises == workoutDetailsAfterSubmit.exercises.size }
+
+        //TODO: [Test] Have DB entry with some sets and submit same entry but with fewer sets
+        // -> check if sets are updated with the new ones (that are not in DB entry)...
     }
 
     /**

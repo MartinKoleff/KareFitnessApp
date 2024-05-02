@@ -8,9 +8,7 @@ import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
-import com.koleff.kare_android.do_workout.DoWorkoutUseCasesUnitTest
-import com.koleff.kare_android.do_workout_performance_metrics.DoWorkoutPerformanceMetricsUseCasesUnitTest
+import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
@@ -71,7 +69,7 @@ import java.util.stream.Stream
 typealias ExerciseFakeDataSource = ExerciseLocalDataSource
 
 class ExerciseUseCasesUnitTest {
-    private lateinit var exerciseDBManager: ExerciseDBManager
+    private lateinit var exerciseDBManager: ExerciseDBManagerV2
 
     private lateinit var exerciseSetDao: ExerciseSetDaoFake
     private lateinit var exerciseDao: ExerciseDaoFake
@@ -195,7 +193,7 @@ class ExerciseUseCasesUnitTest {
         )
 
         //Initialize DB
-        exerciseDBManager = ExerciseDBManager(
+        exerciseDBManager = ExerciseDBManagerV2(
             exerciseSetDao = exerciseSetDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseDao = exerciseDao,

@@ -9,7 +9,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.do_workout.data.TimerUtilFake
 import com.koleff.kare_android.do_workout_performance_metrics.DoWorkoutPerformanceMetricsUseCasesUnitTest
 import com.koleff.kare_android.domain.repository.DoWorkoutRepository
@@ -80,7 +80,7 @@ class DoWorkoutUseCasesUnitTest {
     companion object {
         private const val TAG = "DoWorkoutUseCaseUnitText"
 
-        private lateinit var exerciseDBManager: ExerciseDBManager
+        private lateinit var exerciseDBManager: ExerciseDBManagerV2
 
         private lateinit var exerciseSetDao: ExerciseSetDaoFake
         private lateinit var exerciseDao: ExerciseDaoFake
@@ -210,7 +210,7 @@ class DoWorkoutUseCasesUnitTest {
             timer = TimerUtilFake()
 
             //Initialize DB
-            exerciseDBManager = ExerciseDBManager(
+            exerciseDBManager = ExerciseDBManagerV2(
                 exerciseSetDao = exerciseSetDao,
                 exerciseDetailsDao = exerciseDetailsDao,
                 exerciseDao = exerciseDao,

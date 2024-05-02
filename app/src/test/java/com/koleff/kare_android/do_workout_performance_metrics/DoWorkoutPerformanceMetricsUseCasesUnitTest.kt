@@ -9,7 +9,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.DoWorkoutPerformanceMetricsRepositoryImpl
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.do_workout.DoWorkoutUseCasesUnitTest
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutExerciseSetDaoFake
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutPerformanceMetricsDaoFake
@@ -85,7 +85,7 @@ typealias DoWorkoutPerformanceMetricsFakeDataSource = DoWorkoutPerformanceMetric
 class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
     companion object {
-        private lateinit var exerciseDBManager: ExerciseDBManager
+        private lateinit var exerciseDBManager: ExerciseDBManagerV2
 
         private lateinit var exerciseSetDao: ExerciseSetDaoFake
         private lateinit var exerciseDao: ExerciseDaoFake
@@ -232,7 +232,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         )
 
         //Initialize DB
-        exerciseDBManager = ExerciseDBManager(
+        exerciseDBManager = ExerciseDBManagerV2(
             exerciseSetDao = exerciseSetDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseDao = exerciseDao,
