@@ -62,12 +62,19 @@ interface ExerciseDao {
     }
 
     @Transaction
-    @Query("SELECT * FROM exercise_table WHERE muscleGroup = :muscleGroup ORDER BY exerciseId")
-    fun getExercisesOrderedById(muscleGroup: MuscleGroup): List<Exercise>
+    @Query("SELECT * FROM exercise_table WHERE workoutId = :workoutId AND muscleGroup = :muscleGroup ORDER BY exerciseId")
+    fun getCatalogExercises(
+        workoutId: Int,
+        muscleGroup: MuscleGroup
+    ): List<Exercise>
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId")
     fun getAllExercises(): List<Exercise>
+
+    @Transaction
+    @Query("SELECT * FROM exercise_table WHERE workoutId = :workoutId ORDER BY exerciseId")
+    fun getAllCatalogExercises(workoutId: Int): List<Exercise>
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId ASC")

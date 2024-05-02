@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 interface ExerciseDataSource {
-    suspend fun getExercises(workoutId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
-
     suspend fun getExercise(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>>
 
     suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>>
