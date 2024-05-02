@@ -153,15 +153,20 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val data = workoutDao.getWorkoutsOrderedById()
+        val workouts = workoutDao.getWorkoutsOrderedById().map { it.toDto() }
+        val updatedWorkouts = removeCatalogWorkout(workouts)
 
         val result = WorkoutListWrapper(
             WorkoutsListResponse(
-                data.map(Workout::toDto)
+                updatedWorkouts
             )
         )
 
         emit(ResultWrapper.Success(result))
+    }
+
+    private fun removeCatalogWorkout(workouts: List<WorkoutDto>): List<WorkoutDto> {
+        return workouts.filter { it.workoutId != Constants.CATALOG_EXERCISE_ID }
     }
 
     override suspend fun getAllWorkoutDetails(): Flow<ResultWrapper<WorkoutDetailsListWrapper>> =
@@ -169,16 +174,21 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val data = workoutDetailsDao.getWorkoutDetailsOrderedById()
+            val workoutDetailsList = workoutDetailsDao.getWorkoutDetailsOrderedById().map { it.toDto() }
+            val updatedWorkoutDetailsList = removeCatalogWorkoutDetails(workoutDetailsList)
 
             val result = WorkoutDetailsListWrapper(
                 WorkoutDetailsListResponse(
-                    data.map(WorkoutDetailsWithExercises::toDto)
+                    updatedWorkoutDetailsList
                 )
             )
 
             emit(ResultWrapper.Success(result))
         }
+
+    private fun removeCatalogWorkoutDetails(workoutDetailsList: List<WorkoutDetailsDto>): List<WorkoutDetailsDto> {
+        return workoutDetailsList.filter { it.workoutId != Constants.CATALOG_EXERCISE_ID }
+    }
 
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
@@ -218,8 +228,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             delay(Constants.fakeDelay)
 
             workoutDao.deleteWorkout(workoutId)
-//            workoutDetailsDao.deleteWorkoutDetails(workoutId)
-//            workoutConfigurationDao.deleteWorkoutConfiguration(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()
