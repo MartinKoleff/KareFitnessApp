@@ -7,16 +7,14 @@ import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 
 class WorkoutConfigurationDaoFake(
-    private val workoutDetailsDao: WorkoutDetailsDaoFake
+    private val workoutConfigurationChangeListener: WorkoutConfigurationChangeListener
 ): WorkoutConfigurationDao {
 
     private val workoutConfigurationDB = mutableListOf<WorkoutConfiguration>()
 
     override suspend fun insertWorkoutConfiguration(configuration: WorkoutConfiguration): WorkoutConfigurationId {
         workoutConfigurationDB.add(configuration)
-
-        //Update workoutDetailsDao DB...
-        workoutDetailsDao.updateWorkoutConfiguration(configuration)
+        workoutConfigurationChangeListener.onWorkoutConfigurationUpdated(configuration)
 
         return workoutConfigurationDB.size.toLong()
     }
@@ -33,9 +31,7 @@ class WorkoutConfigurationDaoFake(
 
             //Replace workout configuration
             workoutConfigurationDB[index] = configuration
-
-            //Update workoutDetailsDao DB...
-            workoutDetailsDao.updateWorkoutConfiguration(configuration)
+            workoutConfigurationChangeListener.onWorkoutConfigurationUpdated(configuration)
         } else {
 
             //Delete invalid workout configuration?
@@ -44,16 +40,12 @@ class WorkoutConfigurationDaoFake(
 
     override suspend fun deleteWorkoutConfiguration(configuration: WorkoutConfiguration) {
         workoutConfigurationDB.remove(configuration)
-
-        //Update workoutDetailsDao DB...
-        workoutDetailsDao.deleteWorkoutConfiguration(configuration.workoutId)
+        workoutConfigurationChangeListener.onWorkoutConfigurationDeleted(configuration.workoutId)
     }
 
     override suspend fun deleteWorkoutConfiguration(workoutId: Int) {
         workoutConfigurationDB.removeAll {it.workoutId == workoutId }
-
-        //Update workoutDetailsDao DB...
-        workoutDetailsDao.deleteWorkoutConfiguration(workoutId)
+        workoutConfigurationChangeListener.onWorkoutConfigurationDeleted(workoutId)
     }
 
     fun clearDB(){
