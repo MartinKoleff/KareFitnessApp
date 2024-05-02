@@ -11,7 +11,7 @@ class ExerciseDetailsDaoFake : ExerciseDetailsDao {
         exerciseDetailsDB.add(exercise)
     }
 
-    override suspend fun insertAll(exercises: List<ExerciseDetails>) {
+    override suspend fun insertAllExerciseDetails(exercises: List<ExerciseDetails>) {
         exerciseDetailsDB.addAll(exercises)
     }
 

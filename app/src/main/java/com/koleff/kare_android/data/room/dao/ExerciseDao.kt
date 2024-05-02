@@ -21,31 +21,31 @@ interface ExerciseDao {
     suspend fun insertExercise(exercise: Exercise)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(exercises: List<Exercise>)
+    suspend fun insertAllExercises(exercises: List<Exercise>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllExerciseDetailsExerciseCrossRefs(crossRefs: List<ExerciseDetailsExerciseCrossRef>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertExerciseSetCrossRef(crossRef: ExerciseSetCrossRef)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertExerciseDetailsExerciseCrossRef(crossRef: ExerciseDetailsExerciseCrossRef)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertAllExerciseDetailsExerciseCrossRefs(crossRefs: List<ExerciseDetailsExerciseCrossRef>)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertExerciseSetCrossRef(crossRef: ExerciseSetCrossRef)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
+//
+//    @Delete
+//    suspend fun deleteExerciseSetCrossRef(crossRef: ExerciseSetCrossRef)
+//
+//    @Delete
+//    suspend fun deleteAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateExercise(exercise: Exercise)
 
     @Delete
     suspend fun deleteExercise(exercise: Exercise)
-
-    @Delete
-    suspend fun deleteExerciseSetCrossRef(crossRef: ExerciseSetCrossRef)
-
-    @Delete
-    suspend fun deleteAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
 
     @Transaction
     @Query("SELECT * FROM exercise_table WHERE exerciseId = :exerciseId AND workoutId = :workoutId")

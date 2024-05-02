@@ -196,7 +196,7 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
                 )
 
                 //Save new generated set
-                exerciseSetDao.saveSet(newSet)
+                exerciseSetDao.insertExerciseSet(newSet)
 
                 //Update exercise
                 val updatedExercise = exerciseDao.getExerciseWithSets(
