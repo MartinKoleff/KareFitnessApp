@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
+import androidx.room.Update
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
@@ -33,6 +34,9 @@ interface ExerciseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllExerciseSetCrossRef(crossRefs: List<ExerciseSetCrossRef>)
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateExercise(exercise: Exercise)
 
     @Delete
     suspend fun deleteExercise(exercise: Exercise)

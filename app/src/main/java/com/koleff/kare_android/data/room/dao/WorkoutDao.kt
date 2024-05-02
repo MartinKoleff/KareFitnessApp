@@ -9,11 +9,13 @@ import androidx.room.Update
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 
+typealias WorkoutId = Long
+
 @Dao
 interface WorkoutDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkout(workout: Workout): Long
+    suspend fun insertWorkout(workout: Workout): WorkoutId
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(workouts: List<Workout>)
@@ -44,5 +46,5 @@ interface WorkoutDao {
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE workoutId = :workoutId") //true = 1, false = 0
-    fun getWorkoutById(workoutId: Int): Workout
+    fun getWorkoutById(workoutId: Int): Workout?
 }
