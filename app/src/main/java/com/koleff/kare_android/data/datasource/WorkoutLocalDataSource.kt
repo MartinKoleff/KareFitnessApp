@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
 
+@Deprecated("Cross refs version. Entities updated to automatically set up cross refs.")
 class WorkoutLocalDataSource @Inject constructor(
     private val workoutDao: WorkoutDao,
     private val exerciseDao: ExerciseDao,
