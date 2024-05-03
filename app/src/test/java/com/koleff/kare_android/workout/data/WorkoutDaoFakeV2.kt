@@ -8,7 +8,6 @@ import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
 
 class WorkoutDaoFakeV2(
     private val exerciseChangeListener: ExerciseChangeListener,
-    private val exerciseSetChangeListener: ExerciseSetChangeListener, //TODO: nest in exerciseChangeListener...
     private val workoutDetailsChangeListener: WorkoutDetailsChangeListener,
     private val workoutConfigurationChangeListener: WorkoutConfigurationChangeListener
 ) : WorkoutDao {

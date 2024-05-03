@@ -37,6 +37,7 @@ import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.utils.TestLogger
+import com.koleff.kare_android.workout.data.CompositeExerciseSetChangeListener
 import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDaoFakeV2
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFakeV2
@@ -112,12 +113,16 @@ class WorkoutUseCasesUnitTest {
         //DAOs
         workoutDetailsDao = WorkoutDetailsDaoFakeV2()
         exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
-        workoutDetailsDao.setExerciseSetChangeListener(exerciseDao)
         exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
+
+        val compositeExerciseSetChangeListener = CompositeExerciseSetChangeListener()
+        compositeExerciseSetChangeListener.addListener(exerciseDao)
+        compositeExerciseSetChangeListener.addListener(exerciseSetDao)
+        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener)
+
         exerciseDetailsDao = ExerciseDetailsDaoFake()
         workoutDao = WorkoutDaoFakeV2(
             exerciseChangeListener = workoutDetailsDao,
-            exerciseSetChangeListener = exerciseDao,
             workoutConfigurationChangeListener = workoutDetailsDao,
             workoutDetailsChangeListener = workoutDetailsDao
         )
@@ -877,6 +882,7 @@ class WorkoutUseCasesUnitTest {
                 TAG,
                 "Workout details after new exercise was added: $workoutDetailsAfterAdd\n. Exercises list: ${workoutDetailsAfterAdd.exercises}"
             )
+            logger.i(TAG, "Total exercises: ${workoutDetailsAfterAdd.exercises.size}")
 
             logger.i(TAG, "Assert the exercise is added in workout details")
             assertTrue { workoutDetailsAfterAdd.exercises.size == workoutDetails.exercises.size + 1 }
