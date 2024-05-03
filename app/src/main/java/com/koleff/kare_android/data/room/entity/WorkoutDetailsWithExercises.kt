@@ -3,6 +3,8 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Embedded
 import androidx.room.Relation
 import com.koleff.kare_android.data.KareDto
+import com.koleff.kare_android.data.KareDtoExtended
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 
@@ -15,7 +17,7 @@ data class WorkoutDetailsWithExercises(
         entityColumn = "workoutId",
         entity = Exercise::class,
     )
-    val exercises: List<Exercise>?,
+    val exercises: List<ExerciseWithSets>?,
 
     @Relation(
         parentColumn = "workoutDetailsId",
@@ -23,7 +25,7 @@ data class WorkoutDetailsWithExercises(
     )
     val configuration: WorkoutConfiguration?,
 ) : KareDto<WorkoutDetailsDto> {
-    val safeExercises: List<Exercise>
+    val safeExercises: List<ExerciseWithSets>
         get() = exercises ?: emptyList()
 
     override fun toDto(): WorkoutDetailsDto {
@@ -33,10 +35,11 @@ data class WorkoutDetailsWithExercises(
             description = workoutDetails.description,
             muscleGroup = workoutDetails.muscleGroup,
             exercises = (exercises?.map {
-                it.toDto(sets = emptyList())
-            } ?: emptyList()).toMutableList(),
+                it.toDto()
+            } ?: emptyList()),
             isSelected = workoutDetails.isSelected,
-            configuration = configuration?.toDto() ?: WorkoutConfigurationDto() //Default configuration if there is no in DB...
+            configuration = configuration?.toDto()
+                ?: WorkoutConfigurationDto() //Default configuration if there is no in DB...
         )
     }
 }

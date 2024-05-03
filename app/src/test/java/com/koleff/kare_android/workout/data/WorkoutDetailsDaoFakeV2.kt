@@ -3,13 +3,15 @@ package com.koleff.kare_android.workout.data
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsId
 import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.ExerciseSet
+import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
 
-class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeListener, ExerciseChangeListener,
-    WorkoutDetailsChangeListener {
+class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeListener,
+    ExerciseChangeListener, ExerciseSetChangeListener, WorkoutDetailsChangeListener {
 
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
     private lateinit var compositeExerciseSetChangeListener: CompositeExerciseSetChangeListener
@@ -19,6 +21,7 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
     }
 
     private val isInternalLogging = false
+
     companion object {
         private const val TAG = "WorkoutDetailsDaoFakeV2"
     }
@@ -132,7 +135,12 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         //WorkoutDetails found
         if (index != -1) {
             val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
-            updatedExercises.add(exercise)
+            updatedExercises.add(
+                ExerciseWithSets(
+                    exercise = exercise,
+                    sets = emptyList() //To be wired onSetAdded...
+                )
+            )
 
             workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
         }
@@ -148,11 +156,16 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
             val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
 
             val exerciseIndex = updatedExercises.indexOfFirst {
-                it.exerciseId == exercise.exerciseId
+                it.exercise.exerciseId == exercise.exerciseId &&
+                        it.exercise.workoutId == exercise.workoutId
             }
 
             if (exerciseIndex != -1) {
-                updatedExercises[exerciseIndex] = exercise
+                updatedExercises[exerciseIndex] =
+                    ExerciseWithSets(
+                        exercise = exercise,
+                        sets = updatedExercises[exerciseIndex].sets
+                    )
                 workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
             }
         }
@@ -165,9 +178,15 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
 
         //WorkoutDetails found
         if (index != -1) {
-            compositeExerciseSetChangeListener.onSetsDeleted(exercise.exerciseId, exercise.workoutId).also {
+            compositeExerciseSetChangeListener.onSetsDeleted(
+                exercise.exerciseId,
+                exercise.workoutId
+            ).also {
                 val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
-                updatedExercises.removeAll { it.exerciseId == exercise.exerciseId }
+                updatedExercises.removeAll {
+                    it.exercise.exerciseId == exercise.exerciseId
+                            && it.exercise.workoutId == exercise.workoutId
+                }
 
                 workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
             }
@@ -180,8 +199,8 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
             .map { it.exercises }
             .firstOrNull() ?: emptyList()
 
-        exercisesToDelete.forEach { exercise ->
-            onExerciseDeleted(exercise)
+        exercisesToDelete.forEach { exerciseWithSets ->
+            onExerciseDeleted(exerciseWithSets.exercise)
         }
     }
 
@@ -191,5 +210,189 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
 
     override fun onWorkoutDetailsDeleted(workoutId: Int) {
         workoutDetailsDB.removeAll { it.workoutDetails.workoutDetailsId == workoutId }
+    }
+
+
+    override suspend fun onSetAdded(exerciseSet: ExerciseSet) {
+        val workoutPosition = workoutDetailsDB.indexOfFirst {
+            it.workoutDetails.workoutDetailsId == exerciseSet.workoutId
+        }
+
+        //Workout found
+        if (workoutPosition != -1) {
+            try {
+                val updatedExercises = workoutDetailsDB[workoutPosition].exercises?.toMutableList()
+                    ?: throw IllegalArgumentException("Exercises not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+
+                val exercisePosition = updatedExercises.indexOfFirst {
+                    it.exercise.exerciseId == exerciseSet.exerciseId &&
+                            it.exercise.workoutId == exerciseSet.workoutId
+                }
+
+                //Exercise found
+                if (exercisePosition != -1) {
+                    val exerciseWithSets = updatedExercises[exercisePosition]
+
+                    val updatedSets = exerciseWithSets.sets.toMutableList()
+                    updatedSets.add(exerciseSet)
+
+                    val updatedExercise = ExerciseWithSets(
+                        exercise = exerciseWithSets.exercise,
+                        sets = updatedSets
+                    )
+                    updatedExercises.add(updatedExercise)
+
+                    val updatedWorkout = WorkoutDetailsWithExercises(
+                        workoutDetails = workoutDetailsDB[workoutPosition].workoutDetails,
+                        exercises = updatedExercises,
+                        configuration = workoutDetailsDB[workoutPosition].configuration
+                    )
+                    workoutDetailsDB[workoutPosition] = updatedWorkout
+                } else {
+                    throw NoSuchElementException("Exercise not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+                }
+            } catch (e: NoSuchElementException) {
+                return
+            } catch (e: IllegalArgumentException) {
+                return
+            }
+        }
+    }
+
+    override suspend fun onSetUpdated(exerciseSet: ExerciseSet) {
+        val workoutPosition = workoutDetailsDB.indexOfFirst {
+            it.workoutDetails.workoutDetailsId == exerciseSet.workoutId
+        }
+
+        //Workout found
+        if (workoutPosition != -1) {
+            try {
+                val updatedExercises = workoutDetailsDB[workoutPosition].exercises?.toMutableList()
+                    ?: throw IllegalArgumentException("Exercises not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+
+                val exercisePosition = updatedExercises.indexOfFirst {
+                    it.exercise.exerciseId == exerciseSet.exerciseId &&
+                            it.exercise.workoutId == exerciseSet.workoutId
+                }
+
+                //Exercise found
+                if (exercisePosition != -1) {
+                    val exerciseWithSets = updatedExercises[exercisePosition]
+
+                    val updatedSets = exerciseWithSets.sets.toMutableList()
+                    updatedSets.removeAll { it.setId == exerciseSet.setId }
+                    updatedSets.add(exerciseSet)
+
+                    val updatedExercise = ExerciseWithSets(
+                        exercise = exerciseWithSets.exercise,
+                        sets = updatedSets
+                    )
+                    updatedExercises.removeAt(exercisePosition)
+                    updatedExercises.add(exercisePosition, updatedExercise)
+
+                    val updatedWorkout = WorkoutDetailsWithExercises(
+                        workoutDetails = workoutDetailsDB[workoutPosition].workoutDetails,
+                        exercises = updatedExercises,
+                        configuration = workoutDetailsDB[workoutPosition].configuration
+                    )
+                    workoutDetailsDB[workoutPosition] = updatedWorkout
+                } else {
+                    throw NoSuchElementException("Exercise not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+                }
+            } catch (e: NoSuchElementException) {
+                return
+            } catch (e: IllegalArgumentException) {
+                return
+            }
+        }
+    }
+
+    override suspend fun onSetDeleted(exerciseSet: ExerciseSet) {
+        val workoutPosition = workoutDetailsDB.indexOfFirst {
+            it.workoutDetails.workoutDetailsId == exerciseSet.workoutId
+        }
+
+        //Workout found
+        if (workoutPosition != -1) {
+            try {
+                val updatedExercises = workoutDetailsDB[workoutPosition].exercises?.toMutableList()
+                    ?: throw IllegalArgumentException("Exercises not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+
+                val exercisePosition = updatedExercises.indexOfFirst {
+                    it.exercise.exerciseId == exerciseSet.exerciseId &&
+                            it.exercise.workoutId == exerciseSet.workoutId
+                }
+
+                //Exercise found
+                if (exercisePosition != -1) {
+                    val exerciseWithSets = updatedExercises[exercisePosition]
+
+                    val updatedSets = exerciseWithSets.sets.toMutableList()
+                    updatedSets.removeAll { it.setId == exerciseSet.setId }
+
+                    val updatedExercise = ExerciseWithSets(
+                        exercise = exerciseWithSets.exercise,
+                        sets = updatedSets
+                    )
+                    updatedExercises.removeAt(exercisePosition)
+                    updatedExercises.add(exercisePosition, updatedExercise)
+
+                    val updatedWorkout = WorkoutDetailsWithExercises(
+                        workoutDetails = workoutDetailsDB[workoutPosition].workoutDetails,
+                        exercises = updatedExercises,
+                        configuration = workoutDetailsDB[workoutPosition].configuration
+                    )
+                    workoutDetailsDB[workoutPosition] = updatedWorkout
+                } else {
+                    throw NoSuchElementException("Exercise not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+                }
+            } catch (e: NoSuchElementException) {
+                return
+            } catch (e: IllegalArgumentException) {
+                return
+            }
+        }
+    }
+
+    override suspend fun onSetsDeleted(exerciseId: Int, workoutId: Int) {
+        val workoutPosition = workoutDetailsDB.indexOfFirst {
+            it.workoutDetails.workoutDetailsId == workoutId
+        }
+
+        //Workout found
+        if (workoutPosition != -1) {
+            try {
+                val updatedExercises = workoutDetailsDB[workoutPosition].exercises?.toMutableList()
+                    ?: throw IllegalArgumentException("Exercises not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+
+                val exercisePosition = updatedExercises.indexOfFirst {
+                    it.exercise.exerciseId == exerciseId &&
+                            it.exercise.workoutId == workoutId
+                }
+
+                //Exercise found
+                if (exercisePosition != -1) {
+                    val exerciseWithSets = updatedExercises[exercisePosition]
+                    val updatedExercise = ExerciseWithSets(
+                        exercise = exerciseWithSets.exercise,
+                        sets = emptyList()
+                    )
+                    updatedExercises.add(exercisePosition, updatedExercise)
+
+                    val updatedWorkout = WorkoutDetailsWithExercises(
+                        workoutDetails = workoutDetailsDB[workoutPosition].workoutDetails,
+                        exercises = updatedExercises,
+                        configuration = workoutDetailsDB[workoutPosition].configuration
+                    )
+                    workoutDetailsDB[workoutPosition] = updatedWorkout
+                } else {
+                    throw NoSuchElementException("Exercise not found for workout with id ${workoutDetailsDB[workoutPosition].workoutDetails.workoutDetailsId}")
+                }
+            } catch (e: NoSuchElementException) {
+                return
+            } catch (e: IllegalArgumentException) {
+                return
+            }
+        }
     }
 }
