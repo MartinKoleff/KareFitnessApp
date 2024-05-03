@@ -2,8 +2,9 @@ package com.koleff.kare_android.exercise.data
 
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
+import com.koleff.kare_android.utils.FakeDao
 
-class ExerciseDetailsDaoFake : ExerciseDetailsDao {
+class ExerciseDetailsDaoFake : ExerciseDetailsDao, FakeDao {
 
     private val exerciseDetailsDB = mutableListOf<ExerciseDetails>()
 
@@ -28,7 +29,7 @@ class ExerciseDetailsDaoFake : ExerciseDetailsDao {
         return exerciseDetailsDB.first { it.exerciseDetailsId == exerciseId && it.workoutId == workoutId }
     }
 
-    fun clearDB() {
+    override fun clearDB() {
         exerciseDetailsDB.clear()
     }
 }

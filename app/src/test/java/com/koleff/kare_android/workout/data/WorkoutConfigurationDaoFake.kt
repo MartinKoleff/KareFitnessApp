@@ -5,10 +5,11 @@ import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationId
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
+import com.koleff.kare_android.utils.FakeDao
 
 class WorkoutConfigurationDaoFake(
     private val workoutConfigurationChangeListener: WorkoutConfigurationChangeListener
-): WorkoutConfigurationDao {
+): WorkoutConfigurationDao, FakeDao {
 
     private val workoutConfigurationDB = mutableListOf<WorkoutConfiguration>()
 
@@ -48,11 +49,11 @@ class WorkoutConfigurationDaoFake(
         workoutConfigurationChangeListener.onWorkoutConfigurationDeleted(workoutId)
     }
 
-    fun clearDB(){
-        workoutConfigurationDB.clear()
-    }
-
     fun getAllWorkoutConfigurations(): List<WorkoutConfiguration> {
         return workoutConfigurationDB
+    }
+
+    override fun clearDB(){
+        workoutConfigurationDB.clear()
     }
 }

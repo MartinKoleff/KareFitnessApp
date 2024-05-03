@@ -9,9 +9,10 @@ import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
+import com.koleff.kare_android.utils.FakeDao
 
 class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeListener,
-    ExerciseChangeListener, ExerciseSetChangeListener, WorkoutDetailsChangeListener {
+    ExerciseChangeListener, ExerciseSetChangeListener, WorkoutDetailsChangeListener, FakeDao {
 
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
     private lateinit var compositeExerciseSetChangeListener: CompositeExerciseSetChangeListener
@@ -204,10 +205,6 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }
     }
 
-    fun clearDB() {
-        workoutDetailsDB.clear()
-    }
-
     override fun onWorkoutDetailsDeleted(workoutId: Int) {
         workoutDetailsDB.removeAll { it.workoutDetails.workoutDetailsId == workoutId }
     }
@@ -395,5 +392,8 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
                 return
             }
         }
+    }
+    override fun clearDB() {
+        workoutDetailsDB.clear()
     }
 }

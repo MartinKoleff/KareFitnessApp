@@ -2,12 +2,13 @@ package com.koleff.kare_android.exercise.data
 
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.entity.ExerciseSet
+import com.koleff.kare_android.utils.FakeDao
 import com.koleff.kare_android.workout.data.CompositeExerciseSetChangeListener
 import java.util.UUID
 
 class ExerciseSetDaoFake(
     private val compositeExerciseSetChangeListener: CompositeExerciseSetChangeListener
-) : ExerciseSetDao, ExerciseSetChangeListener{
+) : ExerciseSetDao, ExerciseSetChangeListener, FakeDao {
 
     private val exerciseSetDB = mutableListOf<ExerciseSet>()
 
@@ -55,9 +56,6 @@ class ExerciseSetDaoFake(
         deleteSet(exerciseSet)
     }
 
-    fun clearDB() {
-        exerciseSetDB.clear()
-    }
 
     override suspend fun onSetAdded(exerciseSet: ExerciseSet) = insertExerciseSet(exerciseSet)
 
@@ -67,10 +65,14 @@ class ExerciseSetDaoFake(
     override suspend fun onSetDeleted(exerciseSet: ExerciseSet) = deleteSet(exerciseSet)
 
     override suspend fun onSetsDeleted(exerciseId: Int, workoutId: Int) =
-        exerciseSetDB.filter {set ->
+        exerciseSetDB.filter { set ->
             set.exerciseId == exerciseId &&
                     set.workoutId == workoutId
         }.forEach { set ->
             deleteSet(set)
         }
+
+    override fun clearDB() {
+        exerciseSetDB.clear()
+    }
 }

@@ -113,7 +113,7 @@ class DoWorkoutUseCasesUnitTest {
 
         @JvmStatic
         @BeforeAll
-        fun initialSetup(): Unit = runBlocking {
+        fun setup(): Unit = runBlocking {
             logger = TestLogger(isLogging)
 
             //DAOs

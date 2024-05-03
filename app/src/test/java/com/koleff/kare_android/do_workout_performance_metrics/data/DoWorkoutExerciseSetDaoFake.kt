@@ -3,11 +3,12 @@ package com.koleff.kare_android.do_workout_performance_metrics.data
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.ExerciseSet
+import com.koleff.kare_android.utils.FakeDao
 import java.util.UUID
 
 class DoWorkoutExerciseSetDaoFake(
     private val doWorkoutPerformanceMetricsDaoFake: DoWorkoutPerformanceMetricsDaoFake
-): DoWorkoutExerciseSetDao {
+): DoWorkoutExerciseSetDao, FakeDao {
 
     private val exerciseSetDB = mutableListOf<DoWorkoutExerciseSet>()
 
@@ -62,7 +63,7 @@ class DoWorkoutExerciseSetDaoFake(
     }
 
 
-    fun clearDB() {
+    override fun clearDB() {
         exerciseSetDB.clear()
     }
 }

@@ -73,6 +73,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -119,149 +120,168 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         private lateinit var logger: TestLogger
 
         private const val TAG = "DoWorkoutPerformanceMetricsUseCasesUnitTest"
-    }
 
-    @BeforeEach
-    fun setup() = runTest {
-        logger = TestLogger(isLogging)
+        @JvmStatic
+        @BeforeAll
+        fun setup() = runTest {
+            logger = TestLogger(isLogging)
 
-        //DAOs
-        workoutDetailsDao = WorkoutDetailsDaoFakeV2()
-        exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
+            //DAOs
+            workoutDetailsDao = WorkoutDetailsDaoFakeV2()
+            exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
 
-        val compositeExerciseSetChangeListener1 = CompositeExerciseSetChangeListener()
-        compositeExerciseSetChangeListener1.addListener(exerciseDao)
-        compositeExerciseSetChangeListener1.addListener(workoutDetailsDao)
-        exerciseSetDao = ExerciseSetDaoFake(compositeExerciseSetChangeListener1)
+            val compositeExerciseSetChangeListener1 = CompositeExerciseSetChangeListener()
+            compositeExerciseSetChangeListener1.addListener(exerciseDao)
+            compositeExerciseSetChangeListener1.addListener(workoutDetailsDao)
+            exerciseSetDao = ExerciseSetDaoFake(compositeExerciseSetChangeListener1)
 
-        val compositeExerciseSetChangeListener2 = CompositeExerciseSetChangeListener()
-        compositeExerciseSetChangeListener2.addListener(exerciseDao)
-        compositeExerciseSetChangeListener2.addListener(exerciseSetDao)
-        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener2)
+            val compositeExerciseSetChangeListener2 = CompositeExerciseSetChangeListener()
+            compositeExerciseSetChangeListener2.addListener(exerciseDao)
+            compositeExerciseSetChangeListener2.addListener(exerciseSetDao)
+            workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener2)
 
-        exerciseDetailsDao = ExerciseDetailsDaoFake()
-        workoutDao = WorkoutDaoFakeV2(
-            exerciseChangeListener = workoutDetailsDao,
-            workoutConfigurationChangeListener = workoutDetailsDao,
-            workoutDetailsChangeListener = workoutDetailsDao
-        )
-        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
+            exerciseDetailsDao = ExerciseDetailsDaoFake()
+            workoutDao = WorkoutDaoFakeV2(
+                exerciseChangeListener = workoutDetailsDao,
+                workoutConfigurationChangeListener = workoutDetailsDao,
+                workoutDetailsChangeListener = workoutDetailsDao
+            )
+            workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
 
-        //Exercise
-        exerciseFakeDataSource = ExerciseFakeDataSource(
-            exerciseDao = exerciseDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseSetDao = exerciseSetDao
-        )
+            //Exercise
+            exerciseFakeDataSource = ExerciseFakeDataSource(
+                exerciseDao = exerciseDao,
+                exerciseDetailsDao = exerciseDetailsDao,
+                exerciseSetDao = exerciseSetDao
+            )
 
-        exerciseRepository = ExerciseRepositoryImpl(exerciseFakeDataSource)
+            exerciseRepository = ExerciseRepositoryImpl(exerciseFakeDataSource)
 
-        exerciseUseCases = ExerciseUseCases(
-            onSearchExerciseUseCase = OnSearchExerciseUseCase(),
-            onFilterExercisesUseCase = OnFilterExercisesUseCase(),
-            getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
-            getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
-            getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
-            getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
-            addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
-            deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
-        )
+            exerciseUseCases = ExerciseUseCases(
+                onSearchExerciseUseCase = OnSearchExerciseUseCase(),
+                onFilterExercisesUseCase = OnFilterExercisesUseCase(),
+                getExerciseDetailsUseCase = GetExerciseDetailsUseCase(exerciseRepository),
+                getCatalogExercisesUseCase = GetCatalogExercisesUseCase(exerciseRepository),
+                getCatalogExerciseUseCase = GetCatalogExerciseUseCase(exerciseRepository),
+                getExerciseUseCase = GetExerciseUseCase(exerciseRepository),
+                addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
+                deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
+            )
 
-        //Workout
-        workoutFakeDataSource = WorkoutFakeDataSource(
-            workoutDao = workoutDao,
-            exerciseDao = exerciseDao,
-            workoutDetailsDao = workoutDetailsDao,
-            exerciseSetDao = exerciseSetDao,
-            workoutConfigurationDao = workoutConfigurationDao
-        )
+            //Workout
+            workoutFakeDataSource = WorkoutFakeDataSource(
+                workoutDao = workoutDao,
+                exerciseDao = exerciseDao,
+                workoutDetailsDao = workoutDetailsDao,
+                exerciseSetDao = exerciseSetDao,
+                workoutConfigurationDao = workoutConfigurationDao
+            )
 
-        workoutRepository =
-            WorkoutRepositoryImpl(workoutFakeDataSource)
+            workoutRepository =
+                WorkoutRepositoryImpl(workoutFakeDataSource)
 
-        workoutUseCases = WorkoutUseCases(
-            getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
-            getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
-            getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
-            updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
-            updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
-            onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
-            deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
-            addExerciseUseCase = AddExerciseUseCase(workoutRepository),
-            submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
-            deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
-            selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
-            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
-            getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
-            createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
-            createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
-            getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-            createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
-            updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
-            deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
-        )
+            workoutUseCases = WorkoutUseCases(
+                getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
+                getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
+                getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
+                getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
+                updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+                updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
+                onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
+                deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+                addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+                submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
+                deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
+                selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
+                deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
+                getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
+                createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
+                createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(
+                    workoutRepository
+                ),
+                getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(
+                    workoutRepository
+                ),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(
+                    workoutRepository
+                ),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(
+                    workoutRepository
+                )
+            )
 
-        //Do workout performance metrics
+            //Do workout performance metrics
 //        doWorkoutExerciseSetDao = DoWorkoutExerciseSetDaoFake()
 //        doWorkoutPerformanceMetricsDao = DoWorkoutPerformanceMetricsDaoFake(doWorkoutExerciseSetDao)
 //        doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
 //            doWorkoutPerformanceMetricsDao,
 //            doWorkoutExerciseSetDao
 //        )
-        doWorkoutPerformanceMetricsMediator =
-            DoWorkoutPerformanceMetricsMediator() //Fixes circular dependency
-        doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
-            doWorkoutPerformanceMetricsMediator,
-            doWorkoutPerformanceMetricsMediator
-        )
-
-        doWorkoutPerformanceMetricsRepository =
-            DoWorkoutPerformanceMetricsRepositoryImpl(doWorkoutPerformanceMetricsDataSource)
-        doWorkoutPerformanceMetricsUseCases = DoWorkoutPerformanceMetricsUseCases(
-            deleteDoWorkoutPerformanceMetricsUseCase = DeleteDoWorkoutPerformanceMetricsUseCase(
-                doWorkoutPerformanceMetricsRepository
-            ),
-            updateDoWorkoutPerformanceMetricsUseCase = UpdateDoWorkoutPerformanceMetricsUseCase(
-                doWorkoutPerformanceMetricsRepository
-            ),
-            getAllDoWorkoutPerformanceMetricsUseCase = GetAllDoWorkoutPerformanceMetricsUseCase(
-                doWorkoutPerformanceMetricsRepository
-            ),
-            getDoWorkoutPerformanceMetricsUseCase = GetDoWorkoutPerformanceMetricsUseCase(
-                doWorkoutPerformanceMetricsRepository
-            ),
-            saveAllDoWorkoutExerciseSetUseCase = SaveAllDoWorkoutExerciseSetUseCase(
-                doWorkoutPerformanceMetricsRepository
-            ),
-            saveDoWorkoutExerciseSetUseCase = SaveDoWorkoutExerciseSetUseCase(
-                doWorkoutPerformanceMetricsRepository
-            ),
-            saveDoWorkoutPerformanceMetricsUseCase = SaveDoWorkoutPerformanceMetricsUseCase(
-                doWorkoutPerformanceMetricsRepository
+            doWorkoutPerformanceMetricsMediator =
+                DoWorkoutPerformanceMetricsMediator() //Fixes circular dependency
+            doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
+                doWorkoutPerformanceMetricsMediator,
+                doWorkoutPerformanceMetricsMediator
             )
-        )
 
-        //Initialize DB
-        exerciseDBManager = ExerciseDBManagerV2(
-            exerciseSetDao = exerciseSetDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseDao = exerciseDao,
-            workoutDao = workoutDao,
-            workoutDetailsDao = workoutDetailsDao,
-            hasInitializedDB = false
-        )
+            doWorkoutPerformanceMetricsRepository =
+                DoWorkoutPerformanceMetricsRepositoryImpl(doWorkoutPerformanceMetricsDataSource)
+            doWorkoutPerformanceMetricsUseCases = DoWorkoutPerformanceMetricsUseCases(
+                deleteDoWorkoutPerformanceMetricsUseCase = DeleteDoWorkoutPerformanceMetricsUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                ),
+                updateDoWorkoutPerformanceMetricsUseCase = UpdateDoWorkoutPerformanceMetricsUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                ),
+                getAllDoWorkoutPerformanceMetricsUseCase = GetAllDoWorkoutPerformanceMetricsUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                ),
+                getDoWorkoutPerformanceMetricsUseCase = GetDoWorkoutPerformanceMetricsUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                ),
+                saveAllDoWorkoutExerciseSetUseCase = SaveAllDoWorkoutExerciseSetUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                ),
+                saveDoWorkoutExerciseSetUseCase = SaveDoWorkoutExerciseSetUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                ),
+                saveDoWorkoutPerformanceMetricsUseCase = SaveDoWorkoutPerformanceMetricsUseCase(
+                    doWorkoutPerformanceMetricsRepository
+                )
+            )
 
+            //Initialize DB
+            exerciseDBManager = ExerciseDBManagerV2(
+                exerciseSetDao = exerciseSetDao,
+                exerciseDetailsDao = exerciseDetailsDao,
+                exerciseDao = exerciseDao,
+                workoutDao = workoutDao,
+                workoutDetailsDao = workoutDetailsDao,
+                hasInitializedDB = false
+            )
+        }
+    }
+
+
+    @BeforeEach
+    fun initializeDB() = runTest {
         exerciseDBManager.initializeExerciseTable {
             logger.i(TAG, "DB initialized successfully!")
         }
 
         //Workout DB
         workout1 =
-            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true, workoutId = 1)
+            MockupDataGeneratorV2.generateWorkoutDetails(
+                enableSetIdGeneration = true,
+                workoutId = 1
+            )
         workout2 =
-            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true, workoutId = 2)
+            MockupDataGeneratorV2.generateWorkoutDetails(
+                enableSetIdGeneration = true,
+                workoutId = 2
+            )
 
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).toList()
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).toList()
@@ -453,7 +473,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                     "Delete do workout performance metrics for invalid workout -> isSuccess state raised. [Silent failure action]"
                 )
                 assertTrue { deletePerformanceMetricsState[0].isSuccessful }
-                
+
 //                logger.i(
 //                    TAG,
 //                    "Delete do workout performance metrics for invalid workout -> isError state raised."

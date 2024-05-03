@@ -6,15 +6,17 @@ import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.ExerciseWithSets
+import com.koleff.kare_android.utils.FakeDao
 import com.koleff.kare_android.workout.data.ExerciseChangeListener
 
 class ExerciseDaoFakeV2(
     private val exerciseChangeListener: ExerciseChangeListener
-) : ExerciseDao, ExerciseSetChangeListener {
+) : ExerciseDao, ExerciseSetChangeListener, FakeDao {
 
     private val exerciseWithSetDB = mutableListOf<ExerciseWithSets>()
 
     private val isInternalLogging = false
+
     companion object {
         private const val TAG = "ExerciseDaoFake"
     }
@@ -119,10 +121,6 @@ class ExerciseDaoFakeV2(
             .sortedBy { it.exerciseId }
     }
 
-    fun clearDB() {
-        exerciseWithSetDB.clear()
-    }
-
     override suspend fun onSetAdded(exerciseSet: ExerciseSet) {
         val exercisePosition =
             exerciseWithSetDB.indexOfFirst {
@@ -203,5 +201,9 @@ class ExerciseDaoFakeV2(
 
             exerciseWithSetDB[exercisePosition] = updatedExercise
         }
+    }
+
+    override fun clearDB() {
+        exerciseWithSetDB.clear()
     }
 }

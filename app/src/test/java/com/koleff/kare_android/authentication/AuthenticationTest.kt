@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -38,23 +39,22 @@ import java.util.UUID
 import java.util.stream.Stream
 
 class AuthenticationTest {
-
-    private lateinit var credentialsAuthenticator: CredentialsAuthenticator
-    private lateinit var credentialsValidator: CredentialsValidator
-    private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
-    private lateinit var authenticationUseCases: AuthenticationUseCases
-    private lateinit var loginUseCase: LoginUseCase
-    private lateinit var registerUseCase: RegisterUseCase
-    private lateinit var authenticationRepository: AuthenticationRepository
-    private lateinit var authenticationDataSource: AuthenticationDataSource
-    private lateinit var userRepository: UserRepository
-    private lateinit var userDataSource: UserDataSource
-    private lateinit var userDao: UserDaoFake
-
-    private val isLogging = true
-    private lateinit var logger: TestLogger
-
     companion object {
+        private lateinit var credentialsAuthenticator: CredentialsAuthenticator
+        private lateinit var credentialsValidator: CredentialsValidator
+        private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
+        private lateinit var authenticationUseCases: AuthenticationUseCases
+        private lateinit var loginUseCase: LoginUseCase
+        private lateinit var registerUseCase: RegisterUseCase
+        private lateinit var authenticationRepository: AuthenticationRepository
+        private lateinit var authenticationDataSource: AuthenticationDataSource
+        private lateinit var userRepository: UserRepository
+        private lateinit var userDataSource: UserDataSource
+        private lateinit var userDao: UserDaoFake
+
+        private val isLogging = true
+        private lateinit var logger: TestLogger
+
         private const val TAG = "AuthenticationTest"
 
         @JvmStatic
@@ -202,33 +202,34 @@ class AuthenticationTest {
                 }
             }.stream()
         }
-    }
 
-    @BeforeEach
-    fun setup() {
-        userDao = UserDaoFake()
-        userDataSource = UserLocalDataSource(userDao)
-        userRepository = UserRepositoryImpl(userDataSource)
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            userDao = UserDaoFake()
+            userDataSource = UserLocalDataSource(userDao)
+            userRepository = UserRepositoryImpl(userDataSource)
 
-        credentialsValidator = CredentialsValidatorImpl(userRepository)
-        credentialsDataStoreFake = CredentialsDataStoreFake() //No caching needed for testing
-        credentialsAuthenticator =
-            CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
+            credentialsValidator = CredentialsValidatorImpl(userRepository)
+            credentialsDataStoreFake = CredentialsDataStoreFake() //No caching needed for testing
+            credentialsAuthenticator =
+                CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
 
-        authenticationDataSource = AuthenticationLocalDataSource(
-            userDao,
-            credentialsAuthenticator as CredentialsAuthenticatorImpl
-        )
-        authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
+            authenticationDataSource = AuthenticationLocalDataSource(
+                userDao,
+                credentialsAuthenticator as CredentialsAuthenticatorImpl
+            )
+            authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
 
-        loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
-        registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
-        authenticationUseCases = AuthenticationUseCases(
-            loginUseCase,
-            registerUseCase
-        )
+            loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
+            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
+            authenticationUseCases = AuthenticationUseCases(
+                loginUseCase,
+                registerUseCase
+            )
 
-        logger = TestLogger(isLogging)
+            logger = TestLogger(isLogging)
+        }
     }
 
     @ParameterizedTest(name = "Validates email {0}")

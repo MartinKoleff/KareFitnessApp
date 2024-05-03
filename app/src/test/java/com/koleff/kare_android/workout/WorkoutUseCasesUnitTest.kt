@@ -50,6 +50,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
@@ -62,27 +63,27 @@ import java.util.stream.Stream
 typealias WorkoutFakeDataSource = WorkoutLocalDataSourceV2
 
 class WorkoutUseCasesUnitTest {
-    private lateinit var exerciseDBManager: ExerciseDBManagerV2
-
-    private lateinit var workoutDao: WorkoutDaoFakeV2
-    private lateinit var workoutDetailsDao: WorkoutDetailsDaoFakeV2
-    private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
-    private lateinit var exerciseDao: ExerciseDaoFakeV2
-    private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
-    private lateinit var exerciseSetDao: ExerciseSetDaoFake
-
-    private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
-    private lateinit var workoutRepository: WorkoutRepository
-
-    private lateinit var workoutUseCases: WorkoutUseCases
-
-    private val useMockupDataSource = false
-    private val isErrorTesting = false
-
-    private val isLogging = true
-    private lateinit var logger: TestLogger
-
     companion object {
+        private lateinit var exerciseDBManager: ExerciseDBManagerV2
+
+        private lateinit var workoutDao: WorkoutDaoFakeV2
+        private lateinit var workoutDetailsDao: WorkoutDetailsDaoFakeV2
+        private lateinit var workoutConfigurationDao: WorkoutConfigurationDaoFake
+        private lateinit var exerciseDao: ExerciseDaoFakeV2
+        private lateinit var exerciseDetailsDao: ExerciseDetailsDaoFake
+        private lateinit var exerciseSetDao: ExerciseSetDaoFake
+
+        private lateinit var workoutFakeDataSource: WorkoutFakeDataSource
+        private lateinit var workoutRepository: WorkoutRepository
+
+        private lateinit var workoutUseCases: WorkoutUseCases
+
+        private val useMockupDataSource = false
+        private val isErrorTesting = false
+
+        private val isLogging = true
+        private lateinit var logger: TestLogger
+
         @JvmStatic
         fun provideSearchTexts(): Stream<Arguments> {
             val searchTexts = listOf(
@@ -104,79 +105,83 @@ class WorkoutUseCasesUnitTest {
         }
 
         private const val TAG = "WorkoutUseCasesUnitTest"
+
+        @JvmStatic
+        @BeforeAll
+        fun setup() = runBlocking {
+            logger = TestLogger(isLogging)
+
+            //DAOs
+            workoutDetailsDao = WorkoutDetailsDaoFakeV2()
+            exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
+
+            val compositeExerciseSetChangeListener1 = CompositeExerciseSetChangeListener()
+            compositeExerciseSetChangeListener1.addListener(exerciseDao)
+            compositeExerciseSetChangeListener1.addListener(workoutDetailsDao)
+            exerciseSetDao = ExerciseSetDaoFake(compositeExerciseSetChangeListener1)
+
+            val compositeExerciseSetChangeListener2 = CompositeExerciseSetChangeListener()
+            compositeExerciseSetChangeListener2.addListener(exerciseDao)
+            compositeExerciseSetChangeListener2.addListener(exerciseSetDao)
+            workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener2)
+
+            exerciseDetailsDao = ExerciseDetailsDaoFake()
+            workoutDao = WorkoutDaoFakeV2(
+                exerciseChangeListener = workoutDetailsDao,
+                workoutConfigurationChangeListener = workoutDetailsDao,
+                workoutDetailsChangeListener = workoutDetailsDao
+            )
+            workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
+
+            workoutFakeDataSource = WorkoutFakeDataSource(
+                workoutDao = workoutDao,
+                exerciseDao = exerciseDao,
+                workoutDetailsDao = workoutDetailsDao,
+                exerciseSetDao = exerciseSetDao,
+                workoutConfigurationDao = workoutConfigurationDao
+            )
+
+            workoutRepository =
+                WorkoutRepositoryImpl(workoutFakeDataSource)
+
+            workoutUseCases = WorkoutUseCases(
+                getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
+                getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
+                getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
+                getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
+                updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
+                updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
+                onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
+                deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+                addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+                submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
+                deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
+                selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
+                deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
+                getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
+                createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
+                createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
+                getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
+            )
+
+            //Initialize DB
+            exerciseDBManager = ExerciseDBManagerV2(
+                exerciseSetDao = exerciseSetDao,
+                exerciseDetailsDao = exerciseDetailsDao,
+                exerciseDao = exerciseDao,
+                workoutDao = workoutDao,
+                workoutDetailsDao = workoutDetailsDao,
+                hasInitializedDB = false
+            )
+        }
     }
 
     @BeforeEach
-    fun setup() = runBlocking {
-        logger = TestLogger(isLogging)
-
-        //DAOs
-        workoutDetailsDao = WorkoutDetailsDaoFakeV2()
-        exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
-
-        val compositeExerciseSetChangeListener1 = CompositeExerciseSetChangeListener()
-        compositeExerciseSetChangeListener1.addListener(exerciseDao)
-        compositeExerciseSetChangeListener1.addListener(workoutDetailsDao)
-        exerciseSetDao = ExerciseSetDaoFake(compositeExerciseSetChangeListener1)
-
-        val compositeExerciseSetChangeListener2 = CompositeExerciseSetChangeListener()
-        compositeExerciseSetChangeListener2.addListener(exerciseDao)
-        compositeExerciseSetChangeListener2.addListener(exerciseSetDao)
-        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener2)
-
-        exerciseDetailsDao = ExerciseDetailsDaoFake()
-        workoutDao = WorkoutDaoFakeV2(
-            exerciseChangeListener = workoutDetailsDao,
-            workoutConfigurationChangeListener = workoutDetailsDao,
-            workoutDetailsChangeListener = workoutDetailsDao
-        )
-        workoutConfigurationDao = WorkoutConfigurationDaoFake(workoutDetailsDao)
-
-        workoutFakeDataSource = WorkoutFakeDataSource(
-            workoutDao = workoutDao,
-            exerciseDao = exerciseDao,
-            workoutDetailsDao = workoutDetailsDao,
-            exerciseSetDao = exerciseSetDao,
-            workoutConfigurationDao = workoutConfigurationDao
-        )
-
-        workoutRepository =
-            WorkoutRepositoryImpl(workoutFakeDataSource)
-
-        workoutUseCases = WorkoutUseCases(
-            getWorkoutDetailsUseCase = GetWorkoutsDetailsUseCase(workoutRepository),
-            getAllWorkoutsUseCase = GetAllWorkoutsUseCase(workoutRepository),
-            getAllWorkoutDetailsUseCase = GetAllWorkoutDetailsUseCase(workoutRepository),
-            getWorkoutUseCase = GetWorkoutUseCase(workoutRepository),
-            updateWorkoutUseCase = UpdateWorkoutUseCase(workoutRepository),
-            updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
-            onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
-            deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
-            addExerciseUseCase = AddExerciseUseCase(workoutRepository),
-            submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
-            deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
-            selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
-            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
-            getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
-            createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
-            createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-            createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
-            getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-            createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
-            updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
-            deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
-        )
-
-        //Initialize DB
-        exerciseDBManager = ExerciseDBManagerV2(
-            exerciseSetDao = exerciseSetDao,
-            exerciseDetailsDao = exerciseDetailsDao,
-            exerciseDao = exerciseDao,
-            workoutDao = workoutDao,
-            workoutDetailsDao = workoutDetailsDao,
-            hasInitializedDB = false
-        )
-
+    fun initializeDB() = runTest {
         exerciseDBManager.initializeExerciseTable {
             logger.i(TAG, "DB initialized successfully!")
         }
@@ -449,7 +454,8 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             //Generate workout details and workout
-            val data = MockupDataGeneratorV2.generateWorkoutAndWorkoutDetails(enableSetIdGeneration = true)
+            val data =
+                MockupDataGeneratorV2.generateWorkoutAndWorkoutDetails(enableSetIdGeneration = true)
 
             val workout = data.first
             logger.i(TAG, "Mocked workout: $workout")
@@ -1013,7 +1019,10 @@ class WorkoutUseCasesUnitTest {
         //Generate exercise that is in the DB with different ExerciseSets and submit
         val selectedExercise = savedWorkoutDetails.exercises.random()
             .copy(sets = emptyList())
-        logger.i(TAG, "Selected exercise that is already in workout to be submitted: $selectedExercise")
+        logger.i(
+            TAG,
+            "Selected exercise that is already in workout to be submitted: $selectedExercise"
+        )
 
         val submitExerciseState = workoutUseCases.submitExerciseUseCase(
             workoutId = savedWorkoutDetails.workoutId,
@@ -1294,10 +1303,11 @@ class WorkoutUseCasesUnitTest {
      *
      */
     @RepeatedTest(50)
-    fun `Create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest{
+    fun `Create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest {
 
         //Generate workout details and workout
-        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+        val workoutDetails =
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
         logger.i(TAG, "Mocked workout details: $workoutDetails")
 
         //Insert workout to generate WorkoutDetails in DB
@@ -1314,8 +1324,11 @@ class WorkoutUseCasesUnitTest {
         val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
         logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
-        logger.i(TAG, "Assert workout configuration is default. Workout configuration: ${fetchedWorkoutDetails.configuration}")
-        assertTrue {fetchedWorkoutDetails.configuration == WorkoutConfigurationDto() }
+        logger.i(
+            TAG,
+            "Assert workout configuration is default. Workout configuration: ${fetchedWorkoutDetails.configuration}"
+        )
+        assertTrue { fetchedWorkoutDetails.configuration == WorkoutConfigurationDto() }
 
         val updatedWorkoutConfiguration = WorkoutConfigurationDto(
             workoutId = workoutDetails.workoutId,
@@ -1323,7 +1336,8 @@ class WorkoutUseCasesUnitTest {
         )
 
         //Update workout configuration
-        val updateWorkoutConfigurationState = workoutUseCases.updateWorkoutConfigurationUseCase(updatedWorkoutConfiguration).toList()
+        val updateWorkoutConfigurationState =
+            workoutUseCases.updateWorkoutConfigurationUseCase(updatedWorkoutConfiguration).toList()
 
         logger.i(TAG, "Update workout configuration -> isLoading state raised.")
         assertTrue { updateWorkoutConfigurationState[0].isLoading }
@@ -1332,7 +1346,9 @@ class WorkoutUseCasesUnitTest {
         assertTrue { updateWorkoutConfigurationState[1].isSuccessful }
 
         //Fetch workout configuration
-        val getWorkoutConfigurationState = workoutUseCases.getWorkoutConfigurationUseCase(workoutId = workoutDetails.workoutId).toList()
+        val getWorkoutConfigurationState =
+            workoutUseCases.getWorkoutConfigurationUseCase(workoutId = workoutDetails.workoutId)
+                .toList()
 
         logger.i(TAG, "Get workout configuration -> isLoading state raised.")
         assertTrue { getWorkoutConfigurationState[0].isLoading }
@@ -1340,8 +1356,11 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Get workout configuration -> isSuccessful state raised.")
         assertTrue { getWorkoutConfigurationState[1].isSuccessful }
 
-        logger.i(TAG, "Assert workout configuration has updated. Workout configuration from DB: ${getWorkoutConfigurationState[1].workoutConfiguration}")
-        assertTrue {getWorkoutConfigurationState[1].workoutConfiguration == updatedWorkoutConfiguration}
+        logger.i(
+            TAG,
+            "Assert workout configuration has updated. Workout configuration from DB: ${getWorkoutConfigurationState[1].workoutConfiguration}"
+        )
+        assertTrue { getWorkoutConfigurationState[1].workoutConfiguration == updatedWorkoutConfiguration }
 
         //Fetch workout
         val getWorkoutDetailsState2 =
@@ -1350,11 +1369,16 @@ class WorkoutUseCasesUnitTest {
         val fetchedWorkoutDetails2 = getWorkoutDetailsState2[1].workoutDetails
         logger.i(TAG, "Fetched workout details 2: $fetchedWorkoutDetails2")
 
-        logger.i(TAG, "Assert workout configuration has changed. Workout configuration: ${fetchedWorkoutDetails2.configuration}")
+        logger.i(
+            TAG,
+            "Assert workout configuration has changed. Workout configuration: ${fetchedWorkoutDetails2.configuration}"
+        )
         assertTrue { fetchedWorkoutDetails2.configuration == getWorkoutConfigurationState[1].workoutConfiguration }
 
         //Delete workout configuration
-        val deleteWorkoutConfigurationState = workoutUseCases.deleteWorkoutConfigurationUseCase(savedWorkoutDetails.workoutId).toList()
+        val deleteWorkoutConfigurationState =
+            workoutUseCases.deleteWorkoutConfigurationUseCase(savedWorkoutDetails.workoutId)
+                .toList()
 
         logger.i(TAG, "Delete workout configuration -> isLoading state raised.")
         assertTrue { deleteWorkoutConfigurationState[0].isLoading }
@@ -1369,8 +1393,11 @@ class WorkoutUseCasesUnitTest {
         val fetchedWorkoutDetails3 = getWorkoutDetailsState3[1].workoutDetails
         logger.i(TAG, "Fetched workout details 3: $fetchedWorkoutDetails3")
 
-        logger.i(TAG, "Assert workout configuration is default after delete. Workout configuration: ${fetchedWorkoutDetails3.configuration}")
-        assertTrue {fetchedWorkoutDetails3.configuration == WorkoutConfigurationDto() }
+        logger.i(
+            TAG,
+            "Assert workout configuration is default after delete. Workout configuration: ${fetchedWorkoutDetails3.configuration}"
+        )
+        assertTrue { fetchedWorkoutDetails3.configuration == WorkoutConfigurationDto() }
     }
 
     @ParameterizedTest(name = "OnSearchWorkouts for search text {0}")

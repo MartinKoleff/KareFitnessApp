@@ -5,12 +5,13 @@ import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
+import com.koleff.kare_android.utils.FakeDao
 
 class WorkoutDaoFakeV2(
     private val exerciseChangeListener: ExerciseChangeListener,
     private val workoutDetailsChangeListener: WorkoutDetailsChangeListener,
     private val workoutConfigurationChangeListener: WorkoutConfigurationChangeListener
-) : WorkoutDao {
+) : WorkoutDao, FakeDao {
 
     private var workoutsDB = mutableListOf<Workout>()
 
@@ -70,7 +71,7 @@ class WorkoutDaoFakeV2(
     override fun getWorkoutById(workoutId: Int): Workout =
         workoutsDB.first { it.workoutId == workoutId }
 
-    fun clearDB() {
+    override fun clearDB() {
         workoutsDB.clear()
     }
 }

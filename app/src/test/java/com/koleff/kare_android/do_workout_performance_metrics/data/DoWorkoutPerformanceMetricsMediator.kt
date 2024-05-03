@@ -5,11 +5,12 @@ import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceWithSets
+import com.koleff.kare_android.utils.FakeDao
 import java.util.Date
 import java.util.UUID
 
 class DoWorkoutPerformanceMetricsMediator(
-) : DoWorkoutPerformanceMetricsDao, DoWorkoutExerciseSetDao {
+) : DoWorkoutPerformanceMetricsDao, DoWorkoutExerciseSetDao, FakeDao {
 
     private val workoutPerformanceMetricsDB = mutableListOf<DoWorkoutPerformanceWithSets>()
     private val exerciseSetDB = mutableListOf<DoWorkoutExerciseSet>()
@@ -173,7 +174,7 @@ class DoWorkoutPerformanceMetricsMediator(
         return exerciseSetDB.filter { it.workoutId == workoutId }
     }
 
-    fun clearDB() {
+    override fun clearDB() {
         exerciseSetDB.clear()
         workoutPerformanceMetricsDB.clear()
     }
