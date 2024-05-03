@@ -21,19 +21,19 @@ interface WorkoutDetailsDao {
     suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): WorkoutDetailsId
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
-
-    @Delete
-    suspend fun deleteWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
-
-    @Delete
-    suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
     suspend fun insertAllWorkoutDetails(workoutDetailsList: List<WorkoutDetails>)
+
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
+//
+//    @Delete
+//    suspend fun deleteWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
+//
+//    @Delete
+//    suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
 
     @Query("DELETE FROM workout_details_table WHERE workoutDetailsId = :workoutId")
     suspend fun deleteWorkoutDetails(workoutId: Int)

@@ -20,11 +20,11 @@ interface WorkoutDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllWorkouts(workouts: List<Workout>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllWorkoutDetailsWorkoutCrossRef(crossRefs: List<WorkoutDetailsWorkoutCrossRef>)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutDetailsWorkoutCrossRef(crossRef: WorkoutDetailsWorkoutCrossRef)
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertAllWorkoutDetailsWorkoutCrossRef(crossRefs: List<WorkoutDetailsWorkoutCrossRef>)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertWorkoutDetailsWorkoutCrossRef(crossRef: WorkoutDetailsWorkoutCrossRef)
 
     @Query("DELETE FROM workout_table WHERE workoutId = :workoutId")
     suspend fun deleteWorkout(workoutId: Int)
