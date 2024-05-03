@@ -566,9 +566,19 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
             workoutDetails ?: run {
+                emit(ResultWrapper.ApiError(error = KareError.WORKOUT_DETAILS_NOT_FOUND))
+                return@flow
+            }
+
+            //Update totalExercises
+            val workout = workoutDao.getWorkoutById(workoutId)
+
+            workout?: run {
                 emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
                 return@flow
             }
+            val updatedWorkout = workout.copy(totalExercises = workoutDetails.exercises?.size ?: workout.totalExercises)
+            workoutDao.updateWorkout(updatedWorkout)
 
             //Add sets to all exercises
             val updatedWorkoutDetails = workoutDetails.toDto()
