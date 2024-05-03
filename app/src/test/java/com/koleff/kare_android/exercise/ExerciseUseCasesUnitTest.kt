@@ -9,6 +9,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
+import com.koleff.kare_android.do_workout.DoWorkoutUseCasesUnitTest
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
@@ -128,13 +129,16 @@ class ExerciseUseCasesUnitTest {
         //DAOs
         workoutDetailsDao = WorkoutDetailsDaoFakeV2()
         exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
-        exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
 
-        val compositeExerciseSetChangeListener = CompositeExerciseSetChangeListener()
-        compositeExerciseSetChangeListener.addListener(exerciseDao)
-        compositeExerciseSetChangeListener.addListener(exerciseSetDao)
-        compositeExerciseSetChangeListener.addListener(workoutDetailsDao)
-        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener)
+        val compositeExerciseSetChangeListener1 = CompositeExerciseSetChangeListener()
+        compositeExerciseSetChangeListener1.addListener(exerciseDao)
+        compositeExerciseSetChangeListener1.addListener(workoutDetailsDao)
+        exerciseSetDao = ExerciseSetDaoFake(compositeExerciseSetChangeListener1)
+
+        val compositeExerciseSetChangeListener2 = CompositeExerciseSetChangeListener()
+        compositeExerciseSetChangeListener2.addListener(exerciseDao)
+        compositeExerciseSetChangeListener2.addListener(exerciseSetDao)
+        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener2)
 
         exerciseDetailsDao = ExerciseDetailsDaoFake()
         workoutDao = WorkoutDaoFakeV2(

@@ -113,13 +113,16 @@ class WorkoutUseCasesUnitTest {
         //DAOs
         workoutDetailsDao = WorkoutDetailsDaoFakeV2()
         exerciseDao = ExerciseDaoFakeV2(workoutDetailsDao)
-        exerciseSetDao = ExerciseSetDaoFake(exerciseDao)
 
-        val compositeExerciseSetChangeListener = CompositeExerciseSetChangeListener()
-        compositeExerciseSetChangeListener.addListener(exerciseDao)
-        compositeExerciseSetChangeListener.addListener(exerciseSetDao)
-        compositeExerciseSetChangeListener.addListener(workoutDetailsDao)
-        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener)
+        val compositeExerciseSetChangeListener1 = CompositeExerciseSetChangeListener()
+        compositeExerciseSetChangeListener1.addListener(exerciseDao)
+        compositeExerciseSetChangeListener1.addListener(workoutDetailsDao)
+        exerciseSetDao = ExerciseSetDaoFake(compositeExerciseSetChangeListener1)
+
+        val compositeExerciseSetChangeListener2 = CompositeExerciseSetChangeListener()
+        compositeExerciseSetChangeListener2.addListener(exerciseDao)
+        compositeExerciseSetChangeListener2.addListener(exerciseSetDao)
+        workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener2)
 
         exerciseDetailsDao = ExerciseDetailsDaoFake()
         workoutDao = WorkoutDaoFakeV2(

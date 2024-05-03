@@ -192,6 +192,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         return workoutDetailsList.filter { it.workoutId != Constants.CATALOG_EXERCISE_ID }
     }
 
+
     override suspend fun getWorkoutDetails(workoutId: Int): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
@@ -351,7 +352,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         exerciseSetDao.insertAllExerciseSets(sets)
 
         //Update workout totalExercises
-        val totalExercisesForWorkout = getTotalExercises(exercise.workoutId)
+        val totalExercisesForWorkout = getTotalExercisesCount(exercise.workoutId)
         val workout = workoutDao.getWorkoutById(exercise.workoutId)
             ?: throw IllegalArgumentException("Workout not found for exercise with workoutId ${exercise.workoutId}")
 
@@ -361,7 +362,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         workoutDao.updateWorkout(updatedWorkout)
     }
 
-    private fun getTotalExercises(workoutId: Int): Int {
+    private fun getTotalExercisesCount(workoutId: Int): Int {
         return workoutDetailsDao.getWorkoutDetailsById(workoutId)?.exercises?.size ?: 0
     }
 

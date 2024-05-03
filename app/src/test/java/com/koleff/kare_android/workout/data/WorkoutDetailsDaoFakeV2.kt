@@ -240,7 +240,8 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
                         exercise = exerciseWithSets.exercise,
                         sets = updatedSets
                     )
-                    updatedExercises.add(updatedExercise)
+                    updatedExercises.removeAt(exercisePosition)
+                    updatedExercises.add(exercisePosition, updatedExercise)
 
                     val updatedWorkout = WorkoutDetailsWithExercises(
                         workoutDetails = workoutDetailsDB[workoutPosition].workoutDetails,
