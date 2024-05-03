@@ -118,6 +118,7 @@ class WorkoutUseCasesUnitTest {
         val compositeExerciseSetChangeListener = CompositeExerciseSetChangeListener()
         compositeExerciseSetChangeListener.addListener(exerciseDao)
         compositeExerciseSetChangeListener.addListener(exerciseSetDao)
+        compositeExerciseSetChangeListener.addListener(workoutDetailsDao)
         workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener)
 
         exerciseDetailsDao = ExerciseDetailsDaoFake()
@@ -1290,7 +1291,7 @@ class WorkoutUseCasesUnitTest {
      *
      */
     @RepeatedTest(50)
-    fun `create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest{
+    fun `Create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest{
 
         //Generate workout details and workout
         val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)

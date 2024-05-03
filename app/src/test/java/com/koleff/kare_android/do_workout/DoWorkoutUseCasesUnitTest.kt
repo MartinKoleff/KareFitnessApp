@@ -125,6 +125,7 @@ class DoWorkoutUseCasesUnitTest {
             val compositeExerciseSetChangeListener = CompositeExerciseSetChangeListener()
             compositeExerciseSetChangeListener.addListener(exerciseDao)
             compositeExerciseSetChangeListener.addListener(exerciseSetDao)
+            compositeExerciseSetChangeListener.addListener(workoutDetailsDao)
             workoutDetailsDao.setExerciseSetChangeListeners(compositeExerciseSetChangeListener)
 
             exerciseDetailsDao = ExerciseDetailsDaoFake()
