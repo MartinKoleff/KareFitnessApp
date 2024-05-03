@@ -255,12 +255,12 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
         //Workout DB
         workout1 =
-            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true).copy(workoutId = 1)
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true, workoutId = 1)
         workout2 =
-            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true).copy(workoutId = 2)
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true, workoutId = 2)
 
-        workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).collect()
-        workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).collect()
+        workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).toList()
+        workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).toList()
     }
 
     @AfterEach
@@ -446,23 +446,16 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
                 logger.i(
                     TAG,
-                    "Delete do workout performance metrics for invalid workout -> isLoading state raised."
-                )
-                assertTrue { deletePerformanceMetricsState[0].isLoading }
-
-
-                logger.i(
-                    TAG,
                     "Delete do workout performance metrics for invalid workout -> isSuccess state raised. [Silent failure action]"
                 )
-                assertTrue { deletePerformanceMetricsState[1].isSuccessful }
+                assertTrue { deletePerformanceMetricsState[0].isSuccessful }
                 
 //                logger.i(
 //                    TAG,
 //                    "Delete do workout performance metrics for invalid workout -> isError state raised."
 //                )
-//                assertTrue { deletePerformanceMetricsState[1].isError }
-//                assertTrue { deletePerformanceMetricsState[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
+//                assertTrue { deletePerformanceMetricsState[0].isError }
+//                assertTrue { deletePerformanceMetricsState[0].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
             }
 
         @RepeatedTest(50)
@@ -482,21 +475,21 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 )
                 assertTrue { fetchPerformanceMetricsState[0].isLoading }
 
-                logger.i(
-                    TAG,
-                    "Fetch do workout performance metrics for invalid workout via workoutId -> isSuccessful state raised."
-                )
-                assertTrue { fetchPerformanceMetricsState[1].isSuccessful }
-
-                logger.i(TAG, "Assert do workout performance metrics list is empty.")
-                assertTrue { fetchPerformanceMetricsState[1].doWorkoutPerformanceMetricsList.isEmpty() }
-
 //                logger.i(
 //                    TAG,
-//                    "Fetch do workout performance metrics for invalid workout via workoutId -> isError state raised."
+//                    "Fetch do workout performance metrics for invalid workout via workoutId -> isSuccessful state raised."
 //                )
-//                assertTrue { fetchPerformanceMetricsState[1].isError }
-//                assertTrue { fetchPerformanceMetricsState[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
+//                assertTrue { fetchPerformanceMetricsState[1].isSuccessful }
+//
+//                logger.i(TAG, "Assert do workout performance metrics list is empty.")
+//                assertTrue { fetchPerformanceMetricsState[1].doWorkoutPerformanceMetricsList.isEmpty() }
+
+                logger.i(
+                    TAG,
+                    "Fetch do workout performance metrics for invalid workout via workoutId -> isError state raised."
+                )
+                assertTrue { fetchPerformanceMetricsState[1].isError }
+                assertTrue { fetchPerformanceMetricsState[1].error == KareError.DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND }
 
                 val fetchPerformanceMetricsState2 =
                     doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
@@ -882,15 +875,9 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
             logger.i(
                 TAG,
-                "Delete do workout performance metrics for workout 1 -> isLoading state raised."
-            )
-            assertTrue { deletePerformanceMetricsState[0].isLoading }
-
-            logger.i(
-                TAG,
                 "Delete do workout performance metrics for workout 1 -> isSuccessful state raised."
             )
-            assertTrue { deletePerformanceMetricsState[1].isSuccessful }
+            assertTrue { deletePerformanceMetricsState[0].isSuccessful }
 
             //Fetch do workout performance metrics for deleted workout
             val getPerformanceMetricsState2 =

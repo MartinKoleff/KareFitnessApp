@@ -103,7 +103,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
                         workoutId
                     )
 
-                if(data.isNotEmpty()) throw NoSuchElementException()
+                if(data.isEmpty()) throw NoSuchElementException()
 
                 val result = DoWorkoutPerformanceMetricsListWrapper(
                     DoWorkoutPerformanceMetricsListResponse(

@@ -232,22 +232,23 @@ object MockupDataGeneratorV2 {
     fun generateWorkout(
         name: String = workoutNames.random(),
         muscleGroup: MuscleGroup = MuscleGroup.getSupportedMuscleGroups().random(),
+        workoutId: Int = Random.nextInt(1, 100),
         totalExercises: Int = Random.nextInt(4, 12),
         isSelected: Boolean = Random.nextBoolean(),
         excludedIds: List<Int> = emptyList()
     ): WorkoutDto {
 
         //Generate a random workoutId that is not in the excludedIds list
-        var workoutId = Random.nextInt(1, 100)
-        while (excludedIds.contains(workoutId)) {
-            workoutId = Random.nextInt(1, 100)
+        var updatedWorkoutId = workoutId
+        while (excludedIds.contains(updatedWorkoutId)) {
+            updatedWorkoutId = Random.nextInt(1, 100)
         }
 
         return WorkoutDto(
             workoutId = workoutId,
-            name = "$name $workoutId",
+            name = "$name $updatedWorkoutId",
             muscleGroup = muscleGroup,
-            snapshot = "snapshot$workoutId.png",
+            snapshot = "snapshot$updatedWorkoutId.png",
             totalExercises = totalExercises,
             isSelected = isSelected
         )
@@ -261,14 +262,15 @@ object MockupDataGeneratorV2 {
 
     fun generateWorkoutDetails(
         enableSetIdGeneration: Boolean = true,
+        workoutId: Int = Random.nextInt(1, 100),
         excludedIds: List<Int> = emptyList(),
         preSelectedExerciseIds: List<Int> = emptyList()
     ): WorkoutDetailsDto {
 
         //Generate unique workoutId that is not contained in the excludedIds list
-        var workoutId = Random.nextInt(1, 100)
-        while (excludedIds.contains(workoutId)) {
-            workoutId = Random.nextInt(1, 100)
+        var updatedWorkoutId = workoutId
+        while (excludedIds.contains(updatedWorkoutId)) {
+            updatedWorkoutId = Random.nextInt(1, 100)
         }
 
         val muscleGroup = MuscleGroup.getSupportedMuscleGroups().random()
@@ -279,14 +281,14 @@ object MockupDataGeneratorV2 {
             muscleGroup = muscleGroup,
             isDistinct = true,
             enableSetIdGeneration = enableSetIdGeneration,
-            workoutId = workoutId,
+            workoutId = updatedWorkoutId,
             preSelectedExerciseIds = preSelectedExerciseIds
         ).sortedBy { it.exerciseId }.toMutableList()
 
         return WorkoutDetailsDto(
             workoutId = workoutId,
-            name = "$name $workoutId",
-            description = "Description of $name $workoutId",
+            name = "$name $updatedWorkoutId",
+            description = "Description of $name $updatedWorkoutId",
             muscleGroup = muscleGroup,
             exercises = exercises,
             isSelected = isSelected

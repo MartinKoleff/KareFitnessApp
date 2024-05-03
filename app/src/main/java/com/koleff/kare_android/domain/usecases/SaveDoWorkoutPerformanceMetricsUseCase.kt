@@ -32,6 +32,7 @@ class SaveDoWorkoutPerformanceMetricsUseCase(private val repository: DoWorkoutPe
                     )
 
                     DoWorkoutPerformanceMetricsState(
+                        isSuccessful = true,
                         doWorkoutPerformanceMetrics = apiResult.data.doWorkoutPerformanceMetrics
                     )
                 }
