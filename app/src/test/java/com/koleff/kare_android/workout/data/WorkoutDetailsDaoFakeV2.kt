@@ -12,10 +12,10 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
     WorkoutDetailsChangeListener {
 
     private val workoutDetailsDB = mutableListOf<WorkoutDetailsWithExercises>()
-    private lateinit var exerciseSetChangeListener: ExerciseSetChangeListener
+    private lateinit var compositeExerciseSetChangeListener: CompositeExerciseSetChangeListener
 
-    fun setExerciseSetChangeListener(listener: ExerciseSetChangeListener) {
-        this.exerciseSetChangeListener = listener
+    fun setExerciseSetChangeListeners(compositeExerciseSetChangeListener: CompositeExerciseSetChangeListener) {
+        this.compositeExerciseSetChangeListener = compositeExerciseSetChangeListener
     }
 
     private val isInternalLogging = false
@@ -158,22 +158,23 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }
     }
 
-    override fun onExerciseDeleted(exercise: Exercise) {
+    override suspend fun onExerciseDeleted(exercise: Exercise) {
         val index = workoutDetailsDB.indexOfFirst {
             it.workoutDetails.workoutDetailsId == exercise.workoutId
         }
 
         //WorkoutDetails found
         if (index != -1) {
-            val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
-            updatedExercises.removeAll { it.exerciseId == exercise.exerciseId }
-            exerciseSetChangeListener.onSetsDeleted(exercise.exerciseId, exercise.workoutId)
+            compositeExerciseSetChangeListener.onSetsDeleted(exercise.exerciseId, exercise.workoutId).also {
+                val updatedExercises = workoutDetailsDB[index].exercises?.toMutableList() ?: return
+                updatedExercises.removeAll { it.exerciseId == exercise.exerciseId }
 
-            workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
+                workoutDetailsDB[index] = workoutDetailsDB[index].copy(exercises = updatedExercises)
+            }
         }
     }
 
-    override fun onExercisesDeleted(workoutId: Int) {
+    override suspend fun onExercisesDeleted(workoutId: Int) {
         val exercisesToDelete = workoutDetailsDB
             .filter { it.workoutDetails.workoutDetailsId == workoutId }
             .map { it.exercises }

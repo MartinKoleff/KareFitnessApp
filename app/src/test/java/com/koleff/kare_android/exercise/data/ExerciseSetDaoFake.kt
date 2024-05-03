@@ -6,12 +6,13 @@ import java.util.UUID
 
 class ExerciseSetDaoFake(
     private val exerciseSetChangeListener: ExerciseSetChangeListener
-) : ExerciseSetDao{
+) : ExerciseSetDao, ExerciseSetChangeListener{
 
     private val exerciseSetDB = mutableListOf<ExerciseSet>()
 
     override fun getSetById(setId: UUID): ExerciseSet {
-        return exerciseSetDB.first { it.setId == setId }
+        return exerciseSetDB.firstOrNull { it.setId == setId }
+            ?: throw NoSuchElementException("Exercise set with setId $setId not found.")
     }
 
     override suspend fun insertExerciseSet(exerciseSet: ExerciseSet) {
@@ -44,18 +45,37 @@ class ExerciseSetDaoFake(
     }
 
     override suspend fun deleteSet(exerciseSet: ExerciseSet) {
-        exerciseSetDB.removeAll { it.setId == exerciseSet.setId }
         exerciseSetChangeListener.onSetDeleted(exerciseSet)
+        exerciseSetDB.removeAll { it.setId == exerciseSet.setId }
     }
 
     override suspend fun deleteSet(setId: UUID) {
         val exerciseSet = exerciseSetDB.firstOrNull { it.setId == setId } ?: return
-
-        exerciseSetDB.removeAll { it.setId == exerciseSet.setId }
-        exerciseSetChangeListener.onSetDeleted(exerciseSet)
+        deleteSet(exerciseSet)
     }
 
     fun clearDB() {
         exerciseSetDB.clear()
+    }
+
+    override suspend fun onSetAdded(exerciseSet: ExerciseSet) {
+        insertExerciseSet(exerciseSet)
+    }
+
+    override suspend fun onSetUpdated(exerciseSet: ExerciseSet) {
+        updateSet(exerciseSet)
+    }
+
+    override suspend fun onSetDeleted(exerciseSet: ExerciseSet) {
+        deleteSet(exerciseSet)
+    }
+
+    override suspend fun onSetsDeleted(exerciseId: Int, workoutId: Int) {
+        exerciseSetDB.filter {set ->
+            set.exerciseId == exerciseId &&
+                    set.workoutId == workoutId
+        }.forEach { set ->
+            deleteSet(set)
+        }
     }
 }

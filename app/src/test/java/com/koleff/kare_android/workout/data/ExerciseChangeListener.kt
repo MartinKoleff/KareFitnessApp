@@ -8,7 +8,7 @@ interface ExerciseChangeListener {
 
     fun onExerciseUpdated(exercise: Exercise)
 
-    fun onExerciseDeleted(exercise: Exercise)
+    suspend fun onExerciseDeleted(exercise: Exercise)
 
-    fun onExercisesDeleted(workoutId: Int)
+    suspend fun onExercisesDeleted(workoutId: Int)
 }

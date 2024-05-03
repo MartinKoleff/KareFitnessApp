@@ -68,11 +68,12 @@ class ExerciseDaoFakeV2(
     override suspend fun deleteExercise(exercise: Exercise) {
 
         //If there are multiple entries -> remove all
-        exerciseWithSetDB.removeAll {
-            it.exercise.exerciseId == exercise.exerciseId &&
-                    it.exercise.workoutId == exercise.workoutId
+        exerciseChangeListener.onExerciseDeleted(exercise).also {
+            exerciseWithSetDB.removeAll {
+                it.exercise.exerciseId == exercise.exerciseId &&
+                        it.exercise.workoutId == exercise.workoutId
+            }
         }
-        exerciseChangeListener.onExerciseDeleted(exercise)
     }
 
     override suspend fun getExercise(exerciseId: Int, workoutId: Int): Exercise? {
@@ -122,7 +123,7 @@ class ExerciseDaoFakeV2(
         exerciseWithSetDB.clear()
     }
 
-    override fun onSetAdded(exerciseSet: ExerciseSet) {
+    override suspend fun onSetAdded(exerciseSet: ExerciseSet) {
         val exercisePosition =
             exerciseWithSetDB.indexOfFirst {
                 it.exercise.exerciseId == exerciseSet.exerciseId &&
@@ -141,7 +142,7 @@ class ExerciseDaoFakeV2(
         }
     }
 
-    override fun onSetUpdated(exerciseSet: ExerciseSet) {
+    override suspend fun onSetUpdated(exerciseSet: ExerciseSet) {
         val exercisePosition =
             exerciseWithSetDB.indexOfFirst {
                 it.exercise.exerciseId == exerciseSet.exerciseId &&
@@ -166,7 +167,7 @@ class ExerciseDaoFakeV2(
         }
     }
 
-    override fun onSetDeleted(exerciseSet: ExerciseSet) {
+    override suspend fun onSetDeleted(exerciseSet: ExerciseSet) {
         val exercisePosition =
             exerciseWithSetDB.indexOfFirst {
                 it.exercise.exerciseId == exerciseSet.exerciseId &&
@@ -185,7 +186,7 @@ class ExerciseDaoFakeV2(
         }
     }
 
-    override fun onSetsDeleted(exerciseId: Int, workoutId: Int) {
+    override suspend fun onSetsDeleted(exerciseId: Int, workoutId: Int) {
         val exercisePosition =
             exerciseWithSetDB.indexOfFirst {
                 it.exercise.exerciseId == exerciseId &&

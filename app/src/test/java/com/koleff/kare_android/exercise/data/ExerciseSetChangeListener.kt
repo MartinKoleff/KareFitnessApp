@@ -4,11 +4,11 @@ import com.koleff.kare_android.data.room.entity.ExerciseSet
 
 interface ExerciseSetChangeListener {
 
-    fun onSetAdded(exerciseSet: ExerciseSet)
+    suspend fun onSetAdded(exerciseSet: ExerciseSet)
 
-    fun onSetUpdated(exerciseSet: ExerciseSet)
+    suspend fun onSetUpdated(exerciseSet: ExerciseSet)
 
-    fun onSetDeleted(exerciseSet: ExerciseSet)
+    suspend fun onSetDeleted(exerciseSet: ExerciseSet)
 
-    fun onSetsDeleted(exerciseId: Int, workoutId: Int)
+    suspend fun onSetsDeleted(exerciseId: Int, workoutId: Int)
 }
