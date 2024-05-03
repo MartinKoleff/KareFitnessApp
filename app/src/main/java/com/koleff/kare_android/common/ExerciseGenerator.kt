@@ -7,6 +7,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
+import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
 import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import java.util.UUID
@@ -69,6 +70,28 @@ object ExerciseGenerator {
 
             else -> emptyList()
         }
+    }
+
+
+    fun loadExercisesWithSets(
+        muscleGroup: MuscleGroup,
+        isWorkout: Boolean,
+        workoutId: Int
+    ): List<ExerciseWithSets> {
+        val exercises = loadExercises(muscleGroup, isWorkout, workoutId)
+        val exercisesWithSets = exercises.map { exercise ->
+            val sets = loadExerciseSets(
+                exerciseId = exercise.exerciseId,
+                workoutId = exercise.workoutId
+            )
+
+            ExerciseWithSets(
+                exercise = exercise,
+                sets = sets
+            )
+        }
+
+        return exercisesWithSets
     }
 
     fun loadExerciseDetails(
@@ -195,12 +218,14 @@ object ExerciseGenerator {
                 reps = 8,
                 weight = 0.0f
             ),
-            ExerciseSet(setId = UUID.randomUUID(),
+            ExerciseSet(
+                setId = UUID.randomUUID(),
                 exerciseId = exerciseId,
                 workoutId = workoutId,
                 number = 4,
                 reps = 1,
-                weight = 50f),
+                weight = 50f
+            ),
         )
     }
 

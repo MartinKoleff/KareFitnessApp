@@ -289,13 +289,13 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     private suspend fun updateExercises(exercises: List<ExerciseDto>, workoutId: Int) {
 
         //Fetch exercises from DB
-        val exercisesInDB = workoutDetailsDao.getWorkoutDetailsById(workoutId)?.exercises
-        exercisesInDB ?: throw IllegalArgumentException("Invalid workout")
+        val exercisesWithSetsInDB = workoutDetailsDao.getWorkoutDetailsById(workoutId)?.exercises
+        exercisesWithSetsInDB ?: throw IllegalArgumentException("Invalid workout")
 
         exercises.forEach { exercise ->
-            val existsInDB = exercisesInDB.any { exerciseInDB ->
-                exerciseInDB.exerciseId == exercise.exerciseId &&
-                        exerciseInDB.workoutId == exercise.workoutId
+            val existsInDB = exercisesWithSetsInDB.any { exerciseWithSetsInDB ->
+                exerciseWithSetsInDB.exercise.exerciseId == exercise.exerciseId &&
+                        exerciseWithSetsInDB.exercise.workoutId == exercise.workoutId
             }
 
             //Exercise in DB -> update
@@ -335,7 +335,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         val setsToRemove = findMissingSets(
             newSets,
             setsInDB
-        ) //TODO: test if setsInDB should be on top...
+        )
 
         setsToRemove.forEach { set ->
             exerciseSetDao.deleteSet(set)
@@ -657,7 +657,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             //Entry in DB exists -> update
             val exerciseWithSetsInDB = exerciseDao.getExerciseWithSets(
                 exerciseId = exercise.exerciseId,
-                workoutId = exercise.workoutId
+                workoutId = workoutId
             )
 
             updateExercise(

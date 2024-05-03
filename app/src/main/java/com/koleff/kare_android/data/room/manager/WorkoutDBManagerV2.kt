@@ -36,27 +36,15 @@ class WorkoutDBManagerV2 @Inject constructor(
             for (workoutDetailsWithExercises in workoutDetailsWithExercisesList) {
 
                 //Save all exercises in workout
-                val exercises = workoutDetailsWithExercises.safeExercises
+                val exercisesWithSets = workoutDetailsWithExercises.safeExercises
+                val exercises = exercisesWithSets.map { it.exercise }
                 exerciseDao.insertAllExercises(exercises)
 
-                exercises.forEach { exercise ->
-
-                    //Generate sets
-                    val sets =
-                        MockupDataGeneratorV2.generateExerciseSetsList(
-                            4,
-                            exerciseId = exercise.exerciseId,
-                            workoutId = exercise.workoutId,
-                            enableSetIdGeneration = true
-                        )
-
-                    //Save set
-                    sets
-                        .map { it.toEntity() }
-                        .forEach { set ->
-                        exerciseSetDao.insertExerciseSet(set)
+                exercisesWithSets
+                    .map { it.sets }
+                    .forEach { sets ->
+                        exerciseSetDao.insertAllExerciseSets(sets)
                     }
-                }
             }
 
             //Initialization callback
