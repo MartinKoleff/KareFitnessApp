@@ -2,7 +2,7 @@ package com.koleff.kare_android.data.room.entity.relations
 
 import androidx.room.Entity
 
-//One exercise can be in many workout details and one workout details can have many exercises
+@Deprecated("Not used")
 @Entity(
     tableName = "workout_details_exercise_cross_ref",
     primaryKeys = ["workoutDetailsId", "exerciseId"]

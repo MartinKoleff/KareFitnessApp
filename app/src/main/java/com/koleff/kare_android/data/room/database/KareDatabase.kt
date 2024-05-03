@@ -41,13 +41,9 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         User::class,
         DoWorkoutExerciseSet::class,
         DoWorkoutPerformanceMetrics::class,
-        WorkoutConfiguration::class,
-        WorkoutDetailsExerciseCrossRef::class, //TODO: wire one to many relations with foreign key tag instead of cross ref used for many to many only...
-        WorkoutDetailsWorkoutCrossRef::class,
-        ExerciseDetailsExerciseCrossRef::class,
-        ExerciseSetCrossRef::class
+        WorkoutConfiguration::class
     ],
-    version = 20,
+    version = 21,
     exportSchema = false,
 )
 @TypeConverters(Converters::class, ExerciseTimeConverters::class)

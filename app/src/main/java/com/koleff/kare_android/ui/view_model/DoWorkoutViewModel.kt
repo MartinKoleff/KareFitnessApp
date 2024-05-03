@@ -110,7 +110,7 @@ class DoWorkoutViewModel @Inject constructor(
             //Fetch workout
             workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { result ->
                 if (result.isSuccessful) {
-                    val selectedWorkoutDetails = result.workoutDetails //TODO: check if workout configuration is fetched...
+                    val selectedWorkoutDetails = result.workoutDetails
                     Log.d("DoWorkoutViewModel", "Fetched workout: $selectedWorkoutDetails")
 
                     //Initial setup...
