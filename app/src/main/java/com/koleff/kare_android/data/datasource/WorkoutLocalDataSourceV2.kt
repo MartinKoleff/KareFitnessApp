@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
+import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
@@ -174,7 +175,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val workoutDetailsList = workoutDetailsDao.getWorkoutDetailsOrderedById().map { it.toDto() }
+            val workoutDetailsList =
+                workoutDetailsDao.getWorkoutDetailsOrderedById().map { it.toDto() }
             val updatedWorkoutDetailsList = removeCatalogWorkoutDetails(workoutDetailsList)
 
             val result = WorkoutDetailsListWrapper(
@@ -283,6 +285,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
+    @Throws(IllegalArgumentException::class)
     private suspend fun updateExercises(exercises: List<ExerciseDto>, workoutId: Int) {
 
         //Fetch exercises from DB
@@ -313,7 +316,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     throw NoSuchElementException("Exercise not found")
                 }
             } else {
-
                 insertExercise(
                     exercise = exercise.toEntity(),
                     sets = exercise.sets.map { set -> set.toEntity() }
@@ -343,9 +345,24 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         exerciseSetDao.insertAllExerciseSets(newSets)
     }
 
+    @Throws(IllegalArgumentException::class)
     private suspend fun insertExercise(exercise: Exercise, sets: List<ExerciseSet>) {
         exerciseDao.insertExercise(exercise)
         exerciseSetDao.insertAllExerciseSets(sets)
+
+        //Update workout totalExercises
+        val totalExercisesForWorkout = getTotalExercises(exercise.workoutId)
+        val workout = workoutDao.getWorkoutById(exercise.workoutId)
+            ?: throw IllegalArgumentException("Workout not found for exercise with workoutId ${exercise.workoutId}")
+
+        val updatedWorkout = workout.copy(
+            totalExercises = totalExercisesForWorkout
+        )
+        workoutDao.updateWorkout(updatedWorkout)
+    }
+
+    private fun getTotalExercises(workoutId: Int): Int {
+        return workoutDetailsDao.getWorkoutDetailsById(workoutId)?.exercises?.size ?: 0
     }
 
 
@@ -476,12 +493,19 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
             //Insert all exercises and sets
             workoutDetailsDto.exercises.forEach { exercise ->
-                insertExercise(
-                    exercise = exercise.toEntity(),
-                    sets = exercise.sets.map { set ->
-                        set.toEntity()
-                    }
-                )
+                try {
+                    insertExercise(
+                        exercise = exercise.toEntity(),
+                        sets = exercise.sets.map { set ->
+                            set.toEntity()
+                        }
+                    )
+                } catch (e: IllegalArgumentException) {
+
+                    //Invalid workoutId
+                    emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+                    return@flow
+                }
             }
 
             //Select
@@ -537,7 +561,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     workoutId = exercise.workoutId
                 ).toDto()
             }
-            val updatedWorkoutDetailsWithSets = updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
+            val updatedWorkoutDetailsWithSets =
+                updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
 
             val result = WorkoutDetailsWrapper(
                 WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
@@ -555,12 +580,19 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             delay(Constants.fakeDelay)
             val updatedExercise = exercise.copy(workoutId = workoutId)
 
-            insertExercise(
-                exercise = updatedExercise.toEntity(),
-                sets = updatedExercise.sets.map { set ->
-                    set.toEntity()
-                }
-            )
+            try {
+                insertExercise(
+                    exercise = updatedExercise.toEntity(),
+                    sets = updatedExercise.sets.map { set ->
+                        set.toEntity()
+                    }
+                )
+            } catch (e: IllegalArgumentException) {
+
+                //Invalid workoutId
+                emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+                return@flow
+            }
 
             //Fetch workout details after exercise was inserted
             val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
@@ -570,16 +602,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 return@flow
             }
 
-            //Update totalExercises
-            val workout = workoutDao.getWorkoutById(workoutId)
-
-            workout?: run {
-                emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
-                return@flow
-            }
-            val updatedWorkout = workout.copy(totalExercises = workoutDetails.exercises?.size ?: workout.totalExercises)
-            workoutDao.updateWorkout(updatedWorkout)
-
             //Add sets to all exercises
             val updatedWorkoutDetails = workoutDetails.toDto()
             val updatedExercisesWithSets = updatedWorkoutDetails.exercises.map { exercise ->
@@ -588,7 +610,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     workoutId = exercise.workoutId
                 ).toDto()
             }
-            val updatedWorkoutDetailsWithSets = updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
+            val updatedWorkoutDetailsWithSets =
+                updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
 
             val result = WorkoutDetailsWrapper(
                 WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
@@ -603,6 +626,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
+
+        if (exercise.workoutId != workoutId) emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
 
         //Find current entry
         val workoutDetailsWithExercises = workoutDetailsDao.getWorkoutDetailsById(workoutId)
@@ -628,6 +653,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 //        exercisesInDB.add(exercisePosition, updatedExercise)
 
         try {
+
+            //Entry in DB exists -> update
             val exerciseWithSetsInDB = exerciseDao.getExerciseWithSets(
                 exerciseId = exercise.exerciseId,
                 workoutId = exercise.workoutId
@@ -641,10 +668,24 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 }
             )
         } catch (e: NoSuchElementException) {
+//            emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND.apply {
+//                extraMessage = e.message ?: ""
+//            }))
+//            return@flow
 
-            //Exercise not found
-            emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
-            return@flow
+            //Exercise not found -> new entry...
+            try {
+                insertExercise(
+                    exercise = exercise.toEntity(),
+                    sets = exercise.sets.map { set ->
+                        set.toEntity()
+                    })
+            }catch (e: IllegalArgumentException){
+
+                //Invalid workoutId
+                emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+                return@flow
+            }
         }
 
         val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
@@ -662,7 +703,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 workoutId = exercise.workoutId
             ).toDto()
         }
-        val updatedWorkoutDetailsWithSets = updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
+        val updatedWorkoutDetailsWithSets =
+            updatedWorkoutDetails.copy(exercises = updatedExercisesWithSets)
 
         val result = WorkoutDetailsWrapper(
             WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)

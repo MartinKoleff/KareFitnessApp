@@ -56,9 +56,13 @@ interface ExerciseDao {
 
     suspend fun getExerciseWithSets(exerciseId: Int, workoutId: Int): ExerciseWithSets {
         val exercise = getExercise(exerciseId, workoutId)
-        val sets = if (exercise != null) getSetsForExercise(exerciseId, workoutId) else emptyList()
-        return if (exercise != null) ExerciseWithSets(exercise, sets) else
-            throw NoSuchElementException("No exercise found with exerciseId $exerciseId and workoutId $workoutId")
+            ?: throw NoSuchElementException("No exercise found with exerciseId $exerciseId and workoutId $workoutId")
+        val sets = try {
+            getSetsForExercise(exerciseId, workoutId)
+        } catch (e: NoSuchElementException) {
+            emptyList()
+        }
+        return ExerciseWithSets(exercise, sets)
     }
 
     @Transaction
