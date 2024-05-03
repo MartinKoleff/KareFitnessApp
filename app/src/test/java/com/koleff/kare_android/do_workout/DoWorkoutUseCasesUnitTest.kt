@@ -71,6 +71,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.RepeatedTest
 
@@ -109,8 +110,6 @@ class DoWorkoutUseCasesUnitTest {
 
         private val isLogging = true
         private lateinit var logger: TestLogger
-
-        private var hasInitializedWorkoutDetails = false
 
         @JvmStatic
         @BeforeAll
@@ -215,39 +214,38 @@ class DoWorkoutUseCasesUnitTest {
             )
 
             timer = TimerUtilFake()
-
-            //Initialize DB
-            exerciseDBManager = ExerciseDBManagerV2(
-                exerciseSetDao = exerciseSetDao,
-                exerciseDetailsDao = exerciseDetailsDao,
-                exerciseDao = exerciseDao,
-                workoutDao = workoutDao,
-                workoutDetailsDao = workoutDetailsDao,
-                hasInitializedDB = false
-            )
-
-            exerciseDBManager.initializeExerciseTable {
-                logger.i(TAG, "DB initialized successfully!")
-            }
-
-            //Initialize 2 workout details used in tests
-            if (!hasInitializedWorkoutDetails) {
-
-                logger.i(TAG, "Workout details created successfully!")
-                hasInitializedWorkoutDetails = true
-
-                //Generate random workout details
-                val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
-                workoutUseCases.createCustomWorkoutDetailsUseCase(
-                    workoutDetails
-                ).toList()
-
-                val workoutDetails2 = MockupDataGeneratorV2.generateWorkoutDetails()
-                workoutUseCases.createCustomWorkoutDetailsUseCase(
-                    workoutDetails2
-                ).toList()
-            }
         }
+    }
+
+    @BeforeEach
+    fun initializeDB() = runTest {
+
+        //Initialize DB
+        exerciseDBManager = ExerciseDBManagerV2(
+            exerciseSetDao = exerciseSetDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseDao = exerciseDao,
+            workoutDao = workoutDao,
+            workoutDetailsDao = workoutDetailsDao,
+            hasInitializedDB = false
+        )
+
+        exerciseDBManager.initializeExerciseTable {
+            logger.i(TAG, "DB initialized successfully!")
+        }
+
+        logger.i(TAG, "Workout details created successfully!")
+
+        //Generate random workout details
+        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+        workoutUseCases.createCustomWorkoutDetailsUseCase(
+            workoutDetails
+        ).toList()
+
+        val workoutDetails2 = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+        workoutUseCases.createCustomWorkoutDetailsUseCase(
+            workoutDetails2
+        ).toList()
     }
 
     @AfterEach
@@ -274,7 +272,7 @@ class DoWorkoutUseCasesUnitTest {
         )
     }
 
-    @RepeatedTest(50)
+    @RepeatedTest(50) //TODO: fix...
     fun `add set using AddNewExerciseSetUseCase and remove set using DeleteExerciseSetUseCase`() =
         runTest {
 
@@ -469,10 +467,14 @@ class DoWorkoutUseCasesUnitTest {
 
         workoutExercises.forEach { exercises ->
             assertTrue(exercises.isNotEmpty(), "The list of exercises should not be empty")
+
+            exercises.forEach{ exercise ->
+                assertTrue(exercise.sets.isNotEmpty(), "The list of sets should not be empty")
+            }
         }
     }
 
-    @RepeatedTest(50)
+    @RepeatedTest(50) //TODO: fix...
     fun `initial setup using DoWorkoutInitialSetupUseCase test`() = runTest {
 
         //Get workout details
@@ -647,7 +649,7 @@ class DoWorkoutUseCasesUnitTest {
     @RepeatedTest(50)
     fun `initial setup for workout with 1 exercise using DoWorkoutInitialSetupUseCase test`() =
         runTest {
-            val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
+            val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
             logger.i(
                 TAG,
                 "Workout details: $workoutDetails"
@@ -700,7 +702,7 @@ class DoWorkoutUseCasesUnitTest {
                 "Assert currentSet is first set."
             )
             val firstSet = updatedWorkoutDetails.exercises.first().sets[0]
-            assertEquals(firstSet, doWorkoutInitialSetupData.currentExercise.sets[1])
+            assertEquals(firstSet, doWorkoutInitialSetupData.currentExercise.sets[0])
 
             logger.i(
                 TAG,
