@@ -2,9 +2,10 @@ package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.credentials_validator.Credentials
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
+import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.ui.state.BaseState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -45,5 +46,9 @@ class RegisterViewModel @Inject constructor(
 
     fun clearState() {
         _state.value = BaseState()
+    }
+
+    fun navigateToWelcome(){
+        onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

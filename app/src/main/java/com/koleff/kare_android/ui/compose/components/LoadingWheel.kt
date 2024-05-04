@@ -19,20 +19,19 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingWheel(innerPadding: PaddingValues = PaddingValues(0.dp), hideScreen: Boolean = false) {
+fun LoadingWheel(
+    modifier: Modifier = Modifier.fillMaxSize(),
+    innerPadding: PaddingValues = PaddingValues(8.dp),
+    hideScreen: Boolean = false,
+    customBackground: Color = Color.Transparent
+) {
     val background = if (hideScreen) {
         MaterialTheme.colorScheme.background //Dark theme applied too
-    } else Color.Transparent
+    } else customBackground
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(
-                top = 8.dp,
-                start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                bottom = 8.dp + innerPadding.calculateBottomPadding()
-            )
+        modifier = modifier
+            .padding(innerPadding)
             .background(background),
         contentAlignment = Alignment.Center
     ) {

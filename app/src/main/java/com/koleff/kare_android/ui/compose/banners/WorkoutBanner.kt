@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,9 +25,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -59,9 +58,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import kotlin.math.roundToInt
@@ -74,8 +72,6 @@ fun WorkoutBanner(
     onClick: (WorkoutDto) -> Unit
 ) {
     val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
@@ -98,7 +94,7 @@ fun WorkoutBanner(
                     .fillMaxHeight()
                     .width(screenWidth / 2)
                     .align(Alignment.TopEnd),
-                painter = painterResource(id = workoutImage), //TODO: change to url
+                painter = painterResource(id = workoutImage),
                 contentDescription = workout.name,
                 contentScale = ContentScale.Crop
             )
@@ -114,7 +110,7 @@ fun WorkoutBanner(
 
             //Hexagon effect overflowing into workout snapshot
             Image(
-                painter = painterResource(R.drawable.ic_workout_banner_effect),
+                painter = painterResource(R.drawable.background_workout_banner),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -142,16 +138,18 @@ fun WorkoutBanner(
                     }
             )
 
-            //Workout Title TextBox
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2),
             ) {
+
+                //Texts
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxHeight()
                         .padding(end = 8.dp),
+//                        .weight(7f),
                     verticalArrangement = Arrangement.Center, //TODO: change to Top when adding sets...
                 ) {
 
@@ -199,6 +197,23 @@ fun WorkoutBanner(
                         //TODO: add the first 3 sets and their reps, weight/duration...
                     }
                 }
+
+//                //Start workout button
+//                NavigationItem(
+//                    modifier = Modifier
+//                        .fillMaxSize()
+//                        .weight(1.5f)
+//                        .drawBehind {
+//                            drawCircle(
+//                                color = Color.White,
+//                                radius = this.size.width / 2
+//                            )
+//                        },
+//                    icon = painterResource(id = androidx.media3.ui.R.drawable.exo_legacy_controls_play),
+//                    label = "Start workout",
+//                    tint = Color.Green,
+//                    onNavigateAction = onStartWorkoutAction
+//                )
             }
         }
     }
@@ -288,6 +303,7 @@ fun DeleteButton(
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
+    val paddingValues = PaddingValues(bottom = 8.dp)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -305,11 +321,16 @@ fun DeleteButton(
             .clickable(onClick = onDelete)
     ) {
         Icon(
-            imageVector = Icons.Default.Delete,
+            painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "Delete",
             tint = Color.White,
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier
+                .size(iconSize)
         )
+
+        Spacer(modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth())
 
         Text(
             text = title,
@@ -333,6 +354,7 @@ fun SelectButton(
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
+    val paddingValues = PaddingValues(bottom = 8.dp)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -354,10 +376,15 @@ fun SelectButton(
         Image(
             painter = image,
             contentDescription = "Select",
-            modifier = Modifier.size(iconSize),
+            modifier = Modifier
+                .size(iconSize),
             colorFilter = ColorFilter.tint(Color.White),
             contentScale = ContentScale.Crop // This makes the image fill the bounds of the box
         )
+
+        Spacer(modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth())
 
         Text(
             text = title,
@@ -381,6 +408,7 @@ fun EditButton(
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
+    val paddingValues = PaddingValues(bottom = 8.dp)
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -398,11 +426,16 @@ fun EditButton(
             .clickable(onClick = onEdit)
     ) {
         Icon(
-            imageVector = Icons.Default.Edit,
+            painter = painterResource(id = R.drawable.ic_edit),
             contentDescription = "Edit",
             tint = Color.White,
-            modifier = Modifier.size(iconSize)
+            modifier = Modifier
+                .size(iconSize)
         )
+
+        Spacer(modifier = Modifier
+            .height(5.dp)
+            .fillMaxWidth())
 
         Text(
             text = title,
@@ -444,7 +477,6 @@ fun WorkoutList(
 fun WorkoutListPreview() {
     val n = 5
     val workoutList: MutableList<WorkoutDto> = mutableListOf()
-    val navController = rememberNavController()
     repeat(n) { index ->
         val currentWorkout = WorkoutDto(
             workoutId = index,
@@ -479,7 +511,7 @@ fun WorkoutListPreview() {
 @Preview
 @Composable
 fun WorkoutBannerPreview() {
-    val workout = MockupDataGenerator.generateWorkout()
+    val workout = MockupDataGeneratorV2.generateWorkout()
 
     WorkoutBanner(
         modifier = Modifier
@@ -493,7 +525,7 @@ fun WorkoutBannerPreview() {
 @Preview
 @Composable
 fun SwipeableWorkoutBannerPreview() {
-    val workout = MockupDataGenerator.generateWorkout()
+    val workout = MockupDataGeneratorV2.generateWorkout()
 
     SwipeableWorkoutBanner(
         modifier = Modifier

@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
@@ -12,6 +13,7 @@ import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -64,6 +66,13 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.addExercise(workoutId, exercise)
     }
 
+    override suspend fun submitExercise(
+        workoutId: Int,
+        exercise: ExerciseDto
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        return workoutDataSource.submitExercise(workoutId, exercise)
+    }
+
     override suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {
         return workoutDataSource.updateWorkoutDetails(workout)
     }
@@ -82,5 +91,21 @@ class WorkoutRepositoryImpl @Inject constructor(
 
     override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
         return workoutDataSource.createCustomWorkoutDetails(workoutDetailsDto)
+    }
+
+    override suspend fun getWorkoutConfiguration(workoutId: Int): Flow<ResultWrapper<WorkoutConfigurationWrapper>> {
+        return workoutDataSource.getWorkoutConfiguration(workoutId)
+    }
+
+    override suspend fun updateWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.updateWorkoutConfiguration(workoutConfiguration)
+    }
+
+    override suspend fun saveWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<WorkoutConfigurationWrapper>> {
+        return workoutDataSource.saveWorkoutConfiguration(workoutConfiguration)
+    }
+
+    override suspend fun deleteWorkoutConfiguration(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.deleteWorkoutConfiguration(workoutId)
     }
 }

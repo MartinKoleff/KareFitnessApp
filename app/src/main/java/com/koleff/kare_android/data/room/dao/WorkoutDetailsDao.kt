@@ -7,32 +7,33 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import com.koleff.kare_android.data.room.entity.Exercise
-import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
+import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
+import com.koleff.kare_android.data.room.entity.WorkoutWithConfig
+
+typealias WorkoutDetailsId = Long
 
 @Dao
 interface WorkoutDetailsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): Long
+    suspend fun insertWorkoutDetails(workoutDetails: WorkoutDetails): WorkoutDetailsId
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllDetails(workoutDetailsList: List<WorkoutDetails>)
+    suspend fun insertAllWorkoutDetails(workoutDetailsList: List<WorkoutDetails>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
-
-    @Delete
-    suspend fun deleteWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
-
-    @Delete
-    suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
+//
+//    @Insert(onConflict = OnConflictStrategy.REPLACE)
+//    suspend fun insertAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
+//
+//    @Delete
+//    suspend fun deleteWorkoutDetailsExerciseCrossRef(crossRef: WorkoutDetailsExerciseCrossRef)
+//
+//    @Delete
+//    suspend fun deleteAllWorkoutDetailsExerciseCrossRef(crossRefs: List<WorkoutDetailsExerciseCrossRef>)
 
     @Query("DELETE FROM workout_details_table WHERE workoutDetailsId = :workoutId")
     suspend fun deleteWorkoutDetails(workoutId: Int)

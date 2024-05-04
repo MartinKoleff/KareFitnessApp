@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
-import com.koleff.kare_android.common.Network
+import com.koleff.kare_android.common.network.Network
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.request.LoginRequest
@@ -36,7 +36,7 @@ class AuthenticationRemoteDataSource @Inject constructor(
 
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         val body = RegistrationRequest(
-           user
+            user
         )
 
         return Network.executeApiCall(dispatcher, {

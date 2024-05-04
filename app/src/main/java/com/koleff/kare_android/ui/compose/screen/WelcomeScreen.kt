@@ -139,7 +139,7 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
 
         //Texture background
         Image(
-            painter = painterResource(id = R.drawable.metal_texture_2),
+            painter = painterResource(id = R.drawable.background_metal_texture_2),
             contentDescription = "Metal texture background",
             modifier = Modifier
                 .alpha(0.75f)
@@ -175,7 +175,7 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
         Image(
             modifier = Modifier
                 .size(175.dp),
-            painter = painterResource(R.drawable.ic_logo),
+            painter = painterResource(R.drawable.logo),
             contentDescription = "Logo image",
             contentScale = ContentScale.Crop
         )
@@ -217,7 +217,7 @@ fun LogoRow() {
         Image(
             modifier = Modifier
                 .size(175.dp),
-            painter = painterResource(R.drawable.ic_logo),
+            painter = painterResource(R.drawable.logo),
             contentDescription = "Logo image",
             contentScale = ContentScale.Crop
         )
@@ -272,7 +272,7 @@ fun WideRoundButton(
 
         //Texture background
         Image(
-            painter = painterResource(id = R.drawable.metal_texture_3),
+            painter = painterResource(id = R.drawable.background_metal_texture_3),
             contentDescription = "Metal texture background",
             modifier = Modifier.alpha(0.85f),
             contentScale = ContentScale.Crop

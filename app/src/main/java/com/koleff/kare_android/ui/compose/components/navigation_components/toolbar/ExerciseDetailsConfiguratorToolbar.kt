@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -90,7 +88,7 @@ fun PreviewExerciseConfiguratorToolbar() {
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
             .background(color = MaterialTheme.colorScheme.primaryContainer),
-        exerciseImageId = R.drawable.ic_legs,
+        exerciseImageId = R.drawable.background_legs,
         onNavigateBackAction = {},
         onSubmitExercise = {}
     )

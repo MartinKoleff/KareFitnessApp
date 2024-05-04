@@ -18,12 +18,12 @@ interface ExerciseDetailsDao {
     suspend fun insertExerciseDetails(exercise: ExerciseDetails)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(exercises: List<ExerciseDetails>)
+    suspend fun insertAllExerciseDetails(exercises: List<ExerciseDetails>)
 
     @Delete
     suspend fun deleteExerciseDetails(exercise: ExerciseDetails)
 
     @Transaction
-    @Query("SELECT * FROM exercise_details_table WHERE exerciseDetailsId = :exerciseId")
-    fun getExerciseDetailsById(exerciseId: Int): ExerciseDetails
+    @Query("SELECT * FROM exercise_details_table WHERE exerciseDetailsId = :exerciseId AND workoutId = :workoutId")
+    fun getExerciseDetailsByExerciseAndWorkoutId(exerciseId: Int, workoutId: Int): ExerciseDetails
 }

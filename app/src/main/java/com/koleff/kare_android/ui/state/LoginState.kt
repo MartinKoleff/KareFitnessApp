@@ -10,9 +10,9 @@ data class LoginData(
 )
 
 data class LoginState (
-    val isSuccessful: Boolean = false,
-    val isLoading: Boolean = false,
-    val isError: Boolean = false,
-    val error : KareError = KareError.GENERIC,
-    val data: LoginData = LoginData()
-)
+    val data: LoginData = LoginData(),
+    override val isSuccessful: Boolean = false,
+    override val isLoading: Boolean = false,
+    override val isError: Boolean = false,
+    override val error: KareError = KareError.GENERIC
+): BaseState(isSuccessful, isLoading, isError, error)

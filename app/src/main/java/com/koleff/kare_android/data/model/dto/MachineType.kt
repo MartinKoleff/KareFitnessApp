@@ -9,6 +9,6 @@ enum class MachineType(val machineId: Int) {
 
     companion object {
         fun fromId(id: Int): MachineType =
-            values().find { it.machineId == id } ?: NONE
+            entries.find { it.machineId == id } ?: NONE
     }
 }

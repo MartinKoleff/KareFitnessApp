@@ -1,15 +1,10 @@
 package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavHostController
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
@@ -21,6 +16,7 @@ import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.state.HasUpdated
 import com.koleff.kare_android.ui.state.SelectedWorkoutState
 import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -38,8 +34,9 @@ class WorkoutViewModel @Inject constructor(
     private val preferences: Preferences,
     private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
+    val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : BaseViewModel(navigationController = navigationController) {
+) : BaseViewModel(navigationController = navigationController), MainScreenNavigation {
 
     private var _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
     val state: StateFlow<WorkoutListState>
@@ -65,10 +62,10 @@ class WorkoutViewModel @Inject constructor(
     val updateWorkoutState: StateFlow<WorkoutState>
         get() = _updateWorkoutState
 
-    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
-        MutableStateFlow(WorkoutState())
-    val createWorkoutState: StateFlow<WorkoutState>
-        get() = _createWorkoutState
+//    private var _createWorkoutState: MutableStateFlow<WorkoutState> =
+//        MutableStateFlow(WorkoutState())
+//    val createWorkoutState: StateFlow<WorkoutState>
+//        get() = _createWorkoutState
 
 
     val isRefreshing by mutableStateOf(state.value.isLoading)
@@ -77,11 +74,7 @@ class WorkoutViewModel @Inject constructor(
 
     private val hasLoadedFromCache = mutableStateOf(false)
 
-    val hasUpdated = savedStateHandle.get<Boolean>("hasUpdated") ?: false
-
     init {
-        Log.d("WorkoutViewModel", "hasUpdated: $hasUpdated")
-
         viewModelScope.launch(Dispatchers.Main) {
             preferences.loadSelectedWorkout()?.let { selectedWorkout ->
                 _state.value = WorkoutListState(
@@ -219,31 +212,58 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+//    fun createNewWorkout() {
+//        viewModelScope.launch(dispatcher) {
+//            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
+//                _createWorkoutState.value = createWorkoutState
+//
+//                //Update workout list
+//                if (createWorkoutState.isSuccessful) {
+//                    val createdWorkout = createWorkoutState.workout
+//
+//                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
+//                    updatedList.add(createdWorkout)
+//                    updatedList.sortBy { it.name }
+//
+//                    _state.value = _state.value.copy(workoutList = updatedList)
+//                    originalWorkoutList = updatedList
+//
+//                    //Await update workout
+//                    Log.d(
+//                        "WorkoutViewModel",
+//                        "Create workout with id ${createdWorkout.workoutId}"
+//                    )
+//                    navigateToWorkoutDetails(createdWorkout.workoutId)
+//
+//                    //Reset create workout state...
+//                    resetCreateWorkoutState()
+//                    Log.d("WorkoutViewModel", "Resetting create workout state...")
+//                }
+//            }
+//        }
+//    }
+
+//    private fun resetCreateWorkoutState() {
+//        _createWorkoutState.value =
+//            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+//    }
+
+    //Directly navigate and skip loading. Call create workout use case in workout details view model
+//    fun createNewWorkout() {
+//        viewModelScope.launch(dispatcher) {
+//            savedStateHandle["isNewWorkout"] = true
+//            Log.d("WorkoutViewModel", "isNewWorkout set to true.")
+//
+//            navigateToWorkoutDetails(-1)
+//        }
+//    }
+
     fun createNewWorkout() {
-        viewModelScope.launch(dispatcher) {
-            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
-                _createWorkoutState.value = createWorkoutState
+        navigateToWorkoutDetails(-1, isNewWorkout = true)
 
-                //Update workout list
-                if (createWorkoutState.isSuccessful) {
-                    val createdWorkout = createWorkoutState.workout
-
-                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
-                    updatedList.add(createdWorkout)
-                    updatedList.sortBy { it.name }
-
-                    _state.value = _state.value.copy(workoutList = updatedList)
-                    originalWorkoutList = updatedList
-                }
-            }
-        }
+        Log.d("WorkoutViewModel", "hasUpdated set to true.")
+        hasUpdated.notifyUpdate(true)
     }
-
-    private fun resetCreateWorkoutState() {
-        _createWorkoutState.value =
-            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
-    }
-
 
     fun getWorkouts() {
         viewModelScope.launch(dispatcher) {
@@ -258,15 +278,17 @@ class WorkoutViewModel @Inject constructor(
             }
         }
 
-        savedStateHandle["hasUpdated"] = false
+        Log.d("WorkoutViewModel", "hasUpdated set to false.")
+        hasUpdated.notifyUpdate(false)
     }
 
     //Navigation
-    fun navigateToSearchWorkout(exerciseId: Int) {
+    fun navigateToSearchWorkout(exerciseId: Int, workoutId: Int) {   //TODO: TEST...
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchWorkoutsScreen(
-                    exerciseId = exerciseId
+                    exerciseId = exerciseId,
+                    workoutId = workoutId
                 )
             )
         )
@@ -275,24 +297,17 @@ class WorkoutViewModel @Inject constructor(
     fun navigateToWorkoutDetails(workout: WorkoutDto) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
-                Destination.WorkoutDetails(workoutId = workout.workoutId)
+                Destination.WorkoutDetails(workoutId = workout.workoutId,  isNewWorkout = false)
             )
         )
     }
 
-    fun navigateToWorkoutDetails(workoutId: Int) {
+    fun navigateToWorkoutDetails(workoutId: Int, isNewWorkout: Boolean = false) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
-                Destination.WorkoutDetails(workoutId = workoutId)
+                Destination.WorkoutDetails(workoutId = workoutId, isNewWorkout = isNewWorkout)
             )
         )
-
-        //Reset state
-        resetCreateWorkoutState()
-
-        //Raise a flag to update Workouts screen...
-        savedStateHandle["hasUpdated"] = true
-        Log.d("WorkoutViewModel", "hasUpdated set to true.")
     }
 
     override fun clearError() {
@@ -311,8 +326,24 @@ class WorkoutViewModel @Inject constructor(
         if (getSelectedWorkoutState.value.isError) {
             _getSelectedWorkoutState.value = SelectedWorkoutState()
         }
-        if (createWorkoutState.value.isError) {
-            _createWorkoutState.value = WorkoutState()
-        }
+//        if (createWorkoutState.value.isError) {
+//            _createWorkoutState.value = WorkoutState()
+//        }
+    }
+
+    override fun onNavigateToDashboard() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+
+    override fun onNavigateToWorkouts() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+
+    override fun onNavigateToSettings() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+
+    override fun onNavigateBack() {
+        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

@@ -30,4 +30,5 @@ object Constants {
     const val UNIVERSAL_NOTIFICATION_TOPIC = "KARE"
 
     const val isTestingFirebaseCrashlytics = false
+    const val CATALOG_EXERCISE_ID = 777
 }

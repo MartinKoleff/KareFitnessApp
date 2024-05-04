@@ -48,7 +48,6 @@ fun ExerciseDetailsBottomNavigationBar(
 @Preview
 @Composable
 fun PreviewExerciseDetailsBottomNavigationBar() {
-    val navController = rememberNavController()
     ExerciseDetailsBottomNavigationBar(
         exerciseId = -1,
         onNavigateSubmitExercise = {}

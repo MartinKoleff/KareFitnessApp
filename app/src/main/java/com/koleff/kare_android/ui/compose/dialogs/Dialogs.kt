@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import java.util.Locale
 
@@ -121,17 +121,24 @@ fun SuccessDialog(
 ) {
     AlertDialog(
         title = {
-            Text(
-                text = title,
-                style = TextStyle(
-                    color = Color.Black,
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.Bold
-                ),
-                textAlign = TextAlign.Center,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = title,
+                    style = TextStyle(
+                        color = Color.Black,
+                        fontSize = 24.sp,
+                        fontWeight = FontWeight.Bold
+                    ),
+                    textAlign = TextAlign.Center,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
         },
         text = {
             if (description.isNotEmpty()) {
@@ -262,7 +269,8 @@ fun WarningDialog(
 @Composable
 fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
     val context = LocalContext.current
-    val errorMessage = context.resources.getString(error.errorMessageResourceId)
+    val errorMessage =
+        context.resources.getString(error.errorMessageResourceId) + " " + error.extraMessage
     val title = "Error"
 
     AlertDialog(
@@ -348,6 +356,28 @@ fun EnableNotificationsDialog(
     )
 }
 
+@Composable
+fun WorkoutCompletedDialog(
+    workoutName: String,
+    onClick: () -> Unit,
+) {
+    SuccessDialog(
+        title = "$workoutName completed successfully!",
+        onDismiss = onClick,
+        onClick = onClick
+    )
+}
+
+@Preview
+@Composable
+fun WorkoutCompletedDialogPreview(
+) {
+    WorkoutCompletedDialog(
+        workoutName = "Blow your arms workout",
+        onClick = {}
+    )
+}
+
 @Preview
 @Composable
 fun EnableNotificationsDialogPreview() {
@@ -375,7 +405,7 @@ fun WarningDialogPreview() {
 @Preview
 @Composable
 fun SelectWorkoutDialogPreview() {
-    val workout = MockupDataGenerator.generateWorkout()
+    val workout = MockupDataGeneratorV2.generateWorkout()
     val selectWord = if (workout.isSelected) "De-select" else "Select"
 
     WarningDialog(
@@ -390,7 +420,7 @@ fun SelectWorkoutDialogPreview() {
 @Preview
 @Composable
 fun DeselectWorkoutDialogPreview() {
-    val workout = MockupDataGenerator.generateWorkout().copy(isSelected = true)
+    val workout = MockupDataGeneratorV2.generateWorkout().copy(isSelected = true)
     val selectWord = if (workout.isSelected) "De-select" else "Select"
 
     WarningDialog(
@@ -427,7 +457,9 @@ fun EditWorkoutNameDialogPreview() {
 @Preview
 @Composable
 fun ErrorDialogPreview() {
-    val error = KareError.INVALID_CREDENTIALS
+    val error = KareError.INVALID_CREDENTIALS.apply {
+        extraMessage = "Username must be at least 4 characters long."
+    }
 
     ErrorDialog(
         error = error,

@@ -1,54 +1,43 @@
 package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
-import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.LoginData
 import com.koleff.kare_android.ui.state.LoginState
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 
 class LoginUseCase(
     private val authenticationRepository: AuthenticationRepository,
     private val credentialsAuthenticator: CredentialsAuthenticator
 ) {
+    suspend operator fun invoke(username: String, password: String): Flow<LoginState> = flow {
 
-    private var _credentialsAuthenticationState: MutableStateFlow<BaseState> = MutableStateFlow(
-        BaseState()
-    )
-    private val credentialsAuthenticationState: StateFlow<BaseState> =
-        _credentialsAuthenticationState
-
-
-    suspend operator fun invoke(username: String, password: String): Flow<LoginState> {
+        //Initial loading
+        emit(LoginState(isLoading = true))
 
         //Validate credentials
-        credentialsAuthenticator.checkLoginCredentials(username, password)
-            .collect { credentialsAuthenticationState ->
-                _credentialsAuthenticationState.value = credentialsAuthenticationState
-            }
+        val state = credentialsAuthenticator.checkLoginCredentials(username, password).firstOrNull()
 
         //Valid credentials -> proceed with login
-        return if (credentialsAuthenticationState.value.isSuccessful) {
-            authenticationRepository.login(username, password).map { apiResult ->
+        if (state?.isSuccessful == true) {
+            authenticationRepository.login(username, password).collect { apiResult ->
                 when (apiResult) {
                     is ResultWrapper.ApiError -> {
-                        LoginState(
-                            isError = true,
-                            error = apiResult.error ?: KareError.GENERIC
+                        emit(
+                            LoginState(
+                                isError = true,
+                                error = apiResult.error ?: KareError.GENERIC
+                            )
                         )
                     }
 
                     is ResultWrapper.Loading -> {
-                        LoginState(isLoading = true)
+                        emit(LoginState(isLoading = true))
                     }
 
                     is ResultWrapper.Success -> {
@@ -59,12 +48,14 @@ class LoginUseCase(
                             //Save credentials
                             credentialsAuthenticator.saveCredentials(user)
 
-                            LoginState(
-                                isSuccessful = true,
-                                data = LoginData(
-                                    accessToken = accessToken,
-                                    refreshToken = refreshToken,
-                                    user = user
+                            emit(
+                                LoginState(
+                                    isSuccessful = true,
+                                    data = LoginData(
+                                        accessToken = accessToken,
+                                        refreshToken = refreshToken,
+                                        user = user
+                                    )
                                 )
                             )
                         }
@@ -72,7 +63,7 @@ class LoginUseCase(
                 }
             }
         } else { //if (credentialsAuthenticationState.value.isError)
-            flowOf(
+            emit(
                 LoginState(
                     isError = true,
                     error = KareError.INVALID_CREDENTIALS

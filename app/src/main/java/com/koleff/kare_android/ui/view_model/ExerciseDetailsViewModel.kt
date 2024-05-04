@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
@@ -48,7 +49,7 @@ class ExerciseDetailsViewModel @Inject constructor(
 
     private fun getExerciseDetails(exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExerciseDetailsUseCase(exerciseId).collect { exerciseDetailsState ->
+            exerciseUseCases.getExerciseDetailsUseCase(exerciseId, Constants.CATALOG_EXERCISE_ID).collect { exerciseDetailsState ->
 
                 //Don't clear the exercise initial muscle group data...
                 if (exerciseDetailsState.isLoading) {
@@ -66,7 +67,7 @@ class ExerciseDetailsViewModel @Inject constructor(
     fun navigateToSearchWorkout() {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
-                Destination.SearchWorkoutsScreen(state.value.exercise.id)
+                Destination.SearchWorkoutsScreen(state.value.exercise.id, Constants.CATALOG_EXERCISE_ID)
             )
         )
     }

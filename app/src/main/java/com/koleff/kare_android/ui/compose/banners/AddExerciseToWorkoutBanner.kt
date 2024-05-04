@@ -21,9 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
@@ -37,7 +35,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Composable
 fun AddExerciseToWorkoutBanner(
@@ -64,7 +61,7 @@ fun AddExerciseToWorkoutBanner(
 
             //Parallax effect overflowing into snapshot
             Image(
-                painter = painterResource(R.drawable.ic_add_button_background),
+                painter = painterResource(R.drawable.background_add_button),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

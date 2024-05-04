@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.compose.banners.WorkoutBanner
 
@@ -44,7 +44,7 @@ fun SearchWorkoutListPreview() {
         .fillMaxSize()
         .padding(8.dp)
 
-    val workoutList = MockupDataGenerator.generateWorkoutList()
+    val workoutList = MockupDataGeneratorV2.generateWorkoutList()
 
     SearchWorkoutList(
         modifier = modifier,

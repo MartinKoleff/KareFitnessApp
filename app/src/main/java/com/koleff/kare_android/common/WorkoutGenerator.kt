@@ -1,10 +1,12 @@
 package com.koleff.kare_android.common
 
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.room.entity.Workout
+import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWithExercises
+import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 
 object WorkoutGenerator {
@@ -66,7 +68,8 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.CHEST,
                     isSelected = false
                 ),
-                exercises = ExerciseGenerator.loadExercises(MuscleGroup.CHEST)
+                exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.CHEST, isWorkout = true, workoutId = 1),
+                configuration = WorkoutConfigurationDto(workoutId = 1).toEntity()
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -76,7 +79,8 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.BACK,
                     isSelected = false
                 ),
-                exercises = ExerciseGenerator.loadExercises(MuscleGroup.BACK)
+                exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.BACK, isWorkout = true, workoutId = 2),
+                configuration = WorkoutConfigurationDto(workoutId = 2).toEntity()
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -85,7 +89,8 @@ object WorkoutGenerator {
                     description = "Blow your arms with curls",
                     muscleGroup = MuscleGroup.ARMS,
                     isSelected = true
-                ), exercises = ExerciseGenerator.loadExercises(MuscleGroup.ARMS)
+                ), exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.ARMS, isWorkout = true, workoutId = 3),
+                configuration = WorkoutConfigurationDto(workoutId = 3).toEntity()
             )
         )
     }

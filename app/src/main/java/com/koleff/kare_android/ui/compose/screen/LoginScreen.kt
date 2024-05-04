@@ -6,11 +6,14 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -38,14 +41,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,14 +56,15 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.navigation.Destination
-import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.view_model.LoginViewModel
 
@@ -71,6 +74,9 @@ fun LoginScreen(
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
 
     val cornerSize = 36.dp
 
@@ -86,7 +92,22 @@ fun LoginScreen(
         loginViewModel.login(credentials)
     }
 
+    //Dialog visibility
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
+
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
     LaunchedEffect(loginState) {
+        Log.d("LoginScreen", "Login state updated: $loginState")
+
+        //Update showErrorDialog based on loginState
+        showErrorDialog = loginState.isError
+        error = loginState.error
+
+        //Update showLoadingDialog based on loginState
+        showLoadingDialog = loginState.isLoading
+
         if (loginState.isSuccessful) {
             Log.d("LoginScreen", "Successfully signed in! Caching credentials and tokens!")
 
@@ -98,14 +119,8 @@ fun LoginScreen(
         }
     }
 
-    var showErrorDialog by remember { mutableStateOf(false) }
-
-    //Update showErrorDialog based on loginState
-    LaunchedEffect(loginState.isError) {
-        showErrorDialog = loginState.isError
-    }
-
     val onDismiss = {
+        showErrorDialog = false
         loginViewModel.clearError() //Enters launched effect to update showErrorDialog...
     }
 
@@ -118,85 +133,70 @@ fun LoginScreen(
 
     val onGoogleSign: () -> Unit = {} //TODO: wire with OAuth2...
 
-    //Background image
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .drawWithContent {
-                val colors = listOf(
-                    Color.Red,
-                    Color.Red,
-                    Color.Black,
-                    Color.Blue
-                )
-                drawContent()
-                drawRect(
-                    brush = Brush.linearGradient(colors),
-                    blendMode = BlendMode.Overlay //ColorBurn
-                )
-            }
-    ) {
-
-        //Texture background
-        Image(
-            painter = painterResource(id = R.drawable.ic_login_background_4),
-            contentDescription = "Background",
-            contentScale = ContentScale.Crop
-        )
-    }
-
-    //Loading screen
-    if (loginState.isLoading) {
-        LoadingWheel()
-    }
-
+    //Error dialog
     if (showErrorDialog) {
-        ErrorDialog(loginState.error, onDismiss)
+        error?.let {
+            ErrorDialog(it, onDismiss)
+        }
     }
 
-    //Screen
-    Column(
-        modifier = Modifier.fillMaxSize(), //screenContentModifier
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
-    ) {
+    AuthenticationScaffold(
+        screenTitle = "",
+        onNavigateBackAction = {
+            loginViewModel.navigateToWelcome()
+        }
+    ) { innerPadding ->
 
-        //Gym image
-        Image( //TODO: replace with scaffold and top toolbar...
-            modifier = gymImageModifier
-                .clip(RoundedCornerShape(cornerSize))
-                .padding(bottom = 6.dp),
-            painter = painterResource(id = R.drawable.ic_default),
-            contentDescription = "Top Image",
-            contentScale = ContentScale.Crop
-        )
-
-        CustomTitleAndSubtitle(
-            title = "Welcome back!",
-            subtitle = "We missed you!"
-        )
-
-        //User text box
-        CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
-            username = it
+        //Loading screen
+        if (showLoadingDialog) {
+            LoadingWheel(innerPadding = PaddingValues(top = 46.dp))
         }
 
-        //Password text box
-        PasswordTextField(label = "Password") {
-            password = it
-        }
+        //Screen
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .pointerInput(Unit) {
 
-        AuthenticationButton(
-            text = "Sign in",
-            onAction = onSignIn,
-            credentials =
-            Credentials(
-                username = username,
-                password = password
+                    //Hide keyboard on tap outside text field boxes
+                    detectTapGestures(
+                        onTap = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    )
+                },
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Top
+        ) {
+            AuthorizationTitleAndSubtitle(
+                title = "Welcome back!",
+                subtitle = "We missed you!"
             )
-        )
-        SignInFooter(onGoogleSign = onGoogleSign)
-        //TODO: add don't have an account register redirect to registerScreen...
+
+            //User text box
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
+                username = it
+            }
+
+            //Password text box
+            PasswordTextField(label = "Password") {
+                password = it
+            }
+
+            AuthenticationButton(
+                text = "Sign in",
+                onAction = onSignIn,
+                credentials =
+                Credentials(
+                    username = username,
+                    password = password
+                )
+            )
+            SignInFooter(onGoogleSign = onGoogleSign)
+            //TODO: add don't have an account register redirect to registerScreen...
+        }
     }
 }
 
@@ -207,7 +207,7 @@ fun LoginScreenPreview() {
 }
 
 @Composable
-fun CustomTitleAndSubtitle(title: String, subtitle: String) {
+fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     val textColor = Color.White
 
     val titlePadding =
@@ -274,7 +274,7 @@ fun CustomTitleAndSubtitle(title: String, subtitle: String) {
 @Composable
 fun CustomTextField(
     label: String,
-    iconId: Int,
+    iconResourceId: Int,
     onValueChange: (String) -> Unit
 ) {
     var text by rememberSaveable {
@@ -313,7 +313,7 @@ fun CustomTextField(
                 modifier = Modifier
                     .size(45.dp)
                     .padding(vertical = 8.dp, horizontal = 2.dp),
-                painter = painterResource(iconId),
+                painter = painterResource(iconResourceId),
                 contentDescription = "Icon",
                 contentScale = ContentScale.Inside
 //                    colorFilter = ColorFilter.tint(
@@ -322,7 +322,7 @@ fun CustomTextField(
 //                    )
             )
 //            Icon(
-//                painter = painterResource(iconId),
+//                painter = painterResource(iconResourceId),
 //                contentDescription = "Text box icon"
 //            )
         }
@@ -334,7 +334,7 @@ fun CustomTextField(
 fun CustomTextFieldPreview() {
     CustomTextField(
         label = "Username",
-        iconId = R.drawable.ic_user_2,
+        iconResourceId = R.drawable.ic_user_2,
         onValueChange = {}
     )
 }

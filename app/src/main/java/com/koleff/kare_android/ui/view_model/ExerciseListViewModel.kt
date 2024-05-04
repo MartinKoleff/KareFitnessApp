@@ -32,7 +32,7 @@ class ExerciseListViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : BaseViewModel(navigationController) {
+) : BaseViewModel(navigationController), MainScreenNavigation {
 
     private val muscleGroupId = savedStateHandle.get<String>("muscle_group_id")?.toIntOrNull()
         ?.plus(1)
@@ -46,7 +46,7 @@ class ExerciseListViewModel @Inject constructor(
     private var originalExerciseList: List<ExerciseDto> = mutableListOf()
 
     init {
-        getExercises(muscleGroupId)
+        getCatalogExercises(muscleGroupId)
     }
 
 
@@ -82,9 +82,9 @@ class ExerciseListViewModel @Inject constructor(
         }
     }
 
-    private fun getExercises(muscleGroupId: Int) {
+    private fun getCatalogExercises(muscleGroupId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExercisesUseCase(muscleGroupId).collect { exerciseState ->
+            exerciseUseCases.getCatalogExercisesUseCase(muscleGroupId).collect { exerciseState ->
                 _state.value = exerciseState
 
                 if (_state.value.isSuccessful) {
@@ -110,5 +110,21 @@ class ExerciseListViewModel @Inject constructor(
         if (state.value.isError) {
             _state.value = ExerciseListState()
         }
+    }
+
+    override fun onNavigateToDashboard() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+
+    override fun onNavigateToWorkouts() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+
+    override fun onNavigateToSettings() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+
+    override fun onNavigateBack()  {
+        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

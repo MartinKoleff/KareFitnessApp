@@ -18,20 +18,11 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 6
-        versionName "1.5"
+        versionCode 9
+        versionName "2.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-
-        //Enable tests.
-        testOptions {
-            unitTests.all {
-                useJUnitPlatform()
-            }
-
-            unitTests.returnDefaultValues = true
-        }
 
         vectorDrawables {
             useSupportLibrary true
@@ -42,6 +33,16 @@ android {
             annotationProcessorOptions {
                 arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
+        }
+
+        //Enable tests.
+        testOptions {
+            unitTests.all {
+                useJUnitPlatform()
+            }
+
+            unitTests.returnDefaultValues = true
+            unitTests.includeAndroidResources = true
         }
     }
 
@@ -90,6 +91,11 @@ android {
 kapt {
     correctErrorTypes true
 }
+
+//Legacy way of enabling unit tests...
+//tasks.withType(Test).configureEach {
+//    useJUnitPlatform()
+//}
 
 dependencies {
 
@@ -183,6 +189,7 @@ dependencies {
     //JUnit 4
 //    testImplementation "junit:junit:$robolectric_junit_version"
 //    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
+//    testImplementation ("org.junit.platform:junit-platform-runner:$junit_jupiter_platform_version")
 
     //AndroidX Testing
     androidTestImplementation "androidx.test:core:$test_core_version"
@@ -198,6 +205,10 @@ dependencies {
     //JUnit 5
     testImplementation "org.junit.jupiter:junit-jupiter-api:$junit_jupiter_version"
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version")
+
+    //JUnit platform
+    testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
 
     //Mockk
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"

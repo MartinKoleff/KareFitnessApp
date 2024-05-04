@@ -62,7 +62,7 @@ fun WorkoutFooterBanner(
 
             //Parallax effect overflowing into snapshot
             Image(
-                painter = painterResource(R.drawable.ic_add_button_background),
+                painter = painterResource(R.drawable.background_add_button),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier

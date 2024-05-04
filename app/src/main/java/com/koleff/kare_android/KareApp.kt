@@ -2,11 +2,12 @@ package com.koleff.kare_android
 
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.multidex.MultiDexApplication
+import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.preferences.Preferences
-import com.koleff.kare_android.data.room.manager.ExerciseDBManager
+import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.data.room.manager.UserDBManager
-import com.koleff.kare_android.data.room.manager.WorkoutDBManager
+import com.koleff.kare_android.data.room.manager.WorkoutDBManagerV2
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -18,10 +19,10 @@ import javax.inject.Inject
 class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
     @Inject
-    lateinit var exerciseDBManager: ExerciseDBManager
+    lateinit var exerciseDBManager: ExerciseDBManagerV2
 
     @Inject
-    lateinit var workoutDBManager: WorkoutDBManager
+    lateinit var workoutDBManager: WorkoutDBManagerV2
 
     @Inject
     lateinit var userDBManager: UserDBManager
@@ -33,21 +34,24 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
     override fun onCreate() {
         super<MultiDexApplication>.onCreate()
 
-        //Initialize Room DB on app start
-        GlobalScope.launch(Dispatchers.IO) {
-            exerciseDBManager.initializeExerciseTable {
-                preferences.initializeExerciseTable()
+
+        //Initialize Room DB on app start (only for local testing)
+        if (useLocalDataSource) {
+            GlobalScope.launch(Dispatchers.IO) {
+                exerciseDBManager.initializeExerciseTable {
+                    preferences.initializeExerciseTable()
+                }
+
+                workoutDBManager.initializeWorkoutTable {
+                    preferences.initializeWorkoutTable()
+                }
+
+                userDBManager.initializeUserTable {
+                    preferences.initializeUserTable()
+                }
             }
 
-            workoutDBManager.initializeWorkoutTable {
-                preferences.initializeWorkoutTable()
-            }
-            
-            userDBManager.initializeUserTable {
-                preferences.initializeUserTable()
-            }
         }
-
         //Create push notification channel
         NotificationManager.createNotificationChannel(this@KareApp)
 

@@ -28,25 +28,12 @@ import com.koleff.kare_android.ui.view_model.SettingsViewModel
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
-
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        settingsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        settingsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        settingsViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { settingsViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     MainScreenScaffold(
         "Settings",
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToDashboard = { settingsViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { settingsViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { settingsViewModel.onNavigateBack() },
+        onNavigateToSettings = { settingsViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val modifier = Modifier
             .padding(innerPadding)

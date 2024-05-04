@@ -2,24 +2,19 @@ package com.koleff.kare_android.ui.view_model
 
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.credentials_validator.AuthenticationNotifier
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.Tokens
-import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
-import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.LoginState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -71,5 +66,9 @@ class LoginViewModel @Inject constructor(
             refreshToken = refreshToken
         )
         preferences.saveTokens(tokens)
+    }
+
+    fun navigateToWelcome() {
+        onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

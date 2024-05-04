@@ -2,16 +2,15 @@ package com.koleff.kare_android.authentication
 
 import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake
 import com.koleff.kare_android.authentication.data.UserDaoFake
-import com.koleff.kare_android.common.credentials_validator.Credentials
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticator
-import com.koleff.kare_android.common.credentials_validator.CredentialsAuthenticatorImpl
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidator
-import com.koleff.kare_android.common.credentials_validator.CredentialsValidatorImpl
+import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.common.auth.CredentialsAuthenticator
+import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
+import com.koleff.kare_android.common.auth.CredentialsValidator
+import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
-import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl
@@ -23,13 +22,12 @@ import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
-import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -39,26 +37,24 @@ import org.junit.jupiter.params.provider.CsvSource
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.UUID
 import java.util.stream.Stream
-import kotlin.math.log
 
 class AuthenticationTest {
-
-    private lateinit var credentialsAuthenticator: CredentialsAuthenticator
-    private lateinit var credentialsValidator: CredentialsValidator
-    private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
-    private lateinit var authenticationUseCases: AuthenticationUseCases
-    private lateinit var loginUseCase: LoginUseCase
-    private lateinit var registerUseCase: RegisterUseCase
-    private lateinit var authenticationRepository: AuthenticationRepository
-    private lateinit var authenticationDataSource: AuthenticationDataSource
-    private lateinit var userRepository: UserRepository
-    private lateinit var userDataSource: UserDataSource
-    private lateinit var userDao: UserDaoFake
-
-    private val isLogging = true
-    private lateinit var logger: TestLogger
-
     companion object {
+        private lateinit var credentialsAuthenticator: CredentialsAuthenticator
+        private lateinit var credentialsValidator: CredentialsValidator
+        private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
+        private lateinit var authenticationUseCases: AuthenticationUseCases
+        private lateinit var loginUseCase: LoginUseCase
+        private lateinit var registerUseCase: RegisterUseCase
+        private lateinit var authenticationRepository: AuthenticationRepository
+        private lateinit var authenticationDataSource: AuthenticationDataSource
+        private lateinit var userRepository: UserRepository
+        private lateinit var userDataSource: UserDataSource
+        private lateinit var userDao: UserDaoFake
+
+        private val isLogging = true
+        private lateinit var logger: TestLogger
+
         private const val TAG = "AuthenticationTest"
 
         @JvmStatic
@@ -206,33 +202,34 @@ class AuthenticationTest {
                 }
             }.stream()
         }
-    }
 
-    @BeforeEach
-    fun setup() {
-        userDao = UserDaoFake()
-        userDataSource = UserLocalDataSource(userDao)
-        userRepository = UserRepositoryImpl(userDataSource)
+        @JvmStatic
+        @BeforeAll
+        fun setup() {
+            userDao = UserDaoFake()
+            userDataSource = UserLocalDataSource(userDao)
+            userRepository = UserRepositoryImpl(userDataSource)
 
-        credentialsValidator = CredentialsValidatorImpl(userRepository)
-        credentialsDataStoreFake = CredentialsDataStoreFake() //No caching needed for testing
-        credentialsAuthenticator =
-            CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
+            credentialsValidator = CredentialsValidatorImpl(userRepository)
+            credentialsDataStoreFake = CredentialsDataStoreFake() //No caching needed for testing
+            credentialsAuthenticator =
+                CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStoreFake)
 
-        authenticationDataSource = AuthenticationLocalDataSource(
-            userDao,
-            credentialsAuthenticator as CredentialsAuthenticatorImpl
-        )
-        authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
+            authenticationDataSource = AuthenticationLocalDataSource(
+                userDao,
+                credentialsAuthenticator as CredentialsAuthenticatorImpl
+            )
+            authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
 
-        loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
-        registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
-        authenticationUseCases = AuthenticationUseCases(
-            loginUseCase,
-            registerUseCase
-        )
+            loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
+            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
+            authenticationUseCases = AuthenticationUseCases(
+                loginUseCase,
+                registerUseCase
+            )
 
-        logger = TestLogger(isLogging)
+            logger = TestLogger(isLogging)
+        }
     }
 
     @ParameterizedTest(name = "Validates email {0}")
@@ -454,12 +451,12 @@ class AuthenticationTest {
         assertTrue { loginState[0].isLoading }
 
         logger.i(TAG, "Login -> isSuccessful state raised.")
-        assertTrue { loginState[1].isSuccessful }
+        assertTrue { loginState[2].isSuccessful }
 
-        val accessToken = loginState[1].data.accessToken
-        val refreshToken = loginState[1].data.refreshToken
+        val accessToken = loginState[2].data.accessToken
+        val refreshToken = loginState[2].data.refreshToken
         logger.i(TAG, "Assert access and refresh token are generated.")
-        logger.i(TAG, "Data: ${loginState[1]}")
+        logger.i(TAG, "Data: ${loginState[2]}")
         assertTrue {
             accessToken == "access_token" && refreshToken == "refresh_token"
         }
@@ -482,10 +479,16 @@ class AuthenticationTest {
         val loginState = authenticationUseCases.loginUseCase.invoke(
             credentials.username,
             credentials.password
-        ).first()
+        ).toList()
+
+        logger.i(TAG, "Login -> isLoading state raised.")
+        assertTrue { loginState[0].isLoading }
+
+        logger.i(TAG, "Login -> isError state raised.")
+        assertTrue { loginState[1].isError }
 
         logger.i(TAG, "Data: $loginState")
-        assertTrue { loginState.isError && loginState.error == KareError.INVALID_CREDENTIALS }
+        assertTrue { loginState[1].isError && loginState[1].error == KareError.INVALID_CREDENTIALS }
     }
 
 
@@ -507,9 +510,9 @@ class AuthenticationTest {
         assertTrue { registerState[0].isLoading }
 
         logger.i(TAG, "Register -> isSuccessful state raised.")
-        assertTrue { registerState[1].isSuccessful }
+        assertTrue { registerState[2].isSuccessful }
 
-        logger.i(TAG, "Data: ${registerState[1]}")
+        logger.i(TAG, "Data: ${registerState[2]}")
 
         logger.i(TAG, "Assert DB contains user.")
         val dbEntry = userDao.getUserByUsername(credentials.username)
@@ -529,9 +532,15 @@ class AuthenticationTest {
 
         val registerState = authenticationUseCases.registerUseCase.invoke(
             credentials
-        ).first()
+        ).toList()
+
+        logger.i(TAG, "Register -> isLoading state raised.")
+        assertTrue { registerState[0].isLoading }
+
+        logger.i(TAG, "Register -> isError state raised.")
+        assertTrue { registerState[1].isError }
 
         logger.i(TAG, "Data: $registerState")
-        assertTrue { registerState.isError && registerState.error == KareError.INVALID_CREDENTIALS }
+        assertTrue { registerState[1].isError && registerState[1].error == KareError.INVALID_CREDENTIALS }
     }
 }
