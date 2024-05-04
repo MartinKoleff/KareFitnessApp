@@ -351,15 +351,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         exerciseDao.insertExercise(exercise)
         exerciseSetDao.insertAllExerciseSets(sets)
 
-        //Update workout totalExercises
-        val totalExercisesForWorkout = getTotalExercisesCount(exercise.workoutId)
-        val workout = workoutDao.getWorkoutById(exercise.workoutId)
-            ?: throw IllegalArgumentException("Workout not found for exercise with workoutId ${exercise.workoutId}")
-
-        val updatedWorkout = workout.copy(
-            totalExercises = totalExercisesForWorkout
-        )
-        workoutDao.updateWorkout(updatedWorkout)
+        updateTotalExercises(exercise.workoutId)
     }
 
     private fun getTotalExercisesCount(workoutId: Int): Int {
@@ -533,12 +525,18 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             delay(Constants.fakeDelay)
 
             try {
-                val deletedExercise = exerciseDao.getExerciseWithSets(
+                val deletedExerciseWithSets = exerciseDao.getExerciseWithSets(
                     exerciseId = exerciseId,
                     workoutId = workoutId
                 )
 
-                exerciseDao.deleteExercise(deletedExercise.exercise)
+                exerciseDao.deleteExercise(deletedExerciseWithSets.exercise)
+//                deletedExerciseWithSets.sets.forEach { exerciseSet ->
+//                    exerciseSetDao.deleteSet(exerciseSet)
+//                }
+
+                //Update workout totalExercises
+                updateTotalExercises(workoutId)
             } catch (e: NoSuchElementException) {
 
                 //Exercise not found
@@ -571,6 +569,17 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
             emit(ResultWrapper.Success(result))
         }
+
+    private suspend fun updateTotalExercises(workoutId: Int) {
+        val totalExercisesForWorkout = getTotalExercisesCount(workoutId)
+        val workout = workoutDao.getWorkoutById(workoutId)
+            ?: throw IllegalArgumentException("Workout not found for workoutId $workoutId")
+
+        val updatedWorkout = workout.copy(
+            totalExercises = totalExercisesForWorkout
+        )
+        workoutDao.updateWorkout(updatedWorkout)
+    }
 
     override suspend fun addExercise(
         workoutId: Int,

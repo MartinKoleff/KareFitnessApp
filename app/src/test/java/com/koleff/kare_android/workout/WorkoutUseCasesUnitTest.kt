@@ -943,6 +943,21 @@ class WorkoutUseCasesUnitTest {
             )
             assertTrue { workoutDetailsAfterDelete == workoutDetails }
 
+            val getWorkoutState2 = workoutUseCases.getWorkoutUseCase(workoutDetails.workoutId)
+                .toList()
+
+            logger.i(TAG, "Get workout after deleted exercise -> isLoading state raised.")
+            assertTrue { getWorkoutState2[0].isLoading }
+
+            logger.i(TAG, "Get workout after deleted exercise -> isSuccessful state raised.")
+            assertTrue { getWorkoutState2[1].isSuccessful }
+
+            val fetchedWorkout2 = getWorkoutState2[1].workout
+            logger.i(TAG, "Fetched workout after deleted exercise: $fetchedWorkout2")
+
+            logger.i(TAG, "Assert totalExercises in workout have decreased and are equal to initial workout details.")
+            assertTrue { fetchedWorkout2.totalExercises == workoutDetails.exercises.size  }
+
             logger.i(
                 TAG,
                 "Assert sets from new generated exercise are deleted and not in DB."
