@@ -186,7 +186,13 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             DoWorkoutScaffold(
                 modifier = screenModifier,
                 screenTitle = state.doWorkoutData.currentExercise.name,
-                onExitWorkoutAction = onExitWorkoutAction,
+                onExitWorkoutAction = {
+
+                    //Disable exit workout button when NextExerciseCountdownScreen is visible
+                    if (!state.doWorkoutData.isBetweenExerciseCountdown) {
+                        onExitWorkoutAction()
+                    }
+                },
                 onNextExerciseAction = {
 
                     //Disable skip next exercise button when NextExerciseCountdownScreen is visible
