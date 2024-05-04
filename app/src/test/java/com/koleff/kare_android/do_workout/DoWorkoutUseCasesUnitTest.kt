@@ -238,13 +238,15 @@ class DoWorkoutUseCasesUnitTest {
 
         logger.i(TAG, "Workout details created successfully!")
 
-        //Generate random workout details
-        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+        //Generate random workout details with exercises and workout configuration
+        val workoutDetails =
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
         workoutUseCases.createCustomWorkoutDetailsUseCase(
             workoutDetails
         ).toList()
 
-        val workoutDetails2 = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+        val workoutDetails2 =
+            MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
         workoutUseCases.createCustomWorkoutDetailsUseCase(
             workoutDetails2
         ).toList()
@@ -471,13 +473,21 @@ class DoWorkoutUseCasesUnitTest {
         workoutExercises.forEach { exercises ->
             assertTrue(exercises.isNotEmpty(), "The list of exercises should not be empty")
 
-            exercises.forEach{ exercise ->
+            exercises.forEach { exercise ->
                 assertTrue(exercise.sets.isNotEmpty(), "The list of sets should not be empty")
             }
         }
+
+        workoutDB.forEach { workoutDetails ->
+            logger.i(
+                TAG,
+                "Assert workout configuration is valid for workout with id ${workoutDetails.workoutId}"
+            )
+            assertTrue { workoutDetails.configuration.workoutId == workoutDetails.workoutId }
+        }
     }
 
-    @RepeatedTest(50) //TODO: fix...
+    @RepeatedTest(50)
     fun `initial setup using DoWorkoutInitialSetupUseCase test`() = runTest {
 
         //Get workout details
@@ -512,6 +522,12 @@ class DoWorkoutUseCasesUnitTest {
             TAG,
             "Do workout initial setup data: $doWorkoutInitialSetupData"
         )
+
+        logger.i(
+            TAG,
+            "Assert do workout initial setup is wired with workout configuration"
+        )
+        assertTrue { doWorkoutInitialSetupData.countdownTime == randomWorkoutDetails.configuration.cooldownTime }
 
         logger.i(
             TAG,
@@ -652,7 +668,8 @@ class DoWorkoutUseCasesUnitTest {
     @RepeatedTest(50)
     fun `initial setup for workout with 1 exercise using DoWorkoutInitialSetupUseCase test`() =
         runTest {
-            val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
+            val workoutDetails =
+                MockupDataGeneratorV2.generateWorkoutDetails(enableSetIdGeneration = true)
             logger.i(
                 TAG,
                 "Workout details: $workoutDetails"
