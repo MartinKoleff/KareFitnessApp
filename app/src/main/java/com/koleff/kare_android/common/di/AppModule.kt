@@ -309,6 +309,7 @@ object AppModule {
         preferences: Preferences,
         workoutDao: WorkoutDao,
         workoutDetailsDao: WorkoutDetailsDao,
+        workoutConfigurationDao: WorkoutConfigurationDao,
         exerciseDao: ExerciseDao,
         exerciseSetDao: ExerciseSetDao
     ): WorkoutDBManagerV2 {
@@ -317,6 +318,7 @@ object AppModule {
         return WorkoutDBManagerV2(
             workoutDao = workoutDao,
             workoutDetailsDao = workoutDetailsDao,
+            workoutConfigurationDao = workoutConfigurationDao,
             exerciseDao = exerciseDao,
             exerciseSetDao = exerciseSetDao,
             hasInitializedDB = hasInitializedDB

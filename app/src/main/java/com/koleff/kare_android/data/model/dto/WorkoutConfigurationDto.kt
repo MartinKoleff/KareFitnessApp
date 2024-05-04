@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class WorkoutConfigurationDto(
     val workoutId: Int = -1,
 //    var exercises: List<ExerciseConfigurationDto> = emptyList(),
-    var cooldownTime: ExerciseTime = ExerciseTime(0, 0, 0)
+    var cooldownTime: ExerciseTime = ExerciseTime(0, 0, 10)
 ): Parcelable, KareEntity<WorkoutConfiguration>{
     override fun toEntity(): WorkoutConfiguration {
         return WorkoutConfiguration(

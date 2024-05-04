@@ -3,7 +3,9 @@ package com.koleff.kare_android.common
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
+import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import java.util.UUID
@@ -285,13 +287,26 @@ object MockupDataGeneratorV2 {
             preSelectedExerciseIds = preSelectedExerciseIds
         ).sortedBy { it.exerciseId }.toMutableList()
 
+        val workoutConfiguration = generateWorkoutConfiguration(workoutId)
+
         return WorkoutDetailsDto(
             workoutId = workoutId,
             name = "$name $updatedWorkoutId",
             description = "Description of $name $updatedWorkoutId",
             muscleGroup = muscleGroup,
             exercises = exercises,
-            isSelected = isSelected
+            isSelected = isSelected,
+            configuration = workoutConfiguration
+        )
+    }
+
+    private fun generateWorkoutConfiguration(workoutId: Int): WorkoutConfigurationDto {
+        val seconds = Random.nextInt(1, 60)
+        val cooldownTime = ExerciseTime(0, 0, seconds)
+
+        return WorkoutConfigurationDto(
+            workoutId = workoutId,
+            cooldownTime = cooldownTime
         )
     }
 

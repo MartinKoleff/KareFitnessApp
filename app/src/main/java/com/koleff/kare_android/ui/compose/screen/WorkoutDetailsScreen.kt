@@ -79,7 +79,6 @@ import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
 import kotlinx.coroutines.flow.collectLatest
 
-//TODO: migrate to full screen dialog? (don't need to navigate this way...)
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutDetailsScreen(
@@ -163,7 +162,9 @@ fun WorkoutDetailsScreen(
     }
 
     val onUpdateWorkoutConfiguration: (WorkoutConfigurationDto) -> Unit = { configuration ->
-        workoutDetailsViewModel.updateWorkoutConfiguration(configuration)
+        workoutDetailsViewModel.updateWorkoutConfiguration(
+            configuration
+        )
 
         showWorkoutConfigureDialog = false
     }

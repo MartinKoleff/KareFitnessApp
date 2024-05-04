@@ -39,7 +39,7 @@ data class WorkoutDetailsWithExercises(
             } ?: emptyList()),
             isSelected = workoutDetails.isSelected,
             configuration = configuration?.toDto()
-                ?: WorkoutConfigurationDto() //Default configuration if there is no in DB...
+                ?: WorkoutConfigurationDto(workoutId = workoutDetails.workoutDetailsId) //Default configuration if there is no in DB...
         )
     }
 }

@@ -53,7 +53,8 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                             nextExercise = nextExercise,
                             nextSetNumber = nextSetNumber,
                             workout = workoutDetailsDto,
-                            isBetweenExerciseCountdown = false
+                            isBetweenExerciseCountdown = false,
+                            countdownTime = workoutDetailsDto.configuration.cooldownTime
                         )
                     )
                 )
