@@ -22,20 +22,16 @@ import androidx.compose.ui.unit.dp
 fun LoadingWheel(
     modifier: Modifier = Modifier.fillMaxSize(),
     innerPadding: PaddingValues = PaddingValues(8.dp),
-    hideScreen: Boolean = false
+    hideScreen: Boolean = false,
+    customBackground: Color = Color.Transparent
 ) {
     val background = if (hideScreen) {
         MaterialTheme.colorScheme.background //Dark theme applied too
-    } else Color.Transparent
+    } else customBackground
 
     Box(
         modifier = modifier
-            .padding(
-                top = innerPadding.calculateTopPadding(),
-                start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                bottom = innerPadding.calculateBottomPadding()
-            )
+            .padding(innerPadding)
             .background(background),
         contentAlignment = Alignment.Center
     ) {

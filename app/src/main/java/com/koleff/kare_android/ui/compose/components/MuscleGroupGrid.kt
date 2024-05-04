@@ -106,7 +106,7 @@ fun MuscleGroupGrid(
             ImageCard(
                 painter = painterResource(id = currentMuscleGroup.imageId),
                 contentDescription = currentMuscleGroup.description,
-                title = currentMuscleGroup.name,
+                title = currentMuscleGroup.muscleGroupName,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(

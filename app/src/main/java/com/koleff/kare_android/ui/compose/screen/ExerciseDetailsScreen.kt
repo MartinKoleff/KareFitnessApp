@@ -76,16 +76,10 @@ fun ExerciseDetailsScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(exerciseDetailsState.isError){
-
-        error = if (exerciseDetailsState.isError) {
-            exerciseDetailsState.error
-        } else {
-            null
-        }
-
+    LaunchedEffect(exerciseDetailsState){
         showErrorDialog =
             exerciseDetailsState.isError
+        error = exerciseDetailsState.error
 
         Log.d("ExerciseDetailsScreen", "Error detected -> $showErrorDialog")
     }
@@ -93,7 +87,7 @@ fun ExerciseDetailsScreen(
     //Dialogs
     if (showErrorDialog) {
         error?.let {
-            ErrorDialog(error!!, onErrorDialogDismiss)
+            ErrorDialog(it, onErrorDialogDismiss)
         }
     }
 

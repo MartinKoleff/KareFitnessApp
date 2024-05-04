@@ -29,6 +29,7 @@ import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.SearchWorkoutList
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.ExerciseViewModel
 import com.koleff.kare_android.ui.view_model.SearchWorkoutViewModel
 
@@ -65,9 +66,11 @@ fun SearchWorkoutsScreen(
 
         //Await workout details
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workoutDetails.workoutId != -1) {
-            workoutDetailsState.workoutDetails.exercises.add(exerciseState.exercise)
+            val updatedExercises = workoutDetailsState.workoutDetails.exercises.toMutableList()
+            updatedExercises.add(exerciseState.exercise)
 
-            searchWorkoutViewModel.updateWorkoutDetails(workoutDetailsState.workoutDetails)
+            val updatedWorkoutDetails = workoutDetailsState.workoutDetails.copy(exercises = updatedExercises)
+            searchWorkoutViewModel.updateWorkoutDetails(updatedWorkoutDetails)
         }
     }
 
@@ -99,18 +102,15 @@ fun SearchWorkoutsScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(workoutDetailsState.isError, updateWorkoutState.isError){
+    LaunchedEffect(workoutDetailsState, updateWorkoutState){
+        val states = listOf(
+            workoutDetailsState,
+            updateWorkoutState
+        )
 
-        error = if (workoutDetailsState.isError) {
-            workoutDetailsState.error
-        } else if (updateWorkoutState.isError) {
-            updateWorkoutState.error
-        } else {
-            null
-        }
-
-        showErrorDialog =
-            workoutDetailsState.isError || updateWorkoutState.isError
+        val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+        error = errorState.error
+        showErrorDialog = errorState.isError
 
         Log.d("SearchWorkoutsScreen", "Error detected -> $showErrorDialog")
     }
@@ -118,7 +118,7 @@ fun SearchWorkoutsScreen(
     //Dialogs
     if (showErrorDialog) {
         error?.let {
-            ErrorDialog(error!!, onErrorDialogDismiss)
+            ErrorDialog(it, onErrorDialogDismiss)
         }
     }
 

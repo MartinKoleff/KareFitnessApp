@@ -15,14 +15,15 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.SearchExercisesList
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.view_model.SearchExercisesViewModel
 
 @Composable
@@ -32,11 +33,22 @@ fun SearchExercisesScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
+    val exercisesState by searchExercisesViewModel.state.collectAsState()
+    val allExercises = exercisesState.exerciseList
+    val workoutId = searchExercisesViewModel.workoutId
+
     //Navigation Callbacks
     val onNavigateToSettings = {
         searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }
-    val onNavigateBack = { searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+    val onNavigateBack =
+        { searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+
+    val onSubmitExercise: (ExerciseDto) -> Unit = { selectedExercise ->
+        searchExercisesViewModel.onExerciseUpdateEvent(
+            OnExerciseUpdateEvent.OnExerciseSubmit(selectedExercise)
+        )
+    }
 
     SearchListScaffold(
         screenTitle = "Select exercise",
@@ -57,9 +69,6 @@ fun SearchExercisesScreen(
             }
             .fillMaxSize()
 
-        val exercisesState by searchExercisesViewModel.state.collectAsState()
-        val allExercises = exercisesState.exerciseList
-        val workoutId = searchExercisesViewModel.workoutId
 
         //All exercises
         if (exercisesState.isLoading) {
@@ -85,11 +94,16 @@ fun SearchExercisesScreen(
                     exerciseList = allExercises,
                     workoutId = workoutId,
                     navigateToExerciseDetailsConfigurator = { selectedExercise, workoutId ->
-                        searchExercisesViewModel.navigateToExerciseDetailsConfigurator(
-                            exerciseId = selectedExercise.exerciseId,
-                            workoutId = workoutId,
-                            muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
-                        )
+//                        searchExercisesViewModel.navigateToExerciseDetailsConfigurator(
+//                            exerciseId = selectedExercise.exerciseId,
+//                            workoutId = workoutId,
+//                            muscleGroupId = selectedExercise.muscleGroup.muscleGroupId
+//                        )
+                    },
+                    onSubmitExercise = { selectedExercise ->
+                        onSubmitExercise(selectedExercise)
+
+                        //TODO: select multiple exercises rework...
                     }
                 )
             }
@@ -121,7 +135,7 @@ fun SearchExercisesScreenPreview() {
             .fillMaxSize()
 
 
-        val allExercises = MockupDataGenerator.generateExerciseList()
+        val allExercises = MockupDataGeneratorV2.generateExerciseList()
 
         Column(modifier = modifier) {
             SearchBar(
@@ -139,6 +153,9 @@ fun SearchExercisesScreenPreview() {
                 exerciseList = allExercises,
                 workoutId = 1,
                 navigateToExerciseDetailsConfigurator = { exercise, workoutId ->
+
+                },
+                onSubmitExercise = {
 
                 }
             )

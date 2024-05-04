@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
@@ -115,7 +114,7 @@ fun PreviewExerciseDetailsToolbar() {
 //                )
                 color = MaterialTheme.colorScheme.primaryContainer
             ),
-        exerciseImageId = R.drawable.ic_legs,
+        exerciseImageId = R.drawable.background_legs,
         onNavigateBackAction = {},
         onNavigateAction = {}
     )

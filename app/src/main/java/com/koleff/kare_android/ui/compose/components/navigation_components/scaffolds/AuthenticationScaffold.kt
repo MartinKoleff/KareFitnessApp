@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -75,7 +74,7 @@ fun AuthenticationScaffold(
 
             //Texture background
             Image(
-                painter = painterResource(id = R.drawable.ic_login_background_4),
+                painter = painterResource(id = R.drawable.background_login_7),
                 contentDescription = "Background",
                 contentScale = ContentScale.Crop
             )

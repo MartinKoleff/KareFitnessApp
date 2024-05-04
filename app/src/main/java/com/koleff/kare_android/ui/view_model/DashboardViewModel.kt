@@ -26,7 +26,7 @@ class DashboardViewModel @Inject constructor(
     private val preferences: Preferences,
     private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : BaseViewModel(navigationController = navigationController) {
+) : BaseViewModel(navigationController = navigationController), MainScreenNavigation {
 
     private var _state: MutableStateFlow<DashboardState> =
         MutableStateFlow(DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList()))
@@ -84,5 +84,21 @@ class DashboardViewModel @Inject constructor(
         if (state.value.isError) {
             _state.value = DashboardState(muscleGroupList = preferences.loadDashboardMuscleGroupList())
         }
+    }
+
+    override fun onNavigateToDashboard() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+
+    override fun onNavigateToWorkouts() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+
+    override fun onNavigateToSettings() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+
+    override fun onNavigateBack()  {
+        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

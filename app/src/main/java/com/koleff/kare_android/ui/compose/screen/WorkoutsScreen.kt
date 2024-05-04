@@ -16,17 +16,23 @@ import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.navigation.Destination
@@ -42,33 +48,22 @@ import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WorkoutsScreen(
-    workoutListViewModel: WorkoutViewModel = hiltViewModel()
+    workoutListViewModel: WorkoutViewModel = hiltViewModel(),
 ) {
-
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { workoutListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     MainScreenScaffold(
         "Workouts",
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        onNavigateToDashboard = { workoutListViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { workoutListViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { workoutListViewModel.onNavigateBack() },
+        onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val buttonModifier = Modifier
             .fillMaxWidth()
@@ -102,6 +97,11 @@ fun WorkoutsScreen(
             onRefresh = { workoutListViewModel.getWorkouts() }
         )
 
+        //States
+        val workoutState by workoutListViewModel.state.collectAsState()
+        val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
+        val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
+
         //Refresh screen
         LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
             Log.d(
@@ -111,29 +111,12 @@ fun WorkoutsScreen(
             workoutListViewModel.getWorkouts()
         }
 
-        //States
-        val workoutState by workoutListViewModel.state.collectAsState()
-        val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
-        val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
-        val createWorkoutState by workoutListViewModel.createWorkoutState.collectAsState()
-
-        LaunchedEffect(createWorkoutState) {
-
-            //Await update workout
-            if (createWorkoutState.isSuccessful) {
-                Log.d(
-                    "WorkoutsScreen",
-                    "Create workout with id ${createWorkoutState.workout.workoutId}"
-                )
-                workoutListViewModel.navigateToWorkoutDetails(createWorkoutState.workout.workoutId)
-            }
-        }
-
         //Dialog visibility
         var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
         var showSelectDialog by remember { mutableStateOf(false) }
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showErrorDialog by remember { mutableStateOf(false) }
+        var showLoadingDialog by remember { mutableStateOf(false) }
 
         //Dialog callbacks
         var selectedWorkout by remember { mutableStateOf<WorkoutDto?>(null) }
@@ -166,35 +149,36 @@ fun WorkoutsScreen(
         }
 
         //Error handling
-        var error by remember { mutableStateOf<KareError?>(null) }
-        LaunchedEffect(
-            workoutState.isError,
-            createWorkoutState.isError,
-            deleteWorkoutState.isError,
-            updateWorkoutState.isError
-        ) {
-
-            error = if (workoutState.isError) {
-                workoutState.error
-            } else if (createWorkoutState.isError) {
-                createWorkoutState.error
-            } else if (deleteWorkoutState.isError) {
-                deleteWorkoutState.error
-            } else if (updateWorkoutState.isError) {
-                updateWorkoutState.error
-            } else {
-                null
-            }
-
-            showErrorDialog =
-                workoutState.isError || createWorkoutState.isError || deleteWorkoutState.isError || updateWorkoutState.isError
-
-            Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
-        }
-
         val onErrorDialogDismiss = {
             showErrorDialog = false
             workoutListViewModel.clearError() //Enters launched effect to update showErrorDialog...
+        }
+
+        var error by remember { mutableStateOf<KareError?>(null) }
+        LaunchedEffect(
+            workoutState,
+            deleteWorkoutState,
+            updateWorkoutState
+        ) {
+            val states = listOf(
+                workoutState,
+                deleteWorkoutState,
+                updateWorkoutState
+            )
+
+            val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+            error = errorState.error
+            showErrorDialog = errorState.isError
+            Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
+
+            val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
+            showLoadingDialog = loadingState.isLoading || workoutListViewModel.isRefreshing
+        }
+
+        if (showErrorDialog) {
+            error?.let {
+                ErrorDialog(it, onErrorDialogDismiss)
+            }
         }
 
         //Dialogs
@@ -214,12 +198,6 @@ fun WorkoutsScreen(
                 onClick = onDeleteWorkout,
                 onDismiss = { showDeleteDialog = false }
             )
-        }
-
-        if (showErrorDialog) {
-            error?.let {
-                ErrorDialog(error!!, onErrorDialogDismiss)
-            }
         }
 
         if (showSelectDialog && selectedWorkout != null) {
@@ -253,12 +231,7 @@ fun WorkoutsScreen(
                     workoutListViewModel = workoutListViewModel
                 )
 
-                if (workoutState.isLoading ||
-                    workoutListViewModel.isRefreshing ||
-                    deleteWorkoutState.isLoading ||
-                    updateWorkoutState.isLoading ||
-                    createWorkoutState.isLoading
-                ) { //Don't show loader if retrieved from cache...
+                if (showLoadingDialog) { //Don't show loader if retrieved from cache...
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
@@ -297,7 +270,7 @@ fun WorkoutsScreen(
                             NoWorkoutSelectedBanner {
 
                                 //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.navigateToSearchWorkout(-1) //TODO: test
+                                workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
                             }
                         }
                     } else {
@@ -338,11 +311,12 @@ fun WorkoutsScreen(
                                     NoWorkoutSelectedBanner {
 
                                         //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.navigateToSearchWorkout(-1) //TODO: test
+                                        workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
                                     }
                                 } else {
                                     AddWorkoutBanner {
                                         workoutListViewModel.createNewWorkout()
+                                        Log.d("WorkoutScreen", "hasUpdated set to true.")
                                     }
                                 }
                             }
@@ -359,4 +333,3 @@ fun WorkoutsScreen(
         }
     }
 }
-

@@ -50,7 +50,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -82,7 +82,7 @@ fun ExerciseBannerV1(
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopStart),
-            painter = painterResource(id = R.drawable.ic_exercise_banner_effect), //TODO: change to url
+            painter = painterResource(id = R.drawable.background_exercise_banner_effect), //TODO: change to url
             contentDescription = "Background",
             contentScale = ContentScale.Crop
         )
@@ -169,7 +169,7 @@ fun ExerciseBannerV2(
 
             //Parallax effect overflowing into exercise snapshot
             Image(
-                painter = painterResource(R.drawable.ic_exercise_banner_effect),
+                painter = painterResource(R.drawable.background_exercise_banner_effect),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -342,7 +342,7 @@ fun SwipeableExerciseBanner(
 @Preview
 @Composable
 fun ExerciseBannerV1AndV2ComparingPreview() {
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
 
     Column(
         Modifier
@@ -376,7 +376,7 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
 @Preview
 @Composable
 fun SwipeableExerciseBannerPreview() {
-    val exercise = MockupDataGenerator.generateExercise()
+    val exercise = MockupDataGeneratorV2.generateExercise()
 
     SwipeableExerciseBanner(
         modifier = Modifier
@@ -392,18 +392,7 @@ fun SwipeableExerciseBannerPreview() {
 @Composable
 fun ExerciseListPreview() {
     val n = 5
-    val exercisesList: MutableList<ExerciseDto> = mutableListOf()
-
-    repeat(n) { index ->
-        val currentExercise = ExerciseDto(
-            -1,
-            "BARBELL BENCH PRESS $index",
-            muscleGroup = MuscleGroup.fromId(index + 1),
-            MachineType.BARBELL,
-            ""
-        )
-        exercisesList.add(currentExercise)
-    }
+    val exercisesList = MockupDataGeneratorV2.generateExerciseList(n)
 
     ExerciseList(exerciseList = exercisesList){ exercise ->
 

@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.remote
 import com.koleff.kare_android.data.model.request.ExerciseAddRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
+import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
@@ -10,6 +11,7 @@ import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.WorkoutResponse
 import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
+import com.koleff.kare_android.data.model.response.WorkoutConfigurationResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -63,6 +65,11 @@ interface WorkoutApi {
         @Body body: ExerciseAddRequest
     ): WorkoutDetailsResponse
 
+    @POST("api/v1/workout/submitexercise")
+    fun submitExercise(
+        @Body body: ExerciseAddRequest
+    ): WorkoutDetailsResponse
+
     @PUT("api/v1/workout/updateworkoutdetails")
     suspend fun updateWorkoutDetails(
         @Body body: UpdateWorkoutDetailsRequest
@@ -85,4 +92,24 @@ interface WorkoutApi {
     suspend fun createCustomWorkoutDetails(
         @Body body: UpdateWorkoutDetailsRequest
     ): WorkoutDetailsResponse
+
+    @GET("api/v1/workout/getworkoutconfiguration")
+    fun getWorkoutConfiguration(
+        @Body body: FetchWorkoutByIdRequest
+    ): WorkoutConfigurationResponse
+
+    @GET("api/v1/workout/updateworkoutconfiguration")
+    fun updateWorkoutConfiguration(
+        @Body body: FetchWorkoutConfigurationRequest
+    ): BaseResponse
+
+    @GET("api/v1/workout/saveworkoutconfiguration")
+    fun saveWorkoutConfiguration(
+        @Body body: FetchWorkoutConfigurationRequest
+    ): WorkoutConfigurationResponse
+
+    @GET("api/v1/workout/deleteworkoutconfiguration")
+    fun deleteWorkoutConfiguration(
+        @Body body: FetchWorkoutByIdRequest
+    ): BaseResponse
 }

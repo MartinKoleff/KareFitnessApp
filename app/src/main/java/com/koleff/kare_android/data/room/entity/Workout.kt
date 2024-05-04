@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.koleff.kare_android.data.KareDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 
@@ -14,8 +15,8 @@ data class Workout(
     var snapshot: String,
     var totalExercises: Int,
     var isSelected: Boolean,
-) {
-    fun toWorkoutDto(): WorkoutDto {
+): KareDto<WorkoutDto> {
+    override fun toDto(): WorkoutDto {
         return WorkoutDto(
             workoutId = workoutId,
             name = name,

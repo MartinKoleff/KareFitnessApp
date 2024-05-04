@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
@@ -54,11 +55,14 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         registerViewModel.register(credentials)
     }
 
+    //Dialog visibility
     var showSuccessDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
     var showLoadingDialog by remember { mutableStateOf(false) }
 
 
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
     LaunchedEffect(registerState) {
         Log.d("RegisterScreen", "Register state updated: $registerState")
 
@@ -67,6 +71,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
 
         //Update showErrorDialog based on loginState
         showErrorDialog = registerState.isError
+        error = registerState.error
 
         //Update showLoadingDialog based on loginState
         showLoadingDialog = registerState.isLoading
@@ -89,7 +94,9 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
     }
 
     if (showErrorDialog) {
-        ErrorDialog(registerState.error, onDismiss)
+        error?.let {
+            ErrorDialog(it, onDismiss)
+        }
     }
 
     if (showSuccessDialog) {
@@ -130,13 +137,13 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            CustomTitleAndSubtitle(
+            AuthorizationTitleAndSubtitle(
                 title = "Welcome to Kare!",
                 subtitle = "Create an account so you can become part of the family!"
             )
 
             //User text box
-            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
                 username = it
             }
 
@@ -146,7 +153,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             }
 
             //User text box
-            CustomTextField(label = "Email", iconId = R.drawable.ic_email) {
+            CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
                 email = it
             }
 

@@ -33,19 +33,6 @@ import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
 fun MuscleGroupScreen(
     exerciseListViewModel: ExerciseListViewModel = hiltViewModel()
 ) {
-
-    //Navigation Callbacks
-    val onNavigateToDashboard = {
-        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-    val onNavigateToWorkouts = {
-        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-    val onNavigateToSettings = {
-        exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack = { exerciseListViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
-
     val exerciseListState by exerciseListViewModel.state.collectAsState()
     val muscleGroup = exerciseListViewModel.muscleGroup
 
@@ -60,16 +47,10 @@ fun MuscleGroupScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(exerciseListState.isError){
-
-        error = if (exerciseListState.isError) {
-            exerciseListState.error
-        } else {
-            null
-        }
-
+    LaunchedEffect(exerciseListState){
         showErrorDialog =
             exerciseListState.isError
+        error = exerciseListState.error
 
         Log.d("MuscleGroupScreen", "Error detected -> $showErrorDialog")
     }
@@ -77,16 +58,16 @@ fun MuscleGroupScreen(
     //Dialogs
     if (showErrorDialog) {
         error?.let {
-            ErrorDialog(error!!, onErrorDialogDismiss)
+            ErrorDialog(it, onErrorDialogDismiss)
         }
     }
 
     MainScreenScaffold(
-        muscleGroup.name,
-        onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToWorkouts = onNavigateToWorkouts,
-        onNavigateBackAction = onNavigateBack,
-        onNavigateToSettings = onNavigateToSettings
+        muscleGroup.muscleGroupName,
+        onNavigateToDashboard = { exerciseListViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { exerciseListViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { exerciseListViewModel.onNavigateBack() },
+        onNavigateToSettings = { exerciseListViewModel.onNavigateToSettings() }
     ) { innerPadding ->
         val buttonModifier = Modifier
             .fillMaxWidth()
@@ -102,6 +83,7 @@ fun MuscleGroupScreen(
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
+
             //Filter buttons
             MachineFilterSegmentButton(
                 modifier = buttonModifier,

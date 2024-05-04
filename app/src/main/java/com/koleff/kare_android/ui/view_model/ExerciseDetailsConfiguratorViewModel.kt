@@ -10,6 +10,7 @@ import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.ui.state.ExerciseState
@@ -60,13 +61,13 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         get() = _updateWorkoutState
 
     init {
-        getExercise(exerciseId)
+        getExercise(exerciseId, workoutId)
         getWorkoutDetails(workoutId)
     }
 
-    private fun getExercise(exerciseId: Int) {
+    private fun getExercise(exerciseId: Int, workoutId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExerciseUseCase(exerciseId).collect { exerciseState ->
+            exerciseUseCases.getExerciseUseCase(exerciseId, workoutId).collect { exerciseState ->
                 _exerciseState.value = exerciseState
             }
         }
@@ -98,12 +99,12 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 }
             }
 
-            is OnExerciseUpdateEvent.OnExerciseSubmit -> {
+            is OnExerciseUpdateEvent.OnExerciseSubmit -> { //TODO: not working...
                 selectedWorkout = selectedWorkoutState.value.workoutDetails
                 val exercise = event.exercise
 
                 viewModelScope.launch(dispatcher) {
-                    workoutUseCases.addExerciseUseCase(
+                    workoutUseCases.submitExerciseUseCase(
                         workoutId = selectedWorkout.workoutId,
                         exercise = exercise
                     ).collect { updateWorkoutState ->
@@ -139,14 +140,37 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
     }
 
     override fun clearError() {
-        if(exerciseState.value.isError){
+        if (exerciseState.value.isError) {
             _exerciseState.value = ExerciseState()
         }
-        if(updateWorkoutState.value.isError){
+        if (updateWorkoutState.value.isError) {
             _updateWorkoutState.value = WorkoutDetailsState()
         }
-        if(selectedWorkoutState.value.isError){
+        if (selectedWorkoutState.value.isError) {
             _selectedWorkoutState.value = WorkoutDetailsState()
+        }
+    }
+
+    //TODO: wire with dialog...
+    fun deleteSet(selectedExerciseSet: ExerciseSetDto) {
+        viewModelScope.launch(dispatcher) {
+            exerciseUseCases.deleteExerciseSetUseCase(
+                exerciseId = selectedExerciseSet.exerciseId,
+                workoutId = selectedExerciseSet.workoutId,
+                setId = selectedExerciseSet.setId
+            ).collect { deleteSetState ->
+                _exerciseState.value = deleteSetState
+            }
+        }
+    }
+    fun addNewSet() {
+        viewModelScope.launch(dispatcher) {
+            exerciseUseCases.addNewExerciseSetUseCase(
+                exerciseId = exerciseId,
+                workoutId = workoutId
+            ).collect { addNewSetState ->
+                _exerciseState.value = addNewSetState
+            }
         }
     }
 }

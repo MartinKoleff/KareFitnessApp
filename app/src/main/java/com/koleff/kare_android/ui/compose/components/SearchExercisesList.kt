@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.koleff.kare_android.common.MockupDataGenerator
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerV2
 import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
@@ -20,8 +20,9 @@ import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
 fun SearchExercisesList(
     modifier: Modifier,
     exerciseList: List<ExerciseDto>,
-    workoutId: Int,
-    navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit,
+    workoutId: Int, //Used for navigateToExerciseDetailsConfigurator -> Deprecated
+    navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit, //Deprecated
+    onSubmitExercise: (ExerciseDto) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         val muscleGroups = exerciseList.map(ExerciseDto::muscleGroup).distinct()
@@ -46,7 +47,11 @@ fun SearchExercisesList(
                         .height(200.dp),
                     exercise = currentExercise,
                 ) { selectedExercise ->
-                    navigateToExerciseDetailsConfigurator(selectedExercise, workoutId)
+                    onSubmitExercise(selectedExercise)
+
+                    //TODO: select multiple exercises rework...
+
+                    //navigateToExerciseDetailsConfigurator(selectedExercise, workoutId)
                 }
             }
         }
@@ -61,13 +66,16 @@ fun SearchExercisesListPreview() {
         .fillMaxSize()
         .padding(8.dp)
 
-    val exerciseList = MockupDataGenerator.generateExerciseList()
+    val exerciseList = MockupDataGeneratorV2.generateExerciseList()
 
     SearchExercisesList(
         modifier = modifier,
         exerciseList = exerciseList,
         workoutId = 1,
         navigateToExerciseDetailsConfigurator = { exercise, workoutId ->
+
+        },
+        onSubmitExercise = {
 
         }
     )

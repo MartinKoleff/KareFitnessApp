@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
@@ -91,14 +92,18 @@ fun LoginScreen(
         loginViewModel.login(credentials)
     }
 
+    //Dialog visibility
     var showErrorDialog by remember { mutableStateOf(false) }
     var showLoadingDialog by remember { mutableStateOf(false) }
 
+    //Error handling
+    var error by remember { mutableStateOf<KareError?>(null) }
     LaunchedEffect(loginState) {
         Log.d("LoginScreen", "Login state updated: $loginState")
 
         //Update showErrorDialog based on loginState
         showErrorDialog = loginState.isError
+        error = loginState.error
 
         //Update showLoadingDialog based on loginState
         showLoadingDialog = loginState.isLoading
@@ -130,7 +135,9 @@ fun LoginScreen(
 
     //Error dialog
     if (showErrorDialog) {
-        ErrorDialog(loginState.error, onDismiss)
+        error?.let {
+            ErrorDialog(it, onDismiss)
+        }
     }
 
     AuthenticationScaffold(
@@ -163,13 +170,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            CustomTitleAndSubtitle(
+            AuthorizationTitleAndSubtitle(
                 title = "Welcome back!",
                 subtitle = "We missed you!"
             )
 
             //User text box
-            CustomTextField(label = "Username", iconId = R.drawable.ic_user_3) {
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
                 username = it
             }
 
@@ -200,7 +207,7 @@ fun LoginScreenPreview() {
 }
 
 @Composable
-fun CustomTitleAndSubtitle(title: String, subtitle: String) {
+fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     val textColor = Color.White
 
     val titlePadding =
@@ -267,7 +274,7 @@ fun CustomTitleAndSubtitle(title: String, subtitle: String) {
 @Composable
 fun CustomTextField(
     label: String,
-    iconId: Int,
+    iconResourceId: Int,
     onValueChange: (String) -> Unit
 ) {
     var text by rememberSaveable {
@@ -306,7 +313,7 @@ fun CustomTextField(
                 modifier = Modifier
                     .size(45.dp)
                     .padding(vertical = 8.dp, horizontal = 2.dp),
-                painter = painterResource(iconId),
+                painter = painterResource(iconResourceId),
                 contentDescription = "Icon",
                 contentScale = ContentScale.Inside
 //                    colorFilter = ColorFilter.tint(
@@ -315,7 +322,7 @@ fun CustomTextField(
 //                    )
             )
 //            Icon(
-//                painter = painterResource(iconId),
+//                painter = painterResource(iconResourceId),
 //                contentDescription = "Text box icon"
 //            )
         }
@@ -327,7 +334,7 @@ fun CustomTextField(
 fun CustomTextFieldPreview() {
     CustomTextField(
         label = "Username",
-        iconId = R.drawable.ic_user_2,
+        iconResourceId = R.drawable.ic_user_2,
         onValueChange = {}
     )
 }

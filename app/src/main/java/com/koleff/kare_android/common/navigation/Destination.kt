@@ -58,13 +58,13 @@ sealed interface Destination {
     }
 
     //When workout is selected -> show details screen
-    class WorkoutDetails(private val workoutId: Int) : Destination {
+    class WorkoutDetails(private val workoutId: Int, private val isNewWorkout: Boolean = false) : Destination {
         override val route: String
-            get() = "workout_details/$workoutId"
+            get() = "workout_details/$workoutId/$isNewWorkout"
 
         companion object {
             const val ROUTE =
-                "workout_details/{workout_id}"
+                "workout_details/{workout_id}/{is_new_workout}"
         }
     }
 
@@ -77,13 +77,13 @@ sealed interface Destination {
     }
 
     //Select workout where exercise will be added
-    data class SearchWorkoutsScreen(private val exerciseId: Int) : Destination {
+    data class SearchWorkoutsScreen(private val exerciseId: Int, private val workoutId: Int) : Destination {
         override val route: String
-            get() = "search_workouts/$exerciseId"
+            get() = "search_workouts/$exerciseId/$workoutId"
 
         companion object {
             const val ROUTE =
-                "search_workouts/{exercise_id}"
+                "search_workouts/{exercise_id}/{workout_id}"
         }
     }
 
@@ -123,5 +123,16 @@ sealed interface Destination {
             get() = "register"
 
         const val ROUTE = "register"
+    }
+
+    //Do workout screen
+    data class DoWorkoutScreen(private val workoutId: Int) : Destination {
+        override val route: String
+            get() = "do_workout/$workoutId"
+
+        companion object {
+            const val ROUTE =
+                "do_workout/{workout_id}"
+        }
     }
 }

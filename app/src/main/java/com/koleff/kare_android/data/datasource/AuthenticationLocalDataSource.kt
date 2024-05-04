@@ -45,7 +45,7 @@ class AuthenticationLocalDataSource(
 
                 val result = LoginWrapper(
                     LoginResponse(
-                        user = user.toUserDto(),
+                        user = user.toDto(),
                         accessToken = accessToken,
                         refreshToken = refreshToken
                     )

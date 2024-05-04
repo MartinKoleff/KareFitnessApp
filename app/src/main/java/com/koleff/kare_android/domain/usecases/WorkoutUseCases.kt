@@ -11,6 +11,7 @@ data class WorkoutUseCases(
     val onSearchWorkoutUseCase: OnSearchWorkoutUseCase,
     val deleteExerciseUseCase: DeleteExerciseUseCase,
     val addExerciseUseCase: AddExerciseUseCase,
+    val submitExerciseUseCase: SubmitExerciseUseCase,
     val deleteWorkoutUseCase: DeleteWorkoutUseCase,
     val selectWorkoutUseCase: SelectWorkoutUseCase,
     val deselectWorkoutUseCase: DeselectWorkoutUseCase,
@@ -18,4 +19,8 @@ data class WorkoutUseCases(
     val createNewWorkoutUseCase: CreateNewWorkoutUseCase,
     val createCustomWorkoutUseCase: CreateCustomWorkoutUseCase,
     val createCustomWorkoutDetailsUseCase: CreateCustomWorkoutDetailsUseCase,
+    val getWorkoutConfigurationUseCase: GetWorkoutConfigurationUseCase,
+    val createWorkoutConfigurationUseCase: CreateWorkoutConfigurationUseCase,
+    val updateWorkoutConfigurationUseCase: UpdateWorkoutConfigurationUseCase,
+    val deleteWorkoutConfigurationUseCase: DeleteWorkoutConfigurationUseCase
 )
