@@ -4,6 +4,7 @@ import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.WorkoutGenerator
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
+import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
 import kotlinx.coroutines.Dispatchers
@@ -13,6 +14,7 @@ import javax.inject.Inject
 class WorkoutDBManagerV2 @Inject constructor(
     private val workoutDao: WorkoutDao,
     private val workoutDetailsDao: WorkoutDetailsDao,
+    private val workoutConfigurationDao: WorkoutConfigurationDao,
     private val exerciseDao: ExerciseDao,
     private val exerciseSetDao: ExerciseSetDao,
     private val hasInitializedDB: Boolean
@@ -25,20 +27,31 @@ class WorkoutDBManagerV2 @Inject constructor(
             val workoutList = WorkoutGenerator.getAllWorkouts()
             val workoutDetailsWithExercisesList = WorkoutGenerator.getAllWorkoutDetails()
 
+            //Create Workout
             workoutDao.insertAllWorkouts(workoutList)
+
+            //Create Workout Details
             workoutDetailsDao.insertAllWorkoutDetails(
                 workoutDetailsWithExercisesList.map {
                     it.workoutDetails
                 }
             )
 
-            //Exercises
+            //Create Workout Configuration
+            workoutDetailsWithExercisesList
+                .map { it.toDto() }
+                .map { it.configuration }
+                .forEach { configuration ->
+                workoutConfigurationDao.insertWorkoutConfiguration(configuration.toEntity())
+            }
+
+            //Create Exercises
             for (workoutDetailsWithExercises in workoutDetailsWithExercisesList) {
 
                 //Save all exercises in workout
                 val exercisesWithSets = workoutDetailsWithExercises.safeExercises
                 val exercises = exercisesWithSets.map { it.exercise }
-                exerciseDao.insertAllExercises(exercises)
+                exerciseDao.insertAllExercises(exercises) //Only catalog exercises have exercise details
 
                 exercisesWithSets
                     .map { it.sets }

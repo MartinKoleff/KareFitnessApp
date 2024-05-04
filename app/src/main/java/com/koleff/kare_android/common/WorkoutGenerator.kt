@@ -1,6 +1,7 @@
 package com.koleff.kare_android.common
 
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
@@ -68,7 +69,7 @@ object WorkoutGenerator {
                     isSelected = false
                 ),
                 exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.CHEST, isWorkout = true, workoutId = 1),
-                configuration = null
+                configuration = WorkoutConfigurationDto(workoutId = 1).toEntity()
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -79,7 +80,7 @@ object WorkoutGenerator {
                     isSelected = false
                 ),
                 exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.BACK, isWorkout = true, workoutId = 2),
-                configuration = null
+                configuration = WorkoutConfigurationDto(workoutId = 2).toEntity()
             ),
             WorkoutDetailsWithExercises(
                 workoutDetails = WorkoutDetails(
@@ -89,7 +90,7 @@ object WorkoutGenerator {
                     muscleGroup = MuscleGroup.ARMS,
                     isSelected = true
                 ), exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.ARMS, isWorkout = true, workoutId = 3),
-                configuration = null
+                configuration = WorkoutConfigurationDto(workoutId = 3).toEntity()
             )
         )
     }

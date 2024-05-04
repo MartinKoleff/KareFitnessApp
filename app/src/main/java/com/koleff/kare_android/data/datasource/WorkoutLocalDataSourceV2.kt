@@ -415,9 +415,13 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             workoutDao.updateWorkout(workoutUpdatedName) //Update workout name
 
             val workoutDetails =
-                WorkoutDetailsDto().copy(workoutId = workoutId.toInt(), name = workoutName)
+                WorkoutDetailsDto(workoutId = workoutId.toInt(), name = workoutName)
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetails.toEntity()) //returns 0
+
+            //Create workout configuration
+            val workoutConfiguration = WorkoutConfigurationDto(workoutId = workoutId.toInt())
+            workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
 
             val result = WorkoutWrapper(
                 WorkoutResponse(
@@ -449,6 +453,10 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //returns 0
 
             workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity())
+
+            //Create workout configuration
+            val workoutConfiguration = WorkoutConfigurationDto(workoutId = workoutId.toInt())
+            workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
 
             //Select
             if (workoutDto.isSelected) {
@@ -500,6 +508,10 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     return@flow
                 }
             }
+
+            //Create workout configuration
+            val workoutConfiguration = WorkoutConfigurationDto(workoutId = workoutDetailsId.toInt())
+            workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
 
             //Select
             if (workoutDetailsDto.isSelected) {
@@ -748,7 +760,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
             emit(ResultWrapper.Success(result))
         }
-
 
     override suspend fun updateWorkoutConfiguration(workoutConfiguration: WorkoutConfigurationDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
