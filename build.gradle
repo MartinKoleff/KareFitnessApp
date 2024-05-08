@@ -44,7 +44,7 @@ buildscript {
     ext.compose_material_version = "1.6.1"
 
     //https://developer.android.com/jetpack/androidx/releases/compose-ui
-    ext.compose_ui_version = "1.6.1"
+    ext.compose_ui_version = "1.6.7"
 
     //https://developer.android.com/jetpack/androidx/releases/compose-material3
     ext.compose_material3_version = "1.2.0"

@@ -5,10 +5,25 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 
-val PurpleSmileFontFamily = FontFamily(
+val provider = GoogleFont.Provider(
+    providerAuthority = "com.google.android.gms.fonts",
+    providerPackage = "com.google.android.gms",
+    certificates = R.array.com_google_android_gms_fonts_certs
+)
+
+val bodyFontFamily = FontFamily(
+    Font(
+        googleFont = GoogleFont("Alata"),
+        fontProvider = provider,
+    )
+)
+
+val displayFontFamily = FontFamily(
     listOf(
         Font(R.font.purple_smile)
     )
@@ -17,7 +32,7 @@ val PurpleSmileFontFamily = FontFamily(
 val Typography = Typography(
     // Display Large - Purple smile 57/64 . -0.25px
     displayLarge = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 57.sp,
         lineHeight = 64.sp,
@@ -26,7 +41,7 @@ val Typography = Typography(
 
     // Display Medium - Purple smile 45/52 . 0px
     displayMedium = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 45.sp,
         lineHeight = 52.sp,
@@ -35,7 +50,7 @@ val Typography = Typography(
 
     // Display Small - Purple smile 36/44 . 0px
     displaySmall = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 36.sp,
         lineHeight = 44.sp,
@@ -44,7 +59,7 @@ val Typography = Typography(
 
     // Headline Large - Purple smile 32/40 . 0px
     headlineLarge = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 32.sp,
         lineHeight = 40.sp,
@@ -53,7 +68,7 @@ val Typography = Typography(
 
     // Headline Medium - Purple smile 28/36 . 0px
     headlineMedium = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 28.sp,
         lineHeight = 36.sp,
@@ -62,7 +77,7 @@ val Typography = Typography(
 
     // Headline Small - Purple smile 24/32 . 0px
     headlineSmall = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 24.sp,
         lineHeight = 32.sp,
@@ -71,7 +86,7 @@ val Typography = Typography(
 
     // Title Large - Purple smile 22/28 . 0px
     titleLarge = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 22.sp,
         lineHeight = 28.sp,
@@ -80,7 +95,7 @@ val Typography = Typography(
 
     // Title Medium - Purple smile 16/24 . 0.15px
     titleMedium = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 16.sp,
         lineHeight = 24.sp,
@@ -89,60 +104,60 @@ val Typography = Typography(
 
     // Title Small - Purple smile 14/20 . 0.1px
     titleSmall = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = displayFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
     ),
 
-    // Label Large - Purple smile 14/20 . 0.1px
+    // Label Large - Alata 14/20 . 0.1px
     labelLarge = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = bodyFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.1.sp,
     ),
 
-    // Label Medium - Purple smile 12/16 . 0.5px
+    // Label Medium - Alata 12/16 . 0.5px
     labelMedium = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = bodyFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 12.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
     ),
 
-    // Label Small - Purple smile 11/16 . 0.5px
+    // Label Small - Alata 11/16 . 0.5px
     labelSmall = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = bodyFontFamily,
         fontWeight = FontWeight.W500,
         fontSize = 11.sp,
         lineHeight = 16.sp,
         letterSpacing = 0.5.sp,
     ),
 
-    // Body Large - Purple smile 16/24 . 0.5px
+    // Body Large - Alata 16/24 . 0.5px
     bodyLarge = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = bodyFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp,
     ),
 
-    // Body Medium - Purple smile 14/20 . 0.25px
+    // Body Medium - Alata 14/20 . 0.25px
     bodyMedium = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = bodyFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.25.sp,
     ),
-    // Body Small - Purple smile 12/16 . 0.4px
+    // Body Small - Alata 12/16 . 0.4px
     bodySmall = TextStyle(
-        fontFamily = PurpleSmileFontFamily,
+        fontFamily = bodyFontFamily,
         fontWeight = FontWeight.W400,
         fontSize = 12.sp,
         lineHeight = 16.sp,
