@@ -8,8 +8,8 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
@@ -273,6 +273,7 @@ fun KareTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
+
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
@@ -282,9 +283,29 @@ fun KareTheme(
         }
     }
 
+    //Custom colors
+    val extendedColorScheme = ExtendedColorScheme(
+        doWorkoutColors = DoWorkoutColors(),
+        workoutBannerColors = WorkoutBannerColors(
+            deleteButtonColor = MaterialTheme.colorScheme.tertiary,
+            selectButtonColor = Color.Green,
+            editButtonColor = Color.Green
+        ),
+        detailsScreenBackgroundGradient = listOf(
+            MaterialTheme.colorScheme.tertiary,
+            MaterialTheme.colorScheme.secondary,
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.primary,
+        )
+    )
+
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
-    )
+    ) {
+        CompositionLocalProvider(LocalExtendedColorScheme provides extendedColorScheme) {
+            content()
+        }
+    }
 }
