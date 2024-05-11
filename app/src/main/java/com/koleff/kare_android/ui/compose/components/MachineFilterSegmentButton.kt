@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -27,6 +28,8 @@ fun MachineFilterSegmentButton(
     isDisabled: Boolean,
     exerciseListViewModel: ExerciseListViewModel
 ) {
+    val labelColor = MaterialTheme.colorScheme.onSecondary
+
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
 
@@ -71,6 +74,7 @@ fun MachineFilterSegmentButton(
                     text = label,
                     style = TextStyle(
                         fontSize = 12.sp,
+                        color = labelColor,
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Normal
                     ),

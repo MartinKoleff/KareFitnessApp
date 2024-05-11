@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.MockupDataGeneratorV2
@@ -89,17 +91,18 @@ fun ExerciseDataSheet(
     val screenHeight = configuration.screenHeightDp.dp
 
     val cornerSize = 24.dp
-
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.secondary
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight / 3)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
-            .background(Color.Gray)
+            .background(backgroundColor)
     ) {
         HorizontalLineWithText("Exercise data sheet")
 
@@ -124,6 +127,8 @@ fun ExerciseDataSheet(
 
 @Composable
 fun ExerciseDataSheetTitleRow() {
+    val textColor = MaterialTheme.colorScheme.onSecondary
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -140,7 +145,7 @@ fun ExerciseDataSheetTitleRow() {
                 .weight(0.5f),
             text = "Set",
             style = TextStyle(
-                color = Color.White,
+                color = textColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             ),
@@ -156,7 +161,7 @@ fun ExerciseDataSheetTitleRow() {
                 .weight(1.5f),
             text = "Reps",
             style = TextStyle(
-                color = Color.White,
+                color = textColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             ),
@@ -172,7 +177,7 @@ fun ExerciseDataSheetTitleRow() {
                 .weight(1.5f),
             text = "Weight",
             style = TextStyle(
-                color = Color.White,
+                color = textColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             ),
@@ -188,7 +193,7 @@ fun ExerciseDataSheetTitleRow() {
                 .weight(1f),
             text = "Done",
             style = TextStyle(
-                color = Color.White,
+                color = textColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold
             ),
@@ -204,6 +209,9 @@ fun ExerciseDataSheetRow(
     set: ExerciseSetDto,
     onSetChange: (ExerciseSetProgressDto) -> Unit
 ) {
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val checkboxSelectedColor = Color.Green
+    val checkboxBorderColor = MaterialTheme.colorScheme.outlineVariant
 
     //Forcing Re-composition on set change -> new exercise in ExerciseDataSheet
     key(set.setId) {
@@ -239,7 +247,7 @@ fun ExerciseDataSheetRow(
                     .weight(0.5f),
                 text = set.number.toString(),
                 style = TextStyle(
-                    color = Color.White,
+                    color = textColor,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 ),
@@ -274,15 +282,13 @@ fun ExerciseDataSheetRow(
                 }
             )
 
-            //TODO: reset states...
-
             //Checkbox
             Checkbox(
                 modifier = Modifier
                     .weight(1f),
                 colors = CheckboxDefaults.colors(
-                    checkedColor = Color.Green,
-                    uncheckedColor = Color.White //Checkbox border
+                    checkedColor = checkboxSelectedColor,
+                    uncheckedColor = checkboxBorderColor //Checkbox border
                 ),
                 checked = isDone,
                 onCheckedChange = {
@@ -302,16 +308,19 @@ fun ExerciseDataSheetTextField(
     onValueChange: (String) -> Unit
 ) {
     val cornerSize = 16.dp
-    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        if (LocalConfiguration.current.isNightModeActive) Color.White else Color.Black
-    } else {
-        Color.Black
-    }
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.secondary
+    
     TextField(
         modifier = modifier
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                color = backgroundColor,
                 shape = RoundedCornerShape(cornerSize)
             ),
         value = text,

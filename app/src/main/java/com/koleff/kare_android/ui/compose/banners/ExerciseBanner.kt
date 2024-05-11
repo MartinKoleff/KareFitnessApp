@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,22 +68,23 @@ fun ExerciseBannerV1(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
+    val textColor = MaterialTheme.colorScheme.onSecondary
+
     Box(
         modifier = modifier
             .clickable { onClick.invoke() }
             .background(
                 brush = Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black)
+                    listOf(Color.Transparent, Color.Black) //Flowing effect
                 )
             ),
     ) {
-        //Parallax effect
         Image(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopStart),
-            painter = painterResource(id = R.drawable.background_exercise_banner_effect), //TODO: change to url
+            painter = painterResource(id = R.drawable.background_exercise_banner_effect),
             contentDescription = "Background",
             contentScale = ContentScale.Crop
         )
@@ -98,7 +100,7 @@ fun ExerciseBannerV1(
                 modifier = Modifier.padding(16.dp),
                 text = exercise.name,
                 style = TextStyle(
-                    color = Color.White,
+                    color = textColor,
                     fontSize = 16.sp,
                 ),
                 maxLines = 2,
@@ -112,7 +114,7 @@ fun ExerciseBannerV1(
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopEnd),
-            painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
+            painter = painterResource(id = MuscleGroup.getImage(exercise.muscleGroup)),
             contentDescription = exercise.name,
             contentScale = ContentScale.Crop
         )
@@ -131,8 +133,9 @@ fun ExerciseBannerV2(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-   val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
-
+    val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val descriptionTextColor = MaterialTheme.colorScheme.onSecondary
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -162,7 +165,7 @@ fun ExerciseBannerV2(
                     .fillMaxHeight()
                     .width(screenWidth / 2)
                     .align(Alignment.TopEnd),
-                painter = painterResource(id = exerciseImage), //TODO: change to url
+                painter = painterResource(id = exerciseImage),
                 contentDescription = exercise.name,
                 contentScale = ContentScale.Crop
             )
@@ -211,7 +214,7 @@ fun ExerciseBannerV2(
                 ) {
 
                     //Exercise title
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -222,7 +225,7 @@ fun ExerciseBannerV2(
                         ),
                         text = exercise.name,
                         style = TextStyle(
-                            color = Color.White,
+                            color = titleTextColor,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         ),
@@ -232,7 +235,7 @@ fun ExerciseBannerV2(
 
                     //Exercise sub-title (description)
                     if (hasDescription) {
-                        Text( //TODO: and cooler font...
+                        Text(
                             modifier = Modifier.padding(
                                 PaddingValues(
                                     start = 16.dp,
@@ -243,7 +246,7 @@ fun ExerciseBannerV2(
                             ),
                             text = "Description", //TODO: wire with ExerciseDTO...
                             style = TextStyle(
-                                color = Color.White,
+                                color = descriptionTextColor,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.SemiBold
                             ),
@@ -394,7 +397,7 @@ fun ExerciseListPreview() {
     val n = 5
     val exercisesList = MockupDataGeneratorV2.generateExerciseList(n)
 
-    ExerciseList(exerciseList = exercisesList){ exercise ->
+    ExerciseList(exerciseList = exercisesList) { exercise ->
 
     }
 }

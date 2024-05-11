@@ -28,7 +28,8 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Composable
 fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
-    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
+    val tintColor = MaterialTheme.colorScheme.tertiaryContainer
+    val textColor = MaterialTheme.colorScheme.onTertiary
 
     HorizontalDivider(thickness = 5.dp)
 
@@ -47,13 +48,13 @@ fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
                 .fillMaxSize()
                 .align(Alignment.TopStart)
                 .graphicsLayer { alpha = 0.75f },
-            colorFilter = ColorFilter.tint(primaryContainerColor, BlendMode.Darken)
+            colorFilter = ColorFilter.tint(tintColor, BlendMode.Darken)
         )
 
         Text(
             text = currentMuscleGroup.name,
             style = TextStyle(
-                color = Color.White,
+                color = textColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.SemiBold
             ),

@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -23,6 +24,8 @@ fun WorkoutSegmentButton(
     isDisabled: Boolean,
     workoutListViewModel: WorkoutViewModel
 ) {
+    val labelColor = MaterialTheme.colorScheme.onSecondary
+
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("MyWorkout", "Workouts")
 
@@ -31,6 +34,7 @@ fun WorkoutSegmentButton(
             SegmentedButton(
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
+
                     //If the same option is selected
                     selectedIndex = if (selectedIndex == index) {
                         return@SegmentedButton
@@ -56,7 +60,7 @@ fun WorkoutSegmentButton(
                 selected = index == selectedIndex,
                 enabled = !isDisabled
             ) {
-                Text(label)
+                Text(text = label, color = labelColor)
             }
         }
     }

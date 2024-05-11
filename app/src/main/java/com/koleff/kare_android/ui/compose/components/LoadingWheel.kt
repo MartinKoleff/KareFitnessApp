@@ -20,13 +20,14 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoadingWheel(
-    modifier: Modifier = Modifier.fillMaxSize(),
+    modifier: Modifier = Modifier
+        .fillMaxSize(),
     innerPadding: PaddingValues = PaddingValues(8.dp),
     hideScreen: Boolean = false,
     customBackground: Color = Color.Transparent
 ) {
     val background = if (hideScreen) {
-        MaterialTheme.colorScheme.background //Dark theme applied too
+        MaterialTheme.colorScheme.surface
     } else customBackground
 
     Box(

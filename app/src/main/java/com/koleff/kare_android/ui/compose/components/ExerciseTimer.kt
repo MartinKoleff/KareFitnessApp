@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,7 +35,9 @@ fun ExerciseTimer(
     modifier: Modifier = Modifier,
     timeLeft: ExerciseTime,
     totalTime: ExerciseTime,
-    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
+    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(
+        lineColor = MaterialTheme.colorScheme.outline
+    ),
     isLogging: Boolean = false
 ) {
     val timePercentageLeftState  = remember {
@@ -139,7 +142,9 @@ fun ExerciseTimerPreview() {
     var currentTime by remember {
         mutableStateOf(ExerciseTime(totalTime.hours, totalTime.minutes, totalTime.seconds))
     }
-    val exerciseTimerStyle = ExerciseTimerStyle()
+    val exerciseTimerStyle = ExerciseTimerStyle(
+        lineColor = MaterialTheme.colorScheme.outline
+    )
     val workoutTimer = TimerUtil()
     LaunchedEffect(Unit) {
         workoutTimer.startTimer(totalTime.toSeconds()) {
@@ -151,7 +156,7 @@ fun ExerciseTimerPreview() {
         modifier = Modifier
             .fillMaxSize()
 //            .size(exerciseTimerStyle.timerRadius * 2)
-            .background(androidx.compose.ui.graphics.Color.Black),
+            .background(MaterialTheme.colorScheme.scrim),
         timeLeft = currentTime,
         totalTime = totalTime
     )

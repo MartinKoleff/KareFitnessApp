@@ -47,6 +47,9 @@ fun WorkoutFooterBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val primaryColor = MaterialTheme.colorScheme.primary
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,7 +85,7 @@ fun WorkoutFooterBanner(
                     .padding(end = 16.dp)
                     .drawBehind {
                         drawCircle(
-                            color = Color.White,
+                            color = outlineColor,
                             radius = this.size.maxDimension / 2
                         )
                     },
@@ -103,7 +106,7 @@ fun WorkoutFooterBanner(
                 ) {
 
                     //Title
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -114,7 +117,7 @@ fun WorkoutFooterBanner(
                         ),
                         text = title,
                         style = TextStyle(
-                            color = Color.White,
+                            color = textColor,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         ),
@@ -123,7 +126,7 @@ fun WorkoutFooterBanner(
                     )
 
                     //Sub-title (description)
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -134,7 +137,7 @@ fun WorkoutFooterBanner(
                         ),
                         text = description,
                         style = TextStyle(
-                            color = Color.White,
+                            color = textColor,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold
                         ),

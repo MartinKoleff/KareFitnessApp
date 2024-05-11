@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,10 +16,12 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -26,18 +29,23 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Composable
-fun ImageCard(
+fun MuscleGroupImageCard(
     painter: Painter,
     contentDescription: String,
     title: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
+    val tintColor = MaterialTheme.colorScheme.scrim
+    val textColor = MaterialTheme.colorScheme.onSecondary
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
@@ -47,38 +55,36 @@ fun ImageCard(
     ) {
         //Image first, then gradient over it, then text over the gradient...
         Box(modifier = Modifier
-            .height(200.dp)
+            .height(170.dp)
             .clickable { onClick.invoke() }
         ) {
             Image(
+                modifier = Modifier.drawWithContent {
+                    drawContent()
+
+                    //Tint
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            listOf(Color.Transparent, tintColor)
+                        )
+                    )
+                },
                 painter = painter,
                 contentDescription = contentDescription,
                 contentScale = ContentScale.Crop
             )
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            listOf(Color.Transparent, Color.Black)
-                        )
-                    )
-            )
-
             //Have the text in a box positioned at bottom start
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
+                    .fillMaxSize()
                     .padding(12.dp),
                 contentAlignment = Alignment.BottomCenter
             ) {
                 Text(
                     text = title,
                     style = TextStyle(
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 16.sp,
                         fontStyle = FontStyle.Italic,
                     ),
@@ -103,7 +109,7 @@ fun MuscleGroupGrid(
         items(muscleGroupList.size) { currentMuscleGroupId ->
             val currentMuscleGroup = muscleGroupList[currentMuscleGroupId]
 
-            ImageCard(
+            MuscleGroupImageCard(
                 painter = painterResource(id = currentMuscleGroup.imageId),
                 contentDescription = currentMuscleGroup.description,
                 title = currentMuscleGroup.muscleGroupName,
@@ -116,7 +122,7 @@ fun MuscleGroupGrid(
                             start = 8.dp,
                             end = 8.dp
                         ) else PaddingValues(
-                           all = 8.dp
+                            all = 8.dp
                         )
                     )
             ) {
@@ -124,4 +130,15 @@ fun MuscleGroupGrid(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun MuscleGroupGridPreview() {
+    MuscleGroupGrid(
+        muscleGroupList = MuscleGroup.getSupportedMuscleGroups(),
+        onMuscleGroupSelected = {
+
+        }
+    )
 }
