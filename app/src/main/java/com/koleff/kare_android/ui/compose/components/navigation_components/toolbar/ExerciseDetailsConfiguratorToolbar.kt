@@ -1,10 +1,13 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
@@ -32,15 +35,13 @@ fun ExerciseDetailsConfiguratorToolbar(
     onSubmitExercise: () -> Unit,
     onNavigateBackAction: () -> Unit
 ) {
-    val primaryColor = MaterialTheme.colorScheme.primary
-    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
-
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
+    val backgroundColor = MaterialTheme.colorScheme.primary
+    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val submitButtonTint = Color.Green
 
     Box(
         modifier = modifier
+            .background(backgroundColor)
     ) {
 
         //Exercise Muscle Group Image
@@ -48,7 +49,18 @@ fun ExerciseDetailsConfiguratorToolbar(
             painter = painterResource(id = exerciseImageId),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
-            modifier = modifier.clip(RoundedToolbarShape(hasTopOutline = false))
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(
+                    RoundedToolbarShape(hasTopOutline = true)
+                )
+                .border(
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = tintColor
+                    ),
+                    shape = RoundedToolbarShape(hasTopOutline = true)
+                )
         )
 
         //Navigation
@@ -62,14 +74,14 @@ fun ExerciseDetailsConfiguratorToolbar(
             NavigationItem(
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                tint = Color.White,
+                tint = tintColor,
                 onNavigateAction = onNavigateBackAction
             )
 
             NavigationItem(
                 icon = painterResource(id = R.drawable.ic_vector_select),
                 label = "Submit button",
-                tint = Color.Green,
+                tint = submitButtonTint,
                 onNavigateAction = onSubmitExercise
             )
         }
@@ -83,11 +95,12 @@ fun PreviewExerciseConfiguratorToolbar() {
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
+    val backgroundColor = MaterialTheme.colorScheme.primary
     ExerciseDetailsConfiguratorToolbar(
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
-            .background(color = MaterialTheme.colorScheme.primaryContainer),
+            .background(color = backgroundColor),
         exerciseImageId = R.drawable.background_legs,
         onNavigateBackAction = {},
         onSubmitExercise = {}

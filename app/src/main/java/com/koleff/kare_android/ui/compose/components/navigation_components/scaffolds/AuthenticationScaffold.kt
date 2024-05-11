@@ -40,14 +40,7 @@ fun AuthenticationScaffold(
             AuthenticationToolbar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(screenHeight / 2.5f)
-                    .background(
-                        color = Color.Transparent
-                    )
-                    .border(
-                        border = BorderStroke(2.dp, color = Color.White),
-                        shape = RoundedToolbarShape(hasTopOutline = false)
-                    ),
+                    .height(screenHeight / 2.5f),
                 onNavigateBackAction = onNavigateBackAction
             )
         },

@@ -38,14 +38,7 @@ fun ExerciseDetailsScaffold(
             ExerciseDetailsToolbar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(screenHeight / 2.5f)
-                    .background(
-                        color = MaterialTheme.colorScheme.primaryContainer
-                    )
-                    .border(
-                        border = BorderStroke(2.dp, color = Color.White),
-                        shape = RoundedToolbarShape(hasTopOutline = false)
-                    ),
+                    .height(screenHeight / 2.5f),
                 exerciseImageId = exerciseImageId,
                 onNavigateAction = onNavigateAction,
                 onNavigateBackAction = onNavigateBack

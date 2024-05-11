@@ -34,17 +34,20 @@ fun Toolbar(
     onNavigateToAction: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val tintColor = MaterialTheme.colorScheme.onSecondary
 
     CenterAlignedTopAppBar(
         modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = MaterialTheme.colorScheme.onPrimary,
         ),
         title = {
             if (hasTitle) {
                 Box(
-                    modifier = Modifier.fillMaxSize().alpha(textAlpha),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(textAlpha),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -61,6 +64,7 @@ fun Toolbar(
                 modifier = Modifier.fillMaxHeight(),
                 icon = Icons.AutoMirrored.Filled.ArrowBackIos,
                 label = "Go back",
+                tint = tintColor,
                 onNavigateAction = onNavigateBackAction
             )
         },
@@ -69,6 +73,7 @@ fun Toolbar(
                 modifier = Modifier.fillMaxHeight(),
                 icon = Icons.Filled.Settings,
                 label = "Settings",
+                tint = tintColor,
                 onNavigateAction = onNavigateToAction
             )
         },

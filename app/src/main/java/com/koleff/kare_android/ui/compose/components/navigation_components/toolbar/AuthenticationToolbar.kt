@@ -7,6 +7,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
@@ -38,6 +39,8 @@ fun AuthenticationToolbar(
     imageId: Int = R.drawable.ic_default,
     onNavigateBackAction: () -> Unit
 ) {
+    val tintColor = MaterialTheme.colorScheme.onSecondary
+
     Box(
         modifier = modifier
     ) {
@@ -47,17 +50,18 @@ fun AuthenticationToolbar(
             painter = painterResource(id = imageId),
             contentDescription = "Image",
             contentScale = ContentScale.Crop,
-            modifier = modifier
+            modifier = Modifier
+                .fillMaxSize()
                 .clip(
-                    RoundedToolbarShape(hasTopOutline = false)
+                    RoundedToolbarShape(hasTopOutline = true)
                 )
-//                .border(
-//                    border = BorderStroke(
-//                        width = 2.dp,
-//                        color = Color.White
-//                    ),
-//                    shape = RoundedToolbarShape(hasTopOutline = false)
-//                )
+                .border(
+                    border = BorderStroke(
+                        width = 1.dp,
+                        color = tintColor
+                    ),
+                    shape = RoundedToolbarShape(hasTopOutline = true)
+                )
         )
 
         //Navigation
@@ -78,7 +82,7 @@ fun AuthenticationToolbar(
 //                    },
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
-                tint = Color.White,
+                tint = tintColor,
                 onNavigateAction = onNavigateBackAction
             )
         }
@@ -91,11 +95,12 @@ fun PreviewAuthenticationToolbar() {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
 
+    val backgroundColor = MaterialTheme.colorScheme.primary
     AuthenticationToolbar(
         modifier = Modifier
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
-            .background(color = MaterialTheme.colorScheme.primaryContainer),
+            .background(backgroundColor),
         imageId = R.drawable.ic_default,
         onNavigateBackAction = {}
     )
