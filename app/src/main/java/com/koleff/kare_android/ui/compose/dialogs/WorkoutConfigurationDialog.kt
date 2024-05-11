@@ -1,11 +1,15 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.koleff.kare_android.ui.compose.dialogs
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.koleff.kare_android.data.model.dto.ExerciseTime
@@ -21,6 +25,12 @@ fun WorkoutConfigurationDialog(
     var cooldownMinutes by remember { mutableStateOf(workoutConfiguration.cooldownTime.minutes) }
     var cooldownSeconds by remember { mutableStateOf(workoutConfiguration.cooldownTime.seconds) }
 
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val buttonColor = MaterialTheme.colorScheme.tertiary
+    val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
     Dialog(
         onDismissRequest = { onDismiss() }
     ) {
@@ -33,13 +43,15 @@ fun WorkoutConfigurationDialog(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    "Configure Your Workout",
+                    text = "Configure Your Workout",
+                    color = titleTextColor,
                     style = MaterialTheme.typography.headlineSmall
                 )
 
                 Spacer(Modifier.height(16.dp))
                 Text(
-                    "Cooldown Time",
+                    text = "Cooldown Time",
+                    color = textColor,
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Row(
@@ -54,20 +66,38 @@ fun WorkoutConfigurationDialog(
 //                        modifier = Modifier.weight(1f)
 //                    )
                     OutlinedTextField(
+                        modifier = Modifier.weight(1f),
                         value = cooldownMinutes.toString(),
                         onValueChange = {
                             cooldownMinutes = validateUserInput(it)
                         },
-                        label = { Text("Minutes") },
+                        label = {
+                            Text(
+                                text = "Minutes",
+                                color = textColor
+                            )
+                        },
                         singleLine = true,
-                        modifier = Modifier.weight(1f)
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = outlineColor,
+                            unfocusedBorderColor = outlineColor
+                        )
                     )
                     OutlinedTextField(
+                        modifier = Modifier.weight(1f),
                         value = cooldownSeconds.toString(),
                         onValueChange = { cooldownSeconds = validateUserInput(it) },
-                        label = { Text("Seconds") },
+                        label = {
+                            Text(
+                                text = "Seconds",
+                                color = textColor
+                            )
+                        },
                         singleLine = true,
-                        modifier = Modifier.weight(1f)
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = outlineColor,
+                            unfocusedBorderColor = outlineColor
+                        )
                     )
                 }
 
@@ -78,9 +108,14 @@ fun WorkoutConfigurationDialog(
                             ExerciseTime(cooldownHours, cooldownMinutes, cooldownSeconds)
                         onSave(workoutConfiguration)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = buttonColor,
+                        contentColor = onButtonColor
+                    )
                 ) {
-                    Text("Save Configuration")
+                    Text(text = "Save Configuration", color = textColor)
                 }
             }
         }
@@ -94,6 +129,7 @@ fun validateUserInput(userInput: String): Int {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 private fun WorkoutConfigurationDialogPreview() {
     val workoutConfiguration = WorkoutConfigurationDto()

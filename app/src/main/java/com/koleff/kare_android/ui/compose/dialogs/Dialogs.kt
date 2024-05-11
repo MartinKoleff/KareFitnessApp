@@ -1,13 +1,16 @@
 package com.koleff.kare_android.ui.compose.dialogs
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -27,6 +30,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -44,6 +48,11 @@ fun EditWorkoutDialog(
 ) {
     var text by remember { mutableStateOf(currentName) }
 
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val buttonColor = MaterialTheme.colorScheme.tertiary
+    val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
     AlertDialog(
         title = {
             Box(
@@ -55,7 +64,7 @@ fun EditWorkoutDialog(
                 Text(
                     text = title,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = titleTextColor,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -77,12 +86,16 @@ fun EditWorkoutDialog(
                 onClick = {
                     onConfirm(text)
                     onDismiss()
-                }
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    contentColor = textColor
+                )
             ) {
                 Text(
                     text = "Confirm",
                     style = TextStyle(
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -93,11 +106,17 @@ fun EditWorkoutDialog(
             }
         },
         dismissButton = {
-            Button(onClick = { onDismiss() }) {
+            Button(
+                onClick = { onDismiss() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    contentColor = onButtonColor
+                )
+            ) {
                 Text(
                     text = "Cancel",
                     style = TextStyle(
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -119,6 +138,11 @@ fun SuccessDialog(
     onDismiss: () -> Unit,
     onClick: () -> Unit,
 ) {
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val buttonColor = MaterialTheme.colorScheme.tertiary
+    val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
     AlertDialog(
         title = {
             Box(
@@ -130,7 +154,7 @@ fun SuccessDialog(
                 Text(
                     text = title,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = titleTextColor,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -145,7 +169,7 @@ fun SuccessDialog(
                 Text(
                     text = description,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = textColor,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Normal
                     ),
@@ -162,14 +186,20 @@ fun SuccessDialog(
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                Button(onClick = {
-                    onClick()
-                    onDismiss()
-                }) {
+                Button(
+                    onClick = {
+                        onClick()
+                        onDismiss()
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = buttonColor,
+                        contentColor = onButtonColor
+                    )
+                ) {
                     Text(
                         text = "OK",
                         style = TextStyle(
-                            color = Color.White,
+                            color = textColor,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         ),
@@ -194,6 +224,11 @@ fun WarningDialog(
     actionButtonTitle: String,
     callDismissOnConfirm: Boolean = true
 ) {
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val buttonColor = MaterialTheme.colorScheme.tertiary
+    val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
     AlertDialog(
         title = {
             Box(
@@ -205,7 +240,7 @@ fun WarningDialog(
                 Text(
                     text = title,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = titleTextColor,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -219,7 +254,7 @@ fun WarningDialog(
             Text(
                 text = description,
                 style = TextStyle(
-                    color = Color.Black,
+                    color = textColor,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Normal
                 ),
@@ -229,14 +264,20 @@ fun WarningDialog(
             )
         },
         confirmButton = {
-            Button(onClick = {
-                onClick()
-                if (callDismissOnConfirm) onDismiss()
-            }) {
+            Button(
+                onClick = {
+                    onClick()
+                    if (callDismissOnConfirm) onDismiss()
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    contentColor = onButtonColor
+                )
+            ) {
                 Text(
                     text = actionButtonTitle,
                     style = TextStyle(
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -247,11 +288,17 @@ fun WarningDialog(
             }
         },
         dismissButton = {
-            Button(onClick = onDismiss) {
+            Button(
+                onClick = onDismiss,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    contentColor = onButtonColor
+                )
+            ) {
                 Text(
                     text = "Cancel",
                     style = TextStyle(
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -273,6 +320,11 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
         context.resources.getString(error.errorMessageResourceId) + " " + error.extraMessage
     val title = "Error"
 
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val buttonColor = MaterialTheme.colorScheme.tertiary
+    val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
     AlertDialog(
         onDismissRequest = { onDismiss() },
         title = {
@@ -285,7 +337,7 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
                 Text(
                     text = title,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = titleTextColor,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -305,7 +357,7 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
                 Text(
                     text = errorMessage,
                     style = TextStyle(
-                        color = Color.Black,
+                        color = textColor,
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Normal
                     ),
@@ -316,11 +368,17 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
             }
         },
         confirmButton = {
-            Button(onClick = { onDismiss() }) {
+            Button(
+                onClick = { onDismiss() },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = buttonColor,
+                    contentColor = onButtonColor
+                )
+            ) {
                 Text(
                     text = "OK",
                     style = TextStyle(
-                        color = Color.White,
+                        color = textColor,
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -369,6 +427,7 @@ fun WorkoutCompletedDialog(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun WorkoutCompletedDialogPreview(
 ) {
@@ -379,6 +438,7 @@ fun WorkoutCompletedDialogPreview(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun EnableNotificationsDialogPreview() {
     WarningDialog(
@@ -391,6 +451,7 @@ fun EnableNotificationsDialogPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun WarningDialogPreview() {
     WarningDialog(
@@ -403,6 +464,7 @@ fun WarningDialogPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SelectWorkoutDialogPreview() {
     val workout = MockupDataGeneratorV2.generateWorkout()
@@ -418,6 +480,7 @@ fun SelectWorkoutDialogPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun DeselectWorkoutDialogPreview() {
     val workout = MockupDataGeneratorV2.generateWorkout().copy(isSelected = true)
@@ -433,6 +496,7 @@ fun DeselectWorkoutDialogPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SuccessDialogPreview() {
     SuccessDialog(
@@ -443,6 +507,7 @@ fun SuccessDialogPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun EditWorkoutNameDialogPreview() {
     val onConfirm: (String) -> Unit = {}
@@ -455,6 +520,7 @@ fun EditWorkoutNameDialogPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun ErrorDialogPreview() {
     val error = KareError.INVALID_CREDENTIALS.apply {
