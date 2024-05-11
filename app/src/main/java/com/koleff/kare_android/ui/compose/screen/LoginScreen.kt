@@ -208,7 +208,7 @@ fun LoginScreenPreview() {
 
 @Composable
 fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
-    val textColor = Color.White
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
 
     val titlePadding =
         PaddingValues(
@@ -239,7 +239,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
             ),
             text = title,
             style = TextStyle(
-                color = textColor,
+                color = titleTextColor,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.ExtraBold
             ),
@@ -261,7 +261,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
             ),
             text = subtitle,
             style = TextStyle(
-                color = textColor,
+                color = titleTextColor,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Light
             ),
@@ -285,8 +285,9 @@ fun CustomTextField(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val cornerSize = 8.dp //slight round corners
-
+    val cornerSize = 8.dp //Slight rounded corners
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val labelTextColor = MaterialTheme.colorScheme.onSecondary
     TextField(
         value = text,
         onValueChange = {
@@ -294,19 +295,19 @@ fun CustomTextField(
             onValueChange(it)
         },
         label = {
-            Text(label)
+            Text(text = label, color = labelTextColor)
         },
         modifier = Modifier
             .fillMaxWidth()
             .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             ),
         singleLine = true,
         placeholder = {
-            Text(label)
+            Text(text = label, color = labelTextColor)
         },
         leadingIcon = {
             Image(
@@ -356,7 +357,7 @@ fun PasswordTextField(
         vertical = 8.dp
     )
     val cornerSize = 8.dp //slight round corners
-
+    val textFieldColor = MaterialTheme.colorScheme.onSecondary
     TextField(
         value = password,
         onValueChange = {
@@ -368,7 +369,7 @@ fun PasswordTextField(
             .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = textFieldColor),
                 shape = RoundedCornerShape(cornerSize)
             ),
         label = {
@@ -417,12 +418,13 @@ fun PasswordTextFieldPreview() {
 @Composable
 fun HorizontalLineWithText(
     text: String,
-    color: Color = Color.White
+    outlineColor: Color = MaterialTheme.colorScheme.outlineVariant
 ) {
     val paddingValues = PaddingValues(
         horizontal = 32.dp,
         vertical = 8.dp
     )
+    val labelTextColor = MaterialTheme.colorScheme.onTertiary
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -431,7 +433,7 @@ fun HorizontalLineWithText(
 
         //Left divider
         Box(modifier = Modifier.weight(1f)) {
-            HorizontalDivider(color = color)
+            HorizontalDivider(color = outlineColor)
         }
 
         //Login text
@@ -441,9 +443,9 @@ fun HorizontalLineWithText(
             ),
             text = text,
             style = TextStyle(
-                color = color,
+                color = labelTextColor,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Thin
+                fontWeight = FontWeight.Medium
             ),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -451,7 +453,7 @@ fun HorizontalLineWithText(
 
         //Right divider
         Box(modifier = Modifier.weight(1f)) {
-            HorizontalDivider(color = color)
+            HorizontalDivider(color = outlineColor)
         }
     }
 }
@@ -473,7 +475,9 @@ fun AuthenticationButton(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val textColor = Color.Black
+    val textColor = MaterialTheme.colorScheme.onTertiary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.primaryContainer
 
     Box(
         modifier = Modifier
@@ -482,11 +486,11 @@ fun AuthenticationButton(
             .height(50.dp)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
+                color = backgroundColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = { onAction(credentials) }),
@@ -494,7 +498,7 @@ fun AuthenticationButton(
     ) {
 
         //Sign in text
-        Text( //TODO: and cooler font...
+        Text(
             modifier = Modifier.padding(
                 PaddingValues(8.dp)
             ),
@@ -550,15 +554,17 @@ fun SignInFooterPreview() {
 @Composable
 fun GoogleSignInBox(onGoogleSign: () -> Unit) {
     val cornerSize = 16.dp
+    val backgroundColor = MaterialTheme.colorScheme.primaryContainer
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     Box(
         modifier = Modifier
             .width(75.dp)
             .height(50.dp)
             .clip(RoundedCornerShape(cornerSize))
-            .background(color = MaterialTheme.colorScheme.primaryContainer)
+            .background(color = backgroundColor)
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable {

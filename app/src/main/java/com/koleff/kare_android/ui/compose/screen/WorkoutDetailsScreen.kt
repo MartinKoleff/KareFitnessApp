@@ -329,10 +329,6 @@ fun WorkoutDetailsScreen(
             )
         }
 
-        val contentModifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding)
-
         val paddingValues = PaddingValues(
             top = toolbarSize + innerPadding.calculateTopPadding(), //Top toolbar padding
             start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
@@ -349,10 +345,13 @@ fun WorkoutDetailsScreen(
             if (showLoadingDialog) {
                 LoadingWheel(innerPadding = paddingValues)
             } else {
+
                 //Exercises
                 LazyColumn(
                     state = lazyListState,
-                    modifier = contentModifier,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -423,7 +422,10 @@ fun StartWorkoutButton(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val textColor = Color.White
+
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
+    val textColor = MaterialTheme.colorScheme.onTertiary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     Box(
         modifier = Modifier
@@ -432,11 +434,11 @@ fun StartWorkoutButton(
             .height(50.dp)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = MaterialTheme.colorScheme.primary,
+                color = backgroundColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = { onStartWorkoutAction() }),
@@ -444,7 +446,7 @@ fun StartWorkoutButton(
     ) {
 
         //Sign in text
-        Text( //TODO: and cooler font...
+        Text(
             modifier = Modifier.padding(
                 PaddingValues(8.dp)
             ),
@@ -503,11 +505,13 @@ fun StartWorkoutToolbar(
     onNavigateToSettings: () -> Unit,
     toolbarHeight: Dp = 65.dp
 ) {
-    val color = Color.White
-    val tintColor = Color.Black
     val cornerSize = 24.dp
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
+
+    val circleOutlineColor = MaterialTheme.colorScheme.outlineVariant
+    val tintColor = MaterialTheme.colorScheme.onSecondary
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -519,7 +523,7 @@ fun StartWorkoutToolbar(
             modifier = Modifier
                 .drawBehind {
                     drawCircle(
-                        color = color,
+                        color = circleOutlineColor,
                         radius = this.size.maxDimension / 3
                     )
                 },
@@ -533,7 +537,7 @@ fun StartWorkoutToolbar(
             modifier = Modifier
                 .drawBehind {
                     drawCircle(
-                        color = color,
+                        color = circleOutlineColor,
                         radius = this.size.maxDimension / 3
                     )
                 },
@@ -690,8 +694,8 @@ fun StartWorkoutDynamicActionButton(
         mutableStateOf(false) //TODO: wire with shared preferences...
     }
 
-    val textColor = Color.White
-    val tintColor = Color.White
+    val textColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSecondary
     val iconSize = 30.dp
     val paddingValues = 2.dp
 
@@ -750,7 +754,7 @@ fun StartWorkoutActionRowPreview() {
     val onEditWorkoutNameAction = {}
     Box(
         modifier = Modifier
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         StartWorkoutActionRow(
             onAddExerciseAction = onAddExerciseAction,
@@ -767,7 +771,8 @@ fun StartWorkoutTitleAndSubtitle(
     title: String,
     subtitle: String
 ) {
-    val textColor = Color.White
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val subtitleTextColor = MaterialTheme.colorScheme.onSecondary
 
     val titlePadding =
         PaddingValues(
@@ -798,7 +803,7 @@ fun StartWorkoutTitleAndSubtitle(
             ),
             text = title,
             style = TextStyle(
-                color = textColor,
+                color = titleTextColor,
                 fontSize = 40.sp,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center
@@ -821,7 +826,7 @@ fun StartWorkoutTitleAndSubtitle(
             ),
             text = subtitle,
             style = TextStyle(
-                color = textColor,
+                color = subtitleTextColor,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Light,
                 textAlign = TextAlign.Center

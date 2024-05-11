@@ -36,17 +36,6 @@ import com.koleff.kare_android.ui.view_model.RegisterViewModel
 
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val cornerSize = 36.dp
-
-    val gymImageModifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight * 0.33f)
 
     //State and callbacks
     val registerState by registerViewModel.state.collectAsState()
@@ -106,6 +95,18 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             onClick = onDismiss
         )
     }
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    val cornerSize = 36.dp
+
+    val gymImageModifier = Modifier
+        .fillMaxWidth()
+        .height(screenHeight * 0.33f)
 
     AuthenticationScaffold(
         screenTitle = "",

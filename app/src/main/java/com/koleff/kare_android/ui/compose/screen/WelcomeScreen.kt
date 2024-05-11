@@ -59,7 +59,6 @@ fun WelcomeScreen(welcomeViewModel: WelcomeViewModel = hiltViewModel()) {
     val navigateToRegister = {
         welcomeViewModel.navigateToRegister()
     }
-    val context = LocalContext.current
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -83,11 +82,6 @@ fun WelcomeScreen(welcomeViewModel: WelcomeViewModel = hiltViewModel()) {
 @OptIn(UnstableApi::class)
 @Composable
 fun WelcomeVideoPlayer() {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-
     val context = LocalContext.current
     val videoUri = "android.resource://${context.packageName}/${R.raw.login_video_no_watermark}"
     val exoPlayer = remember {
@@ -199,7 +193,7 @@ fun LogoRow() {
     ) {
 
         //Welcome to
-        Text( //TODO: and cooler font...
+        Text(
             modifier = Modifier.padding(
                 PaddingValues(8.dp)
             ),
@@ -250,20 +244,21 @@ fun WideRoundButton(
         bottom = if (hasBottomPadding) 24.dp else 8.dp
     )
 
-    val textColor = Color.Black //MaterialTheme.colorScheme.primary
-
+    val buttonColor = MaterialTheme.colorScheme.tertiary
+    val textColor = MaterialTheme.colorScheme.onTertiary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(paddingValues)
             .height(50.dp)
+            .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.Black),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = Color.White,
+                color = buttonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = callback),
@@ -279,7 +274,7 @@ fun WideRoundButton(
         )
 
         //Login text
-        Text( //TODO: and cooler font...
+        Text(
             modifier = Modifier.padding(
                 PaddingValues(8.dp)
             ),

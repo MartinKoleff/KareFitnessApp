@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -278,7 +279,7 @@ fun NextExerciseCountdownScreen(
             },
         verticalArrangement = Arrangement.Top
     ) {
-        val textColor = Color.White
+        val textColor = MaterialTheme.colorScheme.onPrimary
         val exerciseText = if (isWorkoutComplete) {
             "Workout completed!"
         } else {
@@ -437,13 +438,15 @@ fun DoWorkoutFooterWithModalPreview() {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutFooter(
-    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
+    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(
+        lineColor = MaterialTheme.colorScheme.outline
+    ),
     totalTime: ExerciseTime,
     timeLeft: ExerciseTime,
     currentSet: ExerciseSetDto
 ) {
     val exerciseDataPadding = PaddingValues(4.dp)
-    val textColor = Color.White
+    val textColor = MaterialTheme.colorScheme.onSecondary
 
     val repsText = currentSet.reps.toString()
     val weightText = if (currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
@@ -644,7 +647,10 @@ fun ExerciseDataSheetModal2(
                 defaultTotalSets = defaultTotalSets
             )
 
-            ExerciseDataSheet(exercise = exercise, onExerciseDataChange = onExerciseDataChange)
+            ExerciseDataSheet(
+                exercise = exercise,
+                onExerciseDataChange = onExerciseDataChange
+            )
         },
         sheetDragHandle = {
             GrabHandle()
@@ -663,7 +669,7 @@ fun CurrentExerciseInfoRow(
     currentSetNumber: Int,
     defaultTotalSets: Int
 ) {
-    val textColor = Color.White
+    val textColor = MaterialTheme.colorScheme.onSecondary
     val setsTextColor = Color.Yellow
     val cornerSize = 24.dp
 
@@ -678,10 +684,10 @@ fun CurrentExerciseInfoRow(
                 RoundedCornerShape(cornerSize)
             )
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.outline),
                 shape = RoundedCornerShape(cornerSize)
             )
-            .background(Color.Gray),
+            .background(MaterialTheme.colorScheme.onSurfaceVariant), //outline
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
@@ -749,7 +755,7 @@ fun ExerciseDataSheetModal2Preview() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.Black)
+                .background(MaterialTheme.colorScheme.onSurface)
         )
     }
 }
@@ -767,7 +773,7 @@ fun GrabHandle(modifier: Modifier = Modifier) {
             .padding(16.dp)
             .height(5.dp)
             .background(
-                color = Color.LightGray,
+                color = MaterialTheme.colorScheme.onSurface,
                 shape = RoundedCornerShape(50)
             )
     )

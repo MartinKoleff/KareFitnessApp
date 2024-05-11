@@ -1,7 +1,9 @@
 package com.koleff.kare_android.ui.compose.screen
 
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +51,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewModel
 
 @Composable
@@ -145,24 +148,22 @@ fun ExerciseDetailsConfiguratorScreen(
 
     val cornerSize = 24.dp
     val loadingWheelSize = 50.dp
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val backgroundColor = MaterialTheme.colorScheme.secondary
+    val outlineColor = MaterialTheme.colorScheme.outline
     ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
         onSubmitExercise = onSubmitExercise,
         onNavigateBackAction = onNavigateBack
     ) { innerPadding ->
+
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
+                    colors = LocalExtendedColorScheme.current.detailsScreenBackgroundGradient
                 )
             )
             .pointerInput(Unit) {
@@ -179,20 +180,20 @@ fun ExerciseDetailsConfiguratorScreen(
             //Exercise name
             Box(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .padding(
                         top = loadingWheelSize,
                         bottom = 8.dp,
                         start = 16.dp,
                         end = 16.dp
                     )
-                    .fillMaxWidth()
                     .height(50.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = exerciseState.exercise.name,
                     style = TextStyle(
-                        color = Color.White,
+                        color = titleTextColor,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -206,19 +207,14 @@ fun ExerciseDetailsConfiguratorScreen(
             if (!showLoadingDialog) {
                 LazyColumn(
                     modifier = Modifier
-                        .padding(vertical = 24.dp)
+                        .padding(vertical = 24.dp, horizontal = 12.dp)
                         .clip(RoundedCornerShape(cornerSize))
                         .background(
-                            brush = Brush.verticalGradient(
-                                listOf(
-                                    Color.DarkGray,
-                                    Color.Black,
-                                    Color.Black,
-                                    Color.Black,
-                                    Color.Black
-                                )
-                            ),
+                            color = backgroundColor,
                             shape = RoundedCornerShape(cornerSize)
+                        )
+                        .border(
+                            border = BorderStroke(2.dp, color = outlineColor)
                         ),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally

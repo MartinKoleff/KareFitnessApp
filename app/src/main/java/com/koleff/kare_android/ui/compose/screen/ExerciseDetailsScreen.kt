@@ -1,8 +1,10 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +45,7 @@ import com.koleff.kare_android.ui.compose.components.YoutubeVideoPlayer
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.ExerciseDetailsScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.ExerciseDetailsState
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import com.koleff.kare_android.ui.view_model.ExerciseDetailsViewModel
 
 @Composable
@@ -76,7 +79,7 @@ fun ExerciseDetailsScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(exerciseDetailsState){
+    LaunchedEffect(exerciseDetailsState) {
         showErrorDialog =
             exerciseDetailsState.isError
         error = exerciseDetailsState.error
@@ -91,6 +94,8 @@ fun ExerciseDetailsScreen(
         }
     }
 
+    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val labelTextColor = MaterialTheme.colorScheme.onSecondary
     ExerciseDetailsScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
         exerciseImageId = exerciseImageId,
@@ -99,44 +104,24 @@ fun ExerciseDetailsScreen(
         onNavigateBack = onNavigateBack,
         onNavigateSubmitExercise = onNavigateSubmitExercise
     ) { innerPadding ->
-        val modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = LocalExtendedColorScheme.current.detailsScreenBackgroundGradient
                     )
                 )
-            )
+        ) {
 
-        ExerciseDetailsContent(
-            modifier = modifier,
-            exerciseDetailsState = exerciseDetailsState,
-        )
-    }
-}
-
-@Composable
-fun ExerciseDetailsContent(
-    modifier: Modifier,
-    exerciseDetailsState: ExerciseDetailsState,
-) {
-    LazyColumn(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (exerciseDetailsState.isLoading) {
-            item {
-                LoadingWheel()
-            }
-        } else {
-            item { //TODO: fix in place...
+            //Fixed title in one place
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 Text(
                     modifier = Modifier.padding(
                         PaddingValues(
@@ -148,7 +133,7 @@ fun ExerciseDetailsContent(
                     ),
                     text = exerciseDetailsState.exercise.name,
                     style = TextStyle(
-                        color = Color.White,
+                        color = titleTextColor,
                         fontSize = 24.sp,
                         fontWeight = FontWeight.Bold
                     ),
@@ -158,53 +143,65 @@ fun ExerciseDetailsContent(
                 )
             }
 
-            item {
-                YoutubeVideoPlayer(
-                    youtubeVideoId = exerciseDetailsState.exercise.videoUrl,
-                    lifecycleOwner = LocalLifecycleOwner.current
-                )
-            }
+            //Content -> scrollable
+            LazyColumn(
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (exerciseDetailsState.isLoading) {
+                    item {
+                        LoadingWheel()
+                    }
+                } else {
+                    item {
+                        YoutubeVideoPlayer(
+                            youtubeVideoId = exerciseDetailsState.exercise.videoUrl,
+                            lifecycleOwner = LocalLifecycleOwner.current
+                        )
+                    }
 
-            item {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(8.dp),
-                        text = "Description:",
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        textAlign = TextAlign.Start,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    item {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalAlignment = Alignment.Start
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                text = "Description:",
+                                style = TextStyle(
+                                    color = labelTextColor,
+                                    fontSize = 20.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                ),
+                                textAlign = TextAlign.Start,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
 
-                    Text(
-                        modifier = Modifier
-                            .padding(8.dp),
-                        text = exerciseDetailsState.exercise.description,
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Normal
-                        ),
-                        textAlign = TextAlign.Start,
-                        maxLines = 5,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                            Text(
+                                modifier = Modifier
+                                    .padding(8.dp),
+                                text = exerciseDetailsState.exercise.description,
+                                style = TextStyle(
+                                    color = labelTextColor,
+                                    fontSize = 16.sp,
+                                    fontWeight = FontWeight.Normal
+                                ),
+                                textAlign = TextAlign.Start,
+                                maxLines = 5,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+                    }
+
+                    //TODO: Rows with cool emojis...
+                    item {
+
+                    }
                 }
-
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
-            }
-
-            //Rows with cool emojies...
-            item {
-
             }
         }
     }
@@ -225,33 +222,4 @@ fun ExerciseDetailsScreenPreview() {
         isSuccessful = true
     )
     val exerciseImageId = MuscleGroup.getImage(exerciseDetailsState.exercise.muscleGroup)
-
-    ExerciseDetailsScaffold(
-        screenTitle = exerciseDetailsState.exercise.name,
-        exerciseImageId = exerciseImageId,
-        exerciseId = exerciseDetailsState.exercise.id,
-        onNavigateBack = {},
-        onNavigateAction = {},
-        onNavigateSubmitExercise = {}
-    ) { innerPadding ->
-        val modifier = Modifier
-            .padding(innerPadding)
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        MaterialTheme.colorScheme.primaryContainer,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.primary,
-                        MaterialTheme.colorScheme.secondary
-                    )
-                )
-            )
-
-        ExerciseDetailsContent(
-            modifier = modifier,
-            exerciseDetailsState = exerciseDetailsState
-        )
-    }
 }
