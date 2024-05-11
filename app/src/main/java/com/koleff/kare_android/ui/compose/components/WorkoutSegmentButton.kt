@@ -22,7 +22,7 @@ fun WorkoutSegmentButton(
     modifier: Modifier = Modifier,
     selectedOptionIndex: Int,
     isDisabled: Boolean,
-    workoutListViewModel: WorkoutViewModel
+    onWorkoutFilter: (OnWorkoutScreenSwitchEvent) -> Unit
 ) {
     val labelColor = MaterialTheme.colorScheme.onSecondary
 
@@ -47,13 +47,13 @@ fun WorkoutSegmentButton(
                         0 -> {
 
                             //MyWorkout screen
-                            workoutListViewModel.onWorkoutFilterEvent(OnWorkoutScreenSwitchEvent.SelectedWorkout)
+                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.SelectedWorkout)
                         }
 
                         1 -> {
 
                             //Workouts Screen
-                            workoutListViewModel.onWorkoutFilterEvent(OnWorkoutScreenSwitchEvent.AllWorkouts)
+                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.AllWorkouts)
                         }
                     }
                 },

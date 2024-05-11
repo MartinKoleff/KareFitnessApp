@@ -26,7 +26,7 @@ fun MachineFilterSegmentButton(
     modifier: Modifier = Modifier,
     selectedOptionIndex: Int = -1,
     isDisabled: Boolean,
-    exerciseListViewModel: ExerciseListViewModel
+    onFilterSelected: (MachineType) -> Unit
 ) {
     val labelColor = MaterialTheme.colorScheme.onSecondary
 
@@ -47,23 +47,23 @@ fun MachineFilterSegmentButton(
                     //Filter
                     when (selectedIndex) {
                         0 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.DUMBBELL)
+                            onFilterSelected(MachineType.DUMBBELL)
                         }
 
                         1 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.BARBELL)
+                            onFilterSelected(MachineType.BARBELL)
                         }
 
                         2 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.MACHINE)
+                            onFilterSelected(MachineType.MACHINE)
                         }
 
                         3 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.CALISTHENICS)
+                            onFilterSelected(MachineType.CALISTHENICS)
                         }
 
                         -1 -> { //Disabled filter -> show all
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.NONE)
+                            onFilterSelected(MachineType.NONE)
                         }
                     }
                 },
