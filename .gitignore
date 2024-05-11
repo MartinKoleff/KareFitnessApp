@@ -70,3 +70,5 @@ lint/outputs/
 lint/tmp/
 **/lint-report.html
 # lint/reports/
+app/src/main/res/values-v23/font_certs.xml
+app/google-services.json
