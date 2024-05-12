@@ -47,7 +47,7 @@ fun WorkoutFooterBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val primaryColor = MaterialTheme.colorScheme.primary
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     Card(

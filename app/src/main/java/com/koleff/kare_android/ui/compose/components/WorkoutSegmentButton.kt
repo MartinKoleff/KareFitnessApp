@@ -27,7 +27,7 @@ fun WorkoutSegmentButton(
     isDisabled: Boolean,
     onWorkoutFilter: (OnWorkoutScreenSwitchEvent) -> Unit
 ) {
-    val labelColor = MaterialTheme.colorScheme.onSecondary
+    val labelColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 

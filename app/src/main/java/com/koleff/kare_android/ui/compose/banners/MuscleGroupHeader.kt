@@ -29,7 +29,7 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 @Composable
 fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
     val tintColor = MaterialTheme.colorScheme.tertiaryContainer
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     HorizontalDivider(thickness = 5.dp)
 

@@ -32,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
@@ -46,6 +47,10 @@ fun AddExerciseToWorkoutBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val primaryColor = MaterialTheme.colorScheme.primary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val subtitleTextColor = MaterialTheme.colorScheme.onSurface
+    val circleColor = MaterialTheme.colorScheme.onSurface
+    val addNewWorkoutTint = Color.Green
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,11 +86,11 @@ fun AddExerciseToWorkoutBanner(
                     .padding(end = 16.dp)
                     .drawBehind {
                         drawCircle(
-                            color = Color.White,
+                            color = circleColor,
                             radius = this.size.maxDimension / 2
                         )
                     },
-                colorFilter = ColorFilter.tint(Color.Green)
+                colorFilter = ColorFilter.tint(addNewWorkoutTint)
             )
 
             //Text
@@ -113,7 +118,7 @@ fun AddExerciseToWorkoutBanner(
                         ),
                         text = "Want to add exercise to your workout?",
                         style = TextStyle(
-                            color = Color.White,
+                            color = titleTextColor,
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold
                         ),
@@ -133,7 +138,7 @@ fun AddExerciseToWorkoutBanner(
                         ),
                         text = "Click to select an exercise.",
                         style = TextStyle(
-                            color = Color.White,
+                            color = subtitleTextColor,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.SemiBold
                         ),
@@ -147,6 +152,7 @@ fun AddExerciseToWorkoutBanner(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun AddExerciseToWorkoutBannerPreview() {
     AddExerciseToWorkoutBanner() {

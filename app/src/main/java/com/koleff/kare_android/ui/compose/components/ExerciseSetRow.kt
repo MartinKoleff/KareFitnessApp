@@ -63,7 +63,7 @@ fun ExerciseSetRow(
 
     val cornerSize = 16.dp
     val backgroundColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     Column(modifier = modifier) {
         Row(
@@ -202,7 +202,7 @@ fun ExerciseSetTextField(
 ) {
 
     //For dark theme...
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val backgroundColor = MaterialTheme.colorScheme.tertiary
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
@@ -301,7 +301,7 @@ fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
     val height = 50.dp
     val cornerSize = 24.dp
     val backgroundColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     Row(

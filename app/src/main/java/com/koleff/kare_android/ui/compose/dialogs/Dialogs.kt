@@ -48,8 +48,8 @@ fun EditWorkoutDialog(
 ) {
     var text by remember { mutableStateOf(currentName) }
 
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 
@@ -138,8 +138,8 @@ fun SuccessDialog(
     onDismiss: () -> Unit,
     onClick: () -> Unit,
 ) {
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 
@@ -224,8 +224,8 @@ fun WarningDialog(
     actionButtonTitle: String,
     callDismissOnConfirm: Boolean = true
 ) {
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 
@@ -320,8 +320,8 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
         context.resources.getString(error.errorMessageResourceId) + " " + error.extraMessage
     val title = "Error"
 
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 

@@ -148,7 +148,7 @@ fun ExerciseDetailsConfiguratorScreen(
 
     val cornerSize = 24.dp
     val loadingWheelSize = 50.dp
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
     val backgroundColor = MaterialTheme.colorScheme.secondary
     val outlineColor = MaterialTheme.colorScheme.outline
     ExerciseDetailsConfiguratorScaffold(

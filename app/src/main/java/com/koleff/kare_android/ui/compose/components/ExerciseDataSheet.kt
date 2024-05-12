@@ -127,7 +127,7 @@ fun ExerciseDataSheet(
 
 @Composable
 fun ExerciseDataSheetTitleRow() {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     Row(
         modifier = Modifier
@@ -209,7 +209,7 @@ fun ExerciseDataSheetRow(
     set: ExerciseSetDto,
     onSetChange: (ExerciseSetProgressDto) -> Unit
 ) {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val checkboxSelectedColor = Color.Green
     val checkboxBorderColor = MaterialTheme.colorScheme.outlineVariant
 
@@ -308,7 +308,7 @@ fun ExerciseDataSheetTextField(
     onValueChange: (String) -> Unit
 ) {
     val cornerSize = 16.dp
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val backgroundColor = MaterialTheme.colorScheme.secondary
     

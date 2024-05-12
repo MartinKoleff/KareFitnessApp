@@ -268,7 +268,7 @@ fun WideRoundButton(
     val cornerSize = 24.dp
 
     val buttonColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     Box(
         modifier = modifier

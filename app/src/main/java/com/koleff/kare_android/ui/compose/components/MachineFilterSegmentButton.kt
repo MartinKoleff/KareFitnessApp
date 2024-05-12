@@ -30,7 +30,7 @@ fun MachineFilterSegmentButton(
     isDisabled: Boolean,
     onFilterSelected: (MachineType) -> Unit
 ) {
-    val labelColor = MaterialTheme.colorScheme.onSecondary
+    val labelColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 

@@ -68,7 +68,7 @@ fun ExerciseBannerV1(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     Box(
         modifier = modifier
@@ -134,8 +134,8 @@ fun ExerciseBannerV2(
     val screenWidth = configuration.screenWidthDp.dp
 
     val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val descriptionTextColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
     Card(
         modifier = modifier
             .fillMaxSize()

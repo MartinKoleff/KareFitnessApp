@@ -41,7 +41,7 @@ fun SearchBar(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSecondary
 
     Row(modifier = modifier) {

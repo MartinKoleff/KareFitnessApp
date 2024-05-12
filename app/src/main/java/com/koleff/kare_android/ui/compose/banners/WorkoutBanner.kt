@@ -80,8 +80,8 @@ fun WorkoutBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val subtitleTextColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val subtitleTextColor = MaterialTheme.colorScheme.onSurface
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -312,9 +312,9 @@ fun DeleteButton(
     val iconSize = 20.dp
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(bottom = 8.dp)
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val tintColor = MaterialTheme.colorScheme.onTertiary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -369,9 +369,9 @@ fun SelectButton(
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(bottom = 8.dp)
 
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val tintColor = MaterialTheme.colorScheme.onTertiary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -429,9 +429,9 @@ fun EditButton(
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(bottom = 8.dp)
 
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val tintColor = MaterialTheme.colorScheme.onTertiary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,

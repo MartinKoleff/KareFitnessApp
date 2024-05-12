@@ -28,7 +28,7 @@ fun SettingsListItem(
     onCheckedChange: (Boolean) -> Unit = {},
     isChecked: Boolean = false
 ) {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     ListItem(
         headlineContent = { Text(text = title, color = textColor) },
@@ -61,7 +61,7 @@ fun SettingsListItem(
     onCheckedChange: (Boolean) -> Unit = {},
     isChecked: Boolean = false
 ) {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     ListItem(
         headlineContent = { Text(text = title, color = textColor) },

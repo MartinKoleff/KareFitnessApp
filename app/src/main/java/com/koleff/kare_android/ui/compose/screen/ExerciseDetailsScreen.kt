@@ -94,8 +94,8 @@ fun ExerciseDetailsScreen(
         }
     }
 
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val labelTextColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val labelTextColor = MaterialTheme.colorScheme.onSurface
     ExerciseDetailsScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
         exerciseImageId = exerciseImageId,

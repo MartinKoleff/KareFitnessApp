@@ -25,8 +25,8 @@ fun WorkoutConfigurationDialog(
     var cooldownMinutes by remember { mutableStateOf(workoutConfiguration.cooldownTime.minutes) }
     var cooldownSeconds by remember { mutableStateOf(workoutConfiguration.cooldownTime.seconds) }
 
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary

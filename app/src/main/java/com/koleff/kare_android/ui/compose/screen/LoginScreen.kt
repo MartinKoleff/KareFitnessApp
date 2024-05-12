@@ -210,7 +210,7 @@ fun LoginScreenPreview() {
 
 @Composable
 fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
 
     val titlePadding =
         PaddingValues(
@@ -291,7 +291,7 @@ fun CustomTextField(
     val cornerSize = 8.dp //Slight rounded corners
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val labelTextColor = MaterialTheme.colorScheme.onSecondary
+    val labelTextColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSecondary
 
     TextField(
@@ -366,7 +366,7 @@ fun PasswordTextField(
     val cornerSize = 8.dp //slight round corners
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val labelTextColor = MaterialTheme.colorScheme.onSecondary
+    val labelTextColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSecondary
 
     TextField(
@@ -439,7 +439,7 @@ fun HorizontalLineWithText(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val labelTextColor = MaterialTheme.colorScheme.onTertiary
+    val labelTextColor = MaterialTheme.colorScheme.onSurface
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
@@ -490,7 +490,7 @@ fun AuthenticationButton(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val backgroundColor = MaterialTheme.colorScheme.primaryContainer
 

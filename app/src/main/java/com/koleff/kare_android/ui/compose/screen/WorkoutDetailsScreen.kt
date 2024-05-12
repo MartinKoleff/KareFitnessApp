@@ -424,7 +424,7 @@ fun StartWorkoutButton(
     )
 
     val backgroundColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.onTertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     Box(
@@ -510,7 +510,7 @@ fun StartWorkoutToolbar(
     val screenWidth = configuration.screenWidthDp.dp
 
     val circleOutlineColor = MaterialTheme.colorScheme.outlineVariant
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     Row(
         modifier = Modifier
@@ -640,8 +640,8 @@ fun StartWorkoutActionButton(
     iconResourceId: Int,
     onAction: () -> Unit
 ) {
-    val textColor = Color.White
-    val tintColor = Color.White
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = MaterialTheme.colorScheme.onSurface
     val iconSize = 30.dp
     val paddingValues = PaddingValues(2.dp)
 
@@ -694,8 +694,8 @@ fun StartWorkoutDynamicActionButton(
         mutableStateOf(false) //TODO: wire with shared preferences...
     }
 
-    val textColor = MaterialTheme.colorScheme.onSecondary
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = MaterialTheme.colorScheme.onSurface
     val iconSize = 30.dp
     val paddingValues = 2.dp
 
@@ -771,8 +771,8 @@ fun StartWorkoutTitleAndSubtitle(
     title: String,
     subtitle: String
 ) {
-    val titleTextColor = MaterialTheme.colorScheme.onPrimary
-    val subtitleTextColor = MaterialTheme.colorScheme.onSecondary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val subtitleTextColor = MaterialTheme.colorScheme.onSurface
 
     val titlePadding =
         PaddingValues(

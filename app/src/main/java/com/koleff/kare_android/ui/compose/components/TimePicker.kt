@@ -63,7 +63,7 @@ fun CircularTimePicker(
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = targetIndex)
     val flingBehavior = rememberSnapFlingBehavior(scrollState)
 
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     LaunchedEffect(scrollState.isScrollInProgress) {
@@ -126,7 +126,7 @@ fun CircularTimerFooter(
     modifier: Modifier = Modifier,
     circularTimerStyle: CircularTimerStyle = CircularTimerStyle()
 ) {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val cornerSize = 20.dp
     Row(
         modifier = modifier
@@ -237,7 +237,7 @@ fun RestBetweenSetsFooter(
     onCheckedChange: (Boolean) -> Unit,
     isChecked: Boolean = false
 ) {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     Column(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)

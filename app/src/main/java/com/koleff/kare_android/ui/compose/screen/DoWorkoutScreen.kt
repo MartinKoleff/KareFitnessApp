@@ -61,8 +61,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
-import com.koleff.kare_android.common.navigation.Destination
-import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
@@ -279,7 +277,7 @@ fun NextExerciseCountdownScreen(
             },
         verticalArrangement = Arrangement.Top
     ) {
-        val textColor = MaterialTheme.colorScheme.onPrimary
+        val textColor = MaterialTheme.colorScheme.onSurface
         val exerciseText = if (isWorkoutComplete) {
             "Workout completed!"
         } else {
@@ -446,7 +444,7 @@ fun DoWorkoutFooter(
     currentSet: ExerciseSetDto
 ) {
     val exerciseDataPadding = PaddingValues(4.dp)
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     val repsText = currentSet.reps.toString()
     val weightText = if (currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
@@ -669,7 +667,7 @@ fun CurrentExerciseInfoRow(
     currentSetNumber: Int,
     defaultTotalSets: Int
 ) {
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
     val setsTextColor = Color.Yellow
     val cornerSize = 24.dp
 

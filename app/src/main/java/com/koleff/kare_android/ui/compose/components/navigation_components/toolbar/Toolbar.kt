@@ -34,13 +34,14 @@ fun Toolbar(
     onNavigateToAction: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
 
     CenterAlignedTopAppBar(
         modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onPrimary,
+            titleContentColor = textColor,
         ),
         title = {
             if (hasTitle) {
@@ -52,6 +53,7 @@ fun Toolbar(
                 ) {
                     Text(
                         text = title,
+                        color = textColor,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center
