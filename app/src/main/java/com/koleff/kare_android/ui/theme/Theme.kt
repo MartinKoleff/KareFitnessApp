@@ -288,15 +288,22 @@ fun KareTheme(
         doWorkoutColors = DoWorkoutColors(),
         workoutBannerColors = WorkoutBannerColors(
             deleteButtonColor = MaterialTheme.colorScheme.tertiary,
-            selectButtonColor = Color.Green,
+            selectButtonColor = Color.Blue,
             editButtonColor = Color.Green
         ),
         detailsScreenBackgroundGradient = listOf(
+            MaterialTheme.colorScheme.inversePrimary,
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.primary,
             MaterialTheme.colorScheme.tertiary,
-            MaterialTheme.colorScheme.secondary,
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.tertiary,
+        ),
+        authenticationScreenBackgroundGradient = listOf(
+            Color.Red,
+            Color.Red,
+            Color.Black,
+            Color.Blue
         )
     )
 
