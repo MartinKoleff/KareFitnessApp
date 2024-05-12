@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -182,8 +183,7 @@ fun ExerciseDetailsConfiguratorScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = loadingWheelSize,
-                        bottom = 8.dp,
+                        bottom = 16.dp,
                         start = 16.dp,
                         end = 16.dp
                     )
@@ -204,40 +204,40 @@ fun ExerciseDetailsConfiguratorScreen(
             }
 
             //Exercise sets
-            if (!showLoadingDialog) {
-                LazyColumn(
-                    modifier = Modifier
-                        .padding(vertical = 24.dp, horizontal = 12.dp)
-                        .clip(RoundedCornerShape(cornerSize))
-                        .background(
-                            color = backgroundColor,
-                            shape = RoundedCornerShape(cornerSize)
-                        )
-                        .border(
-                            border = BorderStroke(2.dp, color = outlineColor)
-                        ),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
+            LazyColumn(
+                modifier = Modifier
+                    .padding(vertical = 24.dp, horizontal = 12.dp)
+                    .clip(RoundedCornerShape(cornerSize))
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(cornerSize)
+                    )
+                    .border(
+                        border = BorderStroke(2.dp, color = outlineColor)
+                    ),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
-                    //Rows with sets / reps / weight configuration
-                    items(exerciseState.exercise.sets.size) { currentSetId ->
-                        val currentSet = exerciseState.exercise.sets[currentSetId]
-                        ExerciseSetRow(
-                            set = currentSet,
-                            onRepsChanged = { newReps ->
-                                currentSet.reps = newReps
-                            },
-                            onWeightChanged = { newWeight ->
-                                currentSet.weight = newWeight
-                            },
-                            onDelete = {
-                                onDeleteSet(currentSet)
-                            }
-                        )
-                    }
+                //Rows with sets / reps / weight configuration
+                items(exerciseState.exercise.sets.size) { currentSetId ->
+                    val currentSet = exerciseState.exercise.sets[currentSetId]
+                    ExerciseSetRow(
+                        set = currentSet,
+                        onRepsChanged = { newReps ->
+                            currentSet.reps = newReps
+                        },
+                        onWeightChanged = { newWeight ->
+                            currentSet.weight = newWeight
+                        },
+                        onDelete = {
+                            onDeleteSet(currentSet)
+                        }
+                    )
+                }
 
-                    //Add new set footer
+                //Add new set footer
+                if(exerciseState.exercise.sets.isNotEmpty()) {
                     item {
                         AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
                     }
@@ -257,6 +257,8 @@ fun ExerciseDetailsConfiguratorScreen(
     }
 
     if (showLoadingDialog) {
-        LoadingWheel(innerPadding = PaddingValues(bottom = loadingWheelSize * 2))
+        LoadingWheel(
+            innerPadding = PaddingValues(bottom = loadingWheelSize - 10.dp)
+        )
     }
 }
