@@ -20,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,13 +41,27 @@ fun ExerciseTimer(
     ),
     isLogging: Boolean = false
 ) {
-    val timePercentageLeftState  = remember {
+    val timePercentageLeftState = remember {
         mutableFloatStateOf(100.0f)
     }
 
     val markedLinesState = remember {
         mutableIntStateOf(exerciseTimerStyle.totalLines)
     }
+
+    val configuration = LocalConfiguration.current
+    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (configuration.isNightModeActive) {
+            Color.WHITE
+        } else {
+            Color.BLACK
+        }
+    } else {
+
+        //No dark mode supported -> default color
+        Color.BLACK
+    }
+
 
     // Update state variables within LaunchedEffect when timeLeft changes
     LaunchedEffect(timeLeft) {
@@ -58,7 +73,10 @@ fun ExerciseTimer(
         )
 
         if (isLogging) {
-            Log.d("ExerciseTimer", "Percentage of Time Left: ${timePercentageLeftState.floatValue}%")
+            Log.d(
+                "ExerciseTimer",
+                "Percentage of Time Left: ${timePercentageLeftState.floatValue}%"
+            )
             Log.d("ExerciseTimer", "Marked Lines: ${markedLinesState.intValue}")
         }
     }
@@ -94,7 +112,7 @@ fun ExerciseTimer(
                 circleCenter.x,
                 circleCenter.y - 10.dp.toPx(),
                 Paint().apply {
-                    color = Color.WHITE
+                    color = textColor
                     textSize = 20.sp.toPx()
                     textAlign = Paint.Align.CENTER
                 }
