@@ -280,7 +280,6 @@ fun NextExerciseCountdownScreen(
             },
         verticalArrangement = Arrangement.Top
     ) {
-        val textColor = MaterialTheme.colorScheme.onSurface
         val exerciseText = if (isWorkoutComplete) {
             "Workout completed!"
         } else {
@@ -290,16 +289,25 @@ fun NextExerciseCountdownScreen(
         val setText =
             "Currently doing set $currentSetNumber out of $totalSets total sets."
 
+        val textColor = MaterialTheme.colorScheme.onSurface
+        val titleTextStyle = MaterialTheme.typography.displaySmall.copy(
+            color = textColor
+        )
+
+        val subtitleTextStyle = MaterialTheme.typography.headlineSmall.copy(
+            color = textColor
+        )
+
+        val timerTextStyle = MaterialTheme.typography.displayLarge.copy(
+            color = textColor
+        )
+
         //Texts
         Text(
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 6.dp),
             text = exerciseText,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.ExtraBold
-            ),
+            style = titleTextStyle,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
@@ -308,11 +316,7 @@ fun NextExerciseCountdownScreen(
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 6.dp),
             text = setText,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
-            ),
+            style = subtitleTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -327,11 +331,7 @@ fun NextExerciseCountdownScreen(
             Text(
                 modifier = Modifier.padding(countdownNumberPadding),
                 text = countdownTime.toSeconds().toString(),
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Medium
-                ),
+                style = timerTextStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )

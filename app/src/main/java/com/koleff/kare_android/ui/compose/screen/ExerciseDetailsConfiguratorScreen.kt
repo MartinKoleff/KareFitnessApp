@@ -152,6 +152,11 @@ fun ExerciseDetailsConfiguratorScreen(
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val backgroundColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outline
+
+    val titleTextStyle = MaterialTheme.typography.headlineSmall.copy(
+        color = titleTextColor
+    )
+
     ExerciseDetailsConfiguratorScaffold(
         screenTitle = exerciseState.exercise.name,
         exerciseImageId = exerciseImageId,
@@ -187,11 +192,7 @@ fun ExerciseDetailsConfiguratorScreen(
             ) {
                 Text(
                     text = exerciseState.exercise.name,
-                    style = TextStyle(
-                        color = titleTextColor,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = titleTextStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

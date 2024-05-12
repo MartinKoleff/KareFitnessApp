@@ -95,7 +95,20 @@ fun ExerciseDetailsScreen(
     }
 
     val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.headlineSmall.copy(
+        color = titleTextColor
+    )
+
     val labelTextColor = MaterialTheme.colorScheme.onSurface
+    val labelTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = labelTextColor
+    )
+
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleLarge.copy(
+        color = descriptionTextColor
+    )
+
     ExerciseDetailsScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
         exerciseImageId = exerciseImageId,
@@ -127,11 +140,7 @@ fun ExerciseDetailsScreen(
                         )
                     ),
                     text = exerciseDetailsState.exercise.name,
-                    style = TextStyle(
-                        color = titleTextColor,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = titleTextStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -164,11 +173,7 @@ fun ExerciseDetailsScreen(
                                 modifier = Modifier
                                     .padding(8.dp),
                                 text = "Description:",
-                                style = TextStyle(
-                                    color = labelTextColor,
-                                    fontSize = 20.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                ),
+                                style = descriptionTextStyle,
                                 textAlign = TextAlign.Start,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis
@@ -178,11 +183,7 @@ fun ExerciseDetailsScreen(
                                 modifier = Modifier
                                     .padding(8.dp),
                                 text = exerciseDetailsState.exercise.description,
-                                style = TextStyle(
-                                    color = labelTextColor,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Normal
-                                ),
+                                style = labelTextStyle,
                                 textAlign = TextAlign.Start,
                                 maxLines = 5,
                                 overflow = TextOverflow.Ellipsis
