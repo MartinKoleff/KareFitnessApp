@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
@@ -29,13 +31,21 @@ fun MachineFilterSegmentButton(
     onFilterSelected: (MachineType) -> Unit
 ) {
     val labelColor = MaterialTheme.colorScheme.onSecondary
+    val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
-
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
             SegmentedButton(
+                colors = SegmentedButtonDefaults.colors(  //TODO: checkmark color to be green...
+                    activeContainerColor = buttonColor,
+                    disabledActiveContainerColor = buttonColor,
+                    activeBorderColor = outlineColor,
+                    disabledInactiveBorderColor = outlineColor,
+                    inactiveBorderColor = outlineColor
+                ),
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
                     selectedIndex = if (selectedIndex == index) {
@@ -82,4 +92,60 @@ fun MachineFilterSegmentButton(
             }
         }
     }
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentEnabledPreview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 1, //Barbell
+        isDisabled = false,
+        onFilterSelected = {
+
+        }
+    )
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentDisabledPreview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 1, //Barbell
+        isDisabled = true,
+        onFilterSelected = {
+
+        }
+    )
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentEnabled2Preview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 1, //Barbell
+        isDisabled = false,
+        onFilterSelected = {
+
+        }
+    )
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentDisabled2Preview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 0, //Dumbbell
+        isDisabled = true,
+        onFilterSelected = {
+
+        }
+    )
 }
