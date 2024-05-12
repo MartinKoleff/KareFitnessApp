@@ -157,6 +157,13 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
         )
     }
 
+    val buttonPadding = PaddingValues(
+        start = 16.dp,
+        end = 16.dp,
+        top =  8.dp,
+        bottom = 24.dp
+    )
+
     //Footer
     Column(
         modifier = sizeModifier
@@ -174,11 +181,27 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
             contentScale = ContentScale.Crop
         )
 
-        //Login button
-        LoginButton(onLogin)
+        //Buttons
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(buttonPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Bottom,
+        ) {
 
-        //Register/ Sign up button
-        RegisterButton(onRegister)
+            //Login button
+            LoginButton(
+                modifier = Modifier.padding(bottom = 8.dp),
+                onLogin
+            )
+
+            //Register/ Sign up button
+            RegisterButton(
+                modifier = Modifier.padding(top = 8.dp),
+                onRegister
+            )
+        }
     }
 }
 
@@ -219,39 +242,38 @@ fun LogoRow() {
 }
 
 @Composable
-fun RegisterButton(onRegister: () -> Unit) {
-    WideRoundButton("Register", onRegister, hasBottomPadding = true)
+fun RegisterButton(modifier: Modifier = Modifier, onRegister: () -> Unit) {
+    WideRoundButton(
+        modifier = modifier,
+        text = "Register",
+        callback = onRegister
+    )
 }
 
 @Composable
-fun LoginButton(onLogin: () -> Unit) {
-    WideRoundButton("Login", onLogin, hasTopPadding = false)
+fun LoginButton(modifier: Modifier = Modifier, onLogin: () -> Unit) {
+    WideRoundButton(
+        modifier = modifier,
+        text = "Login",
+        callback = onLogin
+    )
 }
 
 @Composable
 fun WideRoundButton(
+    modifier: Modifier = Modifier,
     text: String,
-    callback: () -> Unit,
-    hasBottomPadding: Boolean = false,
-    hasTopPadding: Boolean = true
+    callback: () -> Unit
 ) {
     val cornerSize = 24.dp
-
-    val paddingValues = PaddingValues(
-        start = 16.dp,
-        end = 16.dp,
-        top = if (hasTopPadding) 8.dp else 0.dp,
-        bottom = if (hasBottomPadding) 24.dp else 8.dp
-    )
 
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val textColor = MaterialTheme.colorScheme.onTertiary
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
-            .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
                 border = BorderStroke(2.dp, color = outlineColor),
