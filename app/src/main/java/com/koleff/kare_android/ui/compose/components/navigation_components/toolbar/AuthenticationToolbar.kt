@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,10 +18,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
@@ -33,10 +38,17 @@ fun AuthenticationToolbar(
     imageId: Int = R.drawable.background_muscle_default,
     onNavigateBackAction: () -> Unit
 ) {
+    val configuration = LocalConfiguration.current
+
     val tintColor = MaterialTheme.colorScheme.onSurface
+    val circleColor = MaterialTheme.colorScheme.surface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.primary
+
+    val hasTopOutline = true
 
     Box(
-        modifier = modifier
+        modifier = modifier.background(backgroundColor)
     ) {
 
         //Exercise Muscle Group Image
@@ -47,14 +59,14 @@ fun AuthenticationToolbar(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(
-                    RoundedToolbarShape(hasTopOutline = true)
+                    RoundedToolbarShape(hasTopOutline)
                 )
                 .border(
                     border = BorderStroke(
                         width = 1.dp,
-                        color = tintColor
+                        color = outlineColor
                     ),
-                    shape = RoundedToolbarShape(hasTopOutline = true)
+                    shape = RoundedToolbarShape(hasTopOutline)
                 )
         )
 
@@ -67,13 +79,24 @@ fun AuthenticationToolbar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             NavigationItem(
-//                modifier = Modifier
-//                    .drawBehind {
-//                        drawCircle(
-//                            color = Color.Black,
-//                            radius = this.size.maxDimension / 4
-//                        )
-//                    },
+                modifier = Modifier.drawBehind {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//                        if (configuration.isNightModeActive) {
+                            drawCircle(
+                                radius = this.size.maxDimension / 4,
+                                color = circleColor
+                            )
+
+                            if(hasTopOutline){
+                                drawCircle(
+                                    radius = this.size.maxDimension / 4,
+                                    color = outlineColor,
+                                    style = Stroke(width = 1.dp.toPx())
+                                )
+                            }
+//                        }
+//                    }
+                },
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
                 tint = tintColor,
@@ -84,6 +107,7 @@ fun AuthenticationToolbar(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun PreviewAuthenticationToolbar() {
     val configuration = LocalConfiguration.current

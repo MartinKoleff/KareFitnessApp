@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -17,11 +18,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Fill
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
@@ -35,13 +41,17 @@ fun ExerciseDetailsConfiguratorToolbar(
     onSubmitExercise: () -> Unit,
     onNavigateBackAction: () -> Unit
 ) {
-    val backgroundColor = MaterialTheme.colorScheme.inversePrimary
+    val configuration = LocalConfiguration.current
+
+    val backgroundColor = MaterialTheme.colorScheme.primary
     val tintColor = MaterialTheme.colorScheme.onSurface
+    val circleColor = MaterialTheme.colorScheme.surface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val submitButtonTint = Color.Green
 
+    val hasTopOutline = true
     Box(
-        modifier = modifier
-            .background(backgroundColor)
+        modifier = modifier.background(backgroundColor)
     ) {
 
         //Exercise Muscle Group Image
@@ -52,14 +62,14 @@ fun ExerciseDetailsConfiguratorToolbar(
             modifier = Modifier
                 .fillMaxSize()
                 .clip(
-                    RoundedToolbarShape(hasTopOutline = true)
+                    RoundedToolbarShape(hasTopOutline)
                 )
                 .border(
                     border = BorderStroke(
                         width = 1.dp,
-                        color = tintColor
+                        color = outlineColor
                     ),
-                    shape = RoundedToolbarShape(hasTopOutline = true)
+                    shape = RoundedToolbarShape(hasTopOutline)
                 )
         )
 
@@ -72,6 +82,30 @@ fun ExerciseDetailsConfiguratorToolbar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             NavigationItem(
+                modifier = Modifier.drawBehind {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//                        if (configuration.isNightModeActive) {
+
+                            //Fill circle
+                            drawCircle(
+                                center = Offset.Zero,
+                                radius = this.size.maxDimension,
+                                color = circleColor,
+                                style = Fill
+                            )
+
+                            //Border circle
+                            if (hasTopOutline) {
+                                drawCircle(
+                                    center = Offset.Zero,
+                                    radius = this.size.maxDimension,
+                                    color = outlineColor,
+                                    style = Stroke(width = 1.dp.toPx())
+                                )
+                            }
+//                        }
+//                    }
+                },
                 icon = Icons.Filled.ArrowBack,
                 label = "Go back",
                 tint = tintColor,
@@ -89,6 +123,7 @@ fun ExerciseDetailsConfiguratorToolbar(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun PreviewExerciseConfiguratorToolbar() {
     val configuration = LocalConfiguration.current
