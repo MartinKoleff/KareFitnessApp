@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.ui.state.CircularTimerStyle
@@ -55,13 +56,20 @@ fun CircularTimePicker(
     initialTime: Int,
     circularTimerStyle: CircularTimerStyle = CircularTimerStyle()
 ) {
-
     val expandedSize = timeType.maxTime * 10_000_000
     val initialListPoint = expandedSize / 2
     val targetIndex = initialListPoint + initialTime - 1 //Middle time is the selected one -> - 1
 
     val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = targetIndex)
     val flingBehavior = rememberSnapFlingBehavior(scrollState)
+
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     LaunchedEffect(scrollState.isScrollInProgress) {
         if (!scrollState.isScrollInProgress) {
             val currentTime =
@@ -90,10 +98,8 @@ fun CircularTimePicker(
                 ) {
                     Text(
                         text = String.format("%02d", num),
-                        style = MaterialTheme.typography.overline.copy(
-                            color = Color.White,
-                            fontSize = LocalDensity.current.run { circularTimerStyle.cellTextSize.toSp() }
-                        )
+                        style = textStyle,
+                        fontSize = LocalDensity.current.run { circularTimerStyle.cellTextSize.toSp() }
                     )
                 }
             }
@@ -102,10 +108,17 @@ fun CircularTimePicker(
 }
 
 @Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 fun CircularTimePickerPreview() {
     val size = CircularTimerStyle().size
-    Row(modifier = Modifier.size(size).background(Color.Black)) {
+    val backgroundColor = MaterialTheme.colorScheme.scrim
+
+    Row(
+        modifier = Modifier
+            .size(size)
+            .background(backgroundColor)
+    ) {
         CircularTimePicker(TimeType.Hours, initialTime = 5)
         CircularTimePicker(TimeType.Minutes, initialTime = 15)
         CircularTimePicker(TimeType.Seconds, initialTime = 30)
@@ -117,7 +130,12 @@ fun CircularTimerFooter(
     modifier: Modifier = Modifier,
     circularTimerStyle: CircularTimerStyle = CircularTimerStyle()
 ) {
-    val textColor = Color.White
+    val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     val cornerSize = 20.dp
     Row(
         modifier = modifier
@@ -130,11 +148,7 @@ fun CircularTimerFooter(
             modifier = Modifier
                 .padding(4.dp),
             text = "Time:",
-            style = TextStyle(
-                color = textColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = textStyle,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -175,11 +189,7 @@ fun CircularTimerFooter(
                         modifier = Modifier
                             .padding(4.dp),
                         text = "min.",
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = textStyle,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -198,11 +208,7 @@ fun CircularTimerFooter(
                         modifier = Modifier
                             .padding(4.dp),
                         text = "sec.",
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = textStyle,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -214,9 +220,12 @@ fun CircularTimerFooter(
 }
 
 @Preview(showBackground = true)
+@PreviewLightDark
 @Composable
 fun CircularTimerFooterPreview() {
-    CircularTimerFooter(modifier = Modifier.background(Color.Black))
+    val backgroundColor = MaterialTheme.colorScheme.scrim
+
+    CircularTimerFooter(modifier = Modifier.background(backgroundColor))
 }
 
 @Composable
@@ -225,7 +234,11 @@ fun RestBetweenSetsFooter(
     onCheckedChange: (Boolean) -> Unit,
     isChecked: Boolean = false
 ) {
-    val textColor = Color.White
+    val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
 
     Column(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)
@@ -243,11 +256,7 @@ fun RestBetweenSetsFooter(
                 modifier = Modifier
                     .padding(4.dp),
                 text = "Rest between sets:",
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                ),
+                style = textStyle,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -264,20 +273,26 @@ fun RestBetweenSetsFooter(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun RestBetweenSetsFooterPreview() {
+    val backgroundColor = MaterialTheme.colorScheme.scrim
+
     RestBetweenSetsFooter(
-        modifier = Modifier.background(Color.Black),
+        modifier = Modifier.background(backgroundColor),
         onCheckedChange = {},
         isChecked = true
     )
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun RestBetweenSetsFooterPreview2() {
+    val backgroundColor = MaterialTheme.colorScheme.scrim
+
     RestBetweenSetsFooter(
-        modifier = Modifier.background(Color.Black),
+        modifier = Modifier.background(backgroundColor),
         onCheckedChange = {},
         isChecked = false
     )

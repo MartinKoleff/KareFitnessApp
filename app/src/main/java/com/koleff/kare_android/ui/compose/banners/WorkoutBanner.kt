@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.banners
 
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,6 +29,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -37,6 +39,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -49,19 +52,19 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -75,6 +78,68 @@ fun WorkoutBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
+    val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (configuration.isNightModeActive) {
+            R.drawable.background_workout_banner_dark_2
+        } else {
+            R.drawable.background_workout_banner_light_2
+        }
+    } else {
+        //No dark mode supported -> default banner
+        R.drawable.background_workout_banner_dark_2
+    }
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor,
+        fontWeight = FontWeight.Bold
+    )
+
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = descriptionTextColor,
+        fontWeight = FontWeight.SemiBold
+    )
+
+    val bannerTintColors =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (configuration.isNightModeActive) {
+                listOf(
+                    Color.Black,
+                    Color.Black,
+                    Color.Black,
+                    Color.Black,
+                    Color.Black,
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Transparent
+                )
+            } else {
+                listOf(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.secondary,
+                    MaterialTheme.colorScheme.secondary,
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Transparent
+                )
+            }
+        } else {
+
+            //No dark mode supported -> default banner
+            listOf(
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.secondary,
+                MaterialTheme.colorScheme.secondary,
+                Color.Transparent,
+                Color.Transparent,
+                Color.Transparent
+            )
+        }
 
     Card(
         modifier = modifier
@@ -99,40 +164,31 @@ fun WorkoutBanner(
                 contentScale = ContentScale.Crop
             )
 
-            //Fixes white rectangle on left half side
-            Box(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(screenWidth / 2)
-                    .align(Alignment.TopStart)
-                    .background(Color.Black)
-            )
-
             //Hexagon effect overflowing into workout snapshot
             Image(
-                painter = painterResource(R.drawable.background_workout_banner),
+                painter = painterResource(bannerImage),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
                     .align(Alignment.TopStart)
+                    .drawBehind {
+
+                        //Fixes white rectangle on left half side
+                        drawRect(
+                            color = Color.Black,
+                            size = this.size.copy(
+                                width = (screenWidth / 2).toPx()
+                            )
+                        )
+                    }
                     .graphicsLayer { alpha = 0.80f }
                     .drawWithContent {
+                        drawContent()
 
                         //Fill 5/8 of the screen with effect gradient
-                        val colors = listOf(
-                            Color.Black,
-                            Color.Black,
-                            Color.Black,
-                            Color.Black,
-                            Color.Black,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent
-                        )
-                        drawContent()
                         drawRect(
-                            brush = Brush.horizontalGradient(colors),
+                            brush = Brush.horizontalGradient(bannerTintColors),
                             blendMode = BlendMode.DstIn
                         )
                     }
@@ -150,11 +206,11 @@ fun WorkoutBanner(
                         .fillMaxHeight()
                         .padding(end = 8.dp),
 //                        .weight(7f),
-                    verticalArrangement = Arrangement.Center, //TODO: change to Top when adding sets...
+                    verticalArrangement = Arrangement.Center
                 ) {
 
                     //Workout title
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -164,18 +220,14 @@ fun WorkoutBanner(
                             )
                         ),
                         text = workout.name,
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = titleTextStyle,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
 
                     //Workout sub-title (total exercises)
                     if (hasDescription) {
-                        Text( //TODO: and cooler font...
+                        Text(
                             modifier = Modifier.padding(
                                 PaddingValues(
                                     start = 16.dp,
@@ -185,11 +237,7 @@ fun WorkoutBanner(
                                 )
                             ),
                             text = "Exercises: ${workout.totalExercises}",
-                            style = TextStyle(
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            ),
+                            style = descriptionTextStyle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -304,6 +352,14 @@ fun DeleteButton(
     val iconSize = 20.dp
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(bottom = 8.dp)
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val tintColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor,
+        fontWeight = FontWeight.SemiBold
+    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -311,11 +367,11 @@ fun DeleteButton(
         modifier = modifier
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = Color.Red,
+                color = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onDelete)
@@ -323,22 +379,20 @@ fun DeleteButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_delete),
             contentDescription = "Delete",
-            tint = Color.White,
+            tint = tintColor,
             modifier = Modifier
                 .size(iconSize)
         )
 
-        Spacer(modifier = Modifier
-            .height(5.dp)
-            .fillMaxWidth())
+        Spacer(
+            modifier = Modifier
+                .height(5.dp)
+                .fillMaxWidth()
+        )
 
         Text(
             text = title,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
@@ -356,17 +410,26 @@ fun SelectButton(
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(bottom = 8.dp)
 
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val tintColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor,
+        fontWeight = FontWeight.SemiBold
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = Color.Green,
+                color = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onSelect)
@@ -378,21 +441,19 @@ fun SelectButton(
             contentDescription = "Select",
             modifier = Modifier
                 .size(iconSize),
-            colorFilter = ColorFilter.tint(Color.White),
-            contentScale = ContentScale.Crop // This makes the image fill the bounds of the box
+            colorFilter = ColorFilter.tint(tintColor),
+            contentScale = ContentScale.Crop
         )
 
-        Spacer(modifier = Modifier
-            .height(5.dp)
-            .fillMaxWidth())
+        Spacer(
+            modifier = Modifier
+                .height(5.dp)
+                .fillMaxWidth()
+        )
 
         Text(
             text = title,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
@@ -410,17 +471,26 @@ fun EditButton(
     val cornerSize = 24.dp
     val paddingValues = PaddingValues(bottom = 8.dp)
 
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val tintColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor,
+        fontWeight = FontWeight.SemiBold
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
         modifier = modifier
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = Color.White),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = Color.Blue,
+                color = LocalExtendedColorScheme.current.workoutBannerColors.editButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onEdit)
@@ -428,22 +498,20 @@ fun EditButton(
         Icon(
             painter = painterResource(id = R.drawable.ic_edit),
             contentDescription = "Edit",
-            tint = Color.White,
+            tint = tintColor,
             modifier = Modifier
                 .size(iconSize)
         )
 
-        Spacer(modifier = Modifier
-            .height(5.dp)
-            .fillMaxWidth())
+        Spacer(
+            modifier = Modifier
+                .height(5.dp)
+                .fillMaxWidth()
+        )
 
         Text(
             text = title,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
@@ -523,6 +591,7 @@ fun WorkoutBannerPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SwipeableWorkoutBannerPreview() {
     val workout = MockupDataGeneratorV2.generateWorkout()
@@ -540,6 +609,7 @@ fun SwipeableWorkoutBannerPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun DeleteButtonPreview() {
     val configuration = LocalConfiguration.current
@@ -557,6 +627,7 @@ fun DeleteButtonPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SelectButtonPreview() {
     val configuration = LocalConfiguration.current
@@ -574,6 +645,7 @@ fun SelectButtonPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun EditButtonPreview() {
     val configuration = LocalConfiguration.current

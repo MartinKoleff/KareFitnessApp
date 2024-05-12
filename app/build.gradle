@@ -18,8 +18,8 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 9
-        versionName "2.0"
+        versionCode 11
+        versionName "2.2"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -125,6 +125,7 @@ dependencies {
     implementation "androidx.compose.ui:ui-graphics:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
     implementation 'androidx.media3:media3-exoplayer:1.2.1'
+    implementation "androidx.compose.ui:ui-text-google-fonts:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.compose.material3:material3:$compose_material3_version"

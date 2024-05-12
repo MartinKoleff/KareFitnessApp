@@ -56,6 +56,7 @@ fun SearchExercisesScreen(
         onNavigateBackAction = onNavigateBack
     ) { innerPadding ->
         val modifier = Modifier
+            .fillMaxSize()
             .padding(innerPadding)
             .pointerInput(Unit) {
 
@@ -67,7 +68,6 @@ fun SearchExercisesScreen(
                     }
                 )
             }
-            .fillMaxSize()
 
 
         //All exercises

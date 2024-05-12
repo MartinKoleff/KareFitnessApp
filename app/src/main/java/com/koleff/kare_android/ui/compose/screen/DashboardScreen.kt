@@ -1,7 +1,9 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,8 +31,8 @@ fun DashboardScreen(dashboardViewModel: DashboardViewModel = hiltViewModel()) {
             LoadingWheel(innerPadding = innerPadding)
         } else {
             val modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
+                .padding(innerPadding)
 
             MuscleGroupGrid(
                 modifier = modifier,

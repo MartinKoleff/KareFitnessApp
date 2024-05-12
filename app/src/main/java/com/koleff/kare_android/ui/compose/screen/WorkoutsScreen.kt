@@ -65,31 +65,6 @@ fun WorkoutsScreen(
         onNavigateBackAction = { workoutListViewModel.onNavigateBack() },
         onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() }
     ) { innerPadding ->
-        val buttonModifier = Modifier
-            .fillMaxWidth()
-            .padding(
-                PaddingValues(
-                    top = innerPadding.calculateTopPadding(),
-                    start = 4.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                    end = 4.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    bottom = 0.dp
-                )
-            )
-
-        val contentModifier = Modifier
-            .fillMaxSize()
-            .padding(
-                PaddingValues(
-                    top = 8.dp,
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                    bottom = innerPadding.calculateBottomPadding()
-                )
-            )
-
-        val workoutBannerModifier = Modifier
-            .fillMaxWidth()
-            .height(200.dp)
 
         //Pull to refresh
         val pullRefreshState = rememberPullRefreshState(
@@ -212,8 +187,35 @@ fun WorkoutsScreen(
             )
         }
 
+        //Modifiers
+        val buttonModifier = Modifier
+            .fillMaxWidth()
+            .padding(
+                PaddingValues(
+                    top = innerPadding.calculateTopPadding(),
+                    start = 4.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                    end = 4.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    bottom = 0.dp
+                )
+            )
+
+        val contentModifier = Modifier
+            .fillMaxSize()
+            .padding(
+                PaddingValues(
+                    top = 8.dp,
+                    start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                    end = innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                    bottom = innerPadding.calculateBottomPadding()
+                )
+            )
+
+        val workoutBannerModifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp)
+
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .pullRefresh(pullRefreshState)
         ) {
@@ -228,7 +230,7 @@ fun WorkoutsScreen(
                     modifier = buttonModifier,
                     selectedOptionIndex = 1, //Workouts screen
                     isDisabled = workoutState.isLoading,
-                    workoutListViewModel = workoutListViewModel
+                    onWorkoutFilter = workoutListViewModel::onWorkoutFilterEvent //TODO: test...
                 )
 
                 if (showLoadingDialog) { //Don't show loader if retrieved from cache...
@@ -270,7 +272,7 @@ fun WorkoutsScreen(
                             NoWorkoutSelectedBanner {
 
                                 //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
+                                workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test...
                             }
                         }
                     } else {
@@ -311,7 +313,7 @@ fun WorkoutsScreen(
                                     NoWorkoutSelectedBanner {
 
                                         //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
+                                        workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test...
                                     }
                                 } else {
                                     AddWorkoutBanner {

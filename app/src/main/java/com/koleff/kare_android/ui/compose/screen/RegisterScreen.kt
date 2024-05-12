@@ -28,7 +28,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.AuthenticationButton
+import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
+import com.koleff.kare_android.ui.compose.components.CustomTextField
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.PasswordTextField
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
@@ -36,17 +40,6 @@ import com.koleff.kare_android.ui.view_model.RegisterViewModel
 
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val cornerSize = 36.dp
-
-    val gymImageModifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight * 0.33f)
 
     //State and callbacks
     val registerState by registerViewModel.state.collectAsState()
@@ -106,6 +99,18 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             onClick = onDismiss
         )
     }
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    val cornerSize = 36.dp
+
+    val gymImageModifier = Modifier
+        .fillMaxWidth()
+        .height(screenHeight * 0.33f)
 
     AuthenticationScaffold(
         screenTitle = "",

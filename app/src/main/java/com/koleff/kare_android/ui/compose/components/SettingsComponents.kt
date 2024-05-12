@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,8 +28,13 @@ fun SettingsListItem(
     onCheckedChange: (Boolean) -> Unit = {},
     isChecked: Boolean = false
 ) {
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
+
     ListItem(
-        headlineContent = { Text(title) },
+        headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
                 icon,
@@ -58,8 +64,14 @@ fun SettingsListItem(
     onCheckedChange: (Boolean) -> Unit = {},
     isChecked: Boolean = false
 ) {
+    val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
+
     ListItem(
-        headlineContent = { Text(title) },
+        headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
                 icon,

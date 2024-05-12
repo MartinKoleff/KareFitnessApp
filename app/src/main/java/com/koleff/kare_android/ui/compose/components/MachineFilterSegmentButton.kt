@@ -1,6 +1,7 @@
 package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
@@ -25,14 +28,31 @@ fun MachineFilterSegmentButton(
     modifier: Modifier = Modifier,
     selectedOptionIndex: Int = -1,
     isDisabled: Boolean,
-    exerciseListViewModel: ExerciseListViewModel
+    onFilterSelected: (MachineType) -> Unit
 ) {
+    val labelColor = MaterialTheme.colorScheme.onSurface
+    val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val labelTextStyle = MaterialTheme.typography.bodySmall.copy(
+        color = labelColor
+    )
+
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
-
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
             SegmentedButton(
+                colors = SegmentedButtonDefaults.colors(  //TODO: checkmark color to be green...
+                    activeContainerColor = buttonColor,
+                    disabledActiveContainerColor = buttonColor,
+                    activeBorderColor = outlineColor,
+                    disabledInactiveBorderColor = outlineColor,
+                    inactiveBorderColor = outlineColor,
+                    activeContentColor = labelColor,
+                    inactiveContentColor = MaterialTheme.colorScheme.onSurface,
+                    inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
                     selectedIndex = if (selectedIndex == index) {
@@ -44,23 +64,23 @@ fun MachineFilterSegmentButton(
                     //Filter
                     when (selectedIndex) {
                         0 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.DUMBBELL)
+                            onFilterSelected(MachineType.DUMBBELL)
                         }
 
                         1 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.BARBELL)
+                            onFilterSelected(MachineType.BARBELL)
                         }
 
                         2 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.MACHINE)
+                            onFilterSelected(MachineType.MACHINE)
                         }
 
                         3 -> {
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.CALISTHENICS)
+                            onFilterSelected(MachineType.CALISTHENICS)
                         }
 
                         -1 -> { //Disabled filter -> show all
-                            exerciseListViewModel.onFilterExercisesEvent(MachineType.NONE)
+                            onFilterSelected(MachineType.NONE)
                         }
                     }
                 },
@@ -69,13 +89,65 @@ fun MachineFilterSegmentButton(
             ) {
                 Text(
                     text = label,
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Normal
-                    ),
+                    style = labelTextStyle,
                 )
             }
         }
     }
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentEnabledPreview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 1, //Barbell
+        isDisabled = false,
+        onFilterSelected = {
+
+        }
+    )
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentDisabledPreview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 1, //Barbell
+        isDisabled = true,
+        onFilterSelected = {
+
+        }
+    )
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentEnabled2Preview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 1, //Barbell
+        isDisabled = false,
+        onFilterSelected = {
+
+        }
+    )
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun MachineFilterSegmentDisabled2Preview() {
+    MachineFilterSegmentButton(
+        modifier = Modifier,
+        selectedOptionIndex = 0, //Dumbbell
+        isDisabled = true,
+        onFilterSelected = {
+
+        }
+    )
 }
