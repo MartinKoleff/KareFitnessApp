@@ -42,7 +42,7 @@ fun SearchBar(
     val focusManager = LocalFocusManager.current
 
     val textColor = MaterialTheme.colorScheme.onSurface
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     Row(modifier = modifier) {
         TextField(

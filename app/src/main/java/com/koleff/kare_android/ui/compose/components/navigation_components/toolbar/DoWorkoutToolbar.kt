@@ -32,7 +32,7 @@ fun DoWorkoutToolbar(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,

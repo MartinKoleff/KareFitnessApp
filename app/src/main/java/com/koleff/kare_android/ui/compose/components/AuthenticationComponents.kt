@@ -142,7 +142,7 @@ fun CustomTextField(
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val labelTextColor = MaterialTheme.colorScheme.onSurface
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     TextField(
         value = text,
@@ -217,7 +217,7 @@ fun PasswordTextField(
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val labelTextColor = MaterialTheme.colorScheme.onSurface
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     TextField(
         value = password,
@@ -283,7 +283,7 @@ fun PasswordTextFieldPreview() {
 @Composable
 fun HorizontalLineWithText(
     text: String,
-    outlineColor: Color = MaterialTheme.colorScheme.outlineVariant
+    outlineColor: Color = MaterialTheme.colorScheme.outlineVariant //onSurface
 ) {
     val paddingValues = PaddingValues(
         horizontal = 32.dp,

@@ -36,7 +36,7 @@ fun ExerciseDetailsConfiguratorToolbar(
     onNavigateBackAction: () -> Unit
 ) {
     val backgroundColor = MaterialTheme.colorScheme.primary
-    val tintColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSurface
     val submitButtonTint = Color.Green
 
     Box(

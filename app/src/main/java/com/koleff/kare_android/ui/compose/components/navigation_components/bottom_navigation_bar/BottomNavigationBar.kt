@@ -22,6 +22,7 @@ fun BottomNavigationBar(
     onNavigateToWorkouts: () -> Unit,
 ) {
     val backgroundColor = MaterialTheme.colorScheme.primary
+    val tintColor = MaterialTheme.colorScheme.onSurface
 
     BottomAppBar(
         modifier = Modifier.background(backgroundColor),
@@ -29,6 +30,7 @@ fun BottomNavigationBar(
             NavigationItem(
                 icon = Icons.Filled.Star,
                 label = "Dashboard",
+                tint = tintColor,
                 onNavigateAction = onNavigateToDashboard
             )
 
@@ -42,6 +44,7 @@ fun BottomNavigationBar(
             NavigationItem(
                 icon = painterResource(id = R.drawable.ic_vector_my_workout),
                 label = "Workout screen",
+                tint = tintColor,
                 onNavigateAction = onNavigateToWorkouts
             )
         }

@@ -46,7 +46,7 @@ fun WorkoutFooterBanner(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val primaryColor = MaterialTheme.colorScheme.primary
+    val tintColor = MaterialTheme.colorScheme.tertiary
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
@@ -72,7 +72,7 @@ fun WorkoutFooterBanner(
                     .fillMaxSize()
                     .align(Alignment.TopStart)
                     .graphicsLayer { alpha = 0.80f },
-                colorFilter = ColorFilter.tint(primaryColor, BlendMode.Multiply)
+                colorFilter = ColorFilter.tint(tintColor, BlendMode.Multiply)
             )
 
             Image(
