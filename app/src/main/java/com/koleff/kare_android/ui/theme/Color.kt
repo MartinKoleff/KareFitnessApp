@@ -2,6 +2,9 @@ package com.koleff.kare_android.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+//TODO: change secondary color to pink?
+// secondary color currently unused.
+
 val primaryLight = Color(0xFF66558F)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFE9DDFF)

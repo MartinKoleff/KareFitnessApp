@@ -52,7 +52,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,7 +60,6 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -82,13 +80,13 @@ fun WorkoutBanner(
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
     val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         if (configuration.isNightModeActive) {
-            R.drawable.background_workout_banner_dark
+            R.drawable.background_workout_banner_dark_2
         } else {
             R.drawable.background_workout_banner_light_2
         }
     } else {
         //No dark mode supported -> default banner
-        R.drawable.background_workout_banner_dark
+        R.drawable.background_workout_banner_dark_2
     }
 
     val titleTextColor = MaterialTheme.colorScheme.onSurface
