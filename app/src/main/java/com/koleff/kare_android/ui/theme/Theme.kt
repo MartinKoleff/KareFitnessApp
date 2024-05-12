@@ -261,7 +261,7 @@ val unspecified_scheme = ColorFamily(
 @Composable
 fun KareTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,  //Dynamic color is available on Android 12+
+    dynamicColor: Boolean = false,  //Dynamic color is available on Android 12+
     content: @Composable() () -> Unit
 ) {
     val colorScheme = when {
