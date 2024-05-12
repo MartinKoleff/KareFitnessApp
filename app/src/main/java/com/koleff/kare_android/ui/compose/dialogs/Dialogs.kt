@@ -48,10 +48,18 @@ fun EditWorkoutDialog(
 ) {
     var text by remember { mutableStateOf(currentName) }
 
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
-    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
+        color = titleTextColor
+    )
+
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
 
     AlertDialog(
         title = {
@@ -63,11 +71,7 @@ fun EditWorkoutDialog(
             ) {
                 Text(
                     text = title,
-                    style = TextStyle(
-                        color = titleTextColor,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = titleTextStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -94,11 +98,7 @@ fun EditWorkoutDialog(
             ) {
                 Text(
                     text = "Confirm",
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = textStyle,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -115,11 +115,7 @@ fun EditWorkoutDialog(
             ) {
                 Text(
                     text = "Cancel",
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = textStyle,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -138,10 +134,22 @@ fun SuccessDialog(
     onDismiss: () -> Unit,
     onClick: () -> Unit,
 ) {
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
-    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
+        color = titleTextColor
+    )
+
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+
+    val buttonTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     AlertDialog(
         title = {
@@ -153,11 +161,7 @@ fun SuccessDialog(
             ) {
                 Text(
                     text = title,
-                    style = TextStyle(
-                        color = titleTextColor,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = titleTextStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -168,11 +172,7 @@ fun SuccessDialog(
             if (description.isNotEmpty()) {
                 Text(
                     text = description,
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal
-                    ),
+                    style = textStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -198,11 +198,7 @@ fun SuccessDialog(
                 ) {
                     Text(
                         text = "OK",
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = buttonTextStyle,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -224,10 +220,22 @@ fun WarningDialog(
     actionButtonTitle: String,
     callDismissOnConfirm: Boolean = true
 ) {
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
-    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
+        color = titleTextColor
+    )
+
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+
+    val buttonTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     AlertDialog(
         title = {
@@ -239,11 +247,7 @@ fun WarningDialog(
             ) {
                 Text(
                     text = title,
-                    style = TextStyle(
-                        color = titleTextColor,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = titleTextStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -253,11 +257,7 @@ fun WarningDialog(
         text = {
             Text(
                 text = description,
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Normal
-                ),
+                style = textStyle,
                 textAlign = TextAlign.Center,
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis
@@ -276,11 +276,7 @@ fun WarningDialog(
             ) {
                 Text(
                     text = actionButtonTitle,
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = buttonTextStyle,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -297,11 +293,7 @@ fun WarningDialog(
             ) {
                 Text(
                     text = "Cancel",
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = buttonTextStyle,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -320,10 +312,22 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
         context.resources.getString(error.errorMessageResourceId) + " " + error.extraMessage
     val title = "Error"
 
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
-    val textColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
+        color = titleTextColor
+    )
+
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+
+    val buttonTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     AlertDialog(
         onDismissRequest = { onDismiss() },
@@ -336,11 +340,7 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
             ) {
                 Text(
                     text = title,
-                    style = TextStyle(
-                        color = titleTextColor,
-                        fontSize = 24.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = titleTextStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -356,11 +356,7 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
             ) {
                 Text(
                     text = errorMessage,
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Normal
-                    ),
+                    style = textStyle,
                     textAlign = TextAlign.Center,
                     maxLines = 3,
                     overflow = TextOverflow.Ellipsis
@@ -377,11 +373,7 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
             ) {
                 Text(
                     text = "OK",
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
+                    style = buttonTextStyle,
                     textAlign = TextAlign.End,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

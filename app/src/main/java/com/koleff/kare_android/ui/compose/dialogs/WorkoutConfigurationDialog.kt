@@ -25,11 +25,27 @@ fun WorkoutConfigurationDialog(
     var cooldownMinutes by remember { mutableStateOf(workoutConfiguration.cooldownTime.minutes) }
     var cooldownSeconds by remember { mutableStateOf(workoutConfiguration.cooldownTime.seconds) }
 
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
-    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
+        color = titleTextColor
+    )
+
+    val subtitleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor
+    )
+
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.bodyLarge.copy(
+        color = textColor
+    )
+
+    val buttonTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     Dialog(
         onDismissRequest = { onDismiss() }
@@ -42,18 +58,29 @@ fun WorkoutConfigurationDialog(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                Text(
-                    text = "Configure Your Workout",
-                    color = titleTextColor,
-                    style = MaterialTheme.typography.headlineSmall
-                )
+
+                //Title
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "Configure Your Workout",
+                        color = titleTextColor,
+                        style = titleTextStyle
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
+
                 Text(
                     text = "Cooldown Time",
                     color = textColor,
-                    style = MaterialTheme.typography.bodyLarge
+                    style = subtitleTextStyle
                 )
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -74,9 +101,10 @@ fun WorkoutConfigurationDialog(
                         label = {
                             Text(
                                 text = "Minutes",
-                                color = textColor
+                                style = textStyle
                             )
                         },
+                        textStyle = textStyle,
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = outlineColor,
@@ -90,9 +118,10 @@ fun WorkoutConfigurationDialog(
                         label = {
                             Text(
                                 text = "Seconds",
-                                color = textColor
+                                style = textStyle
                             )
                         },
+                        textStyle = textStyle,
                         singleLine = true,
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = outlineColor,
@@ -115,7 +144,7 @@ fun WorkoutConfigurationDialog(
                         contentColor = onButtonColor
                     )
                 ) {
-                    Text(text = "Save Configuration", color = textColor)
+                    Text(text = "Save Configuration", style = buttonTextStyle)
                 }
             }
         }
