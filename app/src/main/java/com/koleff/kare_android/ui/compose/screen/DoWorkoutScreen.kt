@@ -579,7 +579,7 @@ fun ExerciseDataSheetModal() {
             }
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_default),
+                painter = painterResource(id = R.drawable.background_muscle_default),
                 contentDescription = null
             )
         }

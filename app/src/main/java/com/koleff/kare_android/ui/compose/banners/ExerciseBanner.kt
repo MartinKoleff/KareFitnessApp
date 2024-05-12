@@ -84,7 +84,7 @@ fun ExerciseBannerV1(
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopStart),
-            painter = painterResource(id = R.drawable.background_exercise_banner_effect),
+            painter = painterResource(id = R.drawable.background_exercise_banner_dark),
             contentDescription = "Background",
             contentScale = ContentScale.Crop
         )

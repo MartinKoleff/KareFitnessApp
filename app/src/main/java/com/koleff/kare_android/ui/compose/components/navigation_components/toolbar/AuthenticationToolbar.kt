@@ -36,7 +36,7 @@ import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
 @Composable
 fun AuthenticationToolbar(
     modifier: Modifier,
-    imageId: Int = R.drawable.ic_default,
+    imageId: Int = R.drawable.background_muscle_default,
     onNavigateBackAction: () -> Unit
 ) {
     val tintColor = MaterialTheme.colorScheme.onSecondary
@@ -101,7 +101,7 @@ fun PreviewAuthenticationToolbar() {
             .fillMaxWidth()
             .height(screenHeight / 2.5f)
             .background(backgroundColor),
-        imageId = R.drawable.ic_default,
+        imageId = R.drawable.background_muscle_default,
         onNavigateBackAction = {}
     )
 }
