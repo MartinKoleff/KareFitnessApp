@@ -35,7 +35,7 @@ fun ExerciseDetailsConfiguratorToolbar(
     onSubmitExercise: () -> Unit,
     onNavigateBackAction: () -> Unit
 ) {
-    val backgroundColor = MaterialTheme.colorScheme.primary
+    val backgroundColor = MaterialTheme.colorScheme.inversePrimary
     val tintColor = MaterialTheme.colorScheme.onSurface
     val submitButtonTint = Color.Green
 

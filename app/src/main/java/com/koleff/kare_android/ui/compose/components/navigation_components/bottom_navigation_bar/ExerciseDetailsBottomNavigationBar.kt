@@ -32,7 +32,7 @@ fun ExerciseDetailsBottomNavigationBar(
         onNavigateSubmitExercise
     }
 
-    val backgroundColor = MaterialTheme.colorScheme.secondary
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
     val tintColor = MaterialTheme.colorScheme.onSurface
 
     BottomAppBar(

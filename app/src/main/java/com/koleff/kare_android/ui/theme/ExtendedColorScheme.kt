@@ -7,6 +7,7 @@ data class ExtendedColorScheme(
     val doWorkoutColors: DoWorkoutColors,
     val workoutBannerColors: WorkoutBannerColors,
     val detailsScreenBackgroundGradient: List<Color>,
+    val authenticationScreenBackgroundGradient: List<Color>,
 )
 
 data class DoWorkoutColors(
@@ -25,6 +26,7 @@ val LocalExtendedColorScheme = compositionLocalOf {
     ExtendedColorScheme(
         doWorkoutColors = DoWorkoutColors(),
         workoutBannerColors = WorkoutBannerColors(),
-        detailsScreenBackgroundGradient = listOf()
+        detailsScreenBackgroundGradient = listOf(),
+        authenticationScreenBackgroundGradient = listOf(),
     )
 }

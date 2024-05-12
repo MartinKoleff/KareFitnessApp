@@ -41,7 +41,7 @@ fun ExerciseDetailsToolbar(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val backgroundColor = MaterialTheme.colorScheme.primary
+    val backgroundColor = MaterialTheme.colorScheme.inversePrimary
     val tintColor = MaterialTheme.colorScheme.onSurface
     Box(
         modifier = modifier.background(backgroundColor)
