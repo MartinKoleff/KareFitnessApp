@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -44,7 +46,8 @@ fun MuscleGroupImageCard(
     onClick: () -> Unit
 ) {
     val tintColor = MaterialTheme.colorScheme.scrim
-    val textColor = MaterialTheme.colorScheme.onSecondary
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
 
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -54,33 +57,45 @@ fun MuscleGroupImageCard(
         )
     ) {
         //Image first, then gradient over it, then text over the gradient...
-        Box(modifier = Modifier
-            .height(170.dp)
+        Column(modifier = Modifier
+            .height(200.dp)
             .clickable { onClick.invoke() }
+            .drawBehind {
+
+                //Fixes white rectangle due to smaller images
+                drawRect(
+                    color = backgroundColor, //Adds background behind text box with contrast
+                    size = this.size
+                )
+            }
         ) {
             Image(
-                modifier = Modifier.drawWithContent {
-                    drawContent()
+                modifier = Modifier
+                    .weight(5f)
+                    .drawWithContent {
+                        drawContent()
 
-                    //Tint
-                    drawRect(
-                        brush = Brush.verticalGradient(
-                            listOf(Color.Transparent, tintColor)
+                        //Tint
+                        drawRect(
+                            brush = Brush.verticalGradient(
+                                listOf(Color.Transparent, tintColor)
+                            )
                         )
-                    )
-                },
+                    },
                 painter = painter,
                 contentDescription = contentDescription,
                 contentScale = ContentScale.Crop
             )
 
-            //Have the text in a box positioned at bottom start
+            //Muscle group text positioned at the bottom
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(12.dp),
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(6.dp),
                 contentAlignment = Alignment.BottomCenter
             ) {
+
                 Text(
                     text = title,
                     style = TextStyle(
@@ -133,6 +148,7 @@ fun MuscleGroupGrid(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 private fun MuscleGroupGridPreview() {
     MuscleGroupGrid(
