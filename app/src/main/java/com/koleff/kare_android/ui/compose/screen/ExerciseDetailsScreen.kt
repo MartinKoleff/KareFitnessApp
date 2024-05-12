@@ -106,13 +106,8 @@ fun ExerciseDetailsScreen(
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = LocalExtendedColorScheme.current.detailsScreenBackgroundGradient
-                    )
-                )
+                .padding(innerPadding)
         ) {
 
             //Fixed title in one place

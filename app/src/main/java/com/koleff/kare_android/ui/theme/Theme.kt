@@ -291,20 +291,36 @@ fun KareTheme(
             selectButtonColor = Color.Blue,
             editButtonColor = Color.Green
         ),
-        detailsScreenBackgroundGradient = listOf(
-            MaterialTheme.colorScheme.inversePrimary,
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.primary,
-            MaterialTheme.colorScheme.tertiary,
-            MaterialTheme.colorScheme.tertiary,
-        ),
+        detailsScreenBackgroundGradient = if (darkTheme) {
+            listOf(
+                MaterialTheme.colorScheme.inversePrimary,
+                MaterialTheme.colorScheme.inversePrimary,
+                MaterialTheme.colorScheme.inversePrimary,
+                MaterialTheme.colorScheme.tertiary,
+                MaterialTheme.colorScheme.tertiary,
+                MaterialTheme.colorScheme.tertiary,
+            )
+        } else {
+            listOf(
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.tertiary,
+                MaterialTheme.colorScheme.tertiary,
+                MaterialTheme.colorScheme.tertiary,
+            )
+        },
         authenticationScreenBackgroundGradient = listOf(
             Color.Red,
             Color.Red,
             Color.Black,
             Color.Blue
-        )
+        ),
+        detailsToolbarColor = if (darkTheme) {
+            MaterialTheme.colorScheme.inversePrimary
+        } else {
+            MaterialTheme.colorScheme.primary
+        }
     )
 
     MaterialTheme(

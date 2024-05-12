@@ -162,11 +162,6 @@ fun ExerciseDetailsConfiguratorScreen(
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = LocalExtendedColorScheme.current.detailsScreenBackgroundGradient
-                )
-            )
             .pointerInput(Unit) {
 
                 //Hide keyboard on tap outside SearchBar

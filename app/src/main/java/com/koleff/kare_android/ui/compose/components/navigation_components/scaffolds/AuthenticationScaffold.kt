@@ -48,7 +48,7 @@ fun AuthenticationScaffold(
         },
     ) { innerPadding ->
 
-        //Background image
+        //Background gradient
         Box(
             modifier = Modifier
                 .fillMaxSize()

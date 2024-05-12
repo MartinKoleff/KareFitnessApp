@@ -45,6 +45,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
@@ -55,6 +56,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.random.Random
 
 @Composable
@@ -372,7 +374,10 @@ fun CurrentExerciseInfoRow(
     defaultTotalSets: Int
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
-    val setsTextColor = Color.Yellow
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.secondary
+
+    val setsTextColor = LocalExtendedColorScheme.current.doWorkoutColors.setsTextColor
     val cornerSize = 24.dp
 
     val totalSets =
@@ -386,10 +391,10 @@ fun CurrentExerciseInfoRow(
                 RoundedCornerShape(cornerSize)
             )
             .border(
-                border = BorderStroke(2.dp, color = MaterialTheme.colorScheme.outline),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
-            .background(MaterialTheme.colorScheme.onSurfaceVariant), //outline
+            .background(backgroundColor),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

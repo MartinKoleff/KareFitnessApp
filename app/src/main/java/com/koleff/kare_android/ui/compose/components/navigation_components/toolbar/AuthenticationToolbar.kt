@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 
 
 @Composable
@@ -40,15 +41,15 @@ fun AuthenticationToolbar(
 ) {
     val configuration = LocalConfiguration.current
 
+    val backgroundColor = LocalExtendedColorScheme.current.detailsToolbarColor
     val tintColor = MaterialTheme.colorScheme.onSurface
     val circleColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val backgroundColor = MaterialTheme.colorScheme.primary
 
     val hasTopOutline = true
 
     Box(
-        modifier = modifier.background(backgroundColor)
+        modifier = modifier
     ) {
 
         //Exercise Muscle Group Image
