@@ -44,7 +44,10 @@ fun MachineFilterSegmentButton(
                     disabledActiveContainerColor = buttonColor,
                     activeBorderColor = outlineColor,
                     disabledInactiveBorderColor = outlineColor,
-                    inactiveBorderColor = outlineColor
+                    inactiveBorderColor = outlineColor,
+                    activeContentColor = labelColor, //TODO: refactor to onSurface color?
+                    inactiveContentColor = MaterialTheme.colorScheme.onSurface,
+                    inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
@@ -84,7 +87,6 @@ fun MachineFilterSegmentButton(
                     text = label,
                     style = TextStyle(
                         fontSize = 12.sp,
-                        color = labelColor,
                         fontStyle = FontStyle.Italic,
                         fontWeight = FontWeight.Normal
                     ),

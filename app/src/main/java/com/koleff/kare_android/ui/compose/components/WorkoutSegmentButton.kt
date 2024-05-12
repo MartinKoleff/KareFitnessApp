@@ -42,7 +42,10 @@ fun WorkoutSegmentButton(
                     disabledActiveContainerColor = buttonColor,
                     activeBorderColor = outlineColor,
                     disabledInactiveBorderColor = outlineColor,
-                    inactiveBorderColor = outlineColor
+                    inactiveBorderColor = outlineColor,
+                    activeContentColor = labelColor, //TODO: refactor to onSurface color?
+                    inactiveContentColor = MaterialTheme.colorScheme.onSurface,
+                    inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = {
@@ -72,7 +75,7 @@ fun WorkoutSegmentButton(
                 selected = index == selectedIndex,
                 enabled = !isDisabled
             ) {
-                Text(text = label, color = labelColor)
+                Text(text = label)
             }
         }
     }
