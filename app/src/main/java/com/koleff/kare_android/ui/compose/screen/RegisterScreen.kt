@@ -28,7 +28,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.AuthenticationButton
+import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
+import com.koleff.kare_android.ui.compose.components.CustomTextField
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.PasswordTextField
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
