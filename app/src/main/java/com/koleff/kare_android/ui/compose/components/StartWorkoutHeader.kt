@@ -60,11 +60,15 @@ fun StartWorkoutButton(
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val textStyle = MaterialTheme.typography.headlineSmall.copy(
+        color = textColor
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(paddingValues)
             .height(50.dp)
+            .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
                 border = BorderStroke(2.dp, color = outlineColor),
@@ -84,11 +88,7 @@ fun StartWorkoutButton(
                 PaddingValues(8.dp)
             ),
             text = text,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -278,6 +278,10 @@ fun StartWorkoutActionButton(
     val iconSize = 30.dp
     val paddingValues = PaddingValues(2.dp)
 
+    val textStyle = MaterialTheme.typography.bodyMedium.copy(
+        color = textColor
+    )
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -303,11 +307,7 @@ fun StartWorkoutActionButton(
         Text(
             modifier = Modifier.padding(paddingValues),
             text = text,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Normal
-            ),
+            style = textStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -329,6 +329,11 @@ fun StartWorkoutDynamicActionButton(
 
     val textColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.bodyMedium.copy(
+        color = textColor
+    )
+
     val iconSize = 30.dp
     val paddingValues = 2.dp
 
@@ -359,11 +364,7 @@ fun StartWorkoutDynamicActionButton(
                 paddingValues
             ),
             text = if (isSaved) changedText else initialText,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Normal
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -405,7 +406,14 @@ fun StartWorkoutTitleAndSubtitle(
     subtitle: String
 ) {
     val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
+        color = titleTextColor
+    )
+
     val subtitleTextColor = MaterialTheme.colorScheme.onSurface
+    val subtitleTextStyle = MaterialTheme.typography.headlineLarge.copy(
+        color = subtitleTextColor
+    )
 
     val titlePadding =
         PaddingValues(
@@ -435,12 +443,7 @@ fun StartWorkoutTitleAndSubtitle(
                 titlePadding
             ),
             text = title,
-            style = TextStyle(
-                color = titleTextColor,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center
-            ),
+            style = titleTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -458,12 +461,7 @@ fun StartWorkoutTitleAndSubtitle(
                 subtitlePadding
             ),
             text = subtitle,
-            style = TextStyle(
-                color = subtitleTextColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Light,
-                textAlign = TextAlign.Center
-            ),
+            style = subtitleTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )

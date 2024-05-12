@@ -33,14 +33,21 @@ fun DoWorkoutToolbar(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
     val tintColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
             containerColor = MaterialTheme.colorScheme.primary,
-            titleContentColor = MaterialTheme.colorScheme.onSurface,
+            titleContentColor = textColor,
         ),
         title = {
             Text(
                 text = title,
+                style = textStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center

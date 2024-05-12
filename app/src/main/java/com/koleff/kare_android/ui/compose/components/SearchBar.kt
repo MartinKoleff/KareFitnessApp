@@ -44,6 +44,10 @@ fun SearchBar(
     val textColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSurface
 
+    val textStyle = MaterialTheme.typography.bodyLarge.copy(
+        color = textColor
+    )
+
     Row(modifier = modifier) {
         TextField(
             value = text,
@@ -64,7 +68,7 @@ fun SearchBar(
                 //Search every time text value changes
                 onSearch(text)
             },
-            label = { Text(text = "Search", color = textColor) },
+            label = { Text(text = "Search", style = textStyle) },
             leadingIcon = {
                 Icon(
                     Icons.Filled.Search,
@@ -94,6 +98,7 @@ fun SearchBar(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SearchBarPreview() {
     SearchBar(

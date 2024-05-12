@@ -151,6 +151,13 @@ fun DoWorkoutFooter(
 ) {
     val exerciseDataPadding = PaddingValues(4.dp)
     val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+
+    val labelTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     val repsText = currentSet.reps.toString()
     val weightText = if (currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
@@ -173,11 +180,7 @@ fun DoWorkoutFooter(
                     exerciseDataPadding
                 ),
                 text = repsText,
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold
-                ),
+                style = textStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -186,11 +189,7 @@ fun DoWorkoutFooter(
                     exerciseDataPadding
                 ),
                 text = "Reps",
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal
-                ),
+                style = labelTextStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -218,11 +217,7 @@ fun DoWorkoutFooter(
                     exerciseDataPadding
                 ),
                 text = weightText,
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold
-                ),
+                style = textStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -231,11 +226,7 @@ fun DoWorkoutFooter(
                     exerciseDataPadding
                 ),
                 text = "Weight",
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal
-                ),
+                style = labelTextStyle,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
@@ -377,7 +368,15 @@ fun CurrentExerciseInfoRow(
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val backgroundColor = MaterialTheme.colorScheme.secondary
 
+    val exerciseNameTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+
     val setsTextColor = LocalExtendedColorScheme.current.doWorkoutColors.setsTextColor
+    val setTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = setsTextColor
+    )
+
     val cornerSize = 24.dp
 
     val totalSets =
@@ -405,11 +404,7 @@ fun CurrentExerciseInfoRow(
                 )
                 .weight(5f),
             text = currentExercise.name,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = exerciseNameTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -421,11 +416,7 @@ fun CurrentExerciseInfoRow(
                 )
                 .weight(1f),
             text = "$currentSetNumber of $totalSets",
-            style = TextStyle(
-                color = setsTextColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = setTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -433,6 +424,7 @@ fun CurrentExerciseInfoRow(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun CurrentExerciseInfoRowInfoRowPreview() {
     val currentExercise = MockupDataGeneratorV2.generateExercise()
@@ -446,6 +438,7 @@ fun CurrentExerciseInfoRowInfoRowPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun ExerciseDataSheetModal2Preview() {
     val exercise = MockupDataGeneratorV2.generateExercise()

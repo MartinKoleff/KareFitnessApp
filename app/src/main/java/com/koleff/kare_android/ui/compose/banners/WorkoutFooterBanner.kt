@@ -47,8 +47,19 @@ fun WorkoutFooterBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val tintColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor,
+        fontWeight = FontWeight.Bold
+    )
+
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = descriptionTextColor,
+        fontWeight = FontWeight.SemiBold
+    )
 
     Card(
         modifier = Modifier
@@ -93,58 +104,45 @@ fun WorkoutFooterBanner(
             )
 
             //Text
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(screenWidth / 2),
+                    .width(screenWidth / 2)
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 8.dp),
-                    verticalArrangement = Arrangement.Center,
-                ) {
 
-                    //Title
-                    Text(
-                        modifier = Modifier.padding(
-                            PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 16.dp,
-                                bottom = 0.dp
-                            )
-                        ),
-                        text = title,
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                //Title
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = title,
+                    style = titleTextStyle,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                    //Sub-title (description)
-                    Text(
-                        modifier = Modifier.padding(
-                            PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 8.dp,
-                                bottom = 0.dp
-                            )
-                        ),
-                        text = description,
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                //Sub-title (description)
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = description,
+                    style = descriptionTextStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

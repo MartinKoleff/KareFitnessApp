@@ -71,7 +71,9 @@ fun ExerciseBannerV1(
     val screenWidth = configuration.screenWidthDp.dp
 
     val textColor = MaterialTheme.colorScheme.onSurface
-
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
     Box(
         modifier = modifier
             .clickable { onClick.invoke() }
@@ -101,10 +103,7 @@ fun ExerciseBannerV1(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = exercise.name,
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 16.sp,
-                ),
+                style = titleTextStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -136,19 +135,31 @@ fun ExerciseBannerV2(
     val screenWidth = configuration.screenWidthDp.dp
 
     val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
+
     val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor,
+        fontWeight = FontWeight.Bold
+    )
+
     val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = descriptionTextColor,
+        fontWeight = FontWeight.SemiBold
+    )
 
     val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        if(configuration.isNightModeActive){
+        if (configuration.isNightModeActive) {
             R.drawable.background_exercise_banner_dark
         } else {
             R.drawable.background_exercise_banner_light
         }
-    }else {
+    } else {
+
         //No dark mode supported -> default banner
         R.drawable.background_exercise_banner_dark
     }
+
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -222,60 +233,47 @@ fun ExerciseBannerV2(
                     }
             )
 
-            //Exercise Title TextBox
-            Box(
+            //Texts
+            Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(screenWidth / 2),
+                    .width(screenWidth / 2)
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 8.dp),
-                    verticalArrangement = Arrangement.Center,
-                ) {
 
-                    //Exercise title
+                //Exercise title
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = exercise.name,
+                    style = titleTextStyle,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                //Exercise sub-title (description)
+                if (hasDescription) {
                     Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
                                 end = 16.dp,
-                                top = 16.dp,
+                                top = 8.dp,
                                 bottom = 0.dp
                             )
                         ),
-                        text = exercise.name,
-                        style = TextStyle(
-                            color = titleTextColor,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 2,
+                        text = "Description", //TODO: wire with ExerciseDTO...
+                        style = descriptionTextStyle,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-
-                    //Exercise sub-title (description)
-                    if (hasDescription) {
-                        Text(
-                            modifier = Modifier.padding(
-                                PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 8.dp,
-                                    bottom = 0.dp
-                                )
-                            ),
-                            text = "Description", //TODO: wire with ExerciseDTO...
-                            style = TextStyle(
-                                color = descriptionTextColor,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
                 }
             }
         }

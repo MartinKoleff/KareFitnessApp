@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
@@ -37,6 +38,10 @@ fun Toolbar(
     val tintColor = MaterialTheme.colorScheme.onSurface
     val textColor = MaterialTheme.colorScheme.onSurface
 
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     CenterAlignedTopAppBar(
         modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -53,7 +58,7 @@ fun Toolbar(
                 ) {
                     Text(
                         text = title,
-                        color = textColor,
+                        style = textStyle,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center
@@ -84,6 +89,7 @@ fun Toolbar(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun ToolbarPreview() {
     //Adding modifier moves all components up. Without modifier all components are centered.

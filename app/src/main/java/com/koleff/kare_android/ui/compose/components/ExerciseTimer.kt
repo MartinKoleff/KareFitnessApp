@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose.components
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Paint.Style
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -113,6 +114,7 @@ fun ExerciseTimer(
                 circleCenter.y - 10.dp.toPx(),
                 Paint().apply {
                     color = textColor
+                    style = Style.FILL
                     textSize = 20.sp.toPx()
                     textAlign = Paint.Align.CENTER
                 }
@@ -174,7 +176,7 @@ fun ExerciseTimerPreview() {
         modifier = Modifier
             .fillMaxSize()
 //            .size(exerciseTimerStyle.timerRadius * 2)
-            .background(MaterialTheme.colorScheme.scrim),
+            .background(MaterialTheme.colorScheme.surface),
         timeLeft = currentTime,
         totalTime = totalTime
     )

@@ -29,9 +29,12 @@ fun SettingsListItem(
     isChecked: Boolean = false
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     ListItem(
-        headlineContent = { Text(text = title, color = textColor) },
+        headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
                 icon,

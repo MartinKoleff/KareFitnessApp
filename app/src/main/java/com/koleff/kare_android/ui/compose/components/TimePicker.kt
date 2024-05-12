@@ -66,6 +66,10 @@ fun CircularTimePicker(
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     LaunchedEffect(scrollState.isScrollInProgress) {
         if (!scrollState.isScrollInProgress) {
             val currentTime =
@@ -94,7 +98,7 @@ fun CircularTimePicker(
                 ) {
                     Text(
                         text = String.format("%02d", num),
-                        color = textColor,
+                        style = textStyle,
                         fontSize = LocalDensity.current.run { circularTimerStyle.cellTextSize.toSp() }
                     )
                 }
@@ -127,6 +131,11 @@ fun CircularTimerFooter(
     circularTimerStyle: CircularTimerStyle = CircularTimerStyle()
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     val cornerSize = 20.dp
     Row(
         modifier = modifier
@@ -139,11 +148,7 @@ fun CircularTimerFooter(
             modifier = Modifier
                 .padding(4.dp),
             text = "Time:",
-            style = TextStyle(
-                color = textColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = textStyle,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -184,11 +189,7 @@ fun CircularTimerFooter(
                         modifier = Modifier
                             .padding(4.dp),
                         text = "min.",
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = textStyle,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -207,11 +208,7 @@ fun CircularTimerFooter(
                         modifier = Modifier
                             .padding(4.dp),
                         text = "sec.",
-                        style = TextStyle(
-                            color = textColor,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = textStyle,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -239,6 +236,10 @@ fun RestBetweenSetsFooter(
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
 
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     Column(
         modifier = modifier.padding(horizontal = 16.dp, vertical = 4.dp)
     ) {
@@ -255,11 +256,7 @@ fun RestBetweenSetsFooter(
                 modifier = Modifier
                     .padding(4.dp),
                 text = "Rest between sets:",
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                ),
+                style = textStyle,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis

@@ -50,17 +50,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
-import com.koleff.kare_android.ui.compose.screen.LoginScreen
-
-@Preview
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
-}
 
 @Composable
 fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     val titleTextColor = MaterialTheme.colorScheme.onSurface
+
+    val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
+        color = titleTextColor
+    )
+
+    val subtitleTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = titleTextColor
+    )
 
     val titlePadding =
         PaddingValues(
@@ -90,11 +91,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
                 titlePadding
             ),
             text = title,
-            style = TextStyle(
-                color = titleTextColor,
-                fontSize = 40.sp,
-                fontWeight = FontWeight.ExtraBold
-            ),
+            style = titleTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -112,11 +109,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
                 subtitlePadding
             ),
             text = subtitle,
-            style = TextStyle(
-                color = titleTextColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Light
-            ),
+            style = subtitleTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -144,6 +137,10 @@ fun CustomTextField(
     val labelTextColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSurface
 
+    val labelTextStyle = MaterialTheme.typography.labelLarge.copy(
+        color = labelTextColor
+    )
+
     TextField(
         value = text,
         onValueChange = {
@@ -151,7 +148,7 @@ fun CustomTextField(
             onValueChange(it)
         },
         label = {
-            Text(text = label, color = labelTextColor)
+            Text(text = label, style = labelTextStyle)
         },
         modifier = Modifier
             .fillMaxWidth()
@@ -163,7 +160,7 @@ fun CustomTextField(
             ),
         singleLine = true,
         placeholder = {
-            Text(text = label, color = labelTextColor)
+            Text(text = label, style = labelTextStyle)
         },
         leadingIcon = {
             Image(
@@ -196,7 +193,6 @@ fun CustomTextFieldPreview() {
     )
 }
 
-//TODO: fix tint for text and icons...
 @Composable
 fun PasswordTextField(
     label: String = "Password",
@@ -219,6 +215,10 @@ fun PasswordTextField(
     val labelTextColor = MaterialTheme.colorScheme.onSurface
     val tintColor = MaterialTheme.colorScheme.onSurface
 
+    val labelTextStyle = MaterialTheme.typography.labelLarge.copy(
+        color = labelTextColor
+    )
+
     TextField(
         value = password,
         onValueChange = {
@@ -234,11 +234,11 @@ fun PasswordTextField(
                 shape = RoundedCornerShape(cornerSize)
             ),
         label = {
-            Text(text = label, color = labelTextColor)
+            Text(text = label, style = labelTextStyle)
         },
         singleLine = true,
         placeholder = {
-            Text(text = label, color = labelTextColor)
+            Text(text = label, style = labelTextStyle)
         },
         leadingIcon = {
             Image(
@@ -291,6 +291,10 @@ fun HorizontalLineWithText(
     )
     val labelTextColor = MaterialTheme.colorScheme.onSurface
 
+    val labelTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = labelTextColor
+    )
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(paddingValues)
@@ -307,11 +311,7 @@ fun HorizontalLineWithText(
                 PaddingValues(8.dp)
             ),
             text = text,
-            style = TextStyle(
-                color = labelTextColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium
-            ),
+            style = labelTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -344,6 +344,10 @@ fun AuthenticationButton(
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val backgroundColor = MaterialTheme.colorScheme.primaryContainer
 
+    val buttonTextStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -368,11 +372,7 @@ fun AuthenticationButton(
                 PaddingValues(8.dp)
             ),
             text = text,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = buttonTextStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )

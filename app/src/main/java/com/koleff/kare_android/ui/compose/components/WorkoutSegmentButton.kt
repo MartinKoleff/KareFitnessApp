@@ -31,6 +31,10 @@ fun WorkoutSegmentButton(
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val labelTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = labelColor
+    )
+
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("MyWorkout", "Workouts")
 
@@ -43,7 +47,7 @@ fun WorkoutSegmentButton(
                     activeBorderColor = outlineColor,
                     disabledInactiveBorderColor = outlineColor,
                     inactiveBorderColor = outlineColor,
-                    activeContentColor = labelColor, //TODO: refactor to onSurface color?
+                    activeContentColor = labelColor,
                     inactiveContentColor = MaterialTheme.colorScheme.onSurface,
                     inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
@@ -75,7 +79,7 @@ fun WorkoutSegmentButton(
                 selected = index == selectedIndex,
                 enabled = !isDisabled
             ) {
-                Text(text = label)
+                Text(text = label, style = labelTextStyle)
             }
         }
     }

@@ -51,6 +51,10 @@ fun AddExerciseToWorkoutBanner(
     val subtitleTextColor = MaterialTheme.colorScheme.onSurface
     val circleColor = MaterialTheme.colorScheme.onSurface
     val addNewWorkoutTint = Color.Green
+
+    val titleTextStyle = MaterialTheme.typography.titleMedium
+    val subtitleTextStyle = MaterialTheme.typography.titleSmall
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -107,7 +111,7 @@ fun AddExerciseToWorkoutBanner(
                 ) {
 
                     //Title
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -117,17 +121,13 @@ fun AddExerciseToWorkoutBanner(
                             )
                         ),
                         text = "Want to add exercise to your workout?",
-                        style = TextStyle(
-                            color = titleTextColor,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = titleTextStyle,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
 
                     //Sub-title (description)
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -137,11 +137,7 @@ fun AddExerciseToWorkoutBanner(
                             )
                         ),
                         text = "Click to select an exercise.",
-                        style = TextStyle(
-                            color = subtitleTextColor,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                        style = subtitleTextStyle,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

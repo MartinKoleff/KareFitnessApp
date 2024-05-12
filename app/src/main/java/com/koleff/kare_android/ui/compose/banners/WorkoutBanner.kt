@@ -80,8 +80,6 @@ fun WorkoutBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
-    val subtitleTextColor = MaterialTheme.colorScheme.onSurface
     val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
         if (configuration.isNightModeActive) {
             R.drawable.background_workout_banner_dark
@@ -92,6 +90,18 @@ fun WorkoutBanner(
         //No dark mode supported -> default banner
         R.drawable.background_workout_banner_dark
     }
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor,
+        fontWeight = FontWeight.Bold
+    )
+
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = descriptionTextColor,
+        fontWeight = FontWeight.SemiBold
+    )
 
     val bannerTintColors =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -198,7 +208,7 @@ fun WorkoutBanner(
                         .fillMaxHeight()
                         .padding(end = 8.dp),
 //                        .weight(7f),
-                    verticalArrangement = Arrangement.Center, //TODO: change to Top when adding sets...
+                    verticalArrangement = Arrangement.Center
                 ) {
 
                     //Workout title
@@ -212,11 +222,7 @@ fun WorkoutBanner(
                             )
                         ),
                         text = workout.name,
-                        style = TextStyle(
-                            color = titleTextColor,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = titleTextStyle,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -233,11 +239,7 @@ fun WorkoutBanner(
                                 )
                             ),
                             text = "Exercises: ${workout.totalExercises}",
-                            style = TextStyle(
-                                color = subtitleTextColor,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            ),
+                            style = descriptionTextStyle,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -356,6 +358,11 @@ fun DeleteButton(
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val tintColor = MaterialTheme.colorScheme.onSurface
 
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor,
+        fontWeight = FontWeight.SemiBold
+    )
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -387,11 +394,7 @@ fun DeleteButton(
 
         Text(
             text = title,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
@@ -412,6 +415,11 @@ fun SelectButton(
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val tintColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor,
+        fontWeight = FontWeight.SemiBold
+    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -447,11 +455,7 @@ fun SelectButton(
 
         Text(
             text = title,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
@@ -472,6 +476,11 @@ fun EditButton(
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val tintColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor,
+        fontWeight = FontWeight.SemiBold
+    )
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -504,11 +513,7 @@ fun EditButton(
 
         Text(
             text = title,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 12.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center

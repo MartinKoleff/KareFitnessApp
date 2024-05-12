@@ -49,6 +49,10 @@ fun MuscleGroupImageCard(
     val textColor = MaterialTheme.colorScheme.onSurface
     val backgroundColor = MaterialTheme.colorScheme.tertiary
 
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(15.dp),
@@ -98,11 +102,7 @@ fun MuscleGroupImageCard(
 
                 Text(
                     text = title,
-                    style = TextStyle(
-                        color = textColor,
-                        fontSize = 16.sp,
-                        fontStyle = FontStyle.Italic,
-                    ),
+                    style = textStyle
                 )
             }
         }

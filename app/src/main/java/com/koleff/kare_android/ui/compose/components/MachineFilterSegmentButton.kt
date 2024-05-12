@@ -34,6 +34,10 @@ fun MachineFilterSegmentButton(
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val labelTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = labelColor
+    )
+
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
     val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
     SingleChoiceSegmentedButtonRow(modifier) {
@@ -45,7 +49,7 @@ fun MachineFilterSegmentButton(
                     activeBorderColor = outlineColor,
                     disabledInactiveBorderColor = outlineColor,
                     inactiveBorderColor = outlineColor,
-                    activeContentColor = labelColor, //TODO: refactor to onSurface color?
+                    activeContentColor = labelColor,
                     inactiveContentColor = MaterialTheme.colorScheme.onSurface,
                     inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
@@ -85,11 +89,7 @@ fun MachineFilterSegmentButton(
             ) {
                 Text(
                     text = label,
-                    style = TextStyle(
-                        fontSize = 12.sp,
-                        fontStyle = FontStyle.Italic,
-                        fontWeight = FontWeight.Normal
-                    ),
+                    style = labelTextStyle,
                 )
             }
         }

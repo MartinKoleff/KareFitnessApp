@@ -65,6 +65,10 @@ fun ExerciseSetRow(
     val backgroundColor = MaterialTheme.colorScheme.tertiary
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
@@ -84,9 +88,9 @@ fun ExerciseSetRow(
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 text = "Set $setNumber",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = textColor
+                style = textStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             RepsTextField(
@@ -206,6 +210,9 @@ fun ExerciseSetTextField(
     val backgroundColor = MaterialTheme.colorScheme.tertiary
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val textStyle = MaterialTheme.typography.bodyLarge.copy(
+        color = textColor
+    )
     val cornerSize = 16.dp
     BasicTextField(
         modifier = modifier,
@@ -213,10 +220,7 @@ fun ExerciseSetTextField(
         onValueChange = { text ->
             onTextChange(text)
         },
-        textStyle = TextStyle(
-            color = textColor,
-            fontWeight = FontWeight.Bold
-        ),
+        textStyle = textStyle,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         maxLines = 1,
         decorationBox = { innerTextField ->
@@ -234,8 +238,7 @@ fun ExerciseSetTextField(
                 Text(
                     modifier = Modifier.padding(horizontal = 6.dp),
                     text = label,
-                    color = textColor,
-                    fontWeight = FontWeight.Medium,
+                    style = textStyle
                 )
                 innerTextField()
             }
@@ -304,6 +307,10 @@ fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
     val textColor = MaterialTheme.colorScheme.onSurface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -335,11 +342,7 @@ fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
             modifier = Modifier
                 .padding(horizontal = 16.dp),
             text = "Add new set",
-            style = TextStyle(
-                color = textColor,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = textStyle,
             textAlign = TextAlign.Start,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

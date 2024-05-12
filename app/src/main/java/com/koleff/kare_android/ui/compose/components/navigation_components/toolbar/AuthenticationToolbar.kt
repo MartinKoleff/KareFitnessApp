@@ -48,9 +48,7 @@ fun AuthenticationToolbar(
 
     val hasTopOutline = true
 
-    Box(
-        modifier = modifier
-    ) {
+    Box(modifier = modifier) {
 
         //Exercise Muscle Group Image
         Image(
