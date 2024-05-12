@@ -31,7 +31,7 @@ fun WorkoutSegmentButton(
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
-    val labelTextStyle = MaterialTheme.typography.bodySmall.copy(
+    val labelTextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = labelColor
     )
 

@@ -100,7 +100,7 @@ fun ExerciseDetailsScreen(
     )
 
     val labelTextColor = MaterialTheme.colorScheme.onSurface
-    val labelTextStyle = MaterialTheme.typography.titleMedium.copy(
+    val labelTextStyle = MaterialTheme.typography.titleMedium.copy( //TODO: Change font family?
         color = labelTextColor
     )
 
