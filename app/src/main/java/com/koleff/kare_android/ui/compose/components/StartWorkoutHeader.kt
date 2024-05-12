@@ -67,7 +67,7 @@ fun StartWorkoutButton(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(50.dp)
+            .height(75.dp)
             .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
@@ -218,19 +218,18 @@ fun StartWorkoutActionRow(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            StartWorkoutDynamicActionButton(
-                modifier = Modifier.weight(1f),
-                initialText = "Save",
-                changedText = "Saved",
-                initialIconResourceId = R.drawable.ic_heart_outline,
-                changedIconResourceId = R.drawable.ic_heart_full
+            StartWorkoutActionButton(
+                modifier = Modifier.weight(1.2f),
+                text = "Edit workout name",
+                iconResourceId = R.drawable.ic_edit,
+                onAction = onEditWorkoutNameAction
             )
 
             StartWorkoutActionButton(
-                modifier = Modifier.weight(1f),
-                text = "Add exercise",
-                iconResourceId = R.drawable.ic_vector_add,
-                onAction = onAddExerciseAction
+                modifier = Modifier.weight(1.1f),
+                text = "Configure workout",
+                iconResourceId = R.drawable.ic_vector_settings,
+                onAction = onConfigureAction
             )
         }
 
@@ -244,16 +243,18 @@ fun StartWorkoutActionRow(
         ) {
             StartWorkoutActionButton(
                 modifier = Modifier.weight(1f),
-                text = "Edit workout name",
-                iconResourceId = R.drawable.ic_edit,
-                onAction = onEditWorkoutNameAction
+                text = "Add exercise",
+                iconResourceId = R.drawable.ic_vector_add,
+                onAction = onAddExerciseAction
             )
 
-            StartWorkoutActionButton(
+
+            StartWorkoutDynamicActionButton(
                 modifier = Modifier.weight(1f),
-                text = "Configure workout",
-                iconResourceId = R.drawable.ic_vector_settings,
-                onAction = onConfigureAction
+                initialText = "Save",
+                changedText = "Saved",
+                initialIconResourceId = R.drawable.ic_heart_outline,
+                changedIconResourceId = R.drawable.ic_heart_full
             )
 
             StartWorkoutActionButton(
@@ -278,7 +279,7 @@ fun StartWorkoutActionButton(
     val iconSize = 30.dp
     val paddingValues = PaddingValues(2.dp)
 
-    val textStyle = MaterialTheme.typography.bodyMedium.copy(
+    val textStyle = MaterialTheme.typography.labelLarge.copy(
         color = textColor
     )
 
@@ -444,7 +445,7 @@ fun StartWorkoutTitleAndSubtitle(
             ),
             text = title,
             style = titleTextStyle,
-            maxLines = 2,
+            maxLines = 4,
             overflow = TextOverflow.Ellipsis
         )
     }
