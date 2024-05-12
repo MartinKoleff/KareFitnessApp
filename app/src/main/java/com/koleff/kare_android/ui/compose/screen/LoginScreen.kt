@@ -42,7 +42,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -285,9 +287,13 @@ fun CustomTextField(
         horizontal = 32.dp,
         vertical = 8.dp
     )
+
     val cornerSize = 8.dp //Slight rounded corners
+
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val labelTextColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSecondary
+
     TextField(
         value = text,
         onValueChange = {
@@ -316,11 +322,11 @@ fun CustomTextField(
                     .padding(vertical = 8.dp, horizontal = 2.dp),
                 painter = painterResource(iconResourceId),
                 contentDescription = "Icon",
-                contentScale = ContentScale.Inside
-//                    colorFilter = ColorFilter.tint(
-//                        color = MaterialTheme.colorScheme.primary,
-//                        blendMode = BlendMode.DstIn
-//                    )
+                contentScale = ContentScale.Inside,
+                colorFilter = ColorFilter.tint(
+                    color = tintColor,
+                    blendMode = BlendMode.SrcIn
+                )
             )
 //            Icon(
 //                painter = painterResource(iconResourceId),
@@ -340,6 +346,7 @@ fun CustomTextFieldPreview() {
     )
 }
 
+//TODO: fix tint for text and icons...
 @Composable
 fun PasswordTextField(
     label: String = "Password",
@@ -357,7 +364,11 @@ fun PasswordTextField(
         vertical = 8.dp
     )
     val cornerSize = 8.dp //slight round corners
-    val textFieldColor = MaterialTheme.colorScheme.onSecondary
+
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val labelTextColor = MaterialTheme.colorScheme.onSecondary
+    val tintColor = MaterialTheme.colorScheme.onSecondary
+
     TextField(
         value = password,
         onValueChange = {
@@ -369,15 +380,15 @@ fun PasswordTextField(
             .padding(paddingValues)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(2.dp, color = textFieldColor),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             ),
         label = {
-            Text(label)
+            Text(text = label, color = labelTextColor)
         },
         singleLine = true,
         placeholder = {
-            Text(label)
+            Text(text = label, color = labelTextColor)
         },
         leadingIcon = {
             Image(
@@ -386,10 +397,10 @@ fun PasswordTextField(
                     .padding(vertical = 8.dp, horizontal = 2.dp),
                 painter = painterResource(id = R.drawable.ic_vector_password),
                 contentDescription = "Password icon",
-//                    colorFilter = ColorFilter.tint(
-//                        color = MaterialTheme.colorScheme.primary,
-//                        blendMode = BlendMode.DstIn
-//                    )
+                colorFilter = ColorFilter.tint(
+                    color = tintColor,
+                    blendMode = BlendMode.SrcIn
+                )
             )
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -401,7 +412,11 @@ fun PasswordTextField(
 
             val contentDescription = if (passwordVisible) "Hide password" else "Show password"
             IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                Icon(imageVector = image, contentDescription)
+                Icon(
+                    imageVector = image,
+                    tint = tintColor,
+                    contentDescription = contentDescription
+                )
             }
         })
 }
