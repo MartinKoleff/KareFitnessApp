@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.banners
 
+import android.os.Build
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -46,6 +48,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -53,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import kotlin.math.roundToInt
 
@@ -136,6 +138,17 @@ fun ExerciseBannerV2(
     val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+
+    val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if(configuration.isNightModeActive){
+            R.drawable.background_exercise_banner_dark
+        } else {
+            R.drawable.background_exercise_banner_light
+        }
+    }else {
+        //No dark mode supported -> default banner
+        R.drawable.background_exercise_banner_dark
+    }
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -153,9 +166,18 @@ fun ExerciseBannerV2(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2)
-                    .graphicsLayer { alpha = 0.95f }
-                    .background(color = Color.Black) //TODO: add blend mode...
-                    .align(Alignment.TopStart),
+                    .align(Alignment.TopStart)
+                    .drawBehind {
+
+                        //Fixes white rectangle on left half side
+                        drawRect(
+                            color = Color.Black,
+                            size = this.size.copy(
+                                width = (screenWidth / 2).toPx()
+                            )
+                        )
+                    }
+                    .graphicsLayer { alpha = 0.80f }
             )
 
 
@@ -172,7 +194,7 @@ fun ExerciseBannerV2(
 
             //Parallax effect overflowing into exercise snapshot
             Image(
-                painter = painterResource(R.drawable.background_exercise_banner_effect),
+                painter = painterResource(bannerImage),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -377,6 +399,7 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SwipeableExerciseBannerPreview() {
     val exercise = MockupDataGeneratorV2.generateExercise()
@@ -392,6 +415,7 @@ fun SwipeableExerciseBannerPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun ExerciseListPreview() {
     val n = 5

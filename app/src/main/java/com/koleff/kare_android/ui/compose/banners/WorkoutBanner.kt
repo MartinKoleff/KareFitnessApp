@@ -1,6 +1,6 @@
 package com.koleff.kare_android.ui.compose.banners
 
-import androidx.annotation.Px
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -57,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -65,7 +66,6 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.theme.ExtendedColorScheme
 import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.math.roundToInt
 
@@ -82,6 +82,57 @@ fun WorkoutBanner(
     val workoutImage: Int = MuscleGroup.getImage(workout.muscleGroup)
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val subtitleTextColor = MaterialTheme.colorScheme.onSurface
+    val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (configuration.isNightModeActive) {
+            R.drawable.background_workout_banner_dark
+        } else {
+            R.drawable.background_workout_banner_light_2
+        }
+    } else {
+        //No dark mode supported -> default banner
+        R.drawable.background_workout_banner_dark
+    }
+
+    val bannerTintColors =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (configuration.isNightModeActive) {
+                listOf(
+                    Color.Black,
+                    Color.Black,
+                    Color.Black,
+                    Color.Black,
+                    Color.Black,
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Transparent
+                )
+            } else {
+                listOf(
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.primary,
+                    MaterialTheme.colorScheme.secondary,
+                    MaterialTheme.colorScheme.secondary,
+                    Color.Transparent,
+                    Color.Transparent,
+                    Color.Transparent
+                )
+            }
+        } else {
+
+            //No dark mode supported -> default banner
+            listOf(
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.primary,
+                MaterialTheme.colorScheme.secondary,
+                MaterialTheme.colorScheme.secondary,
+                Color.Transparent,
+                Color.Transparent,
+                Color.Transparent
+            )
+        }
+
     Card(
         modifier = modifier
             .fillMaxSize()
@@ -107,7 +158,7 @@ fun WorkoutBanner(
 
             //Hexagon effect overflowing into workout snapshot
             Image(
-                painter = painterResource(R.drawable.background_workout_banner),
+                painter = painterResource(bannerImage),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -128,19 +179,8 @@ fun WorkoutBanner(
                         drawContent()
 
                         //Fill 5/8 of the screen with effect gradient
-                        val colors = listOf(
-                            Color.Black,
-                            Color.Black,
-                            Color.Black,
-                            Color.Black,
-                            Color.Black,
-                            Color.Transparent,
-                            Color.Transparent,
-                            Color.Transparent
-                        )
-
                         drawRect(
-                            brush = Brush.horizontalGradient(colors),
+                            brush = Brush.horizontalGradient(bannerTintColors),
                             blendMode = BlendMode.DstIn
                         )
                     }
@@ -548,6 +588,7 @@ fun WorkoutBannerPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SwipeableWorkoutBannerPreview() {
     val workout = MockupDataGeneratorV2.generateWorkout()
@@ -565,6 +606,7 @@ fun SwipeableWorkoutBannerPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun DeleteButtonPreview() {
     val configuration = LocalConfiguration.current
@@ -582,6 +624,7 @@ fun DeleteButtonPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SelectButtonPreview() {
     val configuration = LocalConfiguration.current
@@ -599,6 +642,7 @@ fun SelectButtonPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun EditButtonPreview() {
     val configuration = LocalConfiguration.current
