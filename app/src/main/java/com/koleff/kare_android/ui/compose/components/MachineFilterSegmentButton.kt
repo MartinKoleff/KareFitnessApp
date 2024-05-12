@@ -34,7 +34,7 @@ fun MachineFilterSegmentButton(
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
-    val labelTextStyle = MaterialTheme.typography.titleSmall.copy(
+    val labelTextStyle = MaterialTheme.typography.bodySmall.copy(
         color = labelColor
     )
 
