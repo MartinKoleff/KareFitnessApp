@@ -53,7 +53,7 @@ class SearchExercisesViewModel @Inject constructor(
         get() = _updateWorkoutState
 
 //    val searchState = _searchState
-//        .debounce(Constants.fakeSmallDelay)
+//        .debounce(Constants.fakeDelay)
 //        .onEach { exercisesState ->  exercisesState.isSearching = true }
 //        .combine(_state) { searchState, exercisesState ->
 //            when {

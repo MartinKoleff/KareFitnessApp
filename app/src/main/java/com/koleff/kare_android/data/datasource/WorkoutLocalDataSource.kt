@@ -438,7 +438,7 @@
 //    override suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>> =
 //        flow {
 //            emit(ResultWrapper.Loading())
-//            delay(Constants.fakeSmallDelay)
+//            delay(Constants.fakeDelay)
 //
 //            val workout = WorkoutDto()
 //
@@ -469,7 +469,7 @@
 //    override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>> =
 //        flow {
 //            emit(ResultWrapper.Loading())
-//            delay(Constants.fakeSmallDelay)
+//            delay(Constants.fakeDelay)
 //
 //            val workoutId = workoutDao.insertWorkout(workoutDto.toEntity()) //Get workout id
 //
@@ -507,7 +507,7 @@
 //    override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
 //        flow {
 //            emit(ResultWrapper.Loading())
-//            delay(Constants.fakeSmallDelay)
+//            delay(Constants.fakeDelay)
 //
 //            val workoutDetailsId =
 //                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //Get workout details id

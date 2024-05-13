@@ -241,9 +241,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
     override suspend fun updateWorkoutDetails(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> =
         flow {
-            emit(ResultWrapper.Loading())
-            delay(Constants.fakeDelay)
-
             workoutDetailsDao.updateWorkoutDetails(workoutDetails.toEntity())
 
             //Update duplicate data between WorkoutDetails and Workout
@@ -403,7 +400,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     override suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(Constants.fakeSmallDelay)
+            delay(Constants.fakeDelay)
 
             val workout = WorkoutDto()
 
@@ -436,7 +433,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     override suspend fun createCustomWorkout(workoutDto: WorkoutDto): Flow<ResultWrapper<WorkoutWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(Constants.fakeSmallDelay)
+            delay(Constants.fakeDelay)
 
             val workoutId = workoutDao.insertWorkout(workoutDto.toEntity()) //Get workout id
 
@@ -475,7 +472,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     override suspend fun createCustomWorkoutDetails(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<WorkoutDetailsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
-            delay(Constants.fakeSmallDelay)
+            delay(Constants.fakeDelay)
 
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //Get workout details id

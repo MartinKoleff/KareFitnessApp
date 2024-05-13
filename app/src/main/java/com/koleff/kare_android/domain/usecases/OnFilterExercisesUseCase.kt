@@ -19,7 +19,7 @@ class OnFilterExercisesUseCase() {
 
     suspend operator fun invoke(event: OnFilterExercisesEvent): Flow<ExerciseListState> = flow {
         emit(ExerciseListState(isLoading = true))
-        delay(Constants.fakeSmallDelay)
+        delay(Constants.fakeDelay)
 
         when (event) {
             is OnFilterExercisesEvent.DumbbellFilter -> {

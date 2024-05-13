@@ -95,7 +95,7 @@ class WorkoutViewModel @Inject constructor(
             _state.value = WorkoutListState(
                 isLoading = true
             )
-            delay(Constants.fakeSmallDelay)
+            delay(Constants.fakeDelay)
 
             when (event) {
                 OnWorkoutScreenSwitchEvent.AllWorkouts -> {
