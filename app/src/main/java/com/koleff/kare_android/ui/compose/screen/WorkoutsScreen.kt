@@ -272,7 +272,10 @@ fun WorkoutsScreen(
                             NoWorkoutSelectedBanner {
 
                                 //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test...
+                                workoutListViewModel.navigateToSearchWorkout(
+                                    -1,
+                                    -1
+                                ) //TODO: test...
                             }
                         }
                     } else {
@@ -308,19 +311,22 @@ fun WorkoutsScreen(
                             }
 
                             //Footer
+                            //TODO: [Bug] fix onPullToRefresh NoWorkoutSelectBanner showing...
                             item {
                                 if (workoutState.workoutList.isEmpty()) {
                                     NoWorkoutSelectedBanner {
 
                                         //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test...
+                                        workoutListViewModel.navigateToSearchWorkout(
+                                            -1,
+                                            -1
+                                        ) //TODO: test...
                                     }
-                                } else {
+                                } else
                                     AddWorkoutBanner {
                                         workoutListViewModel.createNewWorkout()
                                         Log.d("WorkoutScreen", "hasUpdated set to true.")
                                     }
-                                }
                             }
                         }
                     }

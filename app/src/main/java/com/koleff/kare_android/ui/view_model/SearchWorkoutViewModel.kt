@@ -141,6 +141,16 @@ class SearchWorkoutViewModel @Inject constructor(
         )
     }
 
+    fun navigateToWorkouts() {
+        super.onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = Destination.Dashboard.route,
+                destinationRoute = Destination.Workouts.route,
+                inclusive = false
+            )
+        )
+    }
+
     override fun clearError() {
         if (selectedWorkoutState.value.isError) {
             _selectedWorkoutState.value = WorkoutDetailsState()

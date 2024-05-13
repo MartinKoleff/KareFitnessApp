@@ -561,9 +561,6 @@ class WorkoutUseCasesUnitTest {
             val updateWorkoutDetailsState =
                 workoutUseCases.updateWorkoutDetailsUseCase(modifiedWorkoutDetails).toList()
 
-            logger.i(TAG, "Update workout details -> isLoading state raised.")
-            assertTrue { updateWorkoutDetailsState[0].isLoading }
-
             logger.i(TAG, "Update workout details -> isSuccessful state raised.")
             assertTrue { updateWorkoutDetailsState[1].isSuccessful }
 

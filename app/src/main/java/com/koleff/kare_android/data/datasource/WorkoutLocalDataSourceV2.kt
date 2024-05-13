@@ -699,7 +699,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     sets = exercise.sets.map { set ->
                         set.toEntity()
                     })
-            }catch (e: IllegalArgumentException){
+            } catch (e: IllegalArgumentException) {
 
                 //Invalid workoutId
                 emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
