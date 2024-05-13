@@ -12,7 +12,7 @@ enum class MuscleGroup(
     CHEST(1, "Chest", "", R.drawable.background_chest_2),
     BACK(2, "Back", "", R.drawable.background_back),
     TRICEPS(3, "Triceps", "", R.drawable.background_triceps_3),
-    BICEPS(4, "Biceps", "", R.drawable.background_biceps_2),
+    BICEPS(4, "Biceps", "", R.drawable.background_biceps),
     SHOULDERS(5, "Shoulders", "", R.drawable.background_shoulders_2),
     LEGS(6, "Legs", "", R.drawable.background_legs),
     ABS(7, "Abs", "", -1),
