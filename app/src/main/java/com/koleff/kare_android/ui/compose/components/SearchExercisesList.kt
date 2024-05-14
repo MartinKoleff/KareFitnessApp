@@ -7,6 +7,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,9 +23,7 @@ import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
 fun SearchExercisesList(
     modifier: Modifier,
     exerciseList: List<ExerciseDto>,
-    workoutId: Int, //Used for navigateToExerciseDetailsConfigurator -> Deprecated
-    navigateToExerciseDetailsConfigurator: (ExerciseDto, Int) -> Unit, //Deprecated
-    onSubmitExercise: (ExerciseDto) -> Unit
+    onSelectExercise: (ExerciseDto) -> Unit
 ) {
     LazyColumn(modifier = modifier) {
         val muscleGroups = exerciseList.map(ExerciseDto::muscleGroup).distinct()
@@ -47,11 +48,7 @@ fun SearchExercisesList(
                         .height(200.dp),
                     exercise = currentExercise,
                 ) { selectedExercise ->
-                    onSubmitExercise(selectedExercise)
-
-                    //TODO: select multiple exercises rework...
-
-                    //navigateToExerciseDetailsConfigurator(selectedExercise, workoutId)
+                    onSelectExercise(selectedExercise)
                 }
             }
         }
@@ -71,11 +68,7 @@ fun SearchExercisesListPreview() {
     SearchExercisesList(
         modifier = modifier,
         exerciseList = exerciseList,
-        workoutId = 1,
-        navigateToExerciseDetailsConfigurator = { exercise, workoutId ->
-
-        },
-        onSubmitExercise = {
+        onSelectExercise = {
 
         }
     )
