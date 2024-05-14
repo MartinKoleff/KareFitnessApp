@@ -4,6 +4,8 @@ import com.koleff.kare_android.data.model.request.ExerciseAddRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesAddRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
@@ -60,9 +62,19 @@ interface WorkoutApi {
         @Body body: ExerciseDeletionRequest
     ): WorkoutDetailsResponse
 
+    @DELETE("api/v1/workout/deletemultipleexercises")
+    suspend fun deleteMultipleExercises(
+        @Body body: MultipleExercisesDeletionRequest
+    ): WorkoutDetailsResponse
+
     @POST("api/v1/workout/addexercise")
     fun addExercise(
         @Body body: ExerciseAddRequest
+    ): WorkoutDetailsResponse
+
+    @POST("api/v1/workout/addmultipleexercises")
+    fun addMultipleExercises(
+        @Body body: MultipleExercisesAddRequest
     ): WorkoutDetailsResponse
 
     @POST("api/v1/workout/submitexercise")
