@@ -277,7 +277,7 @@ fun WarningDialog(
                 Text(
                     text = actionButtonTitle,
                     style = buttonTextStyle,
-                    textAlign = TextAlign.End,
+                    textAlign = TextAlign.Start,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -418,6 +418,21 @@ fun WorkoutCompletedDialog(
     )
 }
 
+
+@Composable
+fun DuplicateExercisesFoundDialog(
+    onDismiss: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    WarningDialog(
+        title = "Duplicate exercises found",
+        description = "Some exercises are already found in your workout. Do you want to overwrite them?",
+        actionButtonTitle = "Overwrite and submit",
+        onDismiss = onDismiss,
+        onClick = onSubmit,
+    )
+}
+
 @Preview
 @PreviewLightDark
 @Composable
@@ -433,11 +448,16 @@ fun WorkoutCompletedDialogPreview(
 @PreviewLightDark
 @Composable
 fun EnableNotificationsDialogPreview() {
-    WarningDialog(
-        title = "Enable Notifications",
-        description = "Notifications are important for our app. Please enable them in settings.",
-        actionButtonTitle = "Open Settings",
-        onClick = {},
+    EnableNotificationsDialog(onClick = {}, onDismiss = {})
+}
+
+
+@Preview
+@PreviewLightDark
+@Composable
+fun DuplicateExercisesFoundDialogPreview() {
+    DuplicateExercisesFoundDialog(
+        onSubmit = {},
         onDismiss = {}
     )
 }

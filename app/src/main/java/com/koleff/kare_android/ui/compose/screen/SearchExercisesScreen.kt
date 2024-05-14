@@ -47,6 +47,7 @@ import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.SearchExercisesList
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.compose.dialogs.DuplicateExercisesFoundDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.BaseState
@@ -62,22 +63,13 @@ fun SearchExercisesScreen(
 
     val exercisesState by searchExercisesViewModel.state.collectAsState()
     val updateWorkoutState by searchExercisesViewModel.updateWorkoutState.collectAsState()
-
-    //Navigation Callbacks
-    val onNavigateToSettings = {
-        searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-    val onNavigateBack =
-        { searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
+    val duplicateExercisesState by searchExercisesViewModel.duplicateExercisesState.collectAsState()
 
     val selectedExercises = remember {
         mutableStateListOf<ExerciseDto>()
     }
 
     val onSubmitExercises: () -> Unit = {  //(List<ExerciseDto>) -> Unit
-        //TODO: show dialog that exercises are contained in workout do you want to override them?
-        val containsDuplicates = searchExercisesViewModel.findDuplicateExercises(selectedExercises)
-
         searchExercisesViewModel.onMultipleExercisesUpdateEvent(
             OnMultipleExercisesUpdateEvent.OnMultipleExercisesSubmit(selectedExercises)
         )
@@ -93,6 +85,7 @@ fun SearchExercisesScreen(
 
     var showLoadingDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
+    var showOnDuplicateExercisesFoundDialog by remember { mutableStateOf(false) }
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
@@ -104,11 +97,13 @@ fun SearchExercisesScreen(
 
     LaunchedEffect(
         exercisesState,
-        updateWorkoutState
+        updateWorkoutState,
+        duplicateExercisesState
     ) {
         val states = listOf(
             exercisesState,
-            updateWorkoutState
+            updateWorkoutState,
+            duplicateExercisesState
         )
 
         val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
@@ -126,6 +121,37 @@ fun SearchExercisesScreen(
             ErrorDialog(it, onErrorDialogDismiss)
         }
     }
+
+    //TODO: fix not showing dialog and throwing invalid exercise error onSubmit...
+    LaunchedEffect(duplicateExercisesState) {
+        duplicateExercisesState.isSuccessful || return@LaunchedEffect
+
+        if (duplicateExercisesState.containsDuplicates) {
+            showOnDuplicateExercisesFoundDialog = true
+        } else {
+
+            //Don't show dialog and directly submit exercises
+            onSubmitExercises()
+        }
+    }
+
+    val onFindDuplicateExercisesDialogDismiss = {
+        showOnDuplicateExercisesFoundDialog = false
+    }
+
+    if (showOnDuplicateExercisesFoundDialog) {
+        DuplicateExercisesFoundDialog(
+            onSubmit = onSubmitExercises,
+            onDismiss = onFindDuplicateExercisesDialogDismiss
+        )
+    }
+
+    //Navigation Callbacks
+    val onNavigateToSettings = {
+        searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+    val onNavigateBack =
+        { searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
 
     SearchListScaffold(
         screenTitle = "Select exercise",
@@ -187,7 +213,9 @@ fun SearchExercisesScreen(
                             top = 8.dp,
                             bottom = 16.dp
                         ),
-                        onSubmit = onSubmitExercises
+                        onSubmit = {
+                            searchExercisesViewModel.findDuplicateExercises(selectedExercises)
+                        }
                     )
                 }
             }
