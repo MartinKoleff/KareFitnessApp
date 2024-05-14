@@ -209,7 +209,8 @@ fun ExerciseDetailsConfiguratorScreen(
                         shape = RoundedCornerShape(cornerSize)
                     )
                     .border(
-                        border = BorderStroke(2.dp, color = outlineColor)
+                        border = BorderStroke(2.dp, color = outlineColor),
+                        shape = RoundedCornerShape(cornerSize)
                     ),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
