@@ -6,6 +6,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.response.GetDuplicateExercisesResponse
 import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.WorkoutConfigurationResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
@@ -23,6 +24,7 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
+import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
@@ -631,6 +633,9 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             delay(Constants.fakeDelay)
             val updatedExercise = exercise.copy(workoutId = workoutId)
 
+            //Validation
+            if (exercise.workoutId != workoutId) emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+
             try {
                 insertExercise(
                     exercise = updatedExercise.toEntity(),
@@ -671,24 +676,30 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val updatedExerciseList = exerciseList.map{ exercise ->
+            //Validation
+            exerciseList.forEach { exercise ->
+                if (exercise.workoutId != workoutId) emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+            }
+
+            val updatedExerciseList = exerciseList.map { exercise ->
                 exercise.copy(workoutId = workoutId)
             }
 
-            try {
-                updatedExerciseList.forEach { updatedExercise ->
+            updatedExerciseList.forEach { updatedExercise ->
+                try {
+
                     insertExercise(
                         exercise = updatedExercise.toEntity(),
                         sets = updatedExercise.sets.map { set ->
                             set.toEntity()
                         }
                     )
-                }
-            } catch (e: IllegalArgumentException) {
+                } catch (e: IllegalArgumentException) {
 
-                //Invalid workoutId
-                emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
-                return@flow
+                    //Invalid workoutId
+                    emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+                    return@flow
+                }
             }
 
             //Fetch workout details after exercise was inserted
@@ -806,6 +817,116 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         )
 
         emit(ResultWrapper.Success(result))
+    }
+
+    override suspend fun submitMultipleExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> = flow {
+        emit(ResultWrapper.Loading())
+        delay(Constants.fakeDelay)
+
+        //Validation
+        exerciseList.forEach { exercise ->
+            if (exercise.workoutId != workoutId) emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+        }
+
+        //Find current entry
+        val workoutDetailsWithExercises = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+
+        workoutDetailsWithExercises ?: run {
+            emit(ResultWrapper.ApiError(KareError.WORKOUT_DETAILS_NOT_FOUND))
+            return@flow
+        }
+
+        exerciseList.forEach { exercise ->
+            try {
+
+                //Entry in DB exists -> update
+                val exerciseWithSetsInDB = exerciseDao.getExerciseWithSets(
+                    exerciseId = exercise.exerciseId,
+                    workoutId = workoutId
+                )
+
+                updateExercise(
+                    setsInDB = exerciseWithSetsInDB.sets,
+                    newExercise = exercise.toEntity(),
+                    newSets = exercise.sets.map { set ->
+                        set.toEntity()
+                    }
+                )
+            } catch (e: NoSuchElementException) {
+
+                //Exercise not found -> new entry...
+                try {
+                    insertExercise(
+                        exercise = exercise.toEntity(),
+                        sets = exercise.sets.map { set ->
+                            set.toEntity()
+                        })
+                } catch (e: IllegalArgumentException) {
+
+                    //Invalid workoutId
+                    emit(ResultWrapper.ApiError(KareError.INVALID_EXERCISE))
+                    return@flow
+                }
+            }
+        }
+
+        val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+
+        workoutDetails ?: run {
+            emit(ResultWrapper.ApiError(error = KareError.WORKOUT_NOT_FOUND))
+            return@flow
+        }
+
+        //Add sets to all exercises
+        val updatedWorkoutDetailsWithSets = addSetsToWorkout(workoutDetails)
+
+        val result = WorkoutDetailsWrapper(
+            WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
+        )
+
+        emit(ResultWrapper.Success(result))
+    }
+
+    override suspend fun findDuplicateExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<DuplicateExercisesWrapper>> = flow {
+        emit(ResultWrapper.Loading())
+        delay(Constants.fakeDelay)
+
+        val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
+
+        workoutDetails ?: run {
+            emit(ResultWrapper.ApiError(KareError.WORKOUT_DETAILS_NOT_FOUND))
+            return@flow
+        }
+
+        val updatedWorkoutDetails = addSetsToWorkout(workoutDetails)
+
+        val containsDuplicates: Boolean = findDuplicateExercises(
+            workoutExerciseList = updatedWorkoutDetails.exercises,
+            submittedExerciseList = exerciseList
+        )
+
+        val result = DuplicateExercisesWrapper(
+            GetDuplicateExercisesResponse(
+                containsDuplicates
+            )
+        )
+
+        emit(ResultWrapper.Success(result))
+    }
+
+    private fun findDuplicateExercises(
+        workoutExerciseList: List<ExerciseDto>,
+        submittedExerciseList: List<ExerciseDto>
+    ): Boolean {
+        return workoutExerciseList.any {
+            it in submittedExerciseList
+        }
     }
 
     private fun findMissingSets(
