@@ -70,13 +70,18 @@ fun SearchExercisesScreen(
     val onNavigateBack =
         { searchExercisesViewModel.onNavigationEvent(NavigationEvent.NavigateBack) }
 
-    val onSubmitExercise: (ExerciseDto) -> Unit = { selectedExercise ->
-        searchExercisesViewModel.onExerciseUpdateEvent(
-            OnExerciseUpdateEvent.OnExerciseSubmit(selectedExercise)
     val selectedExercises = remember {
         mutableStateListOf<ExerciseDto>()
     }
 
+    val onSubmitExercises: () -> Unit = {  //(List<ExerciseDto>) -> Unit
+        //TODO: show dialog that exercises are contained in workout do you want to override them?
+        val containsDuplicates = searchExercisesViewModel.findDuplicateExercises(selectedExercises)
+
+        searchExercisesViewModel.onMultipleExercisesUpdateEvent(
+            OnMultipleExercisesUpdateEvent.OnMultipleExercisesSubmit(selectedExercises)
+        )
+    }
 
     val onSelectExercise: (ExerciseDto) -> Unit = { selectedExercise ->
         if (selectedExercises.contains(selectedExercise)) {

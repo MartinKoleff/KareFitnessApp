@@ -17,7 +17,6 @@ import com.koleff.kare_android.ui.state.ExerciseListState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.ui.event.OnExerciseListUpdateEvent
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
 import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
@@ -53,6 +52,12 @@ class SearchExercisesViewModel @Inject constructor(
         MutableStateFlow(WorkoutDetailsState())
     val updateWorkoutState: StateFlow<WorkoutDetailsState>
         get() = _updateWorkoutState
+
+    private var _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
+        MutableStateFlow(WorkoutDetailsState())
+
+    val getWorkoutDetailsState: StateFlow<WorkoutDetailsState>
+        get() = _getWorkoutDetailsState
 
 //    val searchState = _searchState
 //        .debounce(Constants.fakeDelay)
@@ -143,6 +148,9 @@ class SearchExercisesViewModel @Inject constructor(
         if (state.value.isError) {
             _state.value = ExerciseListState()
         }
+        if (updateWorkoutState.value.isError) {
+            _updateWorkoutState.value = WorkoutDetailsState()
+        }
     }
 
     /**
@@ -213,6 +221,11 @@ class SearchExercisesViewModel @Inject constructor(
                         exerciseList = exercises
                     ).collect { updateWorkoutState ->
                         _updateWorkoutState.value = updateWorkoutState
+
+                        //Go to workout details
+                        if (updateWorkoutState.isSuccessful) {
+                            navigateToWorkoutDetails()
+                        }
                     }
                 }
             }
@@ -229,5 +242,20 @@ class SearchExercisesViewModel @Inject constructor(
                 inclusive = false
             )
         )
+    }
+
+    //TODO: migrate to use case...
+    fun findDuplicateExercises(selectedExercises: List<ExerciseDto>): Boolean {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
+                _getWorkoutDetailsState.value = workoutDetailsState
+
+                if (workoutDetailsState.isSuccessful) {
+                    return@collect getWorkoutDetailsState.value.workoutDetails.exercises.any {
+                        it in selectedExercises
+                    }
+                }
+            }
+        }
     }
 }
