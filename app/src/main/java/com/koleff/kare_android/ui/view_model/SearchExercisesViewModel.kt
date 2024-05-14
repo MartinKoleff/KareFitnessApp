@@ -17,7 +17,9 @@ import com.koleff.kare_android.ui.state.ExerciseListState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.event.OnExerciseListUpdateEvent
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
+import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -120,7 +122,9 @@ class SearchExercisesViewModel @Inject constructor(
         }
     }
 
-    //Navigation
+    /**
+     * Unused
+     */
     fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
@@ -136,11 +140,14 @@ class SearchExercisesViewModel @Inject constructor(
     }
 
     override fun clearError() {
-        if(state.value.isError){
+        if (state.value.isError) {
             _state.value = ExerciseListState()
         }
     }
 
+    /**
+     * Unused
+     */
     fun onExerciseUpdateEvent(event: OnExerciseUpdateEvent) {
         when (event) {
             is OnExerciseUpdateEvent.OnExerciseDelete -> {
@@ -154,7 +161,7 @@ class SearchExercisesViewModel @Inject constructor(
                         _updateWorkoutState.value = updateWorkoutState
 
                         //Go to workout details
-                        if(updateWorkoutState.isSuccessful){
+                        if (updateWorkoutState.isSuccessful) {
                             navigateToWorkoutDetails()
                         }
                     }
@@ -168,6 +175,42 @@ class SearchExercisesViewModel @Inject constructor(
                     workoutUseCases.addExerciseUseCase(
                         workoutId = workoutId,
                         exercise = exercise
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+                    }
+                }
+            }
+        }
+    }
+
+    fun onMultipleExercisesUpdateEvent(event: OnMultipleExercisesUpdateEvent) {
+        when (event) {
+            is OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete -> {
+                val exercises = event.exerciseList
+                val exerciseIds = exercises.map { it.exerciseId }
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.deleteMultipleExercisesUseCase(
+                        workoutId = workoutId,
+                        exerciseIds = exerciseIds
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+
+                        //Go to workout details
+                        if (updateWorkoutState.isSuccessful) {
+                            navigateToWorkoutDetails()
+                        }
+                    }
+                }
+            }
+
+            is OnMultipleExercisesUpdateEvent.OnMultipleExercisesSubmit -> {
+                val exercises = event.exerciseList
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.addMultipleExercisesUseCase(
+                        workoutId = workoutId,
+                        exerciseList = exercises
                     ).collect { updateWorkoutState ->
                         _updateWorkoutState.value = updateWorkoutState
                     }
