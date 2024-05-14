@@ -18,6 +18,7 @@ import com.koleff.kare_android.domain.repository.DoWorkoutPerformanceMetricsRepo
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.AddMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
@@ -26,6 +27,7 @@ import com.koleff.kare_android.domain.usecases.CreateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
+import com.koleff.kare_android.domain.usecases.DeleteMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
@@ -57,6 +59,7 @@ import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.ExerciseFakeDataSource
+import com.koleff.kare_android.exercise.ExerciseUseCasesUnitTest
 import com.koleff.kare_android.exercise.data.ExerciseDaoFakeV2
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
@@ -189,7 +192,9 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
                 onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
                 deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+                deleteMultipleExercisesUseCase = DeleteMultipleExercisesUseCase(workoutRepository),
                 addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+                addMultipleExercisesUseCase = AddMultipleExercisesUseCase(workoutRepository),
                 submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
                 deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
                 selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
@@ -197,19 +202,11 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
                 createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
                 createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(
-                    workoutRepository
-                ),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
                 getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(
-                    workoutRepository
-                ),
-                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(
-                    workoutRepository
-                ),
-                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(
-                    workoutRepository
-                )
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
             )
 
             //Do workout performance metrics

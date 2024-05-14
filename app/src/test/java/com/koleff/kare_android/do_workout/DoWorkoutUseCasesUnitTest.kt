@@ -16,6 +16,7 @@ import com.koleff.kare_android.domain.repository.DoWorkoutRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.AddMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
@@ -23,6 +24,7 @@ import com.koleff.kare_android.domain.usecases.CreateNewWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.CreateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
+import com.koleff.kare_android.domain.usecases.DeleteMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
@@ -179,7 +181,9 @@ class DoWorkoutUseCasesUnitTest {
                 updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
                 onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
                 deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+                deleteMultipleExercisesUseCase = DeleteMultipleExercisesUseCase(workoutRepository),
                 addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+                addMultipleExercisesUseCase = AddMultipleExercisesUseCase(workoutRepository),
                 submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
                 deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
                 selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
@@ -187,19 +191,11 @@ class DoWorkoutUseCasesUnitTest {
                 getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
                 createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
                 createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(
-                    workoutRepository
-                ),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
                 getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(
-                    workoutRepository
-                ),
-                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(
-                    workoutRepository
-                ),
-                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(
-                    workoutRepository
-                )
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
             )
 
             //Do workout
