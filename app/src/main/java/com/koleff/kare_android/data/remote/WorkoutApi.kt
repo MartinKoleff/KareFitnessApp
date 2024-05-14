@@ -1,13 +1,15 @@
 package com.koleff.kare_android.data.remote
 
+import com.koleff.kare_android.data.datasource.FindDuplicateExercisesRequest
 import com.koleff.kare_android.data.model.request.ExerciseAddRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
-import com.koleff.kare_android.data.model.request.MultipleExercisesAddRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
 import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
+import com.koleff.kare_android.data.model.response.GetDuplicateExercisesResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
@@ -74,12 +76,17 @@ interface WorkoutApi {
 
     @POST("api/v1/workout/addmultipleexercises")
     fun addMultipleExercises(
-        @Body body: MultipleExercisesAddRequest
+        @Body body: MultipleExercisesUpdateRequest
     ): WorkoutDetailsResponse
 
     @POST("api/v1/workout/submitexercise")
     fun submitExercise(
         @Body body: ExerciseAddRequest
+    ): WorkoutDetailsResponse
+
+    @POST("api/v1/workout/submitmultipleexercises")
+    fun submitMultipleExercises(
+        @Body body: MultipleExercisesUpdateRequest
     ): WorkoutDetailsResponse
 
     @PUT("api/v1/workout/updateworkoutdetails")
@@ -124,4 +131,9 @@ interface WorkoutApi {
     fun deleteWorkoutConfiguration(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
+
+    @GET("api/v1/workout/findduplicateexercises")
+    fun findDuplicateExercises(
+        @Body body: FindDuplicateExercisesRequest
+    ): GetDuplicateExercisesResponse
 }
