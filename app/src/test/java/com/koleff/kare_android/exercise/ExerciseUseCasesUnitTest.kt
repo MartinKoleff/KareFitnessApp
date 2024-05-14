@@ -26,6 +26,7 @@ import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.FindDuplicateExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
@@ -41,6 +42,7 @@ import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
+import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
@@ -198,6 +200,8 @@ class ExerciseUseCasesUnitTest {
                 addExerciseUseCase = AddExerciseUseCase(workoutRepository),
                 addMultipleExercisesUseCase = AddMultipleExercisesUseCase(workoutRepository),
                 submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
+                submitMultipleExercisesUseCase = SubmitMultipleExercisesUseCase(workoutRepository),
+                findDuplicateExercisesUseCase = FindDuplicateExercisesUseCase(workoutRepository),
                 deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
                 selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
                 deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),

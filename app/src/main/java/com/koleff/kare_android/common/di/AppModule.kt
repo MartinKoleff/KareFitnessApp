@@ -73,6 +73,7 @@ import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.FindDuplicateExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetAllDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
@@ -95,6 +96,7 @@ import com.koleff.kare_android.domain.usecases.SaveDoWorkoutPerformanceMetricsUs
 import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
+import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.UpdateDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
@@ -505,6 +507,8 @@ object AppModule {
             addExerciseUseCase = AddExerciseUseCase(workoutRepository),
             addMultipleExercisesUseCase = AddMultipleExercisesUseCase(workoutRepository),
             submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
+            submitMultipleExercisesUseCase = SubmitMultipleExercisesUseCase(workoutRepository),
+            findDuplicateExercisesUseCase = FindDuplicateExercisesUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
             selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
             deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
