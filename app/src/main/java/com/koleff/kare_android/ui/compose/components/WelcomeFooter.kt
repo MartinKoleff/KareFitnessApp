@@ -86,8 +86,7 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
 
     //Footer
     Column(
-        modifier = sizeModifier
-            .alpha(0.75f),
+        modifier = sizeModifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Bottom,
     ) {
@@ -218,7 +217,7 @@ fun WideRoundButton(
         Image(
             painter = painterResource(id = R.drawable.background_metal_texture_3),
             contentDescription = "Metal texture background",
-            modifier = Modifier.alpha(0.85f),
+            modifier = Modifier.alpha(0.65f),
             contentScale = ContentScale.Crop
         )
 

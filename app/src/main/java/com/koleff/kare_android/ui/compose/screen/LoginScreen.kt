@@ -119,7 +119,7 @@ fun LoginScreen(
 
         //Loading screen
         if (showLoadingDialog) {
-            LoadingWheel(innerPadding = PaddingValues(top = 46.dp))
+            LoadingWheel(innerPadding = PaddingValues(top = 72.dp))
         }
 
         //Screen
