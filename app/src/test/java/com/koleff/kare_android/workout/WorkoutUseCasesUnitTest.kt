@@ -2206,11 +2206,11 @@ class WorkoutUseCasesUnitTest {
         val createCustomWorkoutDetailsState =
             workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
 
-        logger.i(TAG, "Create custom workout details -> isLoading state raised.")
-        assertTrue { createCustomWorkoutDetailsState[0].isLoading }
+//        logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+//        assertTrue { createCustomWorkoutDetailsState[0].isLoading }
 
         logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
-        assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
+        assertTrue { createCustomWorkoutDetailsState[0].isSuccessful }
 
         val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
         logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
@@ -2230,14 +2230,14 @@ class WorkoutUseCasesUnitTest {
             exerciseList = selectedExerciseList
         ).toList()
 
-        logger.i(TAG, "Find duplicate exercises in workout -> isLoading state raised")
-        assertTrue { findDuplicateExercisesState[0].isLoading }
+//        logger.i(TAG, "Find duplicate exercises in workout -> isLoading state raised")
+//        assertTrue { findDuplicateExercisesState[0].isLoading }
 
         logger.i(TAG, "Find duplicate exercises in workout -> isSuccessful state raised")
-        assertTrue { findDuplicateExercisesState[1].isSuccessful }
+        assertTrue { findDuplicateExercisesState[0].isSuccessful }
 
         logger.i(TAG, "Assert duplicate exercises are found")
-        assertTrue { findDuplicateExercisesState[1].containsDuplicates }
+        assertTrue { findDuplicateExercisesState[0].containsDuplicates }
 
         /**
          * Test 2 -> duplicate exercise with sets
@@ -2256,14 +2256,14 @@ class WorkoutUseCasesUnitTest {
             exerciseList = selectedExerciseList2
         ).toList()
 
-        logger.i(TAG, "Find duplicate exercises in workout 2 -> isLoading state raised")
-        assertTrue { findDuplicateExercisesState2[0].isLoading }
+//        logger.i(TAG, "Find duplicate exercises in workout 2 -> isLoading state raised")
+//        assertTrue { findDuplicateExercisesState2[0].isLoading }
 
         logger.i(TAG, "Find duplicate exercises in workout 2 -> isSuccessful state raised")
-        assertTrue { findDuplicateExercisesState2[1].isSuccessful }
+        assertTrue { findDuplicateExercisesState2[0].isSuccessful }
 
         logger.i(TAG, "Assert duplicate exercises are found")
-        assertTrue { findDuplicateExercisesState2[1].containsDuplicates }
+        assertTrue { findDuplicateExercisesState2[0].containsDuplicates }
 
         /**
          * Test 3 -> no duplicate exercises
@@ -2287,13 +2287,15 @@ class WorkoutUseCasesUnitTest {
             exerciseList = selectedExerciseList3
         ).toList()
 
-        logger.i(TAG, "Find duplicate exercises in workout 3 -> isLoading state raised")
-        assertTrue { findDuplicateExercisesState3[0].isLoading }
+//        logger.i(TAG, "Find duplicate exercises in workout 3 -> isLoading state raised")
+//        assertTrue { findDuplicateExercisesState3[0].isLoading }
 
         logger.i(TAG, "Find duplicate exercises in workout 3 -> isSuccessful state raised")
-        assertTrue { findDuplicateExercisesState3[1].isSuccessful }
+        assertTrue { findDuplicateExercisesState3[0].isSuccessful }
 
         logger.i(TAG, "Assert duplicate exercises are not found")
-        assertTrue { !findDuplicateExercisesState3[1].containsDuplicates }
+        assertTrue { !findDuplicateExercisesState3[0].containsDuplicates }
     }
 }
+
+//TODO: submitExercise save positions...

@@ -751,21 +751,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             return@flow
         }
 
-//        val exercisesInDB = workoutDetailsWithExercises.toDto().exercises
-//        val exerciseDbEntry = exercisesInDB.firstOrNull { it.exerciseId == exercise.exerciseId }
-//        exerciseDbEntry ?: run {
-//            emit(ResultWrapper.ApiError(KareError.EXERCISE_NOT_FOUND))
-//            return@flow
-//        }
-//
-//        //Find the position in list of current exercise DB entry and delete
-//        val exercisePosition = exercisesInDB.indexOfFirst{ it.exerciseId == exercise.exerciseId } //Get position of removed exercise...
-//        exercisesInDB.removeAll { it.exerciseId == exercise.exerciseId }
-//
-//        //Add new exercise to deleted position
-//        val updatedExercise = exercise.copy(workoutId = workoutId)
-//        exercisesInDB.add(exercisePosition, updatedExercise)
-
         try {
 
             //Entry in DB exists -> update
@@ -894,9 +879,6 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         workoutId: Int,
         exerciseList: List<ExerciseDto>
     ): Flow<ResultWrapper<DuplicateExercisesWrapper>> = flow {
-        emit(ResultWrapper.Loading())
-        delay(Constants.fakeDelay)
-
         val workoutDetails = workoutDetailsDao.getWorkoutDetailsById(workoutId)
 
         workoutDetails ?: run {

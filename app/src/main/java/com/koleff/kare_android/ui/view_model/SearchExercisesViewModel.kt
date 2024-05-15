@@ -141,7 +141,7 @@ class SearchExercisesViewModel @Inject constructor(
                 val exercises = event.exerciseList
 
                 viewModelScope.launch(dispatcher) {
-                    workoutUseCases.addMultipleExercisesUseCase(
+                    workoutUseCases.submitMultipleExercisesUseCase(
                         workoutId = workoutId,
                         exerciseList = exercises
                     ).collect { updateWorkoutState ->
