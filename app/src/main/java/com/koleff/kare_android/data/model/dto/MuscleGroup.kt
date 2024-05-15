@@ -53,13 +53,13 @@ enum class MuscleGroup(
                     muscleGroup.muscleGroupName
                 }
                 UPPER_LOWER_BODY -> {
-                    "Upper Body ○ Lower Body"
+                    "Upper Body ⚬ Lower Body"
                 }
                 ARMS -> {
-                    "Triceps ○ Biceps ○ Forearms"
+                    "Triceps ⚬ Biceps ⚬ Forearms"
                 }
                 PUSH_PULL_LEGS -> {
-                    muscleGroup.muscleGroupName.replace(" ", " ○ ")
+                    muscleGroup.muscleGroupName.replace(" ", " ⚬ ")
                 }
                 else -> { //OTHER, ALL, NONE
                     ""
