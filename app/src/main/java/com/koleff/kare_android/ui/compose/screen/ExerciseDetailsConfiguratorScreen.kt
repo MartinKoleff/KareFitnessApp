@@ -234,20 +234,18 @@ fun ExerciseDetailsConfiguratorScreen(
                 }
 
                 //Add new set footer
-                if(exerciseState.exercise.sets.isNotEmpty()) {
-                    item {
-                        AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
-                    }
+                item {
+                    AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
+                }
 
-                    //Rest after exercise footer
-                    item {
-                        RestBetweenSetsFooter(
-                            isChecked = restBetweenSetsIsChecked,
-                            onCheckedChange = { newState ->
-                                restBetweenSetsIsChecked = newState
-                            }
-                        )
-                    }
+                //Rest after exercise footer
+                item {
+                    RestBetweenSetsFooter(
+                        isChecked = restBetweenSetsIsChecked,
+                        onCheckedChange = { newState ->
+                            restBetweenSetsIsChecked = newState
+                        }
+                    )
                 }
             }
         }
