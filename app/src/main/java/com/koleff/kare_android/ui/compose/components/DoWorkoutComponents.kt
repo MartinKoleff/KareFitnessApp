@@ -373,7 +373,7 @@ fun CurrentExerciseInfoRow(
     )
 
     val setsTextColor = LocalExtendedColorScheme.current.doWorkoutColors.setsTextColor
-    val setTextStyle = MaterialTheme.typography.titleMedium.copy(
+    val setTextStyle = MaterialTheme.typography.titleSmall.copy(
         color = setsTextColor
     )
 
