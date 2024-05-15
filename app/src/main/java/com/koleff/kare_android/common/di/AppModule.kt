@@ -68,7 +68,7 @@ import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.UnfavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
@@ -79,7 +79,7 @@ import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
-import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.GetFavoriteWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
@@ -93,7 +93,7 @@ import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
 import com.koleff.kare_android.domain.usecases.SaveAllDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutPerformanceMetricsUseCase
-import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
@@ -510,9 +510,9 @@ object AppModule {
             submitMultipleExercisesUseCase = SubmitMultipleExercisesUseCase(workoutRepository),
             findDuplicateExercisesUseCase = FindDuplicateExercisesUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
-            selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
-            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
-            getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
+            favoriteWorkoutUseCase = FavoriteWorkoutUseCase(workoutRepository),
+            unfavoriteWorkoutUseCase = UnfavoriteWorkoutUseCase(workoutRepository),
+            getFavoriteWorkoutsUseCase = GetFavoriteWorkoutsUseCase(workoutRepository),
             createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
             createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
             createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
