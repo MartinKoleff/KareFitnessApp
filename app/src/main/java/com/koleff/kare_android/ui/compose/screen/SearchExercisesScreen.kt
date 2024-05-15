@@ -77,9 +77,11 @@ fun SearchExercisesScreen(
 
     val onSelectExercise: (ExerciseDto) -> Unit = { selectedExercise ->
         if (selectedExercises.contains(selectedExercise)) {
-            selectedExercises.remove(selectedExercise)
+            selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
         } else {
-            selectedExercises.add(selectedExercise)
+            selectedExercises.add(
+                selectedExercise.copy(workoutId = searchExercisesViewModel.workoutId)
+            )
         }
     }
 
@@ -122,7 +124,6 @@ fun SearchExercisesScreen(
         }
     }
 
-    //TODO: fix not showing dialog and throwing invalid exercise error onSubmit...
     LaunchedEffect(duplicateExercisesState) {
         duplicateExercisesState.isSuccessful || return@LaunchedEffect
 
