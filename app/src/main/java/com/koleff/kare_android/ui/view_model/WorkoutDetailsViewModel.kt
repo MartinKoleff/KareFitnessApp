@@ -36,7 +36,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     private val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController), MainScreenNavigation {
-    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+    private var workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private var _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -229,6 +229,7 @@ class WorkoutDetailsViewModel @Inject constructor(
 
                 if (createWorkoutState.isSuccessful) {
                     val createdWorkout = createWorkoutState.workout
+                    workoutId = createdWorkout.workoutId
 
                     Log.d(
                         "WorkoutDetailsViewModel",
