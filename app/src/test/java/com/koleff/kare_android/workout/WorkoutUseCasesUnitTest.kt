@@ -1103,7 +1103,7 @@ class WorkoutUseCasesUnitTest {
             TAG,
             "Assert previous exercise sets are deleted from DB."
         )
-        val initialSelectedExercise = workoutDetails.exercises.first{
+        val initialSelectedExercise = workoutDetails.exercises.first {
             it.exerciseId == selectedExercise.exerciseId
         }
         val exception = try {
@@ -1914,6 +1914,272 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Assert error is KareError.EXERCISE_NOT_FOUND.")
             assertTrue { deleteMultipleExercisesState[1].error == KareError.EXERCISE_NOT_FOUND }
         }
+
+    /**
+     * Test 1 - Generate multiple exercises that are already in the workoutDetails.exercise list with no sets
+     * Test 2 - Generate exercise that are not already in the workoutDetails.exercise list with some sets
+     * Test 3 - Generate exercise that is already in the workoutDetails.exercise list with some sets
+     */
+    @RepeatedTest(50)
+    @DisplayName("Submit multiple exercises using SubmitMultipleExercisesUseCase test")
+    fun `submit multiple exercises using SubmitMultipleExercisesUseCase test`() = runTest {
+
+        /**
+         * Test 1 - Generate multiple exercises that are already in the workoutDetails.exercise list with no sets
+         */
+
+        //Generate workout details
+        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
+        logger.i(
+            TAG,
+            "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
+        )
+        logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
+
+        //Save workout details to DB
+        val createCustomWorkoutDetailsState =
+            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+        logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+        assertTrue { createCustomWorkoutDetailsState[0].isLoading }
+
+        logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
+
+        val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
+
+        //Generate exercises that are in the DB with different ExerciseSets and submit
+        val n = 2
+        val selectedExerciseList = savedWorkoutDetails.exercises
+            .take(n)
+            .map { exercise -> exercise.copy(sets = emptyList()) }
+        logger.i(
+            TAG,
+            "Selected exercises that are already in workout to be submitted: $selectedExerciseList"
+        )
+
+        val submitMultipleExercisesState = workoutUseCases.submitMultipleExercisesUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exerciseList = selectedExerciseList
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Submit multiple exercises that are already in workout to workout details ${workoutDetails.name} -> isLoading state raised."
+        )
+        assertTrue { submitMultipleExercisesState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Submit multiple exercises that are already in workout to workout details ${workoutDetails.name} -> isSuccessful state raised."
+        )
+        assertTrue { submitMultipleExercisesState[1].isSuccessful }
+
+        logger.i(
+            TAG,
+            "Assert exercise size has not changed. Exercise list after submit: " +
+                    "${submitMultipleExercisesState[1].workoutDetails.exercises.size}."
+        )
+        assertTrue { submitMultipleExercisesState[1].workoutDetails.exercises.size == savedWorkoutDetails.exercises.size }
+
+        val selectedExerciseIds = selectedExerciseList.map { it.exerciseId }
+        val submittedExercises = submitMultipleExercisesState[1].workoutDetails.exercises
+            .filter { exercise -> selectedExerciseIds.contains(exercise.exerciseId) }
+
+        logger.i(
+            TAG,
+            "Assert exercise sets are chosen from newly submitted entry: ${submittedExercises}."
+        )
+        submittedExercises.forEach { submittedExercise ->
+            val initialSelectedExercise = selectedExerciseList.first { selectedExercise ->
+                selectedExercise.exerciseId == submittedExercise.exerciseId
+            }
+            assertTrue { initialSelectedExercise.sets == submittedExercise.sets }
+        }
+
+        logger.i(
+            TAG,
+            "Assert previous exercise sets are deleted from DB."
+        )
+        val initialSelectedExercises = workoutDetails.exercises.filter {
+            selectedExerciseIds.contains(it.exerciseId)
+        }
+
+        val exception = try {
+            initialSelectedExercises.forEach { initialSelectedExercise ->
+                initialSelectedExercise.sets.forEach { set ->
+                    set.setId ?: throw NoSuchElementException()
+
+                    exerciseSetDao.getSetById(set.setId!!)
+                }
+            }
+
+            null
+        } catch (exception: NoSuchElementException) {
+            exception
+        }
+
+        assertThrows(NoSuchElementException::class.java) {
+            throw exception ?: return@assertThrows
+        }
+
+        /**
+         * Test 2 - Generate exercise that are not already in the workoutDetails.exercise list with some sets
+         */
+
+        val excludedIds = workoutDetails.exercises.map { it.exerciseId }
+        val n2 = 2
+        val exerciseList =
+            MockupDataGeneratorV2.generateExerciseList(
+                n = n2,
+                muscleGroup = workoutDetails.muscleGroup,
+                excludedIds = excludedIds,
+                isDistinct = true,
+                workoutId = workoutDetails.workoutId
+            )
+        logger.i(TAG, "Generated $n2 exercises: $exerciseList.")
+
+        //Insert in DB
+        val submitMultipleExercisesState2 = workoutUseCases.submitMultipleExercisesUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exerciseList = exerciseList
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Submit multiple new exercises to workout details ${workoutDetails.name} -> isLoading state raised."
+        )
+        assertTrue { submitMultipleExercisesState2[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Submit multiple new exercises to workout details ${workoutDetails.name} -> isSuccessful state raised."
+        )
+        assertTrue { submitMultipleExercisesState2[1].isSuccessful }
+
+        logger.i(
+            TAG,
+            "Assert exercise sets data is not lost."
+        )
+        assertTrue {
+            submitMultipleExercisesState2[1].workoutDetails.exercises.map { it.sets }.isNotEmpty()
+        }
+
+        val workoutDetailsAfterSubmit2 = submitMultipleExercisesState2[1].workoutDetails
+        logger.i(
+            TAG,
+            "Workout details after new exercises were added: $workoutDetailsAfterSubmit2\n." +
+                    " Exercises list: ${workoutDetailsAfterSubmit2.exercises}"
+        )
+
+        logger.i(TAG, "Assert the new exercises are added in workout details")
+        assertTrue { workoutDetailsAfterSubmit2.exercises.size == workoutDetails.exercises.size + n2 }
+
+        //Check for totalExercises increment
+        val getWorkoutState = workoutUseCases.getWorkoutUseCase(workoutDetails.workoutId)
+            .toList()
+
+        val fetchedWorkout = getWorkoutState[1].workout
+        logger.i(TAG, "Fetched workout: $fetchedWorkout")
+        logger.i(TAG, "Assert totalExercises in workout has increased by $n2")
+        assertTrue { fetchedWorkout.totalExercises == workoutDetails.exercises.size + n2 }
+
+        /**
+         * Test 3 - Generate exercise that is already in the workoutDetails.exercise list with some sets
+         */
+
+        //Generate exercises that are not already in the workoutDetails.exercise list
+        val n3 = 3
+
+        val duplicateExercises = workoutDetails.exercises.subList(0, 2)
+        val duplicateExerciseIds = duplicateExercises.map { it.exerciseId }
+        var excludedIds2 = excludedIds.toMutableList()
+        excludedIds2.addAll(
+            exerciseList.map { it.exerciseId }
+        )
+        excludedIds2 = excludedIds2.distinct().toMutableList()
+
+        //Have some duplicate exercises
+        excludedIds2.removeAll(duplicateExerciseIds)
+
+        //2 duplicate exercises and 1 new
+        val exerciseList2 =
+            MockupDataGeneratorV2.generateExerciseList(
+                n = n3,
+                muscleGroup = workoutDetails.muscleGroup,
+                preSelectedExerciseIds = duplicateExerciseIds,
+                excludedIds = excludedIds2,
+                isDistinct = true,
+                workoutId = workoutDetails.workoutId
+            )
+        logger.i(TAG, "Generated $n3 exercises: $exerciseList2.")
+
+        val submitMultipleExercisesState3 = workoutUseCases.submitMultipleExercisesUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exerciseList = exerciseList2
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Submit multiple exercise that are already in workout to workout details ${workoutDetails.name} 2 -> isLoading state raised."
+        )
+        assertTrue { submitMultipleExercisesState3[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Submit multiple exercise that are already in workout to workout details ${workoutDetails.name} 2 -> isSuccessful state raised."
+        )
+        assertTrue { submitMultipleExercisesState3[1].isSuccessful }
+
+        logger.i(
+            TAG,
+            "Assert exercise size has changed by $n3. Exercise list after submit:" +
+                    " ${submitMultipleExercisesState3[1].workoutDetails.exercises.size}."
+        )
+        assertTrue { submitMultipleExercisesState3[1].workoutDetails.exercises.size == savedWorkoutDetails.exercises.size + n3 }
+
+        val exerciseIds2 = exerciseList2.map { it.exerciseId }
+        val submittedExercises2 = submitMultipleExercisesState3[1].workoutDetails.exercises
+            .filter { exercise -> exerciseIds2.contains(exercise.exerciseId) }
+
+        logger.i(
+            TAG,
+            "Assert exercise sets are chosen from newly submitted entry: ${submittedExercises2}."
+        )
+        submittedExercises2.forEach { submittedExercise ->
+            val initialSelectedExercise = exerciseList2.first { selectedExercise ->
+                selectedExercise.exerciseId == submittedExercise.exerciseId
+            }
+            assertTrue { initialSelectedExercise.sets == submittedExercise.sets }
+        }
+
+        logger.i(
+            TAG,
+            "Assert previous exercise sets are deleted from DB."
+        )
+        val initialSelectedExercises2 = workoutDetails.exercises.filter {
+            exerciseIds2.contains(it.exerciseId)
+        }
+
+        val exception2 = try {
+            initialSelectedExercises2.forEach { initialSelectedExercise ->
+                initialSelectedExercise.sets.forEach { set ->
+                    set.setId ?: throw NoSuchElementException()
+
+                    exerciseSetDao.getSetById(set.setId!!)
+                }
+            }
+
+            null
+        } catch (exception: NoSuchElementException) {
+            exception
+        }
+
+        assertThrows(NoSuchElementException::class.java) {
+            throw exception ?: return@assertThrows
+        }
+    }
 }
 
 //TODO: [Test] submitMultipleExercises...
