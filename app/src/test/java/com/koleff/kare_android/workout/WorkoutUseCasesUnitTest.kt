@@ -63,6 +63,7 @@ import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
 import java.util.stream.Stream
+import kotlin.random.Random
 
 typealias WorkoutFakeDataSource = WorkoutLocalDataSourceV2
 
@@ -1701,10 +1702,100 @@ class WorkoutUseCasesUnitTest {
                 throw exception ?: return@assertThrows
             }
         }
+
+    @RepeatedTest(50)
+    @DisplayName("Delete exercise using DeleteExerciseUseCase in workout with no exercises test")
+    fun `delete exercise using DeleteExerciseUseCase in workout with no exercises test`() = runTest {
+
+        //Generate workout details
+        val workoutDetails =
+            MockupDataGeneratorV2.generateWorkoutDetails(generateExercises = false)
+        logger.i(
+            TAG,
+            "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
+        )
+        logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
+
+        //Save workout details to DB
+        val createCustomWorkoutDetailsState =
+            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+        val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
+
+        //Delete exercise
+        val deleteExerciseState = workoutUseCases.deleteExerciseUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exerciseId = Random.nextInt(0, 10)
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Delete invalid exercise from workout details ${workoutDetails.name} -> isLoading state raised."
+        )
+        assertTrue { deleteExerciseState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Delete invalid exercise from workout details ${workoutDetails.name} -> isError state raised."
+        )
+        assertTrue { deleteExerciseState[1].isError }
+
+        logger.i(TAG, "Assert error is KareError.EXERCISE_NOT_FOUND.")
+        assertTrue { deleteExerciseState[1].error == KareError.EXERCISE_NOT_FOUND }
+    }
+
+    @RepeatedTest(50)
+    @DisplayName("Delete multiple exercises using DeleteMultipleExercisesUseCase in workout with no exercises test")
+    fun `delete multiple exercises using DeleteMultipleExercisesUseCase in workout with no exercises test`() = runTest {
+
+        //Generate workout details
+        val workoutDetails =
+            MockupDataGeneratorV2.generateWorkoutDetails(generateExercises = false)
+        logger.i(
+            TAG,
+            "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
+        )
+        logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
+
+        //Save workout details to DB
+        val createCustomWorkoutDetailsState =
+            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+        val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
+
+        val exerciseIds =
+            listOf(
+                Random.nextInt(0, 10),
+                Random.nextInt(0, 10),
+                Random.nextInt(0, 10)
+            )
+
+        //Delete multiple exercises
+        val deleteMultipleExercisesState = workoutUseCases.deleteMultipleExercisesUseCase(
+            workoutId = savedWorkoutDetails.workoutId,
+            exerciseIds = exerciseIds
+        ).toList()
+
+        logger.i(
+            TAG,
+            "Delete multiple invalid exercises from workout details ${workoutDetails.name} -> isLoading state raised."
+        )
+        assertTrue { deleteMultipleExercisesState[0].isLoading }
+
+        logger.i(
+            TAG,
+            "Delete multiple invalid exercises from workout details ${workoutDetails.name} -> isError state raised."
+        )
+        assertTrue { deleteMultipleExercisesState[1].isError }
+
+        logger.i(TAG, "Assert error is KareError.EXERCISE_NOT_FOUND.")
+        assertTrue { deleteMultipleExercisesState[1].error == KareError.EXERCISE_NOT_FOUND }
+    }
 }
 
 //TODO: [Test] delete multiple exercises in workout details with no exercises...
-//TODO: [Test] addMultipleExercises...
-//TODO: [Test] deleteMultipleExercises...
+//TODO: [Test] delete exercise in workout details with no exercises...
 //TODO: [Test] submitMultipleExercises...
 //TODO: [Test] findDuplicateExercises...
