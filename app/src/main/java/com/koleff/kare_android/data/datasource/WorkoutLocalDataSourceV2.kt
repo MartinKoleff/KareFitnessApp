@@ -324,13 +324,13 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     ) {
         exerciseDao.updateExercise(newExercise)
 
-        //Remove sets that are not in newSets
-        val setsToRemove = findMissingSets(
-            newSets,
-            setsInDB
-        )
+//        //Remove sets that are not in newSets
+//        val setsToRemove = findMissingSets(
+//            newSets,
+//            setsInDB
+//        )
 
-        setsToRemove.forEach { set ->
+        setsInDB.forEach { set ->
             exerciseSetDao.deleteSet(set)
         }
 
