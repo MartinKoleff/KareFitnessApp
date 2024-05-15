@@ -21,16 +21,16 @@ import javax.inject.Inject
 class WorkoutRepositoryImpl @Inject constructor(
     private val workoutDataSource: WorkoutDataSource
 ) : WorkoutRepository {
-    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
-        return workoutDataSource.selectWorkout(workoutId)
+    override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.favoriteWorkout(workoutId)
     }
 
-    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
-        return workoutDataSource.deselectWorkout(workoutId)
+    override suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.unfavoriteWorkout(workoutId)
     }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> {
-        return workoutDataSource.getSelectedWorkout()
+    override suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> {
+        return workoutDataSource.getFavoriteWorkouts()
     }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> {

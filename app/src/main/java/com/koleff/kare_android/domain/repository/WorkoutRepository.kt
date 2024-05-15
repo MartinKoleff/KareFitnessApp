@@ -16,11 +16,11 @@ import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutRepository {
-    suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>>
+    suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>  //Used for loading list view and refresh
 

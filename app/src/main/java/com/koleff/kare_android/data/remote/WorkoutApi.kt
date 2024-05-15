@@ -24,18 +24,18 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface WorkoutApi {
-    @PUT("api/v1/workout/selectworkout")
-    suspend fun selectWorkout(
+    @PUT("api/v1/workout/favoriteworkout")
+    suspend fun favoriteWorkout(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
-    @PUT("api/v1/workout/deselectworkout")
-    suspend fun deselectWorkout(
+    @PUT("api/v1/workout/unfavoriteworkout")
+    suspend fun unfavoriteWorkout(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
-    @GET("api/v1/workout/getselectedworkout")
-    suspend fun getSelectedWorkout(): SelectedWorkoutResponse
+    @GET("api/v1/workout/getfavoriteworkouts")
+    suspend fun getFavoriteWorkouts(): WorkoutsListResponse
 
     @GET("api/v1/workout/getworkout")
     suspend fun getWorkout(

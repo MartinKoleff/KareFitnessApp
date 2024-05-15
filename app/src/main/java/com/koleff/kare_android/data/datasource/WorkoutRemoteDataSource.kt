@@ -34,20 +34,20 @@ class WorkoutRemoteDataSource @Inject constructor(
     private val workoutApi: WorkoutApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : WorkoutDataSource {
-    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         val body = FetchWorkoutByIdRequest(workoutId)
 
-        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.selectWorkout(body)) })
+        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.favoriteWorkout(body)) })
     }
 
-    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         val body = FetchWorkoutByIdRequest(workoutId)
 
-        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.deselectWorkout(body)) })
+        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.unfavoriteWorkout(body)) })
     }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> {
-        return Network.executeApiCall(dispatcher, { SelectedWorkoutWrapper(workoutApi.getSelectedWorkout()) })
+    override suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> {
+        return Network.executeApiCall(dispatcher, { WorkoutListWrapper(workoutApi.getFavoriteWorkouts()) })
     }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> {
