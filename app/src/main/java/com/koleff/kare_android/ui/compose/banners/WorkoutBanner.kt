@@ -92,13 +92,11 @@ fun WorkoutBanner(
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
         color = titleTextColor,
-        fontWeight = FontWeight.Bold
     )
 
     val descriptionTextColor = MaterialTheme.colorScheme.onSurface
     val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
         color = descriptionTextColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     val bannerTintColors =
@@ -358,7 +356,6 @@ fun DeleteButton(
 
     val textStyle = MaterialTheme.typography.titleSmall.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Column(
@@ -416,7 +413,6 @@ fun SelectButton(
 
     val textStyle = MaterialTheme.typography.titleSmall.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Column(
@@ -477,7 +473,6 @@ fun EditButton(
 
     val textStyle = MaterialTheme.typography.titleSmall.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Column(

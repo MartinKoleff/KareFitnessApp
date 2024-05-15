@@ -33,7 +33,6 @@ fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
     val textColor = MaterialTheme.colorScheme.onSurface
     val textStyle = MaterialTheme.typography.titleMedium.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     HorizontalDivider(thickness = 5.dp)

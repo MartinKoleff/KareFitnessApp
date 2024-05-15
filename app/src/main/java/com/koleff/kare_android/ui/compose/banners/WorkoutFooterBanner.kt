@@ -52,13 +52,11 @@ fun WorkoutFooterBanner(
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
         color = titleTextColor,
-        fontWeight = FontWeight.Bold
     )
 
     val descriptionTextColor = MaterialTheme.colorScheme.onSurface
     val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
         color = descriptionTextColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Card(
