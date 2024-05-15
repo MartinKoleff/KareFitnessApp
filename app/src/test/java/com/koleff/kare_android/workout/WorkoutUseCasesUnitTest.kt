@@ -1917,8 +1917,8 @@ class WorkoutUseCasesUnitTest {
 
     /**
      * Test 1 - Generate multiple exercises that are already in the workoutDetails.exercise list with no sets
-     * Test 2 - Generate exercise that are not already in the workoutDetails.exercise list with some sets
-     * Test 3 - Generate exercise that is already in the workoutDetails.exercise list with some sets
+     * Test 2 - Generate multiple exercises that are not already in the workoutDetails.exercise list with some sets
+     * Test 3 - Generate multiple exercises that are already in the workoutDetails.exercise list with some sets
      */
     @RepeatedTest(50)
     @DisplayName("Submit multiple exercises using SubmitMultipleExercisesUseCase test")
@@ -2025,7 +2025,7 @@ class WorkoutUseCasesUnitTest {
         }
 
         /**
-         * Test 2 - Generate exercise that are not already in the workoutDetails.exercise list with some sets
+         * Test 2 - Generate multiple exercises that are not already in the workoutDetails.exercise list with some sets
          */
 
         val excludedIds = workoutDetails.exercises.map { it.exerciseId }
@@ -2086,7 +2086,7 @@ class WorkoutUseCasesUnitTest {
         assertTrue { fetchedWorkout.totalExercises == workoutDetails.exercises.size + n2 }
 
         /**
-         * Test 3 - Generate exercise that is already in the workoutDetails.exercise list with some sets
+         * Test 3 - Generate multiple exercises that are already in the workoutDetails.exercise list with some sets
          */
 
         //Generate exercises that are not already in the workoutDetails.exercise list
@@ -2180,7 +2180,120 @@ class WorkoutUseCasesUnitTest {
             throw exception ?: return@assertThrows
         }
     }
-}
 
-//TODO: [Test] submitMultipleExercises...
-//TODO: [Test] findDuplicateExercises...
+    /**
+     * Test 1 -> duplicate exercise with no sets
+     * Test 2 -> duplicate exercise with sets
+     * Test 3 -> no duplicate exercises
+     */
+    @RepeatedTest(50)
+    @DisplayName("Find duplicate exercises using FindDuplicateExercisesUseCase test")
+    fun `find duplicate exercises using FindDuplicateExercisesUseCase test`() = runTest {
+
+        /**
+         * Test 1 -> duplicate exercise with no sets
+         */
+
+        //Generate workout details
+        val workoutDetails = MockupDataGeneratorV2.generateWorkoutDetails()
+        logger.i(
+            TAG,
+            "Generated workout: $workoutDetails.\nExercises: ${workoutDetails.exercises}"
+        )
+        logger.i(TAG, "Total exercises: ${workoutDetails.exercises.size}")
+
+        //Save workout details to DB
+        val createCustomWorkoutDetailsState =
+            workoutUseCases.createCustomWorkoutDetailsUseCase(workoutDetails).toList()
+
+        logger.i(TAG, "Create custom workout details -> isLoading state raised.")
+        assertTrue { createCustomWorkoutDetailsState[0].isLoading }
+
+        logger.i(TAG, "Create custom workout details -> isSuccessful state raised.")
+        assertTrue { createCustomWorkoutDetailsState[1].isSuccessful }
+
+        val savedWorkoutDetails = createCustomWorkoutDetailsState[1].workoutDetails
+        logger.i(TAG, "Saved workout details: $savedWorkoutDetails")
+
+        //Generate exercises that are in the DB with different no ExerciseSets
+        val n = 2
+        val selectedExerciseList = savedWorkoutDetails.exercises
+            .take(n)
+            .map { exercise -> exercise.copy(sets = emptyList()) }
+        logger.i(
+            TAG,
+            "Selected exercises that are already in workout: $selectedExerciseList"
+        )
+
+        val findDuplicateExercisesState = workoutUseCases.findDuplicateExercisesUseCase(
+            workoutId = workoutDetails.workoutId,
+            exerciseList = selectedExerciseList
+        ).toList()
+
+        logger.i(TAG, "Find duplicate exercises in workout -> isLoading state raised")
+        assertTrue { findDuplicateExercisesState[0].isLoading }
+
+        logger.i(TAG, "Find duplicate exercises in workout -> isSuccessful state raised")
+        assertTrue { findDuplicateExercisesState[1].isSuccessful }
+
+        logger.i(TAG, "Assert duplicate exercises are found")
+        assertTrue { findDuplicateExercisesState[1].containsDuplicates }
+
+        /**
+         * Test 2 -> duplicate exercise with sets
+         */
+
+        //Generate exercises that are in the DB with different no ExerciseSets
+        val n2 = 2
+        val selectedExerciseList2 = savedWorkoutDetails.exercises.take(n2)
+        logger.i(
+            TAG,
+            "Selected exercises that are already in workout 2: $selectedExerciseList2"
+        )
+
+        val findDuplicateExercisesState2 = workoutUseCases.findDuplicateExercisesUseCase(
+            workoutId = workoutDetails.workoutId,
+            exerciseList = selectedExerciseList2
+        ).toList()
+
+        logger.i(TAG, "Find duplicate exercises in workout 2 -> isLoading state raised")
+        assertTrue { findDuplicateExercisesState2[0].isLoading }
+
+        logger.i(TAG, "Find duplicate exercises in workout 2 -> isSuccessful state raised")
+        assertTrue { findDuplicateExercisesState2[1].isSuccessful }
+
+        logger.i(TAG, "Assert duplicate exercises are found")
+        assertTrue { findDuplicateExercisesState2[1].containsDuplicates }
+
+        /**
+         * Test 3 -> no duplicate exercises
+         */
+
+        //Generate exercises that are are not in DB
+        val selectedExerciseList3 =
+            MockupDataGeneratorV2.generateExerciseList(
+                n = 2,
+                muscleGroup = workoutDetails.muscleGroup,
+                excludedIds = workoutDetails.exercises.map { it.exerciseId },
+                workoutId = workoutDetails.workoutId
+            )
+        logger.i(
+            TAG,
+            "Selected exercises that are not in workout 3: $selectedExerciseList3"
+        )
+
+        val findDuplicateExercisesState3 = workoutUseCases.findDuplicateExercisesUseCase(
+            workoutId = workoutDetails.workoutId,
+            exerciseList = selectedExerciseList3
+        ).toList()
+
+        logger.i(TAG, "Find duplicate exercises in workout 3 -> isLoading state raised")
+        assertTrue { findDuplicateExercisesState3[0].isLoading }
+
+        logger.i(TAG, "Find duplicate exercises in workout 3 -> isSuccessful state raised")
+        assertTrue { findDuplicateExercisesState3[1].isSuccessful }
+
+        logger.i(TAG, "Assert duplicate exercises are not found")
+        assertTrue { !findDuplicateExercisesState3[1].containsDuplicates }
+    }
+}

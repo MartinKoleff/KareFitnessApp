@@ -924,8 +924,12 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         workoutExerciseList: List<ExerciseDto>,
         submittedExerciseList: List<ExerciseDto>
     ): Boolean {
-        return workoutExerciseList.any {
-            it in submittedExerciseList
+        val workoutExerciseIds = workoutExerciseList
+            .map { it.exerciseId }
+            .toSet()
+
+        return submittedExerciseList.any {
+            workoutExerciseIds.contains(it.exerciseId)
         }
     }
 
