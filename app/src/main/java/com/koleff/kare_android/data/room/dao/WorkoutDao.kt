@@ -34,7 +34,11 @@ interface WorkoutDao {
 
     @Transaction
     @Query("UPDATE workout_table SET isSelected = 1 WHERE workoutId = :workoutId")
-    suspend fun selectWorkoutById(workoutId: Int)
+    suspend fun favoriteWorkoutById(workoutId: Int)
+
+    @Transaction
+    @Query("UPDATE workout_table SET isSelected = 0 WHERE workoutId = :workoutId")
+    suspend fun unfavoriteWorkoutById(workoutId: Int)
 
     @Transaction
     @Query("SELECT * FROM workout_table ORDER BY workoutId")
@@ -42,7 +46,7 @@ interface WorkoutDao {
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE isSelected = 1") //true = 1, false = 0
-    fun getWorkoutByIsSelected(): Workout?
+    fun getWorkoutByIsSelected(): List<Workout>
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE workoutId = :workoutId") //true = 1, false = 0

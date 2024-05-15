@@ -46,33 +46,12 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     private val exerciseSetDao: ExerciseSetDao,
     private val workoutConfigurationDao: WorkoutConfigurationDao
 ) : WorkoutDataSource {
-    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            //Deselect current selected workout
-            val selectedWorkoutInDB = workoutDao.getWorkoutByIsSelected()
-
-            //Workout not in DB
-            selectedWorkoutInDB ?: run {
-                emit(ResultWrapper.ApiError(KareError.WORKOUT_NOT_FOUND))
-                return@flow
-            }
-
-            val updatedWorkout = selectedWorkoutInDB.copy(
-                isSelected = false
-            )
-
-            //Selecting workout that is not selected
-            if (updatedWorkout.workoutId != workoutId) {
-
-                //Update DB
-                updateWorkout(
-                    updatedWorkout.toDto()
-                ).collect()
-                workoutDao.selectWorkoutById(workoutId)
-            }
+            workoutDao.favoriteWorkoutById(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -81,28 +60,12 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
+    override suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            //Deselect workout
-            val workout = workoutDao.getWorkoutById(workoutId)
-
-            //Workout not in DB
-            workout ?: run {
-                emit(ResultWrapper.ApiError(KareError.WORKOUT_NOT_FOUND))
-                return@flow
-            }
-
-            val updatedWorkout = workout.copy(
-                isSelected = false
-            )
-
-            //Update DB
-            updateWorkout(
-                updatedWorkout.toDto()
-            ).collect()
+            workoutDao.unfavoriteWorkoutById(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -111,15 +74,15 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> =
+    override suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val data = workoutDao.getWorkoutByIsSelected()
 
-            val result = SelectedWorkoutWrapper(
-                SelectedWorkoutResponse(data?.toDto())
+            val result = WorkoutListWrapper(
+                WorkoutsListResponse(data.map { it.toDto() })
             )
 
             emit(ResultWrapper.Success(result))
@@ -452,7 +415,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
             //Select
             if (workoutDto.isSelected) {
-                selectWorkout(workoutDto.workoutId).collect() //Await...
+                favoriteWorkout(workoutDto.workoutId).collect() //Await...
             }
 
             val result = WorkoutWrapper(
@@ -507,7 +470,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
             //Select
             if (workoutDetailsDto.isSelected) {
-                selectWorkout(workoutDetailsDto.workoutId).collect()
+                favoriteWorkout(workoutDetailsDto.workoutId).collect()
             }
 
             val result = WorkoutDetailsWrapper(

@@ -4,6 +4,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
@@ -16,11 +17,11 @@ import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutDataSource {
-    suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>>
+    suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>
 
     suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>>
 
