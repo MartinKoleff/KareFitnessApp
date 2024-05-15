@@ -412,7 +412,7 @@ fun StartWorkoutTitleAndSubtitle(
     )
 
     val subtitleTextColor = MaterialTheme.colorScheme.onSurface
-    val subtitleTextStyle = MaterialTheme.typography.headlineLarge.copy(
+    val subtitleTextStyle = MaterialTheme.typography.headlineSmall.copy(
         color = subtitleTextColor
     )
 

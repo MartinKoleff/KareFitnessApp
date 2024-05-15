@@ -292,15 +292,6 @@ fun WorkoutDetailsScreen(
             textAlpha = textAlpha
         )
     ) { innerPadding ->
-
-        //Fixed WorkoutDetails custom toolbar
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-            StartWorkoutToolbar(
-                onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
-                onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
-            )
-        }
-
         val paddingValues = PaddingValues(
             top = toolbarSize + innerPadding.calculateTopPadding(), //Top toolbar padding
             start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
@@ -367,7 +358,7 @@ fun WorkoutDetailsScreen(
                         if (showAddExerciseBanner) { //Show only after data is fetched
                             AddExerciseToWorkoutBanner {
 
-                                //Open search exercise screen...
+                                //Open search exercise screen
                                 workoutDetailsViewModel.addExercise()
                             }
                         }
@@ -380,6 +371,17 @@ fun WorkoutDetailsScreen(
                 refreshing = workoutDetailsViewModel.isRefreshing,
                 state = pullRefreshState
             ) //If put as first content -> hides behind the screen...
+        }
+
+        //Fixed place WorkoutDetails custom toolbar
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            StartWorkoutToolbar(
+                onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
+                onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
+            )
         }
     }
 }
