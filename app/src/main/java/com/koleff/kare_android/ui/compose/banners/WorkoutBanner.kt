@@ -321,21 +321,21 @@ fun SwipeableWorkoutBanner(
             EditButton(
                 modifier = optionBoxModifier,
                 onEdit = onEdit,
-                title = "Edit Workout Name"
+                title = "Edit Name"
             )
 
             //Select option
             SelectButton(
                 modifier = optionBoxModifier,
                 onSelect = onSelect,
-                title = "Select Workout"
+                title = "Select"
             )
 
             //Delete option
             DeleteButton(
                 modifier = optionBoxModifier,
                 onDelete = onDelete,
-                title = "Delete Workout"
+                title = "Delete"
             )
         }
     }
@@ -507,7 +507,7 @@ fun EditButton(
         Text(
             text = title,
             style = textStyle,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
         )
