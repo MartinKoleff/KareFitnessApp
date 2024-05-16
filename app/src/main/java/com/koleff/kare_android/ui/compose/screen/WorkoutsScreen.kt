@@ -106,9 +106,9 @@ fun WorkoutsScreen(
             }
         }
 
-        val onSelectWorkout: () -> Unit = {
+        val onFavoriteWorkout: () -> Unit = {
             selectedWorkout?.let {
-                workoutListViewModel.selectWorkout(selectedWorkout!!.workoutId)
+                workoutListViewModel.favoriteWorkout(selectedWorkout!!.workoutId)
 
                 showFavoriteDialog = false
             }
@@ -179,7 +179,7 @@ fun WorkoutsScreen(
 
             FavoriteWorkoutDialog(
                 actionTitle = selectWord,
-                onClick = onSelectWorkout,
+                onClick = onFavoriteWorkout,
                 onDismiss = { showFavoriteDialog = false }
             )
         }
@@ -227,27 +227,34 @@ fun WorkoutsScreen(
                     modifier = buttonModifier,
                     selectedOptionIndex = 1, //Workouts screen
                     isDisabled = workoutState.isLoading,
-                    onWorkoutFilter = workoutListViewModel::onWorkoutFilterEvent //TODO: test...
+                    onWorkoutFilter = workoutListViewModel::onWorkoutFilterEvent
                 )
 
-                if (showLoadingDialog) { //Don't show loader if retrieved from cache...
+                //Don't show loader if retrieved from cache...
+                if (showLoadingDialog) {
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
                     )
                 } else {
-
-                    //MyWorkout Screen
-                    if (workoutState.isMyWorkoutScreen) {
-                        val workout = workoutState.workoutList.firstOrNull {
-                            it.isFavorite
+                    val workouts =
+                        if (workoutState.isFavoriteWorkoutsScreen) {
+                            workoutState.workoutList
+                        } else {
+                            workoutState.workoutList.filter {
+                                it.isFavorite
+                            }
                         }
 
-                        workout?.let {
+                    LazyColumn(modifier = contentModifier) {
+
+                        //Workout List
+                        items(workouts.size) { workoutId ->
+                            val workout = workoutState.workoutList[workoutId]
+
                             SwipeableWorkoutBanner(
                                 modifier = workoutBannerModifier,
                                 workout = workout,
-                                hasDescription = true,
                                 onDelete = {
                                     showDeleteDialog = true
                                     selectedWorkout = workout
@@ -258,7 +265,7 @@ fun WorkoutsScreen(
                                 },
                                 onClick = {
                                     workoutListViewModel.navigateToWorkoutDetails(
-                                        workout = it
+                                        workout = workout
                                     )
                                 },
                                 onEdit = {
@@ -266,68 +273,27 @@ fun WorkoutsScreen(
                                     selectedWorkout = workout
                                 }
                             )
-                        } ?: run {
-
-                            //No workout is selected
-                            NoWorkoutSelectedBanner {
-
-                                //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.navigateToSearchWorkout(
-                                    -1,
-                                    -1
-                                ) //TODO: test...
-                            }
                         }
-                    } else {
 
-                        //All Workouts Screen
-                        LazyColumn(modifier = contentModifier) {
+                        //Footer
+                        //TODO: [Bug] fix onPullToRefresh NoWorkoutSelectBanner showing...
+                        item {
+                            if (workoutState.workoutList.isEmpty()) {
+                                NoWorkoutSelectedBanner {
 
-                            //Workout List
-                            items(workoutState.workoutList.size) { workoutId ->
-                                val workout = workoutState.workoutList[workoutId]
 
-                                SwipeableWorkoutBanner(
-                                    modifier = workoutBannerModifier,
-                                    workout = workout,
-                                    onDelete = {
-                                        showDeleteDialog = true
-                                        selectedWorkout = workout
-                                    },
-                                    onSelect = {
-                                        showFavoriteDialog = true
-                                        selectedWorkout = workout
-                                    },
-                                    onClick = {
-                                        workoutListViewModel.navigateToWorkoutDetails(
-                                            workout = workout
-                                        )
-                                    },
-                                    onEdit = {
-                                        showEditWorkoutNameDialog = true
-                                        selectedWorkout = workout
-                                    }
-                                )
-                            }
-
-                            //Footer
-                            //TODO: [Bug] fix onPullToRefresh NoWorkoutSelectBanner showing...
-                            item {
-                                if (workoutState.workoutList.isEmpty()) {
-                                    NoWorkoutSelectedBanner {
-
-                                        //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.navigateToSearchWorkout(
-                                            -1,
-                                            -1
-                                        ) //TODO: test...
-                                    }
-                                } else
-                                    AddWorkoutBanner {
-                                        workoutListViewModel.createNewWorkout()
-                                        Log.d("WorkoutScreen", "hasUpdated set to true.")
-                                    }
-                            }
+                                    //TODO: refactor and fix...
+                                    //Navigate to SearchWorkoutsScreen...
+                                    workoutListViewModel.navigateToSearchWorkout(
+                                        -1,
+                                        -1
+                                    )
+                                }
+                            } else
+                                AddWorkoutBanner {
+                                    workoutListViewModel.createNewWorkout()
+                                    Log.d("WorkoutScreen", "hasUpdated set to true.")
+                                }
                         }
                     }
                 }

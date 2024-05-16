@@ -66,7 +66,7 @@ fun WorkoutSegmentButton(
                         0 -> {
 
                             //MyWorkout screen
-                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.SelectedWorkout)
+                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.FavoriteWorkouts)
                         }
 
                         1 -> {
