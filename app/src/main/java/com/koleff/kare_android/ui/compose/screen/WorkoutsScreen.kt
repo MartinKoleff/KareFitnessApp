@@ -238,7 +238,7 @@ fun WorkoutsScreen(
                     )
                 } else {
                     val workouts =
-                        if (workoutState.isFavoriteWorkoutsScreen) {
+                        if (!workoutState.isFavoriteWorkoutsScreen) {
                             workoutState.workoutList
                         } else {
                             workoutState.workoutList.filter {
