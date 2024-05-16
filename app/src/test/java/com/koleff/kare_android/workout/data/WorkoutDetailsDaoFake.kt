@@ -162,7 +162,7 @@
 //        return exerciseWithSets
 //    }
 //
-//    override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
+//    override fun getWorkoutByIsFavorite(): WorkoutDetailsWithExercises? {
 //
 //        val selectedWorkout = workoutDetailsDB.firstOrNull {
 //            it.workoutDetails.isFavorite

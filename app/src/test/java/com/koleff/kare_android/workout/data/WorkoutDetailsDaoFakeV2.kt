@@ -88,7 +88,7 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         return workoutDetailsDB.sortedBy { it.workoutDetails.workoutDetailsId }
     }
 
-    override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
+    override fun getWorkoutByIsFavorite(): WorkoutDetailsWithExercises? {
         return workoutDetailsDB.firstOrNull {
             it.workoutDetails.isFavorite
         }

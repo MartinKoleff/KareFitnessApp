@@ -58,15 +58,41 @@ class WorkoutDaoFakeV2(
         }
     }
 
-    override suspend fun selectWorkoutById(workoutId: Int) {
-        workoutsDB.forEach {
-            it.isFavorite = it.workoutId == workoutId
+    override suspend fun favoriteWorkoutById(workoutId: Int) {
+
+        //Find workout
+        val index = workoutsDB.indexOfFirst { it.workoutId == workoutId }
+
+        //Workout found
+        if (index != -1) {
+
+            //Replace workout
+            workoutsDB[index] = workoutsDB[index].copy(isFavorite = true)
+        } else {
+
+            //Delete invalid workout?
+        }
+    }
+
+    override suspend fun unfavoriteWorkoutById(workoutId: Int) {
+
+        //Find workout
+        val index = workoutsDB.indexOfFirst { it.workoutId == workoutId }
+
+        //Workout found
+        if (index != -1) {
+
+            //Replace workout
+            workoutsDB[index] = workoutsDB[index].copy(isFavorite = false)
+        } else {
+
+            //Delete invalid workout?
         }
     }
 
     override fun getWorkoutsOrderedById(): List<Workout> = workoutsDB.sortedBy { it.workoutId }
 
-    override fun getWorkoutByIsSelected(): Workout? = workoutsDB.firstOrNull { it.isFavorite }
+    override fun getWorkoutByIsFavorite(): List<Workout> = workoutsDB.filter { it.isFavorite }
 
     override fun getWorkoutById(workoutId: Int): Workout =
         workoutsDB.first { it.workoutId == workoutId }
