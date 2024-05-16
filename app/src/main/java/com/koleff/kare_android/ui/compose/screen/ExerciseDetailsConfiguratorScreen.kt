@@ -90,7 +90,7 @@ fun ExerciseDetailsConfiguratorScreen(
     var showLoadingDialog by remember { mutableStateOf(false) }
 
     //Dialog callbacks
-    val onSubmitExercise: () -> Unit = {
+    val onSubmitExercise: () -> Unit = {  //TODO: wire with dialog on changes done
         if (!exerciseState.isLoading) {
 
             //Replace old exercise with new
@@ -233,19 +233,23 @@ fun ExerciseDetailsConfiguratorScreen(
                     )
                 }
 
-                //Add new set footer
-                item {
-                    AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
-                }
+                //Hide during initial loading
+                if (!exerciseState.isLoading) {
 
-                //Rest after exercise footer
-                item {
-                    RestBetweenSetsFooter(
-                        isChecked = restBetweenSetsIsChecked,
-                        onCheckedChange = { newState ->
-                            restBetweenSetsIsChecked = newState
-                        }
-                    )
+                    //Add new set footer
+                    item {
+                        AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
+                    }
+
+                    //Rest after exercise footer
+                    item {
+                        RestBetweenSetsFooter(
+                            isChecked = restBetweenSetsIsChecked,
+                            onCheckedChange = { newState ->
+                                restBetweenSetsIsChecked = newState
+                            }
+                        )
+                    }
                 }
             }
         }
