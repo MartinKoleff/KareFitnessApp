@@ -177,7 +177,7 @@ class WorkoutViewModel @Inject constructor(
                 if (getFavoriteWorkoutsState.isSuccessful) {
                     val favoriteWorkouts = getFavoriteWorkoutsState.workoutList
 
-                    originalWorkoutList = state.value.workoutList //TODO: test...
+                    originalWorkoutList = state.value.workoutList
                     _state.value = _state.value.copy(workoutList = favoriteWorkouts)
                 }
             }
@@ -205,52 +205,6 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-//    fun createNewWorkout() {
-//        viewModelScope.launch(dispatcher) {
-//            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
-//                _createWorkoutState.value = createWorkoutState
-//
-//                //Update workout list
-//                if (createWorkoutState.isSuccessful) {
-//                    val createdWorkout = createWorkoutState.workout
-//
-//                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
-//                    updatedList.add(createdWorkout)
-//                    updatedList.sortBy { it.name }
-//
-//                    _state.value = _state.value.copy(workoutList = updatedList)
-//                    originalWorkoutList = updatedList
-//
-//                    //Await update workout
-//                    Log.d(
-//                        "WorkoutViewModel",
-//                        "Create workout with id ${createdWorkout.workoutId}"
-//                    )
-//                    navigateToWorkoutDetails(createdWorkout.workoutId)
-//
-//                    //Reset create workout state...
-//                    resetCreateWorkoutState()
-//                    Log.d("WorkoutViewModel", "Resetting create workout state...")
-//                }
-//            }
-//        }
-//    }
-
-//    private fun resetCreateWorkoutState() {
-//        _createWorkoutState.value =
-//            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
-//    }
-
-//Directly navigate and skip loading. Call create workout use case in workout details view model
-//    fun createNewWorkout() {
-//        viewModelScope.launch(dispatcher) {
-//            savedStateHandle["isNewWorkout"] = true
-//            Log.d("WorkoutViewModel", "isNewWorkout set to true.")
-//
-//            navigateToWorkoutDetails(-1)
-//        }
-//    }
-
     fun createNewWorkout() {
         navigateToWorkoutDetails(-1, isNewWorkout = true)
 
@@ -273,6 +227,14 @@ class WorkoutViewModel @Inject constructor(
 
         Log.d("WorkoutViewModel", "hasUpdated set to false.")
         hasUpdated.notifyUpdate(false)
+    }
+
+    fun onRefresh() {
+        if(state.value.isFavoriteWorkoutsScreen){
+            getFavoriteWorkouts()
+        }else{
+            getWorkouts()
+        }
     }
 
     //Navigation
@@ -340,3 +302,53 @@ class WorkoutViewModel @Inject constructor(
         super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }
+
+/**
+ * Moved createNewWorkout logic in WorkoutDetails screen
+ */
+
+//    fun createNewWorkout() {
+//        viewModelScope.launch(dispatcher) {
+//            workoutUseCases.createNewWorkoutUseCase().collect { createWorkoutState ->
+//                _createWorkoutState.value = createWorkoutState
+//
+//                //Update workout list
+//                if (createWorkoutState.isSuccessful) {
+//                    val createdWorkout = createWorkoutState.workout
+//
+//                    val updatedList = state.value.workoutList as MutableList<WorkoutDto>
+//                    updatedList.add(createdWorkout)
+//                    updatedList.sortBy { it.name }
+//
+//                    _state.value = _state.value.copy(workoutList = updatedList)
+//                    originalWorkoutList = updatedList
+//
+//                    //Await update workout
+//                    Log.d(
+//                        "WorkoutViewModel",
+//                        "Create workout with id ${createdWorkout.workoutId}"
+//                    )
+//                    navigateToWorkoutDetails(createdWorkout.workoutId)
+//
+//                    //Reset create workout state...
+//                    resetCreateWorkoutState()
+//                    Log.d("WorkoutViewModel", "Resetting create workout state...")
+//                }
+//            }
+//        }
+//    }
+
+//    private fun resetCreateWorkoutState() {
+//        _createWorkoutState.value =
+//            WorkoutState() //Fix infinite loop navigation bug in LaunchedEffect
+//    }
+
+//Directly navigate and skip loading. Call create workout use case in workout details view model
+//    fun createNewWorkout() {
+//        viewModelScope.launch(dispatcher) {
+//            savedStateHandle["isNewWorkout"] = true
+//            Log.d("WorkoutViewModel", "isNewWorkout set to true.")
+//
+//            navigateToWorkoutDetails(-1)
+//        }
+//    }

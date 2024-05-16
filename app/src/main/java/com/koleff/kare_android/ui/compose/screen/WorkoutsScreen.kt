@@ -71,7 +71,9 @@ fun WorkoutsScreen(
         //Pull to refresh
         val pullRefreshState = rememberPullRefreshState(
             refreshing = workoutListViewModel.isRefreshing,
-            onRefresh = { workoutListViewModel.getWorkouts() }
+            onRefresh = {
+                workoutListViewModel.onRefresh()
+            }
         )
 
         //States
