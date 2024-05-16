@@ -276,6 +276,13 @@ class DoWorkoutUseCasesUnitTest {
         )
     }
 
+    /**
+     * Test 1 - Add set
+     * Test 2 - Remove set
+     * Test 3 - Remove set after set is deleted
+     * Test 4 - Add set after set is deleted
+     */
+
     @RepeatedTest(50)
     fun `add set using AddNewExerciseSetUseCase and remove set using DeleteExerciseSetUseCase`() =
         runTest {
@@ -311,66 +318,122 @@ class DoWorkoutUseCasesUnitTest {
             val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
             logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
+            /**
+             * Test 1 - Add set
+             */
+
             //Choose exercise to add set
             val selectedExercise = fetchedWorkoutDetails.exercises[0]
 
             val addNewSetState =
                 exerciseUseCases.addNewExerciseSetUseCase(
-                    selectedExercise.exerciseId,
-                    workoutDetails.workoutId
+                    exerciseId = selectedExercise.exerciseId,
+                    workoutId = workoutDetails.workoutId,
+                    currentSets = selectedExercise.sets
                 ).toList()
 
             logger.i(TAG, "Add new exercise set -> isSuccessful state raised.")
             assertTrue { addNewSetState[0].isSuccessful }
 
+            val setsAfterAdd = addNewSetState[0].exercise.sets
+
             logger.i(TAG, "Assert new exercise set was added.")
-            assertTrue { addNewSetState[0].exercise.sets.size == selectedExercise.sets.size + 1 }
+            assertTrue { setsAfterAdd.size == selectedExercise.sets.size + 1 }
 
-            //Fetch the exercise from DB to see the changes
-            val getExerciseState =
-                exerciseUseCases.getExerciseUseCase(
-                    selectedExercise.exerciseId,
-                    workoutDetails.workoutId
-                ).toList()
+//            //Fetch the exercise from DB to see the changes
+//            val getExerciseState =
+//                exerciseUseCases.getExerciseUseCase(
+//                    selectedExercise.exerciseId,
+//                    workoutDetails.workoutId
+//                ).toList()
+//
+//            logger.i(
+//                TAG,
+//                "Get exercise for exerciseId ${selectedExercise.exerciseId} -> isLoading state raised."
+//            )
+//            assertTrue { getExerciseState[0].isLoading }
+//
+//            logger.i(
+//                TAG,
+//                "Get exercise for exerciseId ${selectedExercise.exerciseId} -> isSuccessful state raised."
+//            )
+//            assertTrue { getExerciseState[1].isSuccessful }
+//
+//            val fetchedExercise = getExerciseState[1].exercise
+//            logger.i(TAG, "Fetched exercise: $fetchedExercise")
+//
+//            logger.i(TAG, "Assert new set was added.")
+//            assertTrue { fetchedExercise.sets.size == selectedExercise.sets.size + 1 }
+//
+//            logger.i(TAG, "Assert the same set was added as the payload.")
+//            assertTrue { fetchedExercise.sets.last() == addNewSetState[0].exercise.sets.last() }
 
-            logger.i(
-                TAG,
-                "Get exercise for exerciseId ${selectedExercise.exerciseId} -> isLoading state raised."
-            )
-            assertTrue { getExerciseState[0].isLoading }
-
-            logger.i(
-                TAG,
-                "Get exercise for exerciseId ${selectedExercise.exerciseId} -> isSuccessful state raised."
-            )
-            assertTrue { getExerciseState[1].isSuccessful }
-
-            val fetchedExercise = getExerciseState[1].exercise
-            logger.i(TAG, "Fetched exercise: $fetchedExercise")
-
-            logger.i(TAG, "Assert new set was saved in DB.")
-            assertTrue { fetchedExercise.sets.size == selectedExercise.sets.size + 1 }
-
-            logger.i(TAG, "Assert the same set was added as the payload.")
-            assertTrue { fetchedExercise.sets.last() == addNewSetState[0].exercise.sets.last() }
+            /**
+             * Test 2 - Remove set
+             */
 
             //Remove set
             val removeSetState =
                 exerciseUseCases.deleteExerciseSetUseCase(
-                    selectedExercise.exerciseId,
-                    workoutDetails.workoutId,
-                    selectedExercise.sets[0].setId
-                        ?: throw NoSuchElementException("Invalid exercise set")
+                    exerciseId = selectedExercise.exerciseId,
+                    workoutId = workoutDetails.workoutId,
+                    setId = setsAfterAdd[0].setId
+                        ?: throw NoSuchElementException("Invalid exercise set"),
+                    currentSets = setsAfterAdd
                 ).toList()
 
             logger.i(TAG, "Delete exercise set -> isSuccessful state raised.")
             assertTrue { removeSetState[0].isSuccessful }
 
-            logger.i(TAG, "Exercise set was deleted.")
-            assertTrue { removeSetState[0].exercise.sets.size == selectedExercise.sets.size }
+            val setsAfterRemove = removeSetState[0].exercise.sets
+
+            logger.i(TAG, "Assert exercise set was deleted.")
+            assertTrue { setsAfterRemove.size == selectedExercise.sets.size }
 
             logger.i(TAG, "Assert first exercise set was deleted.")
-            assertTrue { !removeSetState[0].exercise.sets.contains(selectedExercise.sets[0]) }
+            assertTrue { !setsAfterRemove.contains(setsAfterAdd[0]) }
+
+            /**
+             * Test 3 - Remove set after set is deleted
+             */
+
+            //Remove set
+            val removeSetState2 =
+                exerciseUseCases.deleteExerciseSetUseCase(
+                    exerciseId = selectedExercise.exerciseId,
+                    workoutId = workoutDetails.workoutId,
+                    setId = setsAfterRemove[0].setId
+                        ?: throw NoSuchElementException("Invalid exercise set"),
+                    currentSets = setsAfterRemove,
+                ).toList()
+
+            logger.i(TAG, "Delete exercise set 2 -> isSuccessful state raised.")
+            assertTrue { removeSetState2[0].isSuccessful }
+
+            val setsAfterRemove2 = removeSetState2[0].exercise.sets
+
+            logger.i(TAG, "Assert exercise set was deleted.")
+            assertTrue { setsAfterRemove2.size + 1 == setsAfterRemove.size}
+
+            logger.i(TAG, "Assert second exercise set was deleted.")
+            assertTrue { !setsAfterRemove2.contains(setsAfterAdd[1]) }
+
+            /**
+             * Test 4 - Add set after set is deleted
+             */
+
+            val addNewSetState2 =
+                exerciseUseCases.addNewExerciseSetUseCase(
+                    exerciseId = selectedExercise.exerciseId,
+                    workoutId = workoutDetails.workoutId,
+                    currentSets = removeSetState2[0].exercise.sets
+                ).toList()
+
+            logger.i(TAG, "Add new exercise set after delete -> isSuccessful state raised.")
+            assertTrue { addNewSetState2[0].isSuccessful }
+
+            logger.i(TAG, "Assert just 1 new exercise set was added and the deleted one is not added.")
+            assertTrue { addNewSetState2[0].exercise.sets.size == setsAfterRemove2.size + 1 }
 
             //To update the DB -> use submitExercise...
             //Fetch the exercise from DB to see the changes
