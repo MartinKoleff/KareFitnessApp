@@ -242,7 +242,7 @@ class WorkoutUseCasesUnitTest {
      */
     @Test
     @DisplayName("Create workout using CreateNewWorkoutUseCase test")
-    fun `Create workout using CreateNewWorkoutUseCase test`() =
+    fun `create workout using CreateNewWorkoutUseCase test`() =
         runTest {
 
             //Create workout on empty DB
@@ -273,7 +273,7 @@ class WorkoutUseCasesUnitTest {
                 .orElseThrow()
 
             logger.i(TAG, "Assert Workout is not selected")
-            assert(!createdWorkout.isSelected)
+            assert(!createdWorkout.isFavorite)
 
             logger.i(TAG, "Assert workoutId is the size of all workouts list")
             assert(createdWorkout.workoutId == workoutsInDBAfterCreate)
@@ -346,10 +346,10 @@ class WorkoutUseCasesUnitTest {
         assertTrue(getWorkoutsState[1].workoutList.isEmpty())
 
         //Insert 2 workouts and fetch again...
-        val workout1 = MockupDataGeneratorV2.generateWorkout(isSelected = false)
+        val workout1 = MockupDataGeneratorV2.generateWorkout(isFavorite = false)
         logger.i(TAG, "Mocked workout 1: $workout1")
 
-        val workout2 = MockupDataGeneratorV2.generateWorkout(isSelected = false)
+        val workout2 = MockupDataGeneratorV2.generateWorkout(isFavorite = false)
         logger.i(TAG, "Mocked workout 2: $workout2")
 
         val workoutList = listOf(workout1, workout2)
@@ -465,6 +465,7 @@ class WorkoutUseCasesUnitTest {
      * ExerciseSetDao.updateSet()
      * ExerciseDao.insertAllExerciseSetCrossRef()
      */
+    //TODO: document tests...
     @RepeatedTest(50)
     @DisplayName("Get workout details using GetWorkoutsDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test")
     fun `get workout details using GetWorkoutsDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test`() =
@@ -535,6 +536,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDao.insertWorkout()
      * WorkoutDao.getWorkoutById()
      */
+    //TODO: document tests...
     @RepeatedTest(50)
     @DisplayName("Update workout details using UpdateWorkoutDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test")
     fun `update workout details using UpdateWorkoutDetailsUseCase test and CreateCustomWorkoutDetailsUseCase test`() =
@@ -645,6 +647,7 @@ class WorkoutUseCasesUnitTest {
      * WorkoutDetailsDao.getWorkoutDetailsById()
      * ExerciseDao.getExerciseByExerciseAndWorkoutId()
      */
+    //TODO: document tests...
     @RepeatedTest(50)
     @DisplayName("Update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase test")
     fun `update workout using UpdateWorkoutUseCase test and CreateCustomWorkoutUseCase test`() =
@@ -841,6 +844,7 @@ class WorkoutUseCasesUnitTest {
      * ---------------------------
      * ExerciseSetDao.getSetById()
      */
+    //TODO: document tests...
     @RepeatedTest(50)
     @DisplayName("Add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test")
     fun `add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test`() =
@@ -1259,201 +1263,18 @@ class WorkoutUseCasesUnitTest {
         }
     }
 
-    /**
-     * Tested functions inside:
-     *
-     * GetSelectedWorkoutUseCase()
-     * WorkoutDao.getWorkoutByIsSelected()
-     * ----------------------------
-     * CreateCustomWorkoutUseCase()
-     * WorkoutDao.insertWorkout()
-     * WorkoutDetailsDao.insertWorkoutDetails()
-     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
-     * ----------------------------
-     * DeselectWorkoutUseCase()
-     * WorkoutDao.getWorkoutById()
-     *
-     * updateWorkoutUseCase()
-     * WorkoutDao.updateWorkout()
-     * WorkoutDetailsDao.getWorkoutDetailsById()
-     * WorkoutDetailsDao.updateWorkoutDetails()
-     * ----------------------------
-     * SelectWorkoutUseCase()
-     * WorkoutDao.getWorkoutByIsSelected()
-     * WorkoutDao.selectWorkoutById()
-     */
-    @RepeatedTest(50)
-    @DisplayName("Select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test")
-    fun `select workout using SelectWorkoutUseCase test and get selected workout using GetSelectedWorkoutUseCase test`() =
-        runTest {
-
-            logger.i(TAG, "Test 1 -> get selected workout on empty DB.")
-
-            //Fetch with empty DB -> no selected workout
-            val getSelectedWorkoutState = workoutUseCases.getSelectedWorkoutUseCase().toList()
-
-            logger.i(TAG, "Get selected workout -> isLoading state raised.")
-            assertTrue { getSelectedWorkoutState[0].isLoading }
-
-            logger.i(TAG, "Get selected workout -> isSuccessful state raised.")
-            assertTrue { getSelectedWorkoutState[1].isSuccessful }
-
-            val selectedWorkout = getSelectedWorkoutState[1].selectedWorkout
-            logger.i(TAG, "Selected workout 1: $selectedWorkout")
-
-            logger.i(TAG, "Assert no workout is currently selected. Workout DB is empty.")
-            assertNull(selectedWorkout)
-
-            //Generate workout
-            val workout = MockupDataGeneratorV2.generateWorkout(isSelected = true)
-            logger.i(TAG, "Mocked workout: $workout")
-
-            //Insert Workout in DB
-            val createCustomWorkoutState =
-                workoutUseCases.createCustomWorkoutUseCase(workout).toList()
-
-            logger.i(TAG, "Create custom workout -> isLoading state raised.")
-            assertTrue { createCustomWorkoutState[0].isLoading }
-
-            logger.i(TAG, "Create custom workout -> isSuccessful state raised.")
-            assertTrue { createCustomWorkoutState[1].isSuccessful }
-
-            val savedWorkout = createCustomWorkoutState[1].workout
-            logger.i(TAG, "Saved workout: $savedWorkout")
-
-            logger.i(TAG, "Test 2 -> get selected workout after created a new one.")
-
-            //Check which workout is currently selected
-            val getSelectedWorkoutState2 = workoutUseCases.getSelectedWorkoutUseCase().toList()
-
-            logger.i(TAG, "Get selected workout 2 -> isLoading state raised.")
-            assertTrue { getSelectedWorkoutState2[0].isLoading }
-
-            logger.i(TAG, "Get selected workout 2 -> isSuccessful state raised.")
-            assertTrue { getSelectedWorkoutState2[1].isSuccessful }
-
-            val selectedWorkout2 = getSelectedWorkoutState2[1].selectedWorkout
-            logger.i(TAG, "Selected workout 2: $selectedWorkout2")
-
-            logger.i(TAG, "Assert workout 1 is currently selected.")
-            assertTrue { selectedWorkout2 == workout }
-
-            logger.i(
-                TAG,
-                "Test 3 -> get selected workout after created a new one and DB contains selected workout."
-            )
-
-            val workout2 = MockupDataGeneratorV2.generateWorkout(
-                isSelected = true,
-                excludedIds = listOf(workout.workoutId)
-            )
-            logger.i(TAG, "Mocked workout 2: $workout2")
-
-            //Insert another selected workout in DB
-            val createCustomWorkoutState2 =
-                workoutUseCases.createCustomWorkoutUseCase(workout2).toList()
-
-            logger.i(TAG, "Create custom workout 2 -> isLoading state raised.")
-            assertTrue { createCustomWorkoutState2[0].isLoading }
-
-            logger.i(TAG, "Create custom workout 2 -> isSuccessful state raised.")
-            assertTrue { createCustomWorkoutState2[1].isSuccessful }
-
-            val savedWorkout2 = createCustomWorkoutState2[1].workout
-            logger.i(TAG, "Saved workout 2: $savedWorkout2")
-
-            //Check which workout is currently selected -> deselect workout and select workout 2
-            val getSelectedWorkoutState3 = workoutUseCases.getSelectedWorkoutUseCase().toList()
-
-            logger.i(TAG, "Get selected workout 3 -> isLoading state raised.")
-            assertTrue { getSelectedWorkoutState3[0].isLoading }
-
-            logger.i(TAG, "Get selected workout 3 -> isSuccessful state raised.")
-            assertTrue { getSelectedWorkoutState3[1].isSuccessful }
-
-            val selectedWorkout3 = getSelectedWorkoutState3[1].selectedWorkout
-            logger.i(TAG, "Selected workout 3: $selectedWorkout3")
-
-            logger.i(TAG, "Assert workout 2 is currently selected.")
-            assertTrue { selectedWorkout3 == workout2 }
-
-            logger.i(TAG, "Test 4 -> deselect workout 2.")
-
-            //Deselect workout
-            val deselectWorkoutState =
-                workoutUseCases.deselectWorkoutUseCase(workout2.workoutId).toList()
-            logger.i(TAG, "Deselected workout 2 -> isLoading state raised.")
-            assertTrue { deselectWorkoutState[0].isLoading }
-
-            logger.i(TAG, "Deselected workout 2 -> isSuccessful state raised.")
-            assertTrue { deselectWorkoutState[1].isSuccessful }
-
-            //Check if DB has no selected workout
-            val getSelectedWorkoutState4 = workoutUseCases.getSelectedWorkoutUseCase().toList()
-
-            logger.i(TAG, "Get selected workout 4 -> isLoading state raised.")
-            assertTrue { getSelectedWorkoutState4[0].isLoading }
-
-            logger.i(TAG, "Get selected workout 4 -> isSuccessful state raised.")
-            assertTrue { getSelectedWorkoutState4[1].isSuccessful }
-
-            val selectedWorkout4 = getSelectedWorkoutState4[1].selectedWorkout
-            logger.i(TAG, "Selected workout 4: $selectedWorkout4")
-
-            logger.i(TAG, "Assert no workout is currently selected.")
-            assertNull(selectedWorkout4)
-
-            logger.i(TAG, "Test 5 -> select workout 1.")
-
-            //Fetch workout 1 from DB
-            val getWorkoutState = workoutUseCases.getWorkoutUseCase(workout.workoutId)
-                .toList()
-
-            logger.i(TAG, "Get workout 1 -> isLoading state raised.")
-            assertTrue { getWorkoutState[0].isLoading }
-
-            logger.i(TAG, "Get workout 1 -> isSuccessful state raised.")
-            assertTrue { getWorkoutState[1].isSuccessful }
-
-            val fetchedWorkout = getWorkoutState[1].workout
-            logger.i(TAG, "Assert workout 1 is not selected in the DB.")
-            assertFalse { fetchedWorkout.isSelected }
-
-            //Select workout 1
-            logger.i(TAG, "Workout 1 is now selected.")
-            val selectWorkoutState =
-                workoutUseCases.selectWorkoutUseCase(workout.workoutId).toList()
-            logger.i(TAG, "Select workout 1 -> isLoading state raised.")
-            assertTrue { selectWorkoutState[0].isLoading }
-
-            logger.i(TAG, "Select workout 1 -> isSuccessful state raised.")
-            assertTrue { selectWorkoutState[1].isSuccessful }
-
-            //Fetch current selected workout
-            val getSelectedWorkoutState5 = workoutUseCases.getSelectedWorkoutUseCase().toList()
-
-            logger.i(TAG, "Get selected workout 5 -> isLoading state raised.")
-            assertTrue { getSelectedWorkoutState5[0].isLoading }
-
-            logger.i(TAG, "Get selected workout 5 -> isSuccessful state raised.")
-            assertTrue { getSelectedWorkoutState5[1].isSuccessful }
-
-            val selectedWorkout5 = getSelectedWorkoutState5[1].selectedWorkout
-            logger.i(TAG, "Selected workout 5: $selectedWorkout5")
-
-            logger.i(TAG, "Assert workout 1 is currently selected.")
-            assertTrue { selectedWorkout5 == workout }
-
-            //TODO: [Test] select workout with workoutID not in DB and fetch...
-            //TODO: [Test] select current selected workout and fetch...
-        }
-
+    //TODO: [Test] update invalid workout configuration
+    //TODO: [Test] delete invalid workout configuration
+    //TODO: [Test] get invalid workout configuration
 
     /**
-     *
+     * Test 1 - create workout configuration
+     * Test 2 - update existing workout configuration
+     * Test 3 - delete workout configuration
      */
     @RepeatedTest(50)
-    fun `Create workout configuration using CreateWorkoutConfigurationUseCase`() = runTest {
+    @DisplayName("Create, update and delete workout configuration using CreateWorkoutConfigurationUseCase, UpdateWorkoutConfigurationUseCase and DeleteWorkoutConfigurationUseCase tests")
+    fun `create, update and delete workout configuration using CreateWorkoutConfigurationUseCase, UpdateWorkoutConfigurationUseCase and DeleteWorkoutConfigurationUseCase tests`() = runTest {
 
         //Generate workout details and workout
         val workoutDetails =
@@ -2296,6 +2117,218 @@ class WorkoutUseCasesUnitTest {
         logger.i(TAG, "Assert duplicate exercises are not found")
         assertTrue { !findDuplicateExercisesState3[0].containsDuplicates }
     }
+
+    /**
+     * Test 1 - favorited workout to favorite again
+     * Test 2 - not favorited workout to favorite
+     */
+    @RepeatedTest(50)
+    @DisplayName("favorite workout using FavoriteWorkoutUseCase test and get favorite workout using GetFavoriteWorkoutsUseCase test")
+    fun `favorite workout using FavoriteWorkoutUseCase test and get favorite workout using GetFavoriteWorkoutsUseCase test`() =
+        runTest {
+        }
+
+    /**
+     * Test 1 - favorited workout to unfavorite
+     * Test 2 - not favorited workout to unfavorite again
+     */
+    @RepeatedTest(50)
+    @DisplayName("unfavorite workout using UnfavoriteWorkoutUseCase test and get favorite workout using GetFavoriteWorkoutsUseCase test")
+    fun `unfavorite workout using UnfavoriteWorkoutUseCase test and get favorite workout using GetFavoriteWorkoutsUseCase test`() =
+        runTest {
+
+        }
 }
 
-//TODO: submitExercise save positions...
+
+/**
+ * Selected workout tests for single view screen (before refactoring to list view and migrating from select to favorite)
+ */
+//   /**
+//     * Tested functions inside:
+//     *
+//     * GetFavoriteWorkoutsUseCase()
+//     * WorkoutDao.getWorkoutByIsSelected()
+//     * ----------------------------
+//     * CreateCustomWorkoutUseCase()
+//     * WorkoutDao.insertWorkout()
+//     * WorkoutDetailsDao.insertWorkoutDetails()
+//     * WorkoutDao.insertWorkoutDetailsWorkoutCrossRef()
+//     * ----------------------------
+//     * UnfavoriteWorkoutUseCase()
+//     * WorkoutDao.getWorkoutById()
+//     *
+//     * updateWorkoutUseCase()
+//     * WorkoutDao.updateWorkout()
+//     * WorkoutDetailsDao.getWorkoutDetailsById()
+//     * WorkoutDetailsDao.updateWorkoutDetails()
+//     * ----------------------------
+//     * FavoriteWorkoutUseCase()
+//     * WorkoutDao.getWorkoutByIsSelected()
+//     * WorkoutDao.selectWorkoutById()
+//     */
+//    @RepeatedTest(50)
+//    @DisplayName("Select workout using FavoriteWorkoutUseCase test and get selected workout using GetFavoriteWorkoutsUseCase test")
+//    fun `select workout using FavoriteWorkoutUseCase test and get selected workout using GetFavoriteWorkoutsUseCase test`() =
+//        runTest {
+//
+//            logger.i(TAG, "Test 1 -> get selected workout on empty DB.")
+//
+//            //Fetch with empty DB -> no selected workout
+//            val getSelectedWorkoutState = workoutUseCases.getFavoriteWorkoutsUseCase().toList()
+//
+//            logger.i(TAG, "Get selected workout -> isLoading state raised.")
+//            assertTrue { getSelectedWorkoutState[0].isLoading }
+//
+//            logger.i(TAG, "Get selected workout -> isSuccessful state raised.")
+//            assertTrue { getSelectedWorkoutState[1].isSuccessful }
+//
+//            val selectedWorkout = getSelectedWorkoutState[1].selectedWorkout
+//            logger.i(TAG, "Selected workout 1: $selectedWorkout")
+//
+//            logger.i(TAG, "Assert no workout is currently selected. Workout DB is empty.")
+//            assertNull(selectedWorkout)
+//
+//            //Generate workout
+//            val workout = MockupDataGeneratorV2.generateWorkout(isFavorite = true)
+//            logger.i(TAG, "Mocked workout: $workout")
+//
+//            //Insert Workout in DB
+//            val createCustomWorkoutState =
+//                workoutUseCases.createCustomWorkoutUseCase(workout).toList()
+//
+//            logger.i(TAG, "Create custom workout -> isLoading state raised.")
+//            assertTrue { createCustomWorkoutState[0].isLoading }
+//
+//            logger.i(TAG, "Create custom workout -> isSuccessful state raised.")
+//            assertTrue { createCustomWorkoutState[1].isSuccessful }
+//
+//            val savedWorkout = createCustomWorkoutState[1].workout
+//            logger.i(TAG, "Saved workout: $savedWorkout")
+//
+//            logger.i(TAG, "Test 2 -> get selected workout after created a new one.")
+//
+//            //Check which workout is currently selected
+//            val getSelectedWorkoutState2 = workoutUseCases.getFavoriteWorkoutsUseCase().toList()
+//
+//            logger.i(TAG, "Get selected workout 2 -> isLoading state raised.")
+//            assertTrue { getSelectedWorkoutState2[0].isLoading }
+//
+//            logger.i(TAG, "Get selected workout 2 -> isSuccessful state raised.")
+//            assertTrue { getSelectedWorkoutState2[1].isSuccessful }
+//
+//            val selectedWorkout2 = getSelectedWorkoutState2[1].selectedWorkout
+//            logger.i(TAG, "Selected workout 2: $selectedWorkout2")
+//
+//            logger.i(TAG, "Assert workout 1 is currently selected.")
+//            assertTrue { selectedWorkout2 == workout }
+//
+//            logger.i(
+//                TAG,
+//                "Test 3 -> get selected workout after created a new one and DB contains selected workout."
+//            )
+//
+//            val workout2 = MockupDataGeneratorV2.generateWorkout(
+//                isFavorite = true,
+//                excludedIds = listOf(workout.workoutId)
+//            )
+//            logger.i(TAG, "Mocked workout 2: $workout2")
+//
+//            //Insert another selected workout in DB
+//            val createCustomWorkoutState2 =
+//                workoutUseCases.createCustomWorkoutUseCase(workout2).toList()
+//
+//            logger.i(TAG, "Create custom workout 2 -> isLoading state raised.")
+//            assertTrue { createCustomWorkoutState2[0].isLoading }
+//
+//            logger.i(TAG, "Create custom workout 2 -> isSuccessful state raised.")
+//            assertTrue { createCustomWorkoutState2[1].isSuccessful }
+//
+//            val savedWorkout2 = createCustomWorkoutState2[1].workout
+//            logger.i(TAG, "Saved workout 2: $savedWorkout2")
+//
+//            //Check which workout is currently selected -> deselect workout and select workout 2
+//            val getSelectedWorkoutState3 = workoutUseCases.getFavoriteWorkoutsUseCase().toList()
+//
+//            logger.i(TAG, "Get selected workout 3 -> isLoading state raised.")
+//            assertTrue { getSelectedWorkoutState3[0].isLoading }
+//
+//            logger.i(TAG, "Get selected workout 3 -> isSuccessful state raised.")
+//            assertTrue { getSelectedWorkoutState3[1].isSuccessful }
+//
+//            val selectedWorkout3 = getSelectedWorkoutState3[1].selectedWorkout
+//            logger.i(TAG, "Selected workout 3: $selectedWorkout3")
+//
+//            logger.i(TAG, "Assert workout 2 is currently selected.")
+//            assertTrue { selectedWorkout3 == workout2 }
+//
+//            logger.i(TAG, "Test 4 -> deselect workout 2.")
+//
+//            //Deselect workout
+//            val deselectWorkoutState =
+//                workoutUseCases.unfavoriteWorkoutUseCase(workout2.workoutId).toList()
+//            logger.i(TAG, "Deselected workout 2 -> isLoading state raised.")
+//            assertTrue { deselectWorkoutState[0].isLoading }
+//
+//            logger.i(TAG, "Deselected workout 2 -> isSuccessful state raised.")
+//            assertTrue { deselectWorkoutState[1].isSuccessful }
+//
+//            //Check if DB has no selected workout
+//            val getSelectedWorkoutState4 = workoutUseCases.getFavoriteWorkoutsUseCase().toList()
+//
+//            logger.i(TAG, "Get selected workout 4 -> isLoading state raised.")
+//            assertTrue { getSelectedWorkoutState4[0].isLoading }
+//
+//            logger.i(TAG, "Get selected workout 4 -> isSuccessful state raised.")
+//            assertTrue { getSelectedWorkoutState4[1].isSuccessful }
+//
+//            val selectedWorkout4 = getSelectedWorkoutState4[1].selectedWorkout
+//            logger.i(TAG, "Selected workout 4: $selectedWorkout4")
+//
+//            logger.i(TAG, "Assert no workout is currently selected.")
+//            assertNull(selectedWorkout4)
+//
+//            logger.i(TAG, "Test 5 -> select workout 1.")
+//
+//            //Fetch workout 1 from DB
+//            val getWorkoutState = workoutUseCases.getWorkoutUseCase(workout.workoutId)
+//                .toList()
+//
+//            logger.i(TAG, "Get workout 1 -> isLoading state raised.")
+//            assertTrue { getWorkoutState[0].isLoading }
+//
+//            logger.i(TAG, "Get workout 1 -> isSuccessful state raised.")
+//            assertTrue { getWorkoutState[1].isSuccessful }
+//
+//            val fetchedWorkout = getWorkoutState[1].workout
+//            logger.i(TAG, "Assert workout 1 is not selected in the DB.")
+//            assertFalse { fetchedWorkout.isFavorite }
+//
+//            //Select workout 1
+//            logger.i(TAG, "Workout 1 is now selected.")
+//            val selectWorkoutState =
+//                workoutUseCases.favoriteWorkoutUseCase(workout.workoutId).toList()
+//            logger.i(TAG, "Select workout 1 -> isLoading state raised.")
+//            assertTrue { selectWorkoutState[0].isLoading }
+//
+//            logger.i(TAG, "Select workout 1 -> isSuccessful state raised.")
+//            assertTrue { selectWorkoutState[1].isSuccessful }
+//
+//            //Fetch current selected workout
+//            val getSelectedWorkoutState5 = workoutUseCases.getFavoriteWorkoutsUseCase().toList()
+//
+//            logger.i(TAG, "Get selected workout 5 -> isLoading state raised.")
+//            assertTrue { getSelectedWorkoutState5[0].isLoading }
+//
+//            logger.i(TAG, "Get selected workout 5 -> isSuccessful state raised.")
+//            assertTrue { getSelectedWorkoutState5[1].isSuccessful }
+//
+//            val selectedWorkout5 = getSelectedWorkoutState5[1].selectedWorkout
+//            logger.i(TAG, "Selected workout 5: $selectedWorkout5")
+//
+//            logger.i(TAG, "Assert workout 1 is currently selected.")
+//            assertTrue { selectedWorkout5 == workout }
+//
+//            //TODO: [Test] select workout with workoutID not in DB and fetch...
+//            //TODO: [Test] select current selected workout and fetch...
+//        }
