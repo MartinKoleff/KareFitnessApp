@@ -433,6 +433,36 @@ fun DuplicateExercisesFoundDialog(
     )
 }
 
+
+@Composable
+fun FavoriteWorkoutDialog(
+    actionTitle: String,
+    onClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    WarningDialog(
+        title = "$actionTitle Workout",
+        description = "Are you sure you want to ${actionTitle.lowercase(Locale.getDefault())} this workout?",
+        actionButtonTitle = actionTitle,
+        onClick = onClick,
+        onDismiss = onDismiss
+    )
+}
+
+@Composable
+fun DeleteWorkoutDialog(
+    onClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    WarningDialog(
+        title = "Delete Workout",
+        description = "Are you sure you want to delete this workout? This action cannot be undone.",
+        actionButtonTitle = "Delete",
+        onClick = onClick,
+        onDismiss = onDismiss
+    )
+}
+
 @Preview
 @PreviewLightDark
 @Composable
@@ -465,45 +495,50 @@ fun DuplicateExercisesFoundDialogPreview() {
 @Preview
 @PreviewLightDark
 @Composable
-fun WarningDialogPreview() {
-    WarningDialog(
-        title = "Delete Workout",
-        description = "Are you sure you want to delete this workout? This action cannot be undone.",
-        actionButtonTitle = "Delete",
-        onClick = {},
-        onDismiss = {}
+fun DeleteWorkoutDialogPreview() {
+    DeleteWorkoutDialog(
+        onClick = {
+
+        },
+        onDismiss = {
+
+        }
     )
 }
 
 @Preview
 @PreviewLightDark
 @Composable
-fun SelectWorkoutDialogPreview() {
-    val workout = MockupDataGeneratorV2.generateWorkout()
-    val selectWord = if (workout.isSelected) "De-select" else "Select"
+fun FavoriteWorkoutDialogPreview() {
+    val workout = MockupDataGeneratorV2.generateWorkout().copy(isFavorite = false)
+    val selectWord = if (workout.isFavorite) "Unfavorite" else "Favorite"
 
-    WarningDialog(
-        title = "$selectWord Workout",
-        description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
-        actionButtonTitle = selectWord,
-        onClick = {},
-        onDismiss = {}
+    FavoriteWorkoutDialog(
+        actionTitle = selectWord,
+        onClick = {
+
+        },
+        onDismiss = {
+
+        }
     )
 }
 
 @Preview
 @PreviewLightDark
 @Composable
-fun DeselectWorkoutDialogPreview() {
-    val workout = MockupDataGeneratorV2.generateWorkout().copy(isSelected = true)
-    val selectWord = if (workout.isSelected) "De-select" else "Select"
+fun UnfavoriteWorkoutDialogPreview() {
+    val workout = MockupDataGeneratorV2.generateWorkout().copy(isFavorite = true)
+    val selectWord = if (workout.isFavorite) "Unfavorite" else "Favorite"
 
-    WarningDialog(
-        title = "$selectWord Workout",
-        description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
-        actionButtonTitle = selectWord,
-        onClick = {},
-        onDismiss = {}
+    FavoriteWorkoutDialog(
+        actionTitle = selectWord,
+        onClick = {
+
+        },
+        onDismiss = {
+
+        }
     )
 }
 
