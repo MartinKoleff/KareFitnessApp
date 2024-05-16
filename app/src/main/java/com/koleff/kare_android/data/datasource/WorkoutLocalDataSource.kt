@@ -59,7 +59,7 @@
 //            )
 //
 //            //Deselect current selected workout
-//            val selectedWorkoutInDB = workoutDao.getWorkoutByIsSelected()?.copy(
+//            val selectedWorkoutInDB = workoutDao.getWorkoutByIsFavorite()?.copy(
 //                isFavorite = false
 //            )
 //
@@ -104,7 +104,7 @@
 //            emit(ResultWrapper.Loading())
 //            delay(Constants.fakeDelay)
 //
-//            val data = workoutDao.getWorkoutByIsSelected()
+//            val data = workoutDao.getWorkoutByIsFavorite()
 //
 //            val result = SelectedWorkoutWrapper(
 //                SelectedWorkoutResponse(data?.toDto())

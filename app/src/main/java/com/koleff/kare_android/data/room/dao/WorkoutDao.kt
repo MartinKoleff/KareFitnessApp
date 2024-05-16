@@ -46,7 +46,7 @@ interface WorkoutDao {
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE isFavorite = 1") //true = 1, false = 0
-    fun getWorkoutByIsSelected(): List<Workout>
+    fun getWorkoutByIsFavorite(): List<Workout>
 
     @Transaction
     @Query("SELECT * FROM workout_table WHERE workoutId = :workoutId") //true = 1, false = 0

@@ -79,7 +79,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val data = workoutDao.getWorkoutByIsSelected()
+            val data = workoutDao.getWorkoutByIsFavorite()
 
             val result = WorkoutListWrapper(
                 WorkoutsListResponse(data.map { it.toDto() })
@@ -414,7 +414,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
 
             //Select
-            if (workoutDto.isSelected) {
+            if (workoutDto.isFavorite) {
                 favoriteWorkout(workoutDto.workoutId).collect() //Await...
             }
 
@@ -441,7 +441,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     workoutId = workoutDetailsId.toInt(),
                     name = workoutDetailsDto.name,
                     muscleGroup = workoutDetailsDto.muscleGroup,
-                    isSelected = workoutDetailsDto.isSelected,
+                    isFavorite = workoutDetailsDto.isFavorite,
                     totalExercises = workoutDetailsDto.exercises.size,
                     snapshot = "snapshot $workoutDetailsId.png"
                 )
@@ -468,8 +468,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             val workoutConfiguration = WorkoutConfigurationDto(workoutId = workoutDetailsId.toInt())
             workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
 
-            //Select
-            if (workoutDetailsDto.isSelected) {
+            //Favorite
+            if (workoutDetailsDto.isFavorite) {
                 favoriteWorkout(workoutDetailsDto.workoutId).collect()
             }
 

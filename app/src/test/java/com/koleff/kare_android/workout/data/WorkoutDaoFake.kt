@@ -64,7 +64,7 @@
 //
 //    override fun getWorkoutsOrderedById(): List<Workout> = workoutsDB.sortedBy { it.workoutId }
 //
-//    override fun getWorkoutByIsSelected(): Workout? = workoutsDB.firstOrNull { it.isFavorite }
+//    override fun getWorkoutByIsFavorite(): Workout? = workoutsDB.firstOrNull { it.isFavorite }
 //    override fun getWorkoutById(workoutId: Int): Workout =
 //        workoutsDB.first { it.workoutId == workoutId }
 //
