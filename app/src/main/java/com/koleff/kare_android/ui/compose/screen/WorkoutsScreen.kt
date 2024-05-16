@@ -47,7 +47,9 @@ import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.dialogs.DeleteWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.FavoriteWorkoutDialog
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import kotlinx.coroutines.launch
@@ -88,7 +90,7 @@ fun WorkoutsScreen(
 
         //Dialog visibility
         var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
-        var showSelectDialog by remember { mutableStateOf(false) }
+        var showFavoriteDialog by remember { mutableStateOf(false) }
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showErrorDialog by remember { mutableStateOf(false) }
         var showLoadingDialog by remember { mutableStateOf(false) }
@@ -108,7 +110,7 @@ fun WorkoutsScreen(
             selectedWorkout?.let {
                 workoutListViewModel.selectWorkout(selectedWorkout!!.workoutId)
 
-                showSelectDialog = false
+                showFavoriteDialog = false
             }
         }
 
@@ -166,24 +168,19 @@ fun WorkoutsScreen(
         }
 
         if (showDeleteDialog && selectedWorkout != null) {
-            WarningDialog(
-                title = "Delete Workout",
-                description = "Are you sure you want to delete this workout? This action cannot be undone.",
-                actionButtonTitle = "Delete",
+            DeleteWorkoutDialog(
                 onClick = onDeleteWorkout,
                 onDismiss = { showDeleteDialog = false }
             )
         }
 
-        if (showSelectDialog && selectedWorkout != null) {
-            val selectWord = if (selectedWorkout!!.isSelected) "De-select" else "Select"
+        if (showFavoriteDialog && selectedWorkout != null) {
+            val selectWord = if (selectedWorkout!!.isFavorite) "Unfavorite" else "Favorite"
 
-            WarningDialog(
-                title = "$selectWord Workout",
-                description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
-                actionButtonTitle = selectWord,
+            FavoriteWorkoutDialog(
+                actionTitle = selectWord,
                 onClick = onSelectWorkout,
-                onDismiss = { showSelectDialog = false }
+                onDismiss = { showFavoriteDialog = false }
             )
         }
 
@@ -243,7 +240,7 @@ fun WorkoutsScreen(
                     //MyWorkout Screen
                     if (workoutState.isMyWorkoutScreen) {
                         val workout = workoutState.workoutList.firstOrNull {
-                            it.isSelected
+                            it.isFavorite
                         }
 
                         workout?.let {
@@ -255,7 +252,10 @@ fun WorkoutsScreen(
                                     showDeleteDialog = true
                                     selectedWorkout = workout
                                 },
-                                onSelect = { showSelectDialog = true },
+                                onSelect = {
+                                    showFavoriteDialog = true
+                                    selectedWorkout = workout
+                                },
                                 onClick = {
                                     workoutListViewModel.navigateToWorkoutDetails(
                                         workout = it
@@ -295,7 +295,7 @@ fun WorkoutsScreen(
                                         selectedWorkout = workout
                                     },
                                     onSelect = {
-                                        showSelectDialog = true
+                                        showFavoriteDialog = true
                                         selectedWorkout = workout
                                     },
                                     onClick = {
