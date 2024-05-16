@@ -40,7 +40,7 @@
 //                    muscleGroup = MuscleGroup.NONE,
 //                    snapshot = "default_snapshot.png",
 //                    totalExercises = MuscleGroup.getTotalExercises(MuscleGroup.ALL),
-//                    isSelected = false
+//                    isFavorite = false
 //                )
 //            workoutDao.insertWorkout(
 //                catalogPlaceholderWorkout
@@ -51,7 +51,7 @@
 //                    name = "Catalog",
 //                    description = "",
 //                    muscleGroup = MuscleGroup.NONE,
-//                    isSelected = false
+//                    isFavorite = false
 //                )
 //            workoutDetailsDao.insertWorkoutDetails(
 //                catalogPlaceholderWorkoutDetails

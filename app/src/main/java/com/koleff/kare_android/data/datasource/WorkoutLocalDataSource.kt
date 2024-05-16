@@ -60,7 +60,7 @@
 //
 //            //Deselect current selected workout
 //            val selectedWorkoutInDB = workoutDao.getWorkoutByIsSelected()?.copy(
-//                isSelected = false
+//                isFavorite = false
 //            )
 //
 //            //If you are trying to select the current selected workout
@@ -86,7 +86,7 @@
 //
 //            //Deselect workout
 //            val workout = workoutDao.getWorkoutById(workoutId).copy(
-//                isSelected = false
+//                isFavorite = false
 //            )
 //
 //            //Update DB
@@ -313,12 +313,12 @@
 //                setupExerciseSetCrossRef(workoutDetails)
 //            }
 //
-//            //Update total exercises, name, muscle group and isSelected
+//            //Update total exercises, name, muscle group and isFavorite
 //            val workoutEntry = workoutDao.getWorkoutById(workoutId).copy(
 //                name = workoutDetails.name,
 //                totalExercises = workoutDetails.exercises.size,
 //                muscleGroup = workoutDetails.muscleGroup,
-//                isSelected = workoutDetails.isSelected,
+//                isFavorite = workoutDetails.isFavorite,
 //            )
 //            workoutDao.updateWorkout(workoutEntry) //if update is not working -> invalid id is provided
 //
@@ -423,7 +423,7 @@
 //                name = workout.name,
 //                description = workoutDetailsWithExercises.workoutDetails.description,
 //                muscleGroup = workout.muscleGroup,
-//                isSelected = workout.isSelected
+//                isFavorite = workout.isFavorite
 //            )
 //
 //            workoutDetailsDao.updateWorkoutDetails(updatedWorkoutDetails)
@@ -480,7 +480,7 @@
 //                    name = workoutDto.name,
 //                    description = "",
 //                    muscleGroup = workoutDto.muscleGroup,
-//                    isSelected = workoutDto.isSelected,
+//                    isFavorite = workoutDto.isFavorite,
 //                )
 //            val workoutDetailsId =
 //                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //returns 0
@@ -491,7 +491,7 @@
 //            workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity())
 //
 //            //Select
-//            if (workoutDto.isSelected) {
+//            if (workoutDto.isFavorite) {
 //                selectWorkout(workoutDto.workoutId).collect() //Await...
 //            }
 //
@@ -518,7 +518,7 @@
 //                    workoutId = workoutDetailsId.toInt(),
 //                    name = workoutDetailsDto.name,
 //                    muscleGroup = workoutDetailsDto.muscleGroup,
-//                    isSelected = workoutDetailsDto.isSelected,
+//                    isFavorite = workoutDetailsDto.isFavorite,
 //                    totalExercises = workoutDetailsDto.exercises.size,
 //                    snapshot = "snapshot $workoutDetailsId.png"
 //                )
@@ -545,7 +545,7 @@
 //            }
 //
 //            //Select
-//            if (workoutDetailsDto.isSelected) {
+//            if (workoutDetailsDto.isFavorite) {
 //                selectWorkout(workoutDetailsDto.workoutId).collect()
 //            }
 //

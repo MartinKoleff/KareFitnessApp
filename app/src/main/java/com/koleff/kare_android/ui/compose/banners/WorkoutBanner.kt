@@ -547,7 +547,7 @@ fun WorkoutListPreview() {
             muscleGroup = MuscleGroup.fromId(index + 1),
             snapshot = "",
             totalExercises = 5,
-            isSelected = false
+            isFavorite = false
         )
         workoutList.add(currentWorkout)
     }

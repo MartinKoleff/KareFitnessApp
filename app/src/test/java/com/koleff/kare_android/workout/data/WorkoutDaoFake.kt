@@ -58,13 +58,13 @@
 //
 //    override suspend fun selectWorkoutById(workoutId: Int) {
 //        workoutsDB.forEach {
-//            it.isSelected = it.workoutId == workoutId
+//            it.isFavorite = it.workoutId == workoutId
 //        }
 //    }
 //
 //    override fun getWorkoutsOrderedById(): List<Workout> = workoutsDB.sortedBy { it.workoutId }
 //
-//    override fun getWorkoutByIsSelected(): Workout? = workoutsDB.firstOrNull { it.isSelected }
+//    override fun getWorkoutByIsSelected(): Workout? = workoutsDB.firstOrNull { it.isFavorite }
 //    override fun getWorkoutById(workoutId: Int): Workout =
 //        workoutsDB.first { it.workoutId == workoutId }
 //

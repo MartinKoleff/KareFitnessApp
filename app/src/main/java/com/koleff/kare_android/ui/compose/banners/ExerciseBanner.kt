@@ -122,6 +122,8 @@ fun ExerciseBannerV1(
     }
 }
 
+//TODO: SelectedExerciseBanner...
+
 @Composable
 fun ExerciseBannerV2(
     modifier: Modifier,

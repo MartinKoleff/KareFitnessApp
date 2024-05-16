@@ -80,7 +80,7 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         workoutDetailsDB.map {
             it.workoutDetails
         }.forEach {
-            it.isSelected = it.workoutDetailsId == workoutId
+            it.isFavorite = it.workoutDetailsId == workoutId
         }
     }
 
@@ -90,7 +90,7 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
 
     override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
         return workoutDetailsDB.firstOrNull {
-            it.workoutDetails.isSelected
+            it.workoutDetails.isFavorite
         }
     }
 

@@ -214,7 +214,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 workoutId = workoutDetails.workoutId,
                 name = workoutDetails.name,
                 muscleGroup = workoutDetails.muscleGroup,
-                isSelected = workoutDetails.isSelected,
+                isFavorite = workoutDetails.isFavorite,
                 snapshot = workout.snapshot,
                 totalExercises = workoutDetails.exercises.size
             )
@@ -343,7 +343,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 name = workout.name,
                 description = workoutDetailsWithExercises.workoutDetails.description,
                 muscleGroup = workout.muscleGroup,
-                isSelected = workout.isSelected
+                isFavorite = workout.isFavorite
             )
 
             workoutDetailsDao.updateWorkoutDetails(updatedWorkoutDetails)
@@ -402,7 +402,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                     name = workoutDto.name,
                     description = "",
                     muscleGroup = workoutDto.muscleGroup,
-                    isSelected = workoutDto.isSelected,
+                    isFavorite = workoutDto.isFavorite,
                 )
             val workoutDetailsId =
                 workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //returns 0

@@ -105,7 +105,7 @@
 //        workoutDetailsDB.map {
 //            it.workoutDetails
 //        }.forEach {
-//            it.isSelected = it.workoutDetailsId == workoutId
+//            it.isFavorite = it.workoutDetailsId == workoutId
 //        }
 //    }
 //
@@ -165,7 +165,7 @@
 //    override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
 //
 //        val selectedWorkout = workoutDetailsDB.firstOrNull {
-//            it.workoutDetails.isSelected
+//            it.workoutDetails.isFavorite
 //        } ?: return null
 //
 //        val workoutExercises = getWorkoutExercises(selectedWorkout.workoutDetails.workoutDetailsId)
