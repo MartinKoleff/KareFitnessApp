@@ -52,10 +52,10 @@ class WorkoutViewModel @Inject constructor(
     val selectWorkoutState: StateFlow<BaseState>
         get() = _selectWorkoutState
 
-    private var _getSelectedWorkoutState: MutableStateFlow<SelectedWorkoutState> =
-        MutableStateFlow(SelectedWorkoutState())
-    val getSelectedWorkoutState: StateFlow<SelectedWorkoutState>
-        get() = _getSelectedWorkoutState
+    private var _getFavoriteWorkoutsState: MutableStateFlow<WorkoutListState> =
+        MutableStateFlow(WorkoutListState())
+    val getFavoriteWorkoutsState: StateFlow<WorkoutListState>
+        get() = _getFavoriteWorkoutsState
 
     private var _updateWorkoutState: MutableStateFlow<WorkoutState> =
         MutableStateFlow(WorkoutState())
@@ -110,7 +110,7 @@ class WorkoutViewModel @Inject constructor(
                     _state.value = state.value.copy(
                         workoutList = listOfNotNull(
                             originalWorkoutList.firstOrNull {
-                                it.isSelected
+                                it.isFavorite
                             }
                         ),
                         isMyWorkoutScreen = true,
@@ -139,6 +139,7 @@ class WorkoutViewModel @Inject constructor(
 //        }
 //    }
 
+    //TODO: refactor...
     fun deleteWorkout(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.deleteWorkoutUseCase(workoutId).collect { deleteWorkoutState ->
@@ -157,9 +158,10 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+    //TODO: refactor...
     fun selectWorkout(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.selectWorkoutUseCase(workoutId).collect { selectWorkoutState ->
+            workoutUseCases.favoriteWorkoutUseCase(workoutId).collect { selectWorkoutState ->
                 _selectWorkoutState.value = selectWorkoutState
 
                 //Update workout list
@@ -170,18 +172,22 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getSelectWorkout() {
+    //TODO: refactor...
+    fun getFavoriteWorkouts() {
         viewModelScope.launch(dispatcher) {
-            workoutUseCases.getSelectedWorkoutUseCase().collect { getSelectedWorkoutState ->
-                _getSelectedWorkoutState.value = getSelectedWorkoutState
+            workoutUseCases.getFavoriteWorkoutsUseCase().collect { getFavoriteWorkoutsState ->
+                _getFavoriteWorkoutsState.value = getFavoriteWorkoutsState
 
                 //Update selected workout
-                if (getSelectedWorkoutState.isSuccessful) {
-                    val selectedWorkout = getSelectedWorkoutState.selectedWorkout ?: return@collect
+                if (getFavoriteWorkoutsState.isSuccessful) {
+                    val selectedWorkouts = getFavoriteWorkoutsState.workoutList
+                    val selectedWorkoutIds = selectedWorkouts.map { it.workoutId }
 
                     val updatedList =
-                        state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
-                    updatedList.add(selectedWorkout)
+                        state.value.workoutList
+                            .filterNot { selectedWorkoutIds.contains(it.workoutId) }
+                            .toMutableList()
+                    updatedList.addAll(selectedWorkouts)
                     updatedList.sortBy { it.name }
 
                     _state.value = _state.value.copy(workoutList = updatedList)
@@ -297,7 +303,7 @@ class WorkoutViewModel @Inject constructor(
     fun navigateToWorkoutDetails(workout: WorkoutDto) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
-                Destination.WorkoutDetails(workoutId = workout.workoutId,  isNewWorkout = false)
+                Destination.WorkoutDetails(workoutId = workout.workoutId, isNewWorkout = false)
             )
         )
     }
@@ -323,8 +329,8 @@ class WorkoutViewModel @Inject constructor(
         if (selectWorkoutState.value.isError) {
             _selectWorkoutState.value = BaseState()
         }
-        if (getSelectedWorkoutState.value.isError) {
-            _getSelectedWorkoutState.value = SelectedWorkoutState()
+        if (getFavoriteWorkoutsState.value.isError) {
+            _getFavoriteWorkoutsState.value = WorkoutListState()
         }
 //        if (createWorkoutState.value.isError) {
 //            _createWorkoutState.value = WorkoutState()
