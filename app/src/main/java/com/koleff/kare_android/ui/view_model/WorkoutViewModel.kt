@@ -106,11 +106,9 @@ class WorkoutViewModel @Inject constructor(
 
                 OnWorkoutScreenSwitchEvent.FavoriteWorkouts -> {
                     _state.value = state.value.copy(
-                        workoutList = listOfNotNull(
-                            originalWorkoutList.firstOrNull {
+                        workoutList = originalWorkoutList.filter {
                                 it.isFavorite
-                            }
-                        ),
+                            },
                         isFavoriteWorkoutsScreen = true,
                         isLoading = false
                     ).also {
@@ -176,8 +174,6 @@ class WorkoutViewModel @Inject constructor(
                 //Update favorite workouts
                 if (getFavoriteWorkoutsState.isSuccessful) {
                     val favoriteWorkouts = getFavoriteWorkoutsState.workoutList
-
-                    originalWorkoutList = state.value.workoutList
                     _state.value = _state.value.copy(workoutList = favoriteWorkouts)
                 }
             }
