@@ -76,18 +76,16 @@ class WorkoutViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.Main) {
-            preferences.loadSelectedWorkout()?.let { selectedWorkout ->
-                _state.value = WorkoutListState(
-                    isSuccessful = true,
-                    workoutList = listOf(selectedWorkout)
-                )
-                hasLoadedFromCache.value = true
-            } ?: run {
-                hasLoadedFromCache.value = false
-            }
+            val cacheFavoriteWorkouts = preferences.loadFavoriteWorkouts()
 
-            getWorkouts()
+            _state.value = WorkoutListState(
+                isSuccessful = true,
+                workoutList = cacheFavoriteWorkouts
+            )
+            hasLoadedFromCache.value = cacheFavoriteWorkouts.isNotEmpty()
         }
+
+        getWorkouts()
     }
 
     fun onWorkoutFilterEvent(event: OnWorkoutScreenSwitchEvent) {
@@ -117,7 +115,7 @@ class WorkoutViewModel @Inject constructor(
                         isLoading = false
                     ).also {
                         if (it.workoutList.isNotEmpty()) {
-                            preferences.saveSelectedWorkout(it.workoutList.first())
+                            preferences.saveFavoriteWorkouts(it.workoutList)
                         }
                     }
                 }
