@@ -1,10 +1,12 @@
 package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.ui.compose.banners.ExerciseBannerV2
 import com.koleff.kare_android.ui.compose.banners.MuscleGroupHeader
+import com.koleff.kare_android.ui.compose.banners.SelectedExerciseBanner
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -42,7 +45,7 @@ fun SearchExercisesList(
             //Exercises for each muscle group
             items(totalExercisesForMuscleGroup.size) { currentExerciseId ->
                 val currentExercise = totalExercisesForMuscleGroup[currentExerciseId]
-                ExerciseBannerV2(
+                SelectedExerciseBanner(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(200.dp),

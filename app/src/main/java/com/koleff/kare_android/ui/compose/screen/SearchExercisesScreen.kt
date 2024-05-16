@@ -61,7 +61,10 @@ fun SearchExercisesScreen(
     }
 
     val onSelectExercise: (ExerciseDto) -> Unit = { selectedExercise ->
-        if (selectedExercises.contains(selectedExercise)) {
+       val isNewExercise = selectedExercises.map { it.exerciseId }
+            .contains(selectedExercise.exerciseId)
+        
+        if (isNewExercise) {
             selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
         } else {
             selectedExercises.add(
