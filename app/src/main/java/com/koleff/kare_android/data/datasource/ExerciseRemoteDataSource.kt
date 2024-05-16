@@ -3,6 +3,8 @@ package com.koleff.kare_android.data.datasource
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.network.Network
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
+import com.koleff.kare_android.data.model.request.AddNewExerciseSetRequest
 import com.koleff.kare_android.data.model.request.DeleteExerciseSetRequest
 import com.koleff.kare_android.domain.wrapper.ExerciseListWrapper
 import com.koleff.kare_android.data.model.request.FetchExerciseRequest
@@ -41,17 +43,26 @@ class ExerciseRemoteDataSource @Inject constructor(
     override suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
         val body = FetchExercisesByMuscleGroupRequest(muscleGroupId)
 
-        return Network.executeApiCall(dispatcher, { ExerciseListWrapper(exerciseApi.getCatalogExercises(body)) })
+        return Network.executeApiCall(
+            dispatcher,
+            { ExerciseListWrapper(exerciseApi.getCatalogExercises(body)) })
     }
 
-    override suspend fun getExerciseDetails(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseDetailsWrapper>> {
+    override suspend fun getExerciseDetails(
+        exerciseId: Int,
+        workoutId: Int
+    ): Flow<ResultWrapper<ExerciseDetailsWrapper>> {
         val body = FetchExerciseRequest(exerciseId, workoutId)
 
         return Network.executeApiCall(dispatcher, { ExerciseDetailsWrapper(exerciseApi.getExerciseDetails(body)) })
     }
 
-    override suspend fun addNewExerciseSet(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = FetchExerciseRequest(exerciseId, workoutId)
+    override suspend fun addNewExerciseSet(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ResultWrapper<ExerciseWrapper>> {
+        val body = AddNewExerciseSetRequest(exerciseId, workoutId, currentSets)
 
         return Network.executeApiCall(dispatcher, { ExerciseWrapper(exerciseApi.addNewExerciseSet(body)) })
     }
@@ -59,9 +70,10 @@ class ExerciseRemoteDataSource @Inject constructor(
     override suspend fun deleteExerciseSet(
         exerciseId: Int,
         workoutId: Int,
-        setId: UUID
+        setId: UUID,
+        currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = DeleteExerciseSetRequest(exerciseId, workoutId, setId)
+        val body = DeleteExerciseSetRequest(exerciseId, workoutId, setId, currentSets)
 
         return Network.executeApiCall(dispatcher, { ExerciseWrapper(exerciseApi.deleteExerciseSet(body)) })
     }
