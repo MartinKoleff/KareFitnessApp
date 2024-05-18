@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import android.util.Log
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -20,10 +21,14 @@ import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.PermissionManager
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.components.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.LogoutDialog
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.BaseViewModel
 import com.koleff.kare_android.ui.view_model.SettingsViewModel
 
@@ -32,14 +37,18 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
 
-    val logoutState = settingsViewModel.logoutState.collectAsState()
+    val logoutState by settingsViewModel.logoutState.collectAsState()
 
     val context = LocalContext.current
 
+    //Dialog visibility
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
+
     //Used for API 33 below -> custom prompt
-    var showNotificationDialog by remember {
-        mutableStateOf(false)
-    }
+    var showNotificationDialog by remember { mutableStateOf(false) }
+
 
     val notificationCallback: () -> Unit = {
         showNotificationDialog = PermissionManager.requestNotificationPermission(context)
@@ -55,13 +64,18 @@ fun SettingsScreen(
         showNotificationDialog = false
     }
 
+    //TODO: show biometrics dialog...
     val biometricsCallback: () -> Unit = {}
     var biometricsIsChecked by remember {
         mutableStateOf(PermissionManager.hasBiometricsPermission(context))
     }
 
-    var showLogoutDialog by remember {
-        mutableStateOf(false)
+
+    //Update switch states on Activity OnResume.
+    observeLifecycleEvent { event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            notificationIsChecked = PermissionManager.hasNotificationPermission(context)
+        }
     }
 
     val onLogout = {
@@ -70,10 +84,28 @@ fun SettingsScreen(
         showLogoutDialog = false
     }
 
-    //Update switch states on Activity OnResume.
-    observeLifecycleEvent { event ->
-        if (event == Lifecycle.Event.ON_RESUME) {
-            notificationIsChecked = PermissionManager.hasNotificationPermission(context)
+    //Error handling
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        settingsViewModel.clearError() //Enters launched effect to update showErrorDialog...
+    }
+
+    var error by remember { mutableStateOf<KareError?>(null) }
+    LaunchedEffect(logoutState) {
+        val states = listOf(logoutState)
+
+        val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+        error = errorState.error
+        showErrorDialog = errorState.isError
+        Log.d("SettingsScreen", "Error detected -> $showErrorDialog")
+
+        val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
+        showLoadingDialog = loadingState.isLoading
+    }
+
+    if (showErrorDialog) {
+        error?.let {
+            ErrorDialog(it, onErrorDialogDismiss)
         }
     }
 
@@ -105,24 +137,28 @@ fun SettingsScreen(
             .padding(innerPadding)
             .fillMaxSize()
 
-        SettingsList(
-            modifier = modifier,
-            notificationIsChecked = notificationIsChecked,
-            biometricsIsChecked = false,
-            onNotificationSwitchChange = { newState ->
-                notificationIsChecked = newState
+        if (showLoadingDialog) {
+            LoadingWheel(innerPadding = innerPadding, hideScreen = true)
+        } else {
+            SettingsList(
+                modifier = modifier,
+                notificationIsChecked = notificationIsChecked,
+                biometricsIsChecked = false,
+                onNotificationSwitchChange = { newState ->
+                    notificationIsChecked = newState
 
-                notificationCallback()
-            },
-            onBiometricsSwitchChange = { newState ->
-                biometricsIsChecked = newState
+                    notificationCallback()
+                },
+                onBiometricsSwitchChange = { newState ->
+                    biometricsIsChecked = newState
 
-                biometricsCallback()
-            },
-            onLogout = {
-                showLogoutDialog = true
-            }
-        )
+                    biometricsCallback()
+                },
+                onLogout = {
+                    showLogoutDialog = true
+                }
+            )
+        }
     }
 }
 
