@@ -73,6 +73,7 @@ import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
@@ -105,6 +106,10 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     var showWorkoutCompletedDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showExitWorkoutDialog by remember {
         mutableStateOf(false)
     }
 
@@ -152,6 +157,22 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
                 doWorkoutViewModel.navigateToDashboard()
+
+                showWorkoutCompletedDialog = false
+            }
+        )
+    }
+
+    if(showExitWorkoutDialog){
+        ExitWorkoutDialog(
+            workoutName = state.doWorkoutData.workout.name,
+            onClick = {
+                onExitWorkoutAction()
+
+                showExitWorkoutDialog = false
+            },
+            onDismiss = {
+                showExitWorkoutDialog = false
             }
         )
     }
@@ -191,7 +212,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
                     //Disable exit workout button when NextExerciseCountdownScreen is visible
                     if (!state.doWorkoutData.isBetweenExerciseCountdown) {
-                        onExitWorkoutAction()
+                        showExitWorkoutDialog = true
                     }
                 },
                 onNextExerciseAction = {
