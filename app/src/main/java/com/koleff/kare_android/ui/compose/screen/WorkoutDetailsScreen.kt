@@ -47,6 +47,8 @@ import com.koleff.kare_android.ui.compose.components.StartWorkoutHeader
 import com.koleff.kare_android.ui.compose.components.StartWorkoutToolbar
 import com.koleff.kare_android.ui.compose.components.SubmitExercisesRow
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.dialogs.DeleteExerciseDialog
+import com.koleff.kare_android.ui.compose.dialogs.DeleteMultipleExercisesDialog
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.FavoriteWorkoutDialog
@@ -252,20 +254,15 @@ fun WorkoutDetailsScreen(
     }
 
     if (showDeleteExerciseDialog) {
-        WarningDialog(
-            title = "Delete Exercise",
-            description = "Are you sure you want to delete this exercise? This action cannot be undone.",
-            actionButtonTitle = "Delete",
+        DeleteExerciseDialog(
             onClick = onDeleteExercise,
             onDismiss = { showDeleteExerciseDialog = false }
         )
     }
 
     if (showDeleteMultipleExercisesDialog) {
-        WarningDialog(
-            title = "Delete ${selectedExercises.size} exercises",
-            description = "Are you sure you want to delete these exercises? This action cannot be undone.",
-            actionButtonTitle = "Delete",
+        DeleteMultipleExercisesDialog(
+            totalExercises = selectedExercises.size,
             onClick =   onDeleteMultipleExercises,
             onDismiss = { showDeleteMultipleExercisesDialog = false }
         )
@@ -283,7 +280,7 @@ fun WorkoutDetailsScreen(
         WarningDialog(
             title = "Delete Workout",
             description = "Are you sure you want to delete this workout? This action cannot be undone.",
-            actionButtonTitle = "Delete",
+            positiveButtonTitle = "Delete",
             onClick = onDeleteWorkout,
             onDismiss = { showDeleteWorkoutDialog = false }
         )
