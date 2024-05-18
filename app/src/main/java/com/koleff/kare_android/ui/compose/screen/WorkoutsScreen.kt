@@ -208,14 +208,14 @@ fun WorkoutsScreen(
         }
 
 
-        if(showFavoriteDialog && selectedWorkout != null){
+        if (showFavoriteDialog && selectedWorkout != null) {
             FavoriteWorkoutDialog(actionTitle = "Favorite Workout",
                 onClick = onFavoriteWorkout,
                 onDismiss = { showFavoriteDialog = false }
             )
         }
 
-        if(showUnfavoriteDialog && selectedWorkout != null){
+        if (showUnfavoriteDialog && selectedWorkout != null) {
             FavoriteWorkoutDialog(actionTitle = "Unfavorite Workout",
                 onClick = onUnfavoriteWorkout,
                 onDismiss = { showUnfavoriteDialog = false }
@@ -275,20 +275,11 @@ fun WorkoutsScreen(
                         hideScreen = true
                     )
                 } else {
-                    val workouts =
-                        if (!workoutState.isFavoriteWorkoutsScreen) {
-                            workoutState.workoutList
-                        } else {
-                            workoutState.workoutList.filter {
-                                it.isFavorite
-                            }
-                        }
-
                     LazyColumn(modifier = contentModifier) {
 
                         //Workout List
-                        items(workouts.size) { workoutId ->
-                            val workout = workoutState.workoutList[workoutId]
+                        items(workoutListViewModel.selectedWorkoutList.size) { workoutId ->
+                            val workout = workoutListViewModel.selectedWorkoutList[workoutId]
 
                             SwipeableWorkoutBanner(
                                 modifier = workoutBannerModifier,
@@ -298,7 +289,7 @@ fun WorkoutsScreen(
                                     selectedWorkout = workout
                                 },
                                 onFavorite = {
-                                    if(workout.isFavorite) {
+                                    if (workout.isFavorite) {
                                         showUnfavoriteDialog = true
                                     } else {
                                         showFavoriteDialog = true
@@ -321,22 +312,22 @@ fun WorkoutsScreen(
                         //Footer
                         if (showFooter) { //Workouts are fetched
                             item {
-//                                if (workoutState.workoutList.isEmpty()) {
-//                                    NoWorkoutSelectedBanner {
-//
-//                                        //TODO: refactor and fix...
-//                                        //Navigate to SearchWorkoutsScreen...
+                                if (workoutListViewModel.selectedWorkoutList.isEmpty()) {
+                                    NoWorkoutSelectedBanner {
+
+                                        //TODO: refactor and fix...
+                                        //Navigate to SearchWorkoutsScreen...
 //                                        workoutListViewModel.navigateToSearchWorkout(
 //                                            -1,
 //                                            -1
 //                                        )
-//                                    }
-//                                } else {
-                                AddWorkoutBanner {
-                                    workoutListViewModel.createNewWorkout()
-                                    Log.d("WorkoutScreen", "hasUpdated set to true.")
+                                    }
+                                } else {
+                                    AddWorkoutBanner {
+                                        workoutListViewModel.createNewWorkout()
+                                        Log.d("WorkoutScreen", "hasUpdated set to true.")
+                                    }
                                 }
-//                                }
                             }
                         }
                     }

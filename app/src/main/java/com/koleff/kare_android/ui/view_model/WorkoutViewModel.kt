@@ -239,13 +239,19 @@ class WorkoutViewModel @Inject constructor(
         if (index2 == -1) {
 
             //New workout -> add
-            updatedFavoriteWorkoutList.add(updatedWorkout)
+            if(isFavorite) {
+                updatedFavoriteWorkoutList.add(updatedWorkout)
+            }
         } else {
 
             //Existing workout -> update
-            val updatedFavoriteWorkout =
-                shownFavoriteWorkoutList[index2].copy(isFavorite = isFavorite)
-            updatedFavoriteWorkoutList[index2] = updatedFavoriteWorkout
+            if(isFavorite){
+                val updatedFavoriteWorkout =
+                    shownFavoriteWorkoutList[index2].copy(isFavorite = true)
+                updatedFavoriteWorkoutList[index2] = updatedFavoriteWorkout
+            }else{
+                updatedFavoriteWorkoutList.removeAt(index2)
+            }
         }
 
         _shownFavoriteWorkoutList = updatedFavoriteWorkoutList
@@ -345,6 +351,9 @@ class WorkoutViewModel @Inject constructor(
 
                 if (workoutState.isSuccessful) {
                     _shownWorkoutList = workoutState.workoutList.toMutableList()
+                    _shownFavoriteWorkoutList = _shownWorkoutList.filter {
+                        it.isFavorite
+                    }.toMutableList()
                 }
             }
         }
