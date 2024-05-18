@@ -170,6 +170,9 @@ fun WorkoutDetailsScreen(
         workoutDetailsViewModel.onMultipleExercisesUpdateEvent(
             OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete(selectedExercises)
         )
+
+        selectedExercises.clear()
+        isDeleteMode = false
         showDeleteMultipleExercisesDialog = false
     }
 
