@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import kotlin.random.Random
 
 
 @Composable
@@ -100,6 +101,7 @@ fun StartWorkoutHeader(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
+    isWorkoutFavorited: Boolean,
     onStartWorkoutAction: () -> Unit,
     onConfigureAction: () -> Unit,
     onAddExerciseAction: () -> Unit,
@@ -121,6 +123,7 @@ fun StartWorkoutHeader(
             StartWorkoutTitleAndSubtitle(title, subtitle)
 
             StartWorkoutActionRow(
+                isWorkoutFavorited = isWorkoutFavorited,
                 onConfigureAction = onConfigureAction,
                 onAddExerciseAction = onAddExerciseAction,
                 onDeleteWorkoutAction = onDeleteWorkoutAction,
@@ -193,6 +196,7 @@ fun StartWorkoutToolbarPreview() {
 
 @Composable
 fun StartWorkoutActionRow(
+    isWorkoutFavorited: Boolean,
     onConfigureAction: () -> Unit,
     onAddExerciseAction: () -> Unit,
     onDeleteWorkoutAction: () -> Unit,
@@ -251,8 +255,9 @@ fun StartWorkoutActionRow(
 
             StartWorkoutDynamicActionButton(
                 modifier = Modifier.weight(1f),
-                initialText = "Save",
-                changedText = "Saved",
+                isWorkoutFavorited = isWorkoutFavorited,
+                initialText = "Favorite",
+                changedText = "Favorited",
                 initialIconResourceId = R.drawable.ic_heart_outline,
                 changedIconResourceId = R.drawable.ic_heart_full
             )
@@ -318,6 +323,7 @@ fun StartWorkoutActionButton(
 @Composable
 fun StartWorkoutDynamicActionButton(
     modifier: Modifier = Modifier,
+    isWorkoutFavorited: Boolean,
     initialText: String,
     changedText: String,
     initialIconResourceId: Int,
@@ -325,7 +331,7 @@ fun StartWorkoutDynamicActionButton(
     onAction: () -> Unit = {},
 ) {
     var isSaved by remember {
-        mutableStateOf(false) //TODO: wire with shared preferences...
+        mutableStateOf(isWorkoutFavorited)
     }
 
     val textColor = MaterialTheme.colorScheme.onSurface
@@ -387,11 +393,14 @@ fun StartWorkoutActionRowPreview() {
     val onConfigureAction = {}
     val onDeleteWorkoutAction = {}
     val onEditWorkoutNameAction = {}
+    val isWorkoutFavorited = Random.nextBoolean()
+
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
     ) {
         StartWorkoutActionRow(
+            isWorkoutFavorited = isWorkoutFavorited,
             onAddExerciseAction = onAddExerciseAction,
             onConfigureAction = onConfigureAction,
             onDeleteWorkoutAction = onDeleteWorkoutAction,
@@ -479,10 +488,13 @@ fun StartWorkoutHeaderPreview() {
     val onDeleteWorkoutAction = {}
     val onNavigateBackAction = {}
     val onNavigateToSettings = {}
+    val isWorkoutFavorited = Random.nextBoolean()
+
     StartWorkoutHeader(
         modifier = Modifier.fillMaxSize(),
         title = "Arnold destroy back workout",
         subtitle = "Biceps, triceps and forearms.",
+        isWorkoutFavorited = isWorkoutFavorited,
         onStartWorkoutAction = onStartWorkoutAction,
         onConfigureAction = onConfigureAction,
         onAddExerciseAction = onAddExerciseAction,

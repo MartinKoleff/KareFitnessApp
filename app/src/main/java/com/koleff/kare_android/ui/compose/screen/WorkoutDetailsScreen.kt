@@ -363,6 +363,7 @@ fun WorkoutDetailsScreen(
                             modifier = Modifier.fillParentMaxHeight(),
                             title = workoutTitle,
                             subtitle = MuscleGroup.toDescription(selectedWorkout.muscleGroup),
+                            isWorkoutFavorited = selectedWorkout.isFavorite,
                             onStartWorkoutAction = {
                                 workoutDetailsViewModel.startWorkout()
                             },
