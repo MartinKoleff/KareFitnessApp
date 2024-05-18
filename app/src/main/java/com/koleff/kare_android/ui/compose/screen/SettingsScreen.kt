@@ -27,6 +27,7 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.scaff
 import com.koleff.kare_android.ui.compose.components.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.compose.dialogs.LogoutDialog
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.BaseViewModel
@@ -138,7 +139,10 @@ fun SettingsScreen(
             .fillMaxSize()
 
         if (showLoadingDialog) {
-            LoadingWheel(innerPadding = innerPadding, hideScreen = true)
+            LoadingDialog(
+                modifier = modifier,
+                onDismiss = { showLoadingDialog = false }
+            )
         } else {
             SettingsList(
                 modifier = modifier,
