@@ -96,6 +96,9 @@ fun WorkoutsScreen(
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showErrorDialog by remember { mutableStateOf(false) }
         var showLoadingDialog by remember { mutableStateOf(false) }
+        var showFooter by remember {
+            mutableStateOf(workoutState.isSuccessful && !showLoadingDialog) //&& workoutState.workoutList.isNotEmpty()
+        }
 
         //Dialog callbacks
         var selectedWorkout by remember { mutableStateOf<WorkoutDto?>(null) }
@@ -152,6 +155,19 @@ fun WorkoutsScreen(
 
             val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
             showLoadingDialog = loadingState.isLoading || workoutListViewModel.isRefreshing
+
+//            showFooter = states
+//                .firstOrNull { it.isSuccessful }?.let {
+//                    !showLoadingDialog
+//                } ?: run {
+//                false
+//            }
+
+//            showFooter = !showLoadingDialog
+
+            showFooter =
+                workoutState.isSuccessful && !showLoadingDialog //&& workoutState.workoutList.isNotEmpty()
+            Log.d("WorkoutsScreen", "Show footer -> $showFooter")
         }
 
         if (showErrorDialog) {
@@ -228,7 +244,7 @@ fun WorkoutsScreen(
                 WorkoutSegmentButton(
                     modifier = buttonModifier,
                     selectedOptionIndex = 1, //Workouts screen
-                    isDisabled = workoutState.isLoading,
+                    isDisabled = showLoadingDialog,
                     onWorkoutFilter = workoutListViewModel::onWorkoutFilterEvent
                 )
 
@@ -278,24 +294,25 @@ fun WorkoutsScreen(
                         }
 
                         //Footer
-                        //TODO: [Bug] fix onPullToRefresh NoWorkoutSelectBanner showing...
-                        item {
-                            if (workoutState.workoutList.isEmpty()) {
-                                NoWorkoutSelectedBanner {
-
-
-                                    //TODO: refactor and fix...
-                                    //Navigate to SearchWorkoutsScreen...
-                                    workoutListViewModel.navigateToSearchWorkout(
-                                        -1,
-                                        -1
-                                    )
-                                }
-                            } else
+                        if (showFooter) { //Workouts are fetched
+                            item {
+//                                if (workoutState.workoutList.isEmpty()) {
+//                                    NoWorkoutSelectedBanner {
+//
+//                                        //TODO: refactor and fix...
+//                                        //Navigate to SearchWorkoutsScreen...
+//                                        workoutListViewModel.navigateToSearchWorkout(
+//                                            -1,
+//                                            -1
+//                                        )
+//                                    }
+//                                } else {
                                 AddWorkoutBanner {
                                     workoutListViewModel.createNewWorkout()
                                     Log.d("WorkoutScreen", "hasUpdated set to true.")
                                 }
+//                                }
+                            }
                         }
                     }
                 }

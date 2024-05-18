@@ -97,20 +97,20 @@ class WorkoutViewModel @Inject constructor(
 
             when (event) {
                 OnWorkoutScreenSwitchEvent.AllWorkouts -> {
-                    _state.value = state.value.copy(
+                    _state.value = WorkoutListState(
                         workoutList = originalWorkoutList,
+                        isSuccessful = true,
                         isFavoriteWorkoutsScreen = false,
-                        isLoading = false
                     )
                 }
 
                 OnWorkoutScreenSwitchEvent.FavoriteWorkouts -> {
-                    _state.value = state.value.copy(
+                    _state.value = WorkoutListState(
                         workoutList = originalWorkoutList.filter {
-                                it.isFavorite
-                            },
+                            it.isFavorite
+                        },
+                        isSuccessful = true,
                         isFavoriteWorkoutsScreen = true,
-                        isLoading = false
                     ).also {
                         if (it.workoutList.isNotEmpty()) {
                             preferences.saveFavoriteWorkouts(it.workoutList)
@@ -226,15 +226,18 @@ class WorkoutViewModel @Inject constructor(
     }
 
     fun onRefresh() {
-        if(state.value.isFavoriteWorkoutsScreen){
+        if (state.value.isFavoriteWorkoutsScreen) {
             getFavoriteWorkouts()
-        }else{
+        } else {
             getWorkouts()
         }
     }
 
     //Navigation
-    fun navigateToSearchWorkout(exerciseId: Int, workoutId: Int) {   //TODO: test for No workout favorite banner...
+    fun navigateToSearchWorkout(
+        exerciseId: Int,
+        workoutId: Int
+    ) {   //TODO: test for No workout favorite banner...
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchWorkoutsScreen(
