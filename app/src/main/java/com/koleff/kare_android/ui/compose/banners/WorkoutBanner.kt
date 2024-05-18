@@ -272,7 +272,7 @@ fun SwipeableWorkoutBanner(
     hasDescription: Boolean = true,
     onClick: (WorkoutDto) -> Unit,
     onDelete: () -> Unit,
-    onSelect: () -> Unit,
+    onFavorite: () -> Unit,
     onEdit: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -325,10 +325,10 @@ fun SwipeableWorkoutBanner(
             )
 
             //Select option
-            SelectButton(
+            FavoriteButton(
                 modifier = optionBoxModifier,
-                onSelect = onSelect,
-                title = "Select"
+                onFavorite = onFavorite,
+                title = if(workout.isFavorite) "Unfavorite" else "Favorite"
             )
 
             //Delete option
@@ -398,10 +398,10 @@ fun DeleteButton(
 }
 
 @Composable
-fun SelectButton(
+fun FavoriteButton(
     modifier: Modifier,
     title: String,
-    onSelect: () -> Unit
+    onFavorite: () -> Unit
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
@@ -428,13 +428,13 @@ fun SelectButton(
                 color = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
-            .clickable(onClick = onSelect)
+            .clickable(onClick = onFavorite)
     ) {
         val image: Painter = painterResource(id = R.drawable.ic_vector_select)
 
         Image(
             painter = image,
-            contentDescription = "Select",
+            contentDescription = "Favorite",
             modifier = Modifier
                 .size(iconSize),
             colorFilter = ColorFilter.tint(tintColor),
@@ -597,7 +597,7 @@ fun SwipeableWorkoutBannerPreview() {
             .height(200.dp),
         onClick = {},
         onDelete = {},
-        onSelect = {},
+        onFavorite = {},
         onEdit = {},
         workout = workout
     )
@@ -624,17 +624,17 @@ fun DeleteButtonPreview() {
 @Preview
 @PreviewLightDark
 @Composable
-fun SelectButtonPreview() {
+fun FavoriteButtonPreview() {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    SelectButton(
+    FavoriteButton(
         modifier = Modifier
             .width(screenWidth / 4)
             .height(200.dp),
-        onSelect = {},
+        onFavorite = {},
         title = "Select Workout"
     )
 }

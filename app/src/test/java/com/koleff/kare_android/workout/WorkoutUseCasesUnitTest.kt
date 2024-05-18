@@ -272,7 +272,7 @@ class WorkoutUseCasesUnitTest {
                 .findFirst()
                 .orElseThrow()
 
-            logger.i(TAG, "Assert Workout is not selected")
+            logger.i(TAG, "Assert Workout is not favorited")
             assert(!createdWorkout.isFavorite)
 
             logger.i(TAG, "Assert workoutId is the size of all workouts list")

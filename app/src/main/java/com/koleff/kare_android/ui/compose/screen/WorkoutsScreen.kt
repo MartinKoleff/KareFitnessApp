@@ -277,7 +277,7 @@ fun WorkoutsScreen(
                                     showDeleteDialog = true
                                     selectedWorkout = workout
                                 },
-                                onSelect = {
+                                onFavorite = {
                                     showFavoriteDialog = true
                                     selectedWorkout = workout
                                 },

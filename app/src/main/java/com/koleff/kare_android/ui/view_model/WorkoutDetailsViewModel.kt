@@ -316,6 +316,11 @@ class WorkoutDetailsViewModel @Inject constructor(
             workoutUseCases.favoriteWorkoutUseCase(workoutId).collect { favoriteWorkoutState ->
                 _favoriteWorkoutState.value = favoriteWorkoutState
 
+                if(favoriteWorkoutState.isSuccessful){
+
+                    Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
+                    hasUpdated.notifyUpdate(true)
+                }
             }
         }
     }
@@ -325,6 +330,11 @@ class WorkoutDetailsViewModel @Inject constructor(
             workoutUseCases.unfavoriteWorkoutUseCase(workoutId).collect { unfavoriteWorkoutState ->
                 _unfavoriteWorkoutState.value = unfavoriteWorkoutState
 
+                if(unfavoriteWorkoutState.isSuccessful){
+
+                    Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
+                    hasUpdated.notifyUpdate(true)
+                }
             }
         }
     }
