@@ -39,6 +39,7 @@ class SettingsViewModel @Inject constructor(
                 if(logoutState.isSuccessful){
 
                     //Navigate to Welcome Screen
+                    preferences.deleteCredentials()
                     navigateToWelcomeScreen()
                 }
             }

@@ -156,6 +156,12 @@ class DefaultPreferences(
         }
     }
 
+    override fun deleteCredentials() {
+        sharedPref.edit()
+            .putString(Preferences.CREDENTIALS, "")
+            .apply()
+    }
+
     override fun saveTokens(tokens: Tokens) {
         val json = gson.toJson(tokens)
 
