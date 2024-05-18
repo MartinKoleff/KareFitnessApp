@@ -12,6 +12,7 @@ import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -72,10 +73,18 @@ class WorkoutViewModel @Inject constructor(
 //    val createWorkoutState: StateFlow<WorkoutState>
 //        get() = _createWorkoutState
 
+    var _shownWorkoutList = mutableListOf<WorkoutDto>()
+    val shownWorkoutList: List<WorkoutDto>
+        get() = _shownWorkoutList
+
+    var _shownFavoriteWorkoutList = mutableListOf<WorkoutDto>()
+    val shownFavoriteWorkoutList: List<WorkoutDto>
+        get() = _shownFavoriteWorkoutList
+
+    val selectedWorkoutList: List<WorkoutDto>
+        get() = if (state.value.isFavoriteWorkoutsScreen) shownFavoriteWorkoutList else shownWorkoutList
 
     val isRefreshing by mutableStateOf(state.value.isLoading)
-
-    private var originalWorkoutList: List<WorkoutDto> = mutableListOf()
 
     private val hasLoadedFromCache = mutableStateOf(false)
 
@@ -103,7 +112,7 @@ class WorkoutViewModel @Inject constructor(
             when (event) {
                 OnWorkoutScreenSwitchEvent.AllWorkouts -> {
                     _state.value = WorkoutListState(
-                        workoutList = originalWorkoutList,
+                        workoutList = shownWorkoutList,
                         isSuccessful = true,
                         isFavoriteWorkoutsScreen = false,
                     )
@@ -111,9 +120,7 @@ class WorkoutViewModel @Inject constructor(
 
                 OnWorkoutScreenSwitchEvent.FavoriteWorkouts -> {
                     _state.value = WorkoutListState(
-                        workoutList = originalWorkoutList.filter {
-                            it.isFavorite
-                        },
+                        workoutList = shownFavoriteWorkoutList,
                         isSuccessful = true,
                         isFavoriteWorkoutsScreen = true,
                     ).also {
@@ -147,15 +154,20 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update workout list
                 if (deleteWorkoutState.isSuccessful) {
-                    val updatedList =
-                        state.value.workoutList.filterNot { it.workoutId == workoutId }
-                    _state.value = _state.value.copy(workoutList = updatedList)
-
-                    originalWorkoutList =
-                        originalWorkoutList.filterNot { it.workoutId == workoutId }
+                    removeWorkoutFromShownWorkoutList(workoutId)
                 }
             }
         }
+    }
+
+    private fun removeWorkoutFromShownWorkoutList(workoutId: Int) {
+        _shownWorkoutList.removeAll {
+            it.workoutId == workoutId
+        }
+        _shownFavoriteWorkoutList.removeAll {
+            it.workoutId == workoutId
+        }
+        _state.value = _state.value.copy(workoutList = selectedWorkoutList)
     }
 
     fun favoriteWorkout(workoutId: Int) {
@@ -165,11 +177,9 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update workout list
                 if (favoriteWorkoutState.isSuccessful) {
-                    val index = originalWorkoutList.indexOfFirst {
-                        it.workoutId == workoutId
-                    }
-                    originalWorkoutList[index] = originalWorkoutList[index].copy(isFavorite = true)
-                    if(state.value.isFavoriteWorkoutsScreen) getFavoriteWorkouts() else getWorkouts()
+                    updateShownWorkoutList(workoutId, isFavorite = true)
+
+//                    if (state.value.isFavoriteWorkoutsScreen) getFavoriteWorkouts() else getWorkouts()
                 }
             }
         }
@@ -182,14 +192,65 @@ class WorkoutViewModel @Inject constructor(
 
                 //Update workout list
                 if (unfavoriteWorkoutState.isSuccessful) {
-                    val index = originalWorkoutList.indexOfFirst {
-                        it.workoutId == workoutId
-                    }
-                    originalWorkoutList[index] = originalWorkoutList[index].copy(isFavorite = false)
-                    if(state.value.isFavoriteWorkoutsScreen) getFavoriteWorkouts() else getWorkouts()
+                    updateShownWorkoutList(workoutId, isFavorite = false)
+
+//                    if (state.value.isFavoriteWorkoutsScreen) getFavoriteWorkouts() else getWorkouts()
                 }
             }
         }
+    }
+
+    private fun updateShownWorkoutList(workoutId: Int, isFavorite: Boolean) {
+
+        /**
+         * All workout list
+         */
+
+        val index = shownWorkoutList.indexOfFirst {
+            it.workoutId == workoutId
+        }
+
+        //Invalid workout
+        if (index == -1) {
+            _state.value = WorkoutListState(
+                isError = true,
+                error = KareError.INVALID_WORKOUT
+            )
+            return
+        }
+
+        val updatedWorkout = shownWorkoutList[index].copy(isFavorite = isFavorite)
+
+        val updatedWorkoutList = shownWorkoutList.toMutableList()
+        updatedWorkoutList[index] = updatedWorkout
+
+        _shownWorkoutList = updatedWorkoutList
+
+
+        /**
+         * Favorite workout list
+         */
+        val index2 = shownFavoriteWorkoutList.indexOfFirst {
+            it.workoutId == workoutId
+        }
+
+        val updatedFavoriteWorkoutList = shownFavoriteWorkoutList.toMutableList()
+
+        if (index2 == -1) {
+
+            //New workout -> add
+            updatedFavoriteWorkoutList.add(updatedWorkout)
+        } else {
+
+            //Existing workout -> update
+            val updatedFavoriteWorkout =
+                shownFavoriteWorkoutList[index2].copy(isFavorite = isFavorite)
+            updatedFavoriteWorkoutList[index2] = updatedFavoriteWorkout
+        }
+
+        _shownFavoriteWorkoutList = updatedFavoriteWorkoutList
+
+        _state.value = _state.value.copy(workoutList = selectedWorkoutList)
     }
 
     fun getFavoriteWorkouts() {
@@ -200,7 +261,7 @@ class WorkoutViewModel @Inject constructor(
                 //Update favorite workouts
                 if (getFavoriteWorkoutsState.isSuccessful) {
                     val favoriteWorkouts = getFavoriteWorkoutsState.workoutList
-                    _state.value = _state.value.copy(workoutList = favoriteWorkouts)
+                    _shownFavoriteWorkoutList = favoriteWorkouts.toMutableList()
                 }
             }
         }
@@ -214,17 +275,58 @@ class WorkoutViewModel @Inject constructor(
                 //Update workout list
                 if (updateWorkoutState.isSuccessful) {
                     val selectedWorkout = updateWorkoutState.workout
-
-                    val updatedList =
-                        state.value.workoutList.filterNot { it.workoutId == selectedWorkout.workoutId } as MutableList
-                    updatedList.add(selectedWorkout)
-                    updatedList.sortBy { it.name }
-
-                    _state.value = _state.value.copy(workoutList = updatedList)
-                    originalWorkoutList = updatedList
+                    updateShownWorkoutList(selectedWorkout)
                 }
             }
         }
+    }
+
+    private fun updateShownWorkoutList(workout: WorkoutDto) {
+
+        /**
+         * All workout list
+         */
+
+        val index = shownWorkoutList.indexOfFirst {
+            it.workoutId == workout.workoutId
+        }
+
+        //Invalid workout
+        if (index == -1) {
+            _state.value = WorkoutListState(
+                isError = true,
+                error = KareError.INVALID_WORKOUT
+            )
+            return
+        }
+
+        val updatedWorkoutList = shownWorkoutList.toMutableList()
+        updatedWorkoutList[index] = workout
+
+        _shownWorkoutList = updatedWorkoutList
+
+
+        /**
+         * Favorite workout list
+         */
+        val index2 = shownFavoriteWorkoutList.indexOfFirst {
+            it.workoutId == workout.workoutId
+        }
+
+        val updatedFavoriteWorkoutList = shownFavoriteWorkoutList.toMutableList()
+        if (index2 == -1) {
+
+            //New workout -> add
+            updatedFavoriteWorkoutList.add(workout)
+        } else {
+
+            //Existing workout -> update
+            updatedFavoriteWorkoutList[index2] = workout
+        }
+
+        _shownFavoriteWorkoutList = updatedFavoriteWorkoutList
+
+        _state.value = _state.value.copy(workoutList = selectedWorkoutList)
     }
 
     fun createNewWorkout() {
@@ -242,7 +344,7 @@ class WorkoutViewModel @Inject constructor(
 //                isRefreshing = workoutState.isLoading
 
                 if (workoutState.isSuccessful) {
-                    originalWorkoutList = workoutState.workoutList ?: emptyList()
+                    _shownWorkoutList = workoutState.workoutList.toMutableList()
                 }
             }
         }
