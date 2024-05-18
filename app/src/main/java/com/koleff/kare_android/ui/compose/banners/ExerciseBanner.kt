@@ -2,11 +2,14 @@ package com.koleff.kare_android.ui.compose.banners
 
 import android.os.Build
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -352,7 +355,8 @@ fun SwipeableExerciseBanner(
     exercise: ExerciseDto,
     hasDescription: Boolean = true,
     onClick: (ExerciseDto) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onLongPress: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
 
@@ -368,10 +372,30 @@ fun SwipeableExerciseBanner(
         .height(200.dp) //Banner height
         .width(deleteBoxWidth)
 
+    val deleteColor = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val cornerSize = 16.dp
+
+    val selectedModifier = modifier
+        .clip(RoundedCornerShape(cornerSize))
+        .border(
+            border = BorderStroke(3.dp, color = deleteColor),
+            shape = RoundedCornerShape(cornerSize)
+        )
+
+    var isSelected by remember { mutableStateOf(false) }
+
+    val appliedModifier = if (isSelected) selectedModifier else modifier
+
     Box {
         ExerciseBannerV2(
-            modifier = modifier
+            modifier = appliedModifier
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
+//                .combinedClickable(  onLongPress = {
+//                    isSelected = !isSelected
+//                    onLongPress()
+//                })
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { change, dragAmount ->
                         val newOffsetX = (offsetX + dragAmount)
@@ -379,6 +403,14 @@ fun SwipeableExerciseBanner(
                         offsetX = newOffsetX
                         change.consumeAllChanges()
                     }
+                }
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = {
+                            isSelected = !isSelected
+                            onLongPress()
+                        }
+                    )
                 },
             exercise = exercise,
             hasDescription = hasDescription,
@@ -445,7 +477,8 @@ fun SwipeableExerciseBannerPreview() {
             .height(200.dp),
         exercise = exercise,
         onClick = {},
-        onDelete = {}
+        onDelete = {},
+        onLongPress = {}
     )
 }
 

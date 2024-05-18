@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,14 +40,18 @@ import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
+import com.koleff.kare_android.ui.compose.components.DeleteExercisesRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.SelectedExercisesRow
 import com.koleff.kare_android.ui.compose.components.StartWorkoutHeader
 import com.koleff.kare_android.ui.compose.components.StartWorkoutToolbar
+import com.koleff.kare_android.ui.compose.components.SubmitExercisesRow
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutConfigurationDialog
+import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.AnimatedToolbarState
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
@@ -66,10 +72,6 @@ fun WorkoutDetailsScreen(
     val workoutTitle =
         if (workoutDetailsState.workoutDetails.name == "" || updateWorkoutDetailsState.isLoading) "Loading..."
         else workoutDetailsState.workoutDetails.name
-
-    val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
-        workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
-    }
 
     var selectedWorkout by remember {
         mutableStateOf(workoutDetailsState.workoutDetails)
@@ -139,6 +141,40 @@ fun WorkoutDetailsScreen(
         )
 
         showWorkoutConfigureDialog = false
+    }
+
+    var isDeleteMode by remember {
+        mutableStateOf(false)
+    }
+    val onDeleteModeEnabled = {
+        isDeleteMode = !isDeleteMode
+    }
+
+    val selectedExercises = remember {
+        mutableStateListOf<ExerciseDto>()
+    }
+
+    val onDeleteMultipleExercises: () -> Unit = {  //(List<ExerciseDto>) -> Unit
+        workoutDetailsViewModel.onMultipleExercisesUpdateEvent(
+            OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete(selectedExercises)
+        )
+    }
+
+    val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
+        if(isDeleteMode){
+            val isNewExercise = selectedExercises.map { it.exerciseId }
+                .contains(selectedExercise.exerciseId)
+
+            if (isNewExercise) {
+                selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
+            } else {
+                selectedExercises.add(
+                    selectedExercise.copy(workoutId = workoutDetailsState.workoutDetails.workoutId)
+                )
+            }
+        }else {
+            workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
+        }
     }
 
     //Error handling
@@ -347,6 +383,12 @@ fun WorkoutDetailsScreen(
                                 .height(200.dp),
                             exercise = currentExercise,
                             onClick = onExerciseSelected,
+                            onLongPress = {
+                                onDeleteModeEnabled()
+
+                                selectedExercise = currentExercise
+                                onExerciseSelected(currentExercise)
+                            },
                             onDelete = {
                                 selectedExercise = currentExercise
                                 showDeleteExerciseDialog = true
@@ -382,6 +424,27 @@ fun WorkoutDetailsScreen(
                 onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
                 onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
             )
+        }
+
+        //Footer
+        if (selectedExercises.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize(),
+                verticalArrangement = Arrangement.Bottom,
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                SelectedExercisesRow(selectedExercises = selectedExercises)
+                DeleteExercisesRow(
+                    modifier = Modifier.padding(
+                        start = 16.dp,
+                        end = 16.dp,
+                        top = 8.dp,
+                        bottom = 16.dp
+                    ),
+                    onDelete = onDeleteMultipleExercises
+                )
+            }
         }
     }
 }
