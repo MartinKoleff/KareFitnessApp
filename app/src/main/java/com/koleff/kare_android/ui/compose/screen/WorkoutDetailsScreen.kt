@@ -109,6 +109,7 @@ fun WorkoutDetailsScreen(
 
     //Dialog visibility
     var showDeleteExerciseDialog by remember { mutableStateOf(false) }
+    var showDeleteMultipleExercisesDialog by remember { mutableStateOf(false) }
     var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
     var showFavoriteDialog by remember { mutableStateOf(false) }
     var showUnfavoriteDialog by remember { mutableStateOf(false) }
@@ -169,10 +170,22 @@ fun WorkoutDetailsScreen(
         workoutDetailsViewModel.onMultipleExercisesUpdateEvent(
             OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete(selectedExercises)
         )
+        showDeleteMultipleExercisesDialog = false
+    }
+
+    val onDeleteExercise = {
+        selectedExercise?.let {
+            workoutDetailsViewModel.deleteExercise(
+                workoutDetailsState.workoutDetails.workoutId,
+                selectedExercise!!.exerciseId
+            )
+        }
+
+        showDeleteExerciseDialog = false
     }
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
-        if(isDeleteMode){
+        if (isDeleteMode) {
             val isNewExercise = !selectedExercises.map { it.exerciseId }
                 .contains(selectedExercise.exerciseId)
 
@@ -185,7 +198,7 @@ fun WorkoutDetailsScreen(
 
                 isDeleteMode = selectedExercises.isNotEmpty()
             }
-        }else {
+        } else {
             workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
         }
     }
@@ -240,16 +253,18 @@ fun WorkoutDetailsScreen(
             title = "Delete Exercise",
             description = "Are you sure you want to delete this exercise? This action cannot be undone.",
             actionButtonTitle = "Delete",
-            onClick = {
-                selectedExercise?.let {
-                    workoutDetailsViewModel.deleteExercise(
-                        workoutDetailsState.workoutDetails.workoutId,
-                        selectedExercise!!.exerciseId
-                    )
-                }
-
-            },
+            onClick = onDeleteExercise,
             onDismiss = { showDeleteExerciseDialog = false }
+        )
+    }
+
+    if (showDeleteMultipleExercisesDialog) {
+        WarningDialog(
+            title = "Delete ${selectedExercises.size} exercises",
+            description = "Are you sure you want to delete these exercises? This action cannot be undone.",
+            actionButtonTitle = "Delete",
+            onClick =   onDeleteMultipleExercises,
+            onDismiss = { showDeleteMultipleExercisesDialog = false }
         )
     }
 
@@ -280,14 +295,14 @@ fun WorkoutDetailsScreen(
         )
     }
 
-    if(showFavoriteDialog){
+    if (showFavoriteDialog) {
         FavoriteWorkoutDialog(actionTitle = "Favorite Workout",
             onClick = onFavoriteWorkout,
             onDismiss = { showFavoriteDialog = false }
         )
     }
 
-    if(showUnfavoriteDialog){
+    if (showUnfavoriteDialog) {
         FavoriteWorkoutDialog(actionTitle = "Unfavorite Workout",
             onClick = onUnfavoriteWorkout,
             onDismiss = {
@@ -359,7 +374,7 @@ fun WorkoutDetailsScreen(
             textAlpha = textAlpha
         )
     ) { innerPadding ->
-        val paddingValues = PaddingValues(
+        val loadingWheelPadding = PaddingValues(
             top = toolbarSize + innerPadding.calculateTopPadding(), //Top toolbar padding
             start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
             end = innerPadding.calculateEndPadding(LayoutDirection.Rtl),
@@ -373,7 +388,7 @@ fun WorkoutDetailsScreen(
         ) {
 
             if (showLoadingDialog) {
-                LoadingWheel(innerPadding = paddingValues)
+                LoadingWheel(innerPadding = loadingWheelPadding)
             } else {
 
                 //Exercises
@@ -441,6 +456,30 @@ fun WorkoutDetailsScreen(
                         }
                     }
                 }
+
+                //Footer
+                if (selectedExercises.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        SelectedExercisesRow(selectedExercises = selectedExercises)
+                        DeleteExercisesRow(
+                            modifier = Modifier.padding(
+                                top = 8.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 8.dp
+                            ),
+                            onDelete = {
+                                showDeleteMultipleExercisesDialog = true
+                            }
+                        )
+                    }
+                }
             }
 
             PullRefreshIndicator(
@@ -459,27 +498,6 @@ fun WorkoutDetailsScreen(
                 onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
                 onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
             )
-        }
-
-        //Footer
-        if (selectedExercises.isNotEmpty()) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize(),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                SelectedExercisesRow(selectedExercises = selectedExercises)
-                DeleteExercisesRow(
-                    modifier = Modifier.padding(
-                        start = 16.dp,
-                        end = 16.dp,
-                        top = 8.dp,
-                        bottom = 16.dp
-                    ),
-                    onDelete = onDeleteMultipleExercises
-                )
-            }
         }
     }
 }
