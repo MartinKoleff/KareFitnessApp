@@ -12,4 +12,5 @@ interface AuthenticationDataSource {
 
     suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>>
 
+    suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>>
 }

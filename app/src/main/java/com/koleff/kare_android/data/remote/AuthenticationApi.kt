@@ -21,7 +21,9 @@ interface AuthenticationApi {
     ): BaseResponse
 
     @GET("api/v1/auth/logout")
-    suspend fun logout() //TODO: implement...
+    suspend fun logout(
+        @Body body: RegistrationRequest
+    ): BaseResponse
 
     @POST("api/v1/auth/changepassword")
     suspend fun changePassword() //TODO: implement...

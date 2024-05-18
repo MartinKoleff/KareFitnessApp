@@ -35,13 +35,21 @@ class AuthenticationRemoteDataSource @Inject constructor(
     }
 
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
-        val body = RegistrationRequest(
-            user
-        )
+        val body = RegistrationRequest(user)
 
         return Network.executeApiCall(dispatcher, {
             ServerResponseData(
                 authenticationApi.register(body)
+            )
+        })
+    }
+
+    override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
+        val body = RegistrationRequest(user)
+
+        return Network.executeApiCall(dispatcher, {
+            ServerResponseData(
+                authenticationApi.logout(body)
             )
         })
     }

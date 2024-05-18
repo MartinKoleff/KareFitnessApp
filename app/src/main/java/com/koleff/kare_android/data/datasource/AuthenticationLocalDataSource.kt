@@ -71,12 +71,24 @@ class AuthenticationLocalDataSource(
                 userDao.saveUser(user.toEntity())
 
                 val result = ServerResponseData(
-                    BaseResponse(isSuccessful = true)
+                    BaseResponse()
                 )
 
                 emit(ResultWrapper.Success(result))
             } else {
                 emit(ResultWrapper.ApiError(error = KareError.INVALID_CREDENTIALS))
             }
+        }
+
+    override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val result = ServerResponseData(
+                BaseResponse()
+            )
+
+            emit(ResultWrapper.Success(result))
         }
 }

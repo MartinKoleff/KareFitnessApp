@@ -20,4 +20,8 @@ class AuthenticationRepositoryImpl(private val authenticationDataSource: Authent
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         return authenticationDataSource.register(user)
     }
+
+    override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
+        return authenticationDataSource.logout(user)
+    }
 }
