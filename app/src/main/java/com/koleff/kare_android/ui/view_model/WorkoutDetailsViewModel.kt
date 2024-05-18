@@ -77,6 +77,16 @@ class WorkoutDetailsViewModel @Inject constructor(
     val updateWorkoutConfigurationState: StateFlow<BaseState>
         get() = _updateWorkoutConfigurationState
 
+    private var _favoriteWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val favoriteWorkoutState: StateFlow<BaseState>
+        get() = _favoriteWorkoutState
+
+    private var _unfavoriteWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val unfavoriteWorkoutState: StateFlow<BaseState>
+        get() = _unfavoriteWorkoutState
+
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
 
     private val isNewWorkout = savedStateHandle.get<String>("is_new_workout").toBoolean()
@@ -191,6 +201,14 @@ class WorkoutDetailsViewModel @Inject constructor(
         if (updateWorkoutConfigurationState.value.isError) {
             _updateWorkoutConfigurationState.value = WorkoutConfigurationState()
         }
+
+        if(favoriteWorkoutState.value.isError){
+            _favoriteWorkoutState.value = BaseState()
+        }
+
+        if(unfavoriteWorkoutState.value.isError){
+            _unfavoriteWorkoutState.value = BaseState()
+        }
     }
 
     fun startWorkout() {
@@ -289,6 +307,24 @@ class WorkoutDetailsViewModel @Inject constructor(
                     _getWorkoutDetailsState.value =
                         _getWorkoutDetailsState.value.copy(workoutDetails = updatedWorkoutDetails)
                 }
+            }
+        }
+    }
+
+    fun favoriteWorkout(workoutId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.favoriteWorkoutUseCase(workoutId).collect { favoriteWorkoutState ->
+                _favoriteWorkoutState.value = favoriteWorkoutState
+
+            }
+        }
+    }
+
+    fun unfavoriteWorkout(workoutId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.unfavoriteWorkoutUseCase(workoutId).collect { unfavoriteWorkoutState ->
+                _unfavoriteWorkoutState.value = unfavoriteWorkoutState
+
             }
         }
     }
