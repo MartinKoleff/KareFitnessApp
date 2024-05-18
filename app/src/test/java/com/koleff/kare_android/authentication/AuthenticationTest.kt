@@ -19,6 +19,7 @@ import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.LoginUseCase
+import com.koleff.kare_android.domain.usecases.LogoutUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
@@ -221,11 +222,13 @@ class AuthenticationTest {
             )
             authenticationRepository = AuthenticationRepositoryImpl(authenticationDataSource)
 
-            loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator)
-            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
             authenticationUseCases = AuthenticationUseCases(
-                loginUseCase,
-                registerUseCase
+                loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator),
+                registerUseCase = RegisterUseCase(
+                    authenticationRepository,
+                    credentialsAuthenticator
+                ),
+                logoutUseCase = LogoutUseCase(authenticationRepository)
             )
 
             logger = TestLogger(isLogging)

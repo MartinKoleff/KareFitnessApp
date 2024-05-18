@@ -18,6 +18,7 @@ import com.koleff.kare_android.domain.repository.AuthenticationRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.LoginUseCase
+import com.koleff.kare_android.domain.usecases.LogoutUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import dagger.Module
 import dagger.Provides
@@ -81,7 +82,8 @@ object AuthenticationModule {
     ): AuthenticationUseCases {
         return AuthenticationUseCases(
             loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator),
-            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator)
+            registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator),
+            logoutUseCase = LogoutUseCase(authenticationRepository)
         )
     }
 }
