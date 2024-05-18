@@ -80,6 +80,8 @@ fun WorkoutsScreen(
         val workoutState by workoutListViewModel.state.collectAsState()
         val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
         val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
+        val favoriteWorkoutState by workoutListViewModel.favoriteWorkoutState.collectAsState()
+        val unfavoriteWorkoutState by workoutListViewModel.unfavoriteWorkoutState.collectAsState()
 
         //Refresh screen
         LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
@@ -93,6 +95,7 @@ fun WorkoutsScreen(
         //Dialog visibility
         var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
         var showFavoriteDialog by remember { mutableStateOf(false) }
+        var showUnfavoriteDialog by remember { mutableStateOf(false) }
         var showDeleteDialog by remember { mutableStateOf(false) }
         var showErrorDialog by remember { mutableStateOf(false) }
         var showLoadingDialog by remember { mutableStateOf(false) }
@@ -119,6 +122,14 @@ fun WorkoutsScreen(
             }
         }
 
+        val onUnfavoriteWorkout: () -> Unit = {
+            selectedWorkout?.let {
+                workoutListViewModel.unfavoriteWorkout(selectedWorkout!!.workoutId)
+
+                showUnfavoriteDialog = false
+            }
+        }
+
         val onEditWorkoutName: (String) -> Unit = { newName ->
             selectedWorkout?.let {
                 selectedWorkout = selectedWorkout!!.copy(name = newName)
@@ -140,12 +151,16 @@ fun WorkoutsScreen(
         LaunchedEffect(
             workoutState,
             deleteWorkoutState,
-            updateWorkoutState
+            updateWorkoutState,
+            favoriteWorkoutState,
+            unfavoriteWorkoutState
         ) {
             val states = listOf(
                 workoutState,
                 deleteWorkoutState,
-                updateWorkoutState
+                updateWorkoutState,
+                favoriteWorkoutState,
+                unfavoriteWorkoutState
             )
 
             val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
@@ -192,13 +207,18 @@ fun WorkoutsScreen(
             )
         }
 
-        if (showFavoriteDialog && selectedWorkout != null) {
-            val selectWord = if (selectedWorkout!!.isFavorite) "Unfavorite" else "Favorite"
 
-            FavoriteWorkoutDialog(
-                actionTitle = selectWord,
+        if(showFavoriteDialog && selectedWorkout != null){
+            FavoriteWorkoutDialog(actionTitle = "Favorite Workout",
                 onClick = onFavoriteWorkout,
                 onDismiss = { showFavoriteDialog = false }
+            )
+        }
+
+        if(showUnfavoriteDialog && selectedWorkout != null){
+            FavoriteWorkoutDialog(actionTitle = "Unfavorite Workout",
+                onClick = onUnfavoriteWorkout,
+                onDismiss = { showUnfavoriteDialog = false }
             )
         }
 
@@ -278,7 +298,12 @@ fun WorkoutsScreen(
                                     selectedWorkout = workout
                                 },
                                 onFavorite = {
-                                    showFavoriteDialog = true
+                                    if(workout.isFavorite) {
+                                        showUnfavoriteDialog = true
+                                    } else {
+                                        showFavoriteDialog = true
+                                    }
+
                                     selectedWorkout = workout
                                 },
                                 onClick = {

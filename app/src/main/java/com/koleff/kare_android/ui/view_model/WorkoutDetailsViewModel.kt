@@ -317,6 +317,12 @@ class WorkoutDetailsViewModel @Inject constructor(
                 _favoriteWorkoutState.value = favoriteWorkoutState
 
                 if(favoriteWorkoutState.isSuccessful){
+                    val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
+                        isFavorite = true
+                    )
+                    _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                        workoutDetails = updatedWorkoutDetails
+                    )
 
                     Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
                     hasUpdated.notifyUpdate(true)
@@ -331,6 +337,12 @@ class WorkoutDetailsViewModel @Inject constructor(
                 _unfavoriteWorkoutState.value = unfavoriteWorkoutState
 
                 if(unfavoriteWorkoutState.isSuccessful){
+                    val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
+                        isFavorite = false
+                    )
+                    _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                        workoutDetails = updatedWorkoutDetails
+                    )
 
                     Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
                     hasUpdated.notifyUpdate(true)
