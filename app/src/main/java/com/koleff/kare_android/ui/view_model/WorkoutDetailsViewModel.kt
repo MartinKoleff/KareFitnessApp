@@ -15,6 +15,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.HasUpdated
 import com.koleff.kare_android.ui.state.WorkoutConfigurationState
@@ -114,6 +115,30 @@ class WorkoutDetailsViewModel @Inject constructor(
 
             Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
             hasUpdated.notifyUpdate(true)
+        }
+    }
+
+    fun onMultipleExercisesUpdateEvent(event: OnMultipleExercisesUpdateEvent) {
+        when (event) {
+            is OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete -> {
+                val exercises = event.exerciseList
+                val exerciseIds = exercises.map { it.exerciseId }
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.deleteMultipleExercisesUseCase(
+                        workoutId = workoutId,
+                        exerciseIds = exerciseIds
+                    ).collect { updateWorkoutState ->
+                        _deleteExerciseState.value = updateWorkoutState
+
+                        //Update main state
+                        _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                            workoutDetails = updateWorkoutState.workoutDetails
+                        )
+                    }
+                }
+            }
+            else -> {}
         }
     }
 

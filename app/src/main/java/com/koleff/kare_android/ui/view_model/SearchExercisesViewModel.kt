@@ -118,25 +118,6 @@ class SearchExercisesViewModel @Inject constructor(
 
     fun onMultipleExercisesUpdateEvent(event: OnMultipleExercisesUpdateEvent) {
         when (event) {
-            is OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete -> {
-                val exercises = event.exerciseList
-                val exerciseIds = exercises.map { it.exerciseId }
-
-                viewModelScope.launch(dispatcher) {
-                    workoutUseCases.deleteMultipleExercisesUseCase(
-                        workoutId = workoutId,
-                        exerciseIds = exerciseIds
-                    ).collect { updateWorkoutState ->
-                        _updateWorkoutState.value = updateWorkoutState
-
-                        //Go to workout details
-                        if (updateWorkoutState.isSuccessful) {
-                            navigateToWorkoutDetails()
-                        }
-                    }
-                }
-            }
-
             is OnMultipleExercisesUpdateEvent.OnMultipleExercisesSubmit -> {
                 val exercises = event.exerciseList
 
@@ -154,6 +135,7 @@ class SearchExercisesViewModel @Inject constructor(
                     }
                 }
             }
+            else -> {}
         }
     }
 
