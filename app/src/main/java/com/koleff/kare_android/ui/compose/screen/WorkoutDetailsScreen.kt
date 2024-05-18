@@ -162,15 +162,17 @@ fun WorkoutDetailsScreen(
 
     val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
         if(isDeleteMode){
-            val isNewExercise = selectedExercises.map { it.exerciseId }
+            val isNewExercise = !selectedExercises.map { it.exerciseId }
                 .contains(selectedExercise.exerciseId)
 
             if (isNewExercise) {
-                selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
-            } else {
                 selectedExercises.add(
                     selectedExercise.copy(workoutId = workoutDetailsState.workoutDetails.workoutId)
                 )
+            } else {
+                selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
+
+                isDeleteMode = selectedExercises.isNotEmpty()
             }
         }else {
             workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
@@ -392,7 +394,8 @@ fun WorkoutDetailsScreen(
                             onDelete = {
                                 selectedExercise = currentExercise
                                 showDeleteExerciseDialog = true
-                            }
+                            },
+                            isSelected = selectedExercises.contains(currentExercise)
                         )
                     }
 

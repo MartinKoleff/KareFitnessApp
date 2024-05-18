@@ -164,12 +164,14 @@ fun SelectedExerciseBanner(
     )
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ExerciseBannerV2(
     modifier: Modifier,
     exercise: ExerciseDto,
     hasDescription: Boolean = false,
-    onClick: (ExerciseDto) -> Unit
+    onClick: (ExerciseDto) -> Unit,
+    onLongPress: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
 
@@ -203,12 +205,17 @@ fun ExerciseBannerV2(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(8.dp)
+            .combinedClickable(
+                onLongClick = onLongPress,
+                onClick = {
+                    onClick(exercise)
+                }
+            ),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
-        onClick = { onClick.invoke(exercise) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
@@ -342,9 +349,10 @@ fun ExerciseList(
                     .fillMaxWidth()
                     .height(200.dp),
                 exercise = exercise,
-            ) {
-                navigateToExerciseDetails(exercise)
-            }
+                onClick = {
+                    navigateToExerciseDetails(exercise)
+                }
+            )
         }
     }
 }
@@ -356,7 +364,8 @@ fun SwipeableExerciseBanner(
     hasDescription: Boolean = true,
     onClick: (ExerciseDto) -> Unit,
     onDelete: () -> Unit,
-    onLongPress: () -> Unit
+    onLongPress: () -> Unit,
+    isSelected: Boolean //isDeleteMode enabled
 ) {
     val configuration = LocalConfiguration.current
 
@@ -384,18 +393,12 @@ fun SwipeableExerciseBanner(
             shape = RoundedCornerShape(cornerSize)
         )
 
-    var isSelected by remember { mutableStateOf(false) }
-
     val appliedModifier = if (isSelected) selectedModifier else modifier
 
     Box {
         ExerciseBannerV2(
             modifier = appliedModifier
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
-//                .combinedClickable(  onLongPress = {
-//                    isSelected = !isSelected
-//                    onLongPress()
-//                })
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { change, dragAmount ->
                         val newOffsetX = (offsetX + dragAmount)
@@ -403,18 +406,11 @@ fun SwipeableExerciseBanner(
                         offsetX = newOffsetX
                         change.consumeAllChanges()
                     }
-                }
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onLongPress = {
-                            isSelected = !isSelected
-                            onLongPress()
-                        }
-                    )
                 },
             exercise = exercise,
             hasDescription = hasDescription,
-            onClick = onClick
+            onClick = onClick,
+            onLongPress = onLongPress,
         )
 
         //Delete option
@@ -478,7 +474,8 @@ fun SwipeableExerciseBannerPreview() {
         exercise = exercise,
         onClick = {},
         onDelete = {},
-        onLongPress = {}
+        onLongPress = {},
+        isSelected = false
     )
 }
 
