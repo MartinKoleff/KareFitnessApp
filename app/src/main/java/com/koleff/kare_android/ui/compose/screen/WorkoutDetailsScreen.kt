@@ -49,6 +49,7 @@ import com.koleff.kare_android.ui.compose.components.SubmitExercisesRow
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.FavoriteWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutConfigurationDialog
 import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
@@ -68,6 +69,8 @@ fun WorkoutDetailsScreen(
     val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
     val startWorkoutState by workoutDetailsViewModel.startWorkoutState.collectAsState()
     val createWorkoutState by workoutDetailsViewModel.createWorkoutState.collectAsState()
+    val favoriteWorkoutState by workoutDetailsViewModel.favoriteWorkoutState.collectAsState()
+    val unfavoriteWorkoutState by workoutDetailsViewModel.unfavoriteWorkoutState.collectAsState()
 
     val workoutTitle =
         if (workoutDetailsState.workoutDetails.name == "" || updateWorkoutDetailsState.isLoading) "Loading..."
@@ -107,7 +110,8 @@ fun WorkoutDetailsScreen(
     //Dialog visibility
     var showDeleteExerciseDialog by remember { mutableStateOf(false) }
     var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
-    var showSelectDialog by remember { mutableStateOf(false) }
+    var showFavoriteDialog by remember { mutableStateOf(false) }
+    var showUnfavoriteDialog by remember { mutableStateOf(false) }
     var showDeleteWorkoutDialog by remember { mutableStateOf(false) }
     var showWorkoutConfigureDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -120,11 +124,18 @@ fun WorkoutDetailsScreen(
         showDeleteWorkoutDialog = false
     }
 
-//    val onSelectWorkout: () -> Unit = {
-//        workoutDetailsViewModel.selectWorkout(selectedWorkout.workoutId)
-//
-//        showSelectDialog = false
-//    }
+    val onFavoriteWorkout: () -> Unit = {
+        workoutDetailsViewModel.favoriteWorkout(selectedWorkout.workoutId)
+
+        showFavoriteDialog = false
+    }
+
+    val onUnfavoriteWorkout: () -> Unit = {
+        workoutDetailsViewModel.unfavoriteWorkout(selectedWorkout.workoutId)
+
+        showUnfavoriteDialog = false
+    }
+
 
     val onEditWorkoutName: (String) -> Unit = { newName ->
         val updatedWorkout = selectedWorkout.copy(name = newName)
@@ -192,7 +203,9 @@ fun WorkoutDetailsScreen(
         deleteWorkoutDetailsState,
         updateWorkoutDetailsState,
         startWorkoutState,
-        createWorkoutState
+        createWorkoutState,
+        favoriteWorkoutState,
+        unfavoriteWorkoutState
     ) {
         val states = listOf(
             workoutDetailsState,
@@ -200,7 +213,9 @@ fun WorkoutDetailsScreen(
             deleteWorkoutDetailsState,
             updateWorkoutDetailsState,
             startWorkoutState,
-            createWorkoutState
+            createWorkoutState,
+            favoriteWorkoutState,
+            unfavoriteWorkoutState
         )
 
         val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
@@ -261,8 +276,22 @@ fun WorkoutDetailsScreen(
         WorkoutConfigurationDialog(
             workoutConfiguration = workoutDetailsState.workoutDetails.configuration,
             onSave = onUpdateWorkoutConfiguration,
+            onDismiss = { showWorkoutConfigureDialog = false }
+        )
+    }
+
+    if(showFavoriteDialog){
+        FavoriteWorkoutDialog(actionTitle = "Favorite Workout",
+            onClick = onFavoriteWorkout,
+            onDismiss = { showFavoriteDialog = false }
+        )
+    }
+
+    if(showUnfavoriteDialog){
+        FavoriteWorkoutDialog(actionTitle = "Unfavorite Workout",
+            onClick = onUnfavoriteWorkout,
             onDismiss = {
-                showWorkoutConfigureDialog = false
+                showUnfavoriteDialog = false
             }
         )
     }
@@ -371,6 +400,8 @@ fun WorkoutDetailsScreen(
                             onAddExerciseAction = { workoutDetailsViewModel.addExercise() },
                             onDeleteWorkoutAction = { showDeleteWorkoutDialog = true },
                             onEditWorkoutNameAction = { showEditWorkoutNameDialog = true },
+                            onFavoriteWorkoutAction = { showFavoriteDialog = true },
+                            onUnfavoriteWorkoutAction = { showUnfavoriteDialog = true },
                             onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
                             onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
                         )
