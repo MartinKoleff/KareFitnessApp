@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import kotlin.random.Random
 
 
 @Composable
@@ -100,11 +101,14 @@ fun StartWorkoutHeader(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String,
+    isWorkoutFavorited: Boolean,
     onStartWorkoutAction: () -> Unit,
     onConfigureAction: () -> Unit,
     onAddExerciseAction: () -> Unit,
     onDeleteWorkoutAction: () -> Unit,
     onEditWorkoutNameAction: () -> Unit,
+    onFavoriteWorkoutAction: () -> Unit,
+    onUnfavoriteWorkoutAction: () -> Unit,
     onNavigateBackAction: () -> Unit,
     onNavigateToSettings: () -> Unit
 ) {
@@ -121,10 +125,13 @@ fun StartWorkoutHeader(
             StartWorkoutTitleAndSubtitle(title, subtitle)
 
             StartWorkoutActionRow(
+                isWorkoutFavorited = isWorkoutFavorited,
                 onConfigureAction = onConfigureAction,
                 onAddExerciseAction = onAddExerciseAction,
                 onDeleteWorkoutAction = onDeleteWorkoutAction,
-                onEditWorkoutNameAction = onEditWorkoutNameAction
+                onEditWorkoutNameAction = onEditWorkoutNameAction,
+                onFavoriteWorkoutAction = onFavoriteWorkoutAction,
+                onUnfavoriteWorkoutAction = onUnfavoriteWorkoutAction
             )
 
             StartWorkoutButton(text = "Start workout!", onStartWorkoutAction = onStartWorkoutAction)
@@ -193,10 +200,13 @@ fun StartWorkoutToolbarPreview() {
 
 @Composable
 fun StartWorkoutActionRow(
+    isWorkoutFavorited: Boolean,
     onConfigureAction: () -> Unit,
     onAddExerciseAction: () -> Unit,
     onDeleteWorkoutAction: () -> Unit,
-    onEditWorkoutNameAction: () -> Unit
+    onEditWorkoutNameAction: () -> Unit,
+    onFavoriteWorkoutAction: () -> Unit,
+    onUnfavoriteWorkoutAction: () -> Unit,
 ) {
 
     //Same as StartWorkoutButton
@@ -251,10 +261,13 @@ fun StartWorkoutActionRow(
 
             StartWorkoutDynamicActionButton(
                 modifier = Modifier.weight(1f),
-                initialText = "Save",
-                changedText = "Saved",
+                isWorkoutFavorited = isWorkoutFavorited,
+                initialText = "Favorite",
+                changedText = "Favorited",
                 initialIconResourceId = R.drawable.ic_heart_outline,
-                changedIconResourceId = R.drawable.ic_heart_full
+                changedIconResourceId = R.drawable.ic_heart_full,
+                onFavoriteWorkoutAction = onFavoriteWorkoutAction,
+                onUnfavoriteWorkoutAction = onUnfavoriteWorkoutAction
             )
 
             StartWorkoutActionButton(
@@ -318,14 +331,16 @@ fun StartWorkoutActionButton(
 @Composable
 fun StartWorkoutDynamicActionButton(
     modifier: Modifier = Modifier,
+    isWorkoutFavorited: Boolean,
     initialText: String,
     changedText: String,
     initialIconResourceId: Int,
     changedIconResourceId: Int,
-    onAction: () -> Unit = {},
+    onFavoriteWorkoutAction: () -> Unit = {},
+    onUnfavoriteWorkoutAction: () -> Unit = {},
 ) {
-    var isSaved by remember {
-        mutableStateOf(false) //TODO: wire with shared preferences...
+    var isWorkoutFavorited by remember {
+        mutableStateOf(isWorkoutFavorited)
     }
 
     val textColor = MaterialTheme.colorScheme.onSurface
@@ -348,12 +363,12 @@ fun StartWorkoutDynamicActionButton(
         IconButton(
             modifier = Modifier.size(iconSize),
             onClick = {
-                isSaved = !isSaved
+//                isSaved = !isSaved
 
-                onAction()
+                if(isWorkoutFavorited) onUnfavoriteWorkoutAction() else onFavoriteWorkoutAction()
             }) {
             Icon(
-                painter = painterResource(id = if (isSaved) changedIconResourceId else initialIconResourceId),
+                painter = painterResource(id = if (isWorkoutFavorited) changedIconResourceId else initialIconResourceId),
                 contentDescription = "Start workout action button",
                 tint = tintColor
             )
@@ -364,7 +379,7 @@ fun StartWorkoutDynamicActionButton(
             modifier = Modifier.padding(
                 paddingValues
             ),
-            text = if (isSaved) changedText else initialText,
+            text = if (isWorkoutFavorited) changedText else initialText,
             style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
@@ -387,15 +402,22 @@ fun StartWorkoutActionRowPreview() {
     val onConfigureAction = {}
     val onDeleteWorkoutAction = {}
     val onEditWorkoutNameAction = {}
+    val onFavoriteWorkoutAction = {}
+    val onUnfavoriteWorkoutAction = {}
+    val isWorkoutFavorited = Random.nextBoolean()
+
     Box(
         modifier = Modifier
             .background(MaterialTheme.colorScheme.surface)
     ) {
         StartWorkoutActionRow(
+            isWorkoutFavorited = isWorkoutFavorited,
             onAddExerciseAction = onAddExerciseAction,
             onConfigureAction = onConfigureAction,
             onDeleteWorkoutAction = onDeleteWorkoutAction,
-            onEditWorkoutNameAction = onEditWorkoutNameAction
+            onEditWorkoutNameAction = onEditWorkoutNameAction,
+            onFavoriteWorkoutAction = onFavoriteWorkoutAction,
+            onUnfavoriteWorkoutAction = onUnfavoriteWorkoutAction
         )
     }
 
@@ -412,7 +434,7 @@ fun StartWorkoutTitleAndSubtitle(
     )
 
     val subtitleTextColor = MaterialTheme.colorScheme.onSurface
-    val subtitleTextStyle = MaterialTheme.typography.headlineLarge.copy(
+    val subtitleTextStyle = MaterialTheme.typography.headlineSmall.copy(
         color = subtitleTextColor
     )
 
@@ -420,16 +442,16 @@ fun StartWorkoutTitleAndSubtitle(
         PaddingValues(
             top = 8.dp,
             bottom = 0.dp,
-            start = 8.dp,
-            end = 8.dp
+            start = 32.dp,
+            end = 32.dp
         )
 
     val subtitlePadding =
         PaddingValues(
             top = 2.dp,
             bottom = 64.dp,
-            start = 8.dp,
-            end = 8.dp
+            start = 32.dp,
+            end = 32.dp
         )
 
     //Title
@@ -478,16 +500,23 @@ fun StartWorkoutHeaderPreview() {
     val onEditWorkoutNameAction = {}
     val onDeleteWorkoutAction = {}
     val onNavigateBackAction = {}
+    val onFavoriteWorkoutAction = {}
+    val onUnfavoriteWorkoutAction = {}
     val onNavigateToSettings = {}
+    val isWorkoutFavorited = Random.nextBoolean()
+
     StartWorkoutHeader(
         modifier = Modifier.fillMaxSize(),
         title = "Arnold destroy back workout",
         subtitle = "Biceps, triceps and forearms.",
+        isWorkoutFavorited = isWorkoutFavorited,
         onStartWorkoutAction = onStartWorkoutAction,
         onConfigureAction = onConfigureAction,
         onAddExerciseAction = onAddExerciseAction,
         onEditWorkoutNameAction = onEditWorkoutNameAction,
         onDeleteWorkoutAction = onDeleteWorkoutAction,
+        onFavoriteWorkoutAction = onFavoriteWorkoutAction,
+        onUnfavoriteWorkoutAction = onUnfavoriteWorkoutAction,
         onNavigateBackAction = onNavigateBackAction,
         onNavigateToSettings = onNavigateToSettings
     )

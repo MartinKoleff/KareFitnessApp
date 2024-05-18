@@ -1,40 +1,41 @@
 package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
+import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
-import com.koleff.kare_android.ui.state.SelectedWorkoutState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class GetSelectedWorkoutUseCase(private val workoutRepository: WorkoutRepository) {
+class AddMultipleExercisesUseCase(private val workoutRepository: WorkoutRepository) {
 
-    suspend operator fun invoke(): Flow<SelectedWorkoutState> =
-        workoutRepository.getSelectedWorkout().map { apiResult ->
+    suspend operator fun invoke(workoutId: Int, exerciseList: List<ExerciseDto>): Flow<WorkoutDetailsState> =
+        workoutRepository.addMultipleExercises(workoutId, exerciseList).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {
-                    SelectedWorkoutState(
+                    WorkoutDetailsState(
                         isError = true,
                         error = apiResult.error ?: KareError.GENERIC
                     )
                 }
 
                 is ResultWrapper.Loading -> {
-                    SelectedWorkoutState(isLoading = true)
+                    WorkoutDetailsState(isLoading = true)
                 }
 
                 is ResultWrapper.Success -> {
-                    Log.d("GetSelectedWorkoutUseCase", "Selected workout fetched: ${apiResult.data.workout}")
+                    Log.d("AddMultipleExerciseUseCase", "Workout with id $workoutId updated\n. Exercises added. $exerciseList")
 
-                    SelectedWorkoutState(
+                    WorkoutDetailsState(
                         isSuccessful = true,
-                        selectedWorkout = apiResult.data.workout
+                        workoutDetails = apiResult.data.workoutDetails
                     )
                 }
             }
         }
 }
-

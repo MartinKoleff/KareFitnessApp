@@ -89,7 +89,7 @@ fun MuscleGroupScreen(
                 modifier = buttonModifier,
                 selectedOptionIndex = -1,
                 isDisabled = exerciseListState.isLoading,
-                onFilterSelected = exerciseListViewModel::onFilterExercisesEvent //TODO: test...
+                onFilterSelected = exerciseListViewModel::onFilterExercisesEvent
             )
 
             if (exerciseListState.isLoading) {

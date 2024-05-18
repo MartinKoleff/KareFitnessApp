@@ -57,7 +57,7 @@ class ExerciseDBManagerV2 @Inject constructor(
                 muscleGroup = MuscleGroup.NONE,
                 snapshot = "default_snapshot.png",
                 totalExercises = MuscleGroup.getTotalExercises(MuscleGroup.ALL),
-                isSelected = false
+                isFavorite = false
             )
         workoutDao.insertWorkout(
             catalogPlaceholderWorkout
@@ -68,7 +68,7 @@ class ExerciseDBManagerV2 @Inject constructor(
                 name = "Catalog",
                 description = "",
                 muscleGroup = MuscleGroup.NONE,
-                isSelected = false
+                isFavorite = false
             )
         workoutDetailsDao.insertWorkoutDetails(
             catalogPlaceholderWorkoutDetails

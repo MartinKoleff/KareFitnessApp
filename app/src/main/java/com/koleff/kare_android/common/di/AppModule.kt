@@ -56,6 +56,7 @@ import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
+import com.koleff.kare_android.domain.usecases.AddMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.CreateCustomWorkoutUseCase
@@ -64,19 +65,21 @@ import com.koleff.kare_android.domain.usecases.CreateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
+import com.koleff.kare_android.domain.usecases.DeleteMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.DeselectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.UnfavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.FindDuplicateExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetAllDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
-import com.koleff.kare_android.domain.usecases.GetSelectedWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.GetFavoriteWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
@@ -90,9 +93,10 @@ import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
 import com.koleff.kare_android.domain.usecases.SaveAllDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutPerformanceMetricsUseCase
-import com.koleff.kare_android.domain.usecases.SelectWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
+import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.UpdateDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
@@ -499,12 +503,16 @@ object AppModule {
             updateWorkoutDetailsUseCase = UpdateWorkoutDetailsUseCase(workoutRepository),
             onSearchWorkoutUseCase = OnSearchWorkoutUseCase(),
             deleteExerciseUseCase = DeleteExerciseUseCase(workoutRepository),
+            deleteMultipleExercisesUseCase = DeleteMultipleExercisesUseCase(workoutRepository),
             addExerciseUseCase = AddExerciseUseCase(workoutRepository),
+            addMultipleExercisesUseCase = AddMultipleExercisesUseCase(workoutRepository),
             submitExerciseUseCase = SubmitExerciseUseCase(workoutRepository),
+            submitMultipleExercisesUseCase = SubmitMultipleExercisesUseCase(workoutRepository),
+            findDuplicateExercisesUseCase = FindDuplicateExercisesUseCase(workoutRepository),
             deleteWorkoutUseCase = DeleteWorkoutUseCase(workoutRepository),
-            selectWorkoutUseCase = SelectWorkoutUseCase(workoutRepository),
-            deselectWorkoutUseCase = DeselectWorkoutUseCase(workoutRepository),
-            getSelectedWorkoutUseCase = GetSelectedWorkoutUseCase(workoutRepository),
+            favoriteWorkoutUseCase = FavoriteWorkoutUseCase(workoutRepository),
+            unfavoriteWorkoutUseCase = UnfavoriteWorkoutUseCase(workoutRepository),
+            getFavoriteWorkoutsUseCase = GetFavoriteWorkoutsUseCase(workoutRepository),
             createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
             createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
             createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),

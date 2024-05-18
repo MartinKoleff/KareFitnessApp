@@ -10,6 +10,8 @@ import com.koleff.kare_android.data.model.request.ExerciseAddRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
@@ -18,6 +20,7 @@ import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.data.remote.WorkoutApi
+import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
@@ -25,25 +28,26 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+
+typealias FindDuplicateExercisesRequest = MultipleExercisesUpdateRequest
 class WorkoutRemoteDataSource @Inject constructor(
     private val workoutApi: WorkoutApi,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : WorkoutDataSource {
-    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         val body = FetchWorkoutByIdRequest(workoutId)
 
-        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.selectWorkout(body)) })
+        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.favoriteWorkout(body)) })
     }
 
-    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         val body = FetchWorkoutByIdRequest(workoutId)
 
-        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.deselectWorkout(body)) })
+        return Network.executeApiCall(dispatcher, { ServerResponseData(workoutApi.unfavoriteWorkout(body)) })
     }
 
-
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> {
-        return Network.executeApiCall(dispatcher, { SelectedWorkoutWrapper(workoutApi.getSelectedWorkout()) })
+    override suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> {
+        return Network.executeApiCall(dispatcher, { WorkoutListWrapper(workoutApi.getFavoriteWorkouts()) })
     }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> {
@@ -93,6 +97,15 @@ class WorkoutRemoteDataSource @Inject constructor(
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.deleteExercise(body)) })
     }
 
+    override suspend fun deleteMultipleExercises(
+        workoutId: Int,
+        exerciseIds: List<Int>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        val body = MultipleExercisesDeletionRequest(workoutId, exerciseIds)
+
+        return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.deleteMultipleExercises(body)) })
+    }
+
     override suspend fun addExercise(
         workoutId: Int,
         exercise: ExerciseDto
@@ -102,6 +115,15 @@ class WorkoutRemoteDataSource @Inject constructor(
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.addExercise(body)) })
     }
 
+    override suspend fun addMultipleExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        val body = MultipleExercisesUpdateRequest(workoutId, exerciseList)
+
+        return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.addMultipleExercises(body)) })
+    }
+
     override suspend fun submitExercise(
         workoutId: Int,
         exercise: ExerciseDto
@@ -109,6 +131,24 @@ class WorkoutRemoteDataSource @Inject constructor(
         val body = ExerciseAddRequest(workoutId, exercise)
 
         return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.submitExercise(body)) })
+    }
+
+    override suspend fun submitMultipleExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        val body = MultipleExercisesUpdateRequest(workoutId, exerciseList)
+
+        return Network.executeApiCall(dispatcher, { WorkoutDetailsWrapper(workoutApi.submitMultipleExercises(body)) })
+    }
+
+    override suspend fun findDuplicateExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<DuplicateExercisesWrapper>> {
+        val body = FindDuplicateExercisesRequest(workoutId, exerciseList)
+
+        return Network.executeApiCall(dispatcher, { DuplicateExercisesWrapper(workoutApi.findDuplicateExercises(body)) })
     }
 
     override suspend fun createNewWorkout(): Flow<ResultWrapper<WorkoutWrapper>> {

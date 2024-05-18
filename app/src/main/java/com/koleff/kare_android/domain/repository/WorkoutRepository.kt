@@ -4,6 +4,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
@@ -15,11 +16,11 @@ import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
 import kotlinx.coroutines.flow.Flow
 
 interface WorkoutRepository {
-    suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>>
+    suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>
 
     suspend fun getAllWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>>  //Used for loading list view and refresh
 
@@ -36,9 +37,20 @@ interface WorkoutRepository {
         exerciseId: Int
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 
+    suspend fun deleteMultipleExercises(
+        workoutId: Int,
+        exerciseIds: List<Int>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>>
+
     suspend fun addExercise(workoutId: Int, exercise: ExerciseDto): Flow<ResultWrapper<WorkoutDetailsWrapper>>
 
+    suspend fun addMultipleExercises(workoutId: Int, exerciseList: List<ExerciseDto>): Flow<ResultWrapper<WorkoutDetailsWrapper>>
+
     suspend fun submitExercise(workoutId: Int, exercise: ExerciseDto): Flow<ResultWrapper<WorkoutDetailsWrapper>>
+
+    suspend fun submitMultipleExercises(workoutId: Int, exerciseList: List<ExerciseDto>): Flow<ResultWrapper<WorkoutDetailsWrapper>>
+
+    suspend fun findDuplicateExercises(workoutId: Int, exerciseList: List<ExerciseDto>): Flow<ResultWrapper<DuplicateExercisesWrapper>>
 
     suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>>
 

@@ -66,7 +66,7 @@ object WorkoutGenerator {
                     name = "Arnold chest workout",
                     description = "Blow your chest",
                     muscleGroup = MuscleGroup.CHEST,
-                    isSelected = false
+                    isFavorite = false
                 ),
                 exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.CHEST, isWorkout = true, workoutId = 1),
                 configuration = WorkoutConfigurationDto(workoutId = 1).toEntity()
@@ -77,7 +77,7 @@ object WorkoutGenerator {
                     name = "Chavdo destroy back workout",
                     description = "Blow your back with me4ka",
                     muscleGroup = MuscleGroup.BACK,
-                    isSelected = false
+                    isFavorite = false
                 ),
                 exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.BACK, isWorkout = true, workoutId = 2),
                 configuration = WorkoutConfigurationDto(workoutId = 2).toEntity()
@@ -88,7 +88,7 @@ object WorkoutGenerator {
                     name = "Blow your arms workout",
                     description = "Blow your arms with curls",
                     muscleGroup = MuscleGroup.ARMS,
-                    isSelected = true
+                    isFavorite = true
                 ), exercises = ExerciseGenerator.loadExercisesWithSets(MuscleGroup.ARMS, isWorkout = true, workoutId = 3),
                 configuration = WorkoutConfigurationDto(workoutId = 3).toEntity()
             )
@@ -103,7 +103,7 @@ object WorkoutGenerator {
                 muscleGroup = MuscleGroup.CHEST,
                 snapshot = "",
                 totalExercises = ExerciseGenerator.getTotalExercisesForMuscleGroup(MuscleGroup.CHEST),
-                isSelected = false
+                isFavorite = false
             ),
             Workout(
                 workoutId = 2,
@@ -111,7 +111,7 @@ object WorkoutGenerator {
                 muscleGroup = MuscleGroup.BACK,
                 snapshot = "",
                 totalExercises = ExerciseGenerator.getTotalExercisesForMuscleGroup(MuscleGroup.BACK),
-                isSelected = false
+                isFavorite = false
             ),
             Workout(
                 workoutId = 3,
@@ -119,7 +119,7 @@ object WorkoutGenerator {
                 muscleGroup = MuscleGroup.ARMS,
                 snapshot = "",
                 totalExercises = ExerciseGenerator.getTotalExercisesForMuscleGroup(MuscleGroup.ARMS),
-                isSelected = true
+                isFavorite = true
             )
         )
     }

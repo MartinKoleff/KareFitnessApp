@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -22,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -38,14 +40,19 @@ import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.banners.AddExerciseToWorkoutBanner
 import com.koleff.kare_android.ui.compose.banners.SwipeableExerciseBanner
+import com.koleff.kare_android.ui.compose.components.DeleteExercisesRow
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.SelectedExercisesRow
 import com.koleff.kare_android.ui.compose.components.StartWorkoutHeader
 import com.koleff.kare_android.ui.compose.components.StartWorkoutToolbar
+import com.koleff.kare_android.ui.compose.components.SubmitExercisesRow
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.FavoriteWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutConfigurationDialog
+import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.AnimatedToolbarState
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutDetailsViewModel
@@ -62,14 +69,12 @@ fun WorkoutDetailsScreen(
     val deleteExerciseState by workoutDetailsViewModel.deleteExerciseState.collectAsState()
     val startWorkoutState by workoutDetailsViewModel.startWorkoutState.collectAsState()
     val createWorkoutState by workoutDetailsViewModel.createWorkoutState.collectAsState()
+    val favoriteWorkoutState by workoutDetailsViewModel.favoriteWorkoutState.collectAsState()
+    val unfavoriteWorkoutState by workoutDetailsViewModel.unfavoriteWorkoutState.collectAsState()
 
     val workoutTitle =
         if (workoutDetailsState.workoutDetails.name == "" || updateWorkoutDetailsState.isLoading) "Loading..."
         else workoutDetailsState.workoutDetails.name
-
-    val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
-        workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
-    }
 
     var selectedWorkout by remember {
         mutableStateOf(workoutDetailsState.workoutDetails)
@@ -104,8 +109,10 @@ fun WorkoutDetailsScreen(
 
     //Dialog visibility
     var showDeleteExerciseDialog by remember { mutableStateOf(false) }
+    var showDeleteMultipleExercisesDialog by remember { mutableStateOf(false) }
     var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
-    var showSelectDialog by remember { mutableStateOf(false) }
+    var showFavoriteDialog by remember { mutableStateOf(false) }
+    var showUnfavoriteDialog by remember { mutableStateOf(false) }
     var showDeleteWorkoutDialog by remember { mutableStateOf(false) }
     var showWorkoutConfigureDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -118,11 +125,18 @@ fun WorkoutDetailsScreen(
         showDeleteWorkoutDialog = false
     }
 
-//    val onSelectWorkout: () -> Unit = {
-//        workoutDetailsViewModel.selectWorkout(selectedWorkout.workoutId)
-//
-//        showSelectDialog = false
-//    }
+    val onFavoriteWorkout: () -> Unit = {
+        workoutDetailsViewModel.favoriteWorkout(selectedWorkout.workoutId)
+
+        showFavoriteDialog = false
+    }
+
+    val onUnfavoriteWorkout: () -> Unit = {
+        workoutDetailsViewModel.unfavoriteWorkout(selectedWorkout.workoutId)
+
+        showUnfavoriteDialog = false
+    }
+
 
     val onEditWorkoutName: (String) -> Unit = { newName ->
         val updatedWorkout = selectedWorkout.copy(name = newName)
@@ -141,6 +155,57 @@ fun WorkoutDetailsScreen(
         showWorkoutConfigureDialog = false
     }
 
+    var isDeleteMode by remember {
+        mutableStateOf(false)
+    }
+    val onDeleteModeEnabled = {
+        isDeleteMode = !isDeleteMode
+    }
+
+    val selectedExercises = remember {
+        mutableStateListOf<ExerciseDto>()
+    }
+
+    val onDeleteMultipleExercises: () -> Unit = {  //(List<ExerciseDto>) -> Unit
+        workoutDetailsViewModel.onMultipleExercisesUpdateEvent(
+            OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete(selectedExercises)
+        )
+
+        selectedExercises.clear()
+        isDeleteMode = false
+        showDeleteMultipleExercisesDialog = false
+    }
+
+    val onDeleteExercise = {
+        selectedExercise?.let {
+            workoutDetailsViewModel.deleteExercise(
+                workoutDetailsState.workoutDetails.workoutId,
+                selectedExercise!!.exerciseId
+            )
+        }
+
+        showDeleteExerciseDialog = false
+    }
+
+    val onExerciseSelected: (ExerciseDto) -> Unit = { selectedExercise ->
+        if (isDeleteMode) {
+            val isNewExercise = !selectedExercises.map { it.exerciseId }
+                .contains(selectedExercise.exerciseId)
+
+            if (isNewExercise) {
+                selectedExercises.add(
+                    selectedExercise.copy(workoutId = workoutDetailsState.workoutDetails.workoutId)
+                )
+            } else {
+                selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
+
+                isDeleteMode = selectedExercises.isNotEmpty()
+            }
+        } else {
+            workoutDetailsViewModel.navigateToExerciseDetailsConfigurator(selectedExercise)
+        }
+    }
+
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
     val onErrorDialogDismiss = {
@@ -154,7 +219,9 @@ fun WorkoutDetailsScreen(
         deleteWorkoutDetailsState,
         updateWorkoutDetailsState,
         startWorkoutState,
-        createWorkoutState
+        createWorkoutState,
+        favoriteWorkoutState,
+        unfavoriteWorkoutState
     ) {
         val states = listOf(
             workoutDetailsState,
@@ -162,7 +229,9 @@ fun WorkoutDetailsScreen(
             deleteWorkoutDetailsState,
             updateWorkoutDetailsState,
             startWorkoutState,
-            createWorkoutState
+            createWorkoutState,
+            favoriteWorkoutState,
+            unfavoriteWorkoutState
         )
 
         val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
@@ -187,16 +256,18 @@ fun WorkoutDetailsScreen(
             title = "Delete Exercise",
             description = "Are you sure you want to delete this exercise? This action cannot be undone.",
             actionButtonTitle = "Delete",
-            onClick = {
-                selectedExercise?.let {
-                    workoutDetailsViewModel.deleteExercise(
-                        workoutDetailsState.workoutDetails.workoutId,
-                        selectedExercise!!.exerciseId
-                    )
-                }
-
-            },
+            onClick = onDeleteExercise,
             onDismiss = { showDeleteExerciseDialog = false }
+        )
+    }
+
+    if (showDeleteMultipleExercisesDialog) {
+        WarningDialog(
+            title = "Delete ${selectedExercises.size} exercises",
+            description = "Are you sure you want to delete these exercises? This action cannot be undone.",
+            actionButtonTitle = "Delete",
+            onClick =   onDeleteMultipleExercises,
+            onDismiss = { showDeleteMultipleExercisesDialog = false }
         )
     }
 
@@ -223,8 +294,22 @@ fun WorkoutDetailsScreen(
         WorkoutConfigurationDialog(
             workoutConfiguration = workoutDetailsState.workoutDetails.configuration,
             onSave = onUpdateWorkoutConfiguration,
+            onDismiss = { showWorkoutConfigureDialog = false }
+        )
+    }
+
+    if (showFavoriteDialog) {
+        FavoriteWorkoutDialog(actionTitle = "Favorite Workout",
+            onClick = onFavoriteWorkout,
+            onDismiss = { showFavoriteDialog = false }
+        )
+    }
+
+    if (showUnfavoriteDialog) {
+        FavoriteWorkoutDialog(actionTitle = "Unfavorite Workout",
+            onClick = onUnfavoriteWorkout,
             onDismiss = {
-                showWorkoutConfigureDialog = false
+                showUnfavoriteDialog = false
             }
         )
     }
@@ -292,16 +377,7 @@ fun WorkoutDetailsScreen(
             textAlpha = textAlpha
         )
     ) { innerPadding ->
-
-        //Fixed WorkoutDetails custom toolbar
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-            StartWorkoutToolbar(
-                onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
-                onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
-            )
-        }
-
-        val paddingValues = PaddingValues(
+        val loadingWheelPadding = PaddingValues(
             top = toolbarSize + innerPadding.calculateTopPadding(), //Top toolbar padding
             start = innerPadding.calculateStartPadding(LayoutDirection.Rtl),
             end = innerPadding.calculateEndPadding(LayoutDirection.Rtl),
@@ -315,7 +391,7 @@ fun WorkoutDetailsScreen(
         ) {
 
             if (showLoadingDialog) {
-                LoadingWheel(innerPadding = paddingValues)
+                LoadingWheel(innerPadding = loadingWheelPadding)
             } else {
 
                 //Exercises
@@ -334,6 +410,7 @@ fun WorkoutDetailsScreen(
                             modifier = Modifier.fillParentMaxHeight(),
                             title = workoutTitle,
                             subtitle = MuscleGroup.toDescription(selectedWorkout.muscleGroup),
+                            isWorkoutFavorited = selectedWorkout.isFavorite,
                             onStartWorkoutAction = {
                                 workoutDetailsViewModel.startWorkout()
                             },
@@ -341,6 +418,8 @@ fun WorkoutDetailsScreen(
                             onAddExerciseAction = { workoutDetailsViewModel.addExercise() },
                             onDeleteWorkoutAction = { showDeleteWorkoutDialog = true },
                             onEditWorkoutNameAction = { showEditWorkoutNameDialog = true },
+                            onFavoriteWorkoutAction = { showFavoriteDialog = true },
+                            onUnfavoriteWorkoutAction = { showUnfavoriteDialog = true },
                             onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
                             onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
                         )
@@ -356,10 +435,17 @@ fun WorkoutDetailsScreen(
                                 .height(200.dp),
                             exercise = currentExercise,
                             onClick = onExerciseSelected,
+                            onLongPress = {
+                                onDeleteModeEnabled()
+
+                                selectedExercise = currentExercise
+                                onExerciseSelected(currentExercise)
+                            },
                             onDelete = {
                                 selectedExercise = currentExercise
                                 showDeleteExerciseDialog = true
-                            }
+                            },
+                            isSelected = selectedExercises.contains(currentExercise)
                         )
                     }
 
@@ -367,10 +453,34 @@ fun WorkoutDetailsScreen(
                         if (showAddExerciseBanner) { //Show only after data is fetched
                             AddExerciseToWorkoutBanner {
 
-                                //Open search exercise screen...
+                                //Open search exercise screen
                                 workoutDetailsViewModel.addExercise()
                             }
                         }
+                    }
+                }
+
+                //Footer
+                if (selectedExercises.isNotEmpty()) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                        verticalArrangement = Arrangement.Bottom,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        SelectedExercisesRow(selectedExercises = selectedExercises)
+                        DeleteExercisesRow(
+                            modifier = Modifier.padding(
+                                top = 8.dp,
+                                start = 16.dp,
+                                end = 16.dp,
+                                bottom = 8.dp
+                            ),
+                            onDelete = {
+                                showDeleteMultipleExercisesDialog = true
+                            }
+                        )
                     }
                 }
             }
@@ -380,6 +490,17 @@ fun WorkoutDetailsScreen(
                 refreshing = workoutDetailsViewModel.isRefreshing,
                 state = pullRefreshState
             ) //If put as first content -> hides behind the screen...
+        }
+
+        //Fixed place WorkoutDetails custom toolbar
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
+        ) {
+            StartWorkoutToolbar(
+                onNavigateBackAction = { workoutDetailsViewModel.onNavigateBack() },
+                onNavigateToSettings = { workoutDetailsViewModel.onNavigateToSettings() }
+            )
         }
     }
 }

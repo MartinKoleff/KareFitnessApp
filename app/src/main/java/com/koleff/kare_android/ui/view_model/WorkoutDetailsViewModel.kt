@@ -15,6 +15,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
+import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.state.HasUpdated
 import com.koleff.kare_android.ui.state.WorkoutConfigurationState
@@ -36,7 +37,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     private val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController), MainScreenNavigation {
-    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+    private var workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
 
     private var _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -76,6 +77,16 @@ class WorkoutDetailsViewModel @Inject constructor(
     val updateWorkoutConfigurationState: StateFlow<BaseState>
         get() = _updateWorkoutConfigurationState
 
+    private var _favoriteWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val favoriteWorkoutState: StateFlow<BaseState>
+        get() = _favoriteWorkoutState
+
+    private var _unfavoriteWorkoutState: MutableStateFlow<BaseState> =
+        MutableStateFlow(BaseState())
+    val unfavoriteWorkoutState: StateFlow<BaseState>
+        get() = _unfavoriteWorkoutState
+
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
 
     private val isNewWorkout = savedStateHandle.get<String>("is_new_workout").toBoolean()
@@ -114,6 +125,30 @@ class WorkoutDetailsViewModel @Inject constructor(
 
             Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
             hasUpdated.notifyUpdate(true)
+        }
+    }
+
+    fun onMultipleExercisesUpdateEvent(event: OnMultipleExercisesUpdateEvent) {
+        when (event) {
+            is OnMultipleExercisesUpdateEvent.OnMultipleExercisesDelete -> {
+                val exercises = event.exerciseList
+                val exerciseIds = exercises.map { it.exerciseId }
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.deleteMultipleExercisesUseCase(
+                        workoutId = workoutId,
+                        exerciseIds = exerciseIds
+                    ).collect { updateWorkoutState ->
+                        _deleteExerciseState.value = updateWorkoutState
+
+                        //Update main state
+                        _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                            workoutDetails = updateWorkoutState.workoutDetails
+                        )
+                    }
+                }
+            }
+            else -> {}
         }
     }
 
@@ -165,6 +200,14 @@ class WorkoutDetailsViewModel @Inject constructor(
 
         if (updateWorkoutConfigurationState.value.isError) {
             _updateWorkoutConfigurationState.value = WorkoutConfigurationState()
+        }
+
+        if(favoriteWorkoutState.value.isError){
+            _favoriteWorkoutState.value = BaseState()
+        }
+
+        if(unfavoriteWorkoutState.value.isError){
+            _unfavoriteWorkoutState.value = BaseState()
         }
     }
 
@@ -229,6 +272,7 @@ class WorkoutDetailsViewModel @Inject constructor(
 
                 if (createWorkoutState.isSuccessful) {
                     val createdWorkout = createWorkoutState.workout
+                    workoutId = createdWorkout.workoutId
 
                     Log.d(
                         "WorkoutDetailsViewModel",
@@ -262,6 +306,46 @@ class WorkoutDetailsViewModel @Inject constructor(
 
                     _getWorkoutDetailsState.value =
                         _getWorkoutDetailsState.value.copy(workoutDetails = updatedWorkoutDetails)
+                }
+            }
+        }
+    }
+
+    fun favoriteWorkout(workoutId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.favoriteWorkoutUseCase(workoutId).collect { favoriteWorkoutState ->
+                _favoriteWorkoutState.value = favoriteWorkoutState
+
+                if(favoriteWorkoutState.isSuccessful){
+                    val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
+                        isFavorite = true
+                    )
+                    _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                        workoutDetails = updatedWorkoutDetails
+                    )
+
+                    Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
+                    hasUpdated.notifyUpdate(true)
+                }
+            }
+        }
+    }
+
+    fun unfavoriteWorkout(workoutId: Int) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.unfavoriteWorkoutUseCase(workoutId).collect { unfavoriteWorkoutState ->
+                _unfavoriteWorkoutState.value = unfavoriteWorkoutState
+
+                if(unfavoriteWorkoutState.isSuccessful){
+                    val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
+                        isFavorite = false
+                    )
+                    _getWorkoutDetailsState.value = _getWorkoutDetailsState.value.copy(
+                        workoutDetails = updatedWorkoutDetails
+                    )
+
+                    Log.d("WorkoutDetailsViewModel", "hasUpdated set to true.")
+                    hasUpdated.notifyUpdate(true)
                 }
             }
         }

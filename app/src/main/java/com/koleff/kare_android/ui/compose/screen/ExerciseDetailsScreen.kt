@@ -109,6 +109,8 @@ fun ExerciseDetailsScreen(
         color = descriptionTextColor
     )
 
+    val tintColor = MaterialTheme.colorScheme.onSurface
+
     ExerciseDetailsScaffold(
         screenTitle = exerciseDetailsState.exercise.name,
         exerciseImageId = exerciseImageId,
@@ -190,7 +192,10 @@ fun ExerciseDetailsScreen(
                             )
                         }
 
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 8.dp))
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 8.dp),
+                            color = tintColor
+                        )
                     }
 
                     //TODO: Rows with cool emojis...

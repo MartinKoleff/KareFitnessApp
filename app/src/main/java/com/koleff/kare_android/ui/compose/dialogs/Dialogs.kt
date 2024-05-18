@@ -277,7 +277,7 @@ fun WarningDialog(
                 Text(
                     text = actionButtonTitle,
                     style = buttonTextStyle,
-                    textAlign = TextAlign.End,
+                    textAlign = TextAlign.Start,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -418,6 +418,51 @@ fun WorkoutCompletedDialog(
     )
 }
 
+
+@Composable
+fun DuplicateExercisesFoundDialog(
+    onDismiss: () -> Unit,
+    onSubmit: () -> Unit
+) {
+    WarningDialog(
+        title = "Duplicate exercises found",
+        description = "Some exercises are already found in your workout. Do you want to overwrite them?",
+        actionButtonTitle = "Overwrite and submit",
+        onDismiss = onDismiss,
+        onClick = onSubmit,
+    )
+}
+
+
+@Composable
+fun FavoriteWorkoutDialog(
+    actionTitle: String,
+    onClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    WarningDialog(
+        title = "$actionTitle Workout",
+        description = "Are you sure you want to ${actionTitle.lowercase(Locale.getDefault())} this workout?",
+        actionButtonTitle = actionTitle,
+        onClick = onClick,
+        onDismiss = onDismiss
+    )
+}
+
+@Composable
+fun DeleteWorkoutDialog(
+    onClick: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    WarningDialog(
+        title = "Delete Workout",
+        description = "Are you sure you want to delete this workout? This action cannot be undone.",
+        actionButtonTitle = "Delete",
+        onClick = onClick,
+        onDismiss = onDismiss
+    )
+}
+
 @Preview
 @PreviewLightDark
 @Composable
@@ -433,11 +478,16 @@ fun WorkoutCompletedDialogPreview(
 @PreviewLightDark
 @Composable
 fun EnableNotificationsDialogPreview() {
-    WarningDialog(
-        title = "Enable Notifications",
-        description = "Notifications are important for our app. Please enable them in settings.",
-        actionButtonTitle = "Open Settings",
-        onClick = {},
+    EnableNotificationsDialog(onClick = {}, onDismiss = {})
+}
+
+
+@Preview
+@PreviewLightDark
+@Composable
+fun DuplicateExercisesFoundDialogPreview() {
+    DuplicateExercisesFoundDialog(
+        onSubmit = {},
         onDismiss = {}
     )
 }
@@ -445,45 +495,50 @@ fun EnableNotificationsDialogPreview() {
 @Preview
 @PreviewLightDark
 @Composable
-fun WarningDialogPreview() {
-    WarningDialog(
-        title = "Delete Workout",
-        description = "Are you sure you want to delete this workout? This action cannot be undone.",
-        actionButtonTitle = "Delete",
-        onClick = {},
-        onDismiss = {}
+fun DeleteWorkoutDialogPreview() {
+    DeleteWorkoutDialog(
+        onClick = {
+
+        },
+        onDismiss = {
+
+        }
     )
 }
 
 @Preview
 @PreviewLightDark
 @Composable
-fun SelectWorkoutDialogPreview() {
-    val workout = MockupDataGeneratorV2.generateWorkout()
-    val selectWord = if (workout.isSelected) "De-select" else "Select"
+fun FavoriteWorkoutDialogPreview() {
+    val workout = MockupDataGeneratorV2.generateWorkout().copy(isFavorite = false)
+    val selectWord = if (workout.isFavorite) "Unfavorite" else "Favorite"
 
-    WarningDialog(
-        title = "$selectWord Workout",
-        description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
-        actionButtonTitle = selectWord,
-        onClick = {},
-        onDismiss = {}
+    FavoriteWorkoutDialog(
+        actionTitle = selectWord,
+        onClick = {
+
+        },
+        onDismiss = {
+
+        }
     )
 }
 
 @Preview
 @PreviewLightDark
 @Composable
-fun DeselectWorkoutDialogPreview() {
-    val workout = MockupDataGeneratorV2.generateWorkout().copy(isSelected = true)
-    val selectWord = if (workout.isSelected) "De-select" else "Select"
+fun UnfavoriteWorkoutDialogPreview() {
+    val workout = MockupDataGeneratorV2.generateWorkout().copy(isFavorite = true)
+    val selectWord = if (workout.isFavorite) "Unfavorite" else "Favorite"
 
-    WarningDialog(
-        title = "$selectWord Workout",
-        description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
-        actionButtonTitle = selectWord,
-        onClick = {},
-        onDismiss = {}
+    FavoriteWorkoutDialog(
+        actionTitle = selectWord,
+        onClick = {
+
+        },
+        onDismiss = {
+
+        }
     )
 }
 

@@ -42,16 +42,20 @@ interface WorkoutDetailsDao {
     suspend fun updateWorkoutDetails(workout: WorkoutDetails)
 
     @Transaction
-    @Query("UPDATE workout_details_table SET isSelected = 1 WHERE workoutDetailsId = :workoutId")
-    suspend fun selectWorkoutDetailsById(workoutId: Int)
+    @Query("UPDATE workout_details_table SET isFavorite = 1 WHERE workoutDetailsId = :workoutId")
+    suspend fun favoriteWorkoutDetailsById(workoutId: Int)
+
+    @Transaction
+    @Query("UPDATE workout_details_table SET isFavorite = 0 WHERE workoutDetailsId = :workoutId")
+    suspend fun unfavoriteWorkoutDetailsById(workoutId: Int)
 
     @Transaction
     @Query("SELECT * FROM workout_details_table ORDER BY workoutDetailsId")
     fun getWorkoutDetailsOrderedById(): List<WorkoutDetailsWithExercises>
 
     @Transaction
-    @Query("SELECT * FROM workout_details_table WHERE isSelected = 1") //true = 1, false = 0
-    fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises?
+    @Query("SELECT * FROM workout_details_table WHERE isFavorite = 1") //true = 1, false = 0
+    fun getWorkoutByIsFavorite(): WorkoutDetailsWithExercises?
 
     @Transaction
     @Query("SELECT * FROM workout_details_table w WHERE workoutDetailsId = :workoutId")

@@ -92,13 +92,11 @@ fun WorkoutBanner(
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
         color = titleTextColor,
-        fontWeight = FontWeight.Bold
     )
 
     val descriptionTextColor = MaterialTheme.colorScheme.onSurface
     val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
         color = descriptionTextColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     val bannerTintColors =
@@ -274,7 +272,7 @@ fun SwipeableWorkoutBanner(
     hasDescription: Boolean = true,
     onClick: (WorkoutDto) -> Unit,
     onDelete: () -> Unit,
-    onSelect: () -> Unit,
+    onFavorite: () -> Unit,
     onEdit: () -> Unit
 ) {
     val configuration = LocalConfiguration.current
@@ -323,21 +321,21 @@ fun SwipeableWorkoutBanner(
             EditButton(
                 modifier = optionBoxModifier,
                 onEdit = onEdit,
-                title = "Edit Workout Name"
+                title = "Edit Name"
             )
 
             //Select option
-            SelectButton(
+            FavoriteButton(
                 modifier = optionBoxModifier,
-                onSelect = onSelect,
-                title = "Select Workout"
+                onFavorite = onFavorite,
+                title = if(workout.isFavorite) "Unfavorite" else "Favorite"
             )
 
             //Delete option
             DeleteButton(
                 modifier = optionBoxModifier,
                 onDelete = onDelete,
-                title = "Delete Workout"
+                title = "Delete"
             )
         }
     }
@@ -358,7 +356,6 @@ fun DeleteButton(
 
     val textStyle = MaterialTheme.typography.titleSmall.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Column(
@@ -393,7 +390,7 @@ fun DeleteButton(
         Text(
             text = title,
             style = textStyle,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
         )
@@ -401,10 +398,10 @@ fun DeleteButton(
 }
 
 @Composable
-fun SelectButton(
+fun FavoriteButton(
     modifier: Modifier,
     title: String,
-    onSelect: () -> Unit
+    onFavorite: () -> Unit
 ) {
     val iconSize = 20.dp
     val cornerSize = 24.dp
@@ -416,7 +413,6 @@ fun SelectButton(
 
     val textStyle = MaterialTheme.typography.titleSmall.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Column(
@@ -432,13 +428,13 @@ fun SelectButton(
                 color = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
-            .clickable(onClick = onSelect)
+            .clickable(onClick = onFavorite)
     ) {
         val image: Painter = painterResource(id = R.drawable.ic_vector_select)
 
         Image(
             painter = image,
-            contentDescription = "Select",
+            contentDescription = "Favorite",
             modifier = Modifier
                 .size(iconSize),
             colorFilter = ColorFilter.tint(tintColor),
@@ -477,7 +473,6 @@ fun EditButton(
 
     val textStyle = MaterialTheme.typography.titleSmall.copy(
         color = textColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     Column(
@@ -512,7 +507,7 @@ fun EditButton(
         Text(
             text = title,
             style = textStyle,
-            maxLines = 2,
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
         )
@@ -552,7 +547,7 @@ fun WorkoutListPreview() {
             muscleGroup = MuscleGroup.fromId(index + 1),
             snapshot = "",
             totalExercises = 5,
-            isSelected = false
+            isFavorite = false
         )
         workoutList.add(currentWorkout)
     }
@@ -602,7 +597,7 @@ fun SwipeableWorkoutBannerPreview() {
             .height(200.dp),
         onClick = {},
         onDelete = {},
-        onSelect = {},
+        onFavorite = {},
         onEdit = {},
         workout = workout
     )
@@ -629,17 +624,17 @@ fun DeleteButtonPreview() {
 @Preview
 @PreviewLightDark
 @Composable
-fun SelectButtonPreview() {
+fun FavoriteButtonPreview() {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    SelectButton(
+    FavoriteButton(
         modifier = Modifier
             .width(screenWidth / 4)
             .height(200.dp),
-        onSelect = {},
+        onFavorite = {},
         title = "Select Workout"
     )
 }

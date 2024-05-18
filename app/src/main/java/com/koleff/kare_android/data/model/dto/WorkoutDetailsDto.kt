@@ -15,8 +15,8 @@ data class WorkoutDetailsDto(
     val muscleGroup: MuscleGroup = MuscleGroup.NONE,
     @field:Json(name = "exercises")
     val exercises: List<ExerciseDto> = mutableListOf(),
-    @field:Json(name = "is_selected")
-    val isSelected: Boolean = false,
+    @field:Json(name = "is_favorite")
+    val isFavorite: Boolean = false,
     @field:Json(name = "configuration")
     val configuration: WorkoutConfigurationDto = WorkoutConfigurationDto()
 ): KareEntity<WorkoutDetails> {
@@ -26,7 +26,7 @@ data class WorkoutDetailsDto(
             name = name,
             description = description,
             muscleGroup = muscleGroup,
-            isSelected = isSelected
+            isFavorite = isFavorite
         )
     }
 }

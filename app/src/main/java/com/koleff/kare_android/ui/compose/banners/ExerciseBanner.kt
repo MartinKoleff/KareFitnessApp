@@ -1,10 +1,15 @@
 package com.koleff.kare_android.ui.compose.banners
 
 import android.os.Build
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
@@ -57,6 +63,7 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -123,11 +130,48 @@ fun ExerciseBannerV1(
 }
 
 @Composable
-fun ExerciseBannerV2(
+fun SelectedExerciseBanner(
     modifier: Modifier,
     exercise: ExerciseDto,
     hasDescription: Boolean = false,
     onClick: (ExerciseDto) -> Unit
+) {
+    val selectedColor = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val cornerSize = 16.dp
+
+    val selectedModifier = modifier
+        .clip(RoundedCornerShape(cornerSize))
+        .border(
+            border = BorderStroke(3.dp, color = selectedColor),
+            shape = RoundedCornerShape(cornerSize)
+        )
+
+    var isSelected by remember { mutableStateOf(false) }
+
+    val appliedModifier = if (isSelected) selectedModifier else modifier
+
+    //Banner
+    ExerciseBannerV2(
+        modifier = appliedModifier,
+        exercise = exercise,
+        hasDescription = hasDescription,
+        onClick = {
+            isSelected = !isSelected
+            onClick(it)
+        }
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ExerciseBannerV2(
+    modifier: Modifier,
+    exercise: ExerciseDto,
+    hasDescription: Boolean = false,
+    onClick: (ExerciseDto) -> Unit,
+    onLongPress: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
 
@@ -139,13 +183,11 @@ fun ExerciseBannerV2(
     val titleTextColor = MaterialTheme.colorScheme.onSurface
     val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
         color = titleTextColor,
-        fontWeight = FontWeight.Bold
     )
 
     val descriptionTextColor = MaterialTheme.colorScheme.onSurface
     val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
         color = descriptionTextColor,
-        fontWeight = FontWeight.SemiBold
     )
 
     val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -163,12 +205,17 @@ fun ExerciseBannerV2(
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(8.dp)
+            .combinedClickable(
+                onLongClick = onLongPress,
+                onClick = {
+                    onClick(exercise)
+                }
+            ),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
-        onClick = { onClick.invoke(exercise) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
@@ -302,9 +349,10 @@ fun ExerciseList(
                     .fillMaxWidth()
                     .height(200.dp),
                 exercise = exercise,
-            ) {
-                navigateToExerciseDetails(exercise)
-            }
+                onClick = {
+                    navigateToExerciseDetails(exercise)
+                }
+            )
         }
     }
 }
@@ -315,7 +363,9 @@ fun SwipeableExerciseBanner(
     exercise: ExerciseDto,
     hasDescription: Boolean = true,
     onClick: (ExerciseDto) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onLongPress: () -> Unit,
+    isSelected: Boolean //isDeleteMode enabled
 ) {
     val configuration = LocalConfiguration.current
 
@@ -331,9 +381,23 @@ fun SwipeableExerciseBanner(
         .height(200.dp) //Banner height
         .width(deleteBoxWidth)
 
+    val deleteColor = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val cornerSize = 16.dp
+
+    val selectedModifier = modifier
+        .clip(RoundedCornerShape(cornerSize))
+        .border(
+            border = BorderStroke(3.dp, color = deleteColor),
+            shape = RoundedCornerShape(cornerSize)
+        )
+
+    val appliedModifier = if (isSelected) selectedModifier else modifier
+
     Box {
         ExerciseBannerV2(
-            modifier = modifier
+            modifier = appliedModifier
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { change, dragAmount ->
@@ -345,7 +409,8 @@ fun SwipeableExerciseBanner(
                 },
             exercise = exercise,
             hasDescription = hasDescription,
-            onClick = onClick
+            onClick = onClick,
+            onLongPress = onLongPress,
         )
 
         //Delete option
@@ -408,7 +473,9 @@ fun SwipeableExerciseBannerPreview() {
             .height(200.dp),
         exercise = exercise,
         onClick = {},
-        onDelete = {}
+        onDelete = {},
+        onLongPress = {},
+        isSelected = false
     )
 }
 
@@ -422,4 +489,19 @@ fun ExerciseListPreview() {
     ExerciseList(exerciseList = exercisesList) { exercise ->
 
     }
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun SelectedExerciseBannerPreview() {
+    val exercise = MockupDataGeneratorV2.generateExercise()
+
+    SelectedExerciseBanner(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        exercise = exercise,
+        onClick = {}
+    )
 }

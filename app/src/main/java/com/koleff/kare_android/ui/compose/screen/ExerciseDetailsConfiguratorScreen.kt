@@ -90,7 +90,7 @@ fun ExerciseDetailsConfiguratorScreen(
     var showLoadingDialog by remember { mutableStateOf(false) }
 
     //Dialog callbacks
-    val onSubmitExercise: () -> Unit = {
+    val onSubmitExercise: () -> Unit = {  //TODO: wire with dialog on changes done
         if (!exerciseState.isLoading) {
 
             //Replace old exercise with new
@@ -209,7 +209,8 @@ fun ExerciseDetailsConfiguratorScreen(
                         shape = RoundedCornerShape(cornerSize)
                     )
                     .border(
-                        border = BorderStroke(2.dp, color = outlineColor)
+                        border = BorderStroke(2.dp, color = outlineColor),
+                        shape = RoundedCornerShape(cornerSize)
                     ),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -232,8 +233,10 @@ fun ExerciseDetailsConfiguratorScreen(
                     )
                 }
 
-                //Add new set footer
-                if(exerciseState.exercise.sets.isNotEmpty()) {
+                //Hide during initial loading
+                if (!exerciseState.isLoading) {
+
+                    //Add new set footer
                     item {
                         AddNewSetFooter(onAddNewSetAction = onAddNewSetAction)
                     }

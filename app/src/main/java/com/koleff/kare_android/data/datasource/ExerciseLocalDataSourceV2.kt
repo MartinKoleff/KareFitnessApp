@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
 import com.koleff.kare_android.data.model.response.ExerciseResponse
@@ -131,14 +132,20 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
     override suspend fun deleteExerciseSet(
         exerciseId: Int,
         workoutId: Int,
-        setId: UUID
+        setId: UUID,
+        currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
 
             //Update exercise
             try {
                 val exerciseWithSets =
-                    exerciseDao.getExerciseWithSets(exerciseId, workoutId)
+                    exerciseDao.getExerciseWithSets(
+                        exerciseId = exerciseId,
+                        workoutId = workoutId
+                    )
+                        .toDto()
+                        .copy(sets = currentSets)
 
                 val updatedSets = exerciseWithSets.sets.toMutableList()
                 updatedSets.removeAll { it.setId == setId }
@@ -153,7 +160,7 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
 
                 val result = ExerciseWrapper(
                     ExerciseResponse(
-                        exercise = exerciseWithSets.exercise.toDto(updatedSets)
+                        exercise = exerciseWithSets.copy(sets = updatedSets)
                     )
                 )
 
@@ -169,18 +176,13 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
 
     override suspend fun addNewExerciseSet(
         exerciseId: Int,
-        workoutId: Int
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> =
         flow {
             try {
-                val exerciseWitSets =
-                    exerciseDao.getExerciseWithSets(
-                        exerciseId = exerciseId,
-                        workoutId = workoutId
-                    )
-
                 val nextSetNumber =
-                    exerciseWitSets.sets
+                    currentSets
                         .map { it.number }
                         .maxOf { it } + 1 //Find last set number
 
@@ -188,25 +190,29 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
                 val defaultWeight = 0.0f
                 val newSet = ExerciseSet(
                     setId = UUID.randomUUID(),
-                    workoutId = exerciseWitSets.exercise.workoutId,
-                    exerciseId = exerciseWitSets.exercise.exerciseId,
+                    exerciseId = exerciseId,
+                    workoutId = workoutId,
                     number = nextSetNumber,
                     reps = defaultReps,
                     weight = defaultWeight
                 )
 
-                //Save new generated set
-                exerciseSetDao.insertExerciseSet(newSet)
+                val updatedSets = currentSets.toMutableList()
+                updatedSets.add(newSet.toDto())
 
                 //Update exercise
                 val updatedExercise = exerciseDao.getExerciseWithSets(
                     exerciseId = exerciseId,
                     workoutId = workoutId
                 )
+                    .toDto()
+                    .copy(
+                        sets = updatedSets
+                    )
 
                 val result = ExerciseWrapper(
                     ExerciseResponse(
-                        exercise = updatedExercise.toDto()
+                        exercise = updatedExercise
                     )
                 )
 

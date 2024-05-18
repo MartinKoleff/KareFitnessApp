@@ -14,7 +14,7 @@ data class Workout(
     var muscleGroup: MuscleGroup,
     var snapshot: String,
     var totalExercises: Int,
-    var isSelected: Boolean,
+    var isFavorite: Boolean,
 ): KareDto<WorkoutDto> {
     override fun toDto(): WorkoutDto {
         return WorkoutDto(
@@ -23,7 +23,7 @@ data class Workout(
             muscleGroup = muscleGroup,
             snapshot = snapshot,
             totalExercises = totalExercises,
-            isSelected = isSelected
+            isFavorite = isFavorite
         )
     }
 }

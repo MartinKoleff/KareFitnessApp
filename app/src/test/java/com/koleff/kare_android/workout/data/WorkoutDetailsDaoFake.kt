@@ -101,11 +101,11 @@
 //        }
 //    }
 //
-//    override suspend fun selectWorkoutDetailsById(workoutId: Int) {
+//    override suspend fun favoriteWorkoutDetailsById(workoutId: Int) {
 //        workoutDetailsDB.map {
 //            it.workoutDetails
 //        }.forEach {
-//            it.isSelected = it.workoutDetailsId == workoutId
+//            it.isFavorite = it.workoutDetailsId == workoutId
 //        }
 //    }
 //
@@ -162,10 +162,10 @@
 //        return exerciseWithSets
 //    }
 //
-//    override fun getWorkoutByIsSelected(): WorkoutDetailsWithExercises? {
+//    override fun getWorkoutByIsFavorite(): WorkoutDetailsWithExercises? {
 //
 //        val selectedWorkout = workoutDetailsDB.firstOrNull {
-//            it.workoutDetails.isSelected
+//            it.workoutDetails.isFavorite
 //        } ?: return null
 //
 //        val workoutExercises = getWorkoutExercises(selectedWorkout.workoutDetails.workoutDetailsId)

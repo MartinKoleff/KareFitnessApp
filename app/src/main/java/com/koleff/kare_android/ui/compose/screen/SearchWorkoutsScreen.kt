@@ -67,7 +67,8 @@ fun SearchWorkoutsScreen(
         //Await workout details
         if (workoutDetailsState.isSuccessful && workoutDetailsState.workoutDetails.workoutId != -1) {
             val updatedExercises = workoutDetailsState.workoutDetails.exercises.toMutableList()
-            updatedExercises.add(exerciseState.exercise)
+            val selectedExercise = exerciseState.exercise.copy(workoutId = workoutDetailsState.workoutDetails.workoutId)
+            updatedExercises.add(selectedExercise)
 
             val updatedWorkoutDetails = workoutDetailsState.workoutDetails.copy(exercises = updatedExercises)
             searchWorkoutViewModel.updateWorkoutDetails(updatedWorkoutDetails)
@@ -75,16 +76,19 @@ fun SearchWorkoutsScreen(
     }
 
     LaunchedEffect(updateWorkoutState) {
+
         //Await update workout
         if (updateWorkoutState.isSuccessful) {
 
-            //Animate transition navigation
-            alpha.animateTo(
-                targetValue = 0f,
-                animationSpec = TweenSpec(durationMillis = 500)
-            ) {
-                searchWorkoutViewModel.navigateToWorkoutDetails(updateWorkoutState.workoutDetails.workoutId)
-            }
+//            //Animate transition navigation
+//            alpha.animateTo(
+//                targetValue = 0f,
+//                animationSpec = TweenSpec(durationMillis = 500)
+//            ) {
+//                searchWorkoutViewModel.navigateToWorkoutDetails(updateWorkoutState.workoutDetails.workoutId)
+//            }
+
+            searchWorkoutViewModel.navigateToWorkouts()
 
             //Reset state
             searchWorkoutViewModel.resetUpdateWorkoutState()
@@ -122,6 +126,9 @@ fun SearchWorkoutsScreen(
         }
     }
 
+    //States
+    val workoutState by searchWorkoutViewModel.workoutsState.collectAsState()
+
     //Navigation Callbacks
     val onNavigateToSettings = {
         searchWorkoutViewModel.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
@@ -148,15 +155,10 @@ fun SearchWorkoutsScreen(
             }
             .fillMaxSize()
 
-        val workoutState by searchWorkoutViewModel.workoutsState.collectAsState()
-        val allWorkouts = workoutState.workoutList
-
-        //All workouts
         if (workoutState.isLoading || isUpdateLoading) {
             LoadingWheel()
         } else {
             Column(modifier = modifier) {
-                //Search bar
                 SearchBar(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -170,7 +172,7 @@ fun SearchWorkoutsScreen(
 
                 SearchWorkoutList(
                     modifier = Modifier.fillMaxSize(),
-                    workoutList = allWorkouts,
+                    workoutList = workoutState.workoutList,
                 ) { workoutId ->
 
                     //Updates WorkoutDetailsViewModel...

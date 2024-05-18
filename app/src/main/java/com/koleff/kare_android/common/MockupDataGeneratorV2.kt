@@ -115,7 +115,8 @@ object MockupDataGeneratorV2 {
         isDistinct: Boolean = false,
         enableSetIdGeneration: Boolean = true,
         workoutId: Int = Random.nextInt(),
-        preSelectedExerciseIds: List<Int> = emptyList() //Specific exercises to include
+        preSelectedExerciseIds: List<Int> = emptyList(), //Specific exercises to include
+        excludedIds: List<Int> = preSelectedExerciseIds //Add pre selected exercise ids
     ): List<ExerciseDto> {
         val exercisesList: MutableList<ExerciseDto> = mutableListOf()
 
@@ -135,7 +136,7 @@ object MockupDataGeneratorV2 {
         while (exercisesList.size < n) {
             val exercise = generateExercise(
                 muscleGroup = muscleGroup,
-                excludedIds = exercisesList.map { it.exerciseId },
+                excludedIds = excludedIds,
                 enableSetIdGeneration = enableSetIdGeneration,
                 workoutId = workoutId
             )
@@ -236,7 +237,7 @@ object MockupDataGeneratorV2 {
         muscleGroup: MuscleGroup = MuscleGroup.getSupportedMuscleGroups().random(),
         workoutId: Int = Random.nextInt(1, 100),
         totalExercises: Int = Random.nextInt(4, 12),
-        isSelected: Boolean = Random.nextBoolean(),
+        isFavorite: Boolean = Random.nextBoolean(),
         excludedIds: List<Int> = emptyList()
     ): WorkoutDto {
 
@@ -252,7 +253,7 @@ object MockupDataGeneratorV2 {
             muscleGroup = muscleGroup,
             snapshot = "snapshot$updatedWorkoutId.png",
             totalExercises = totalExercises,
-            isSelected = isSelected
+            isFavorite = isFavorite
         )
     }
 
@@ -265,6 +266,7 @@ object MockupDataGeneratorV2 {
     fun generateWorkoutDetails(
         enableSetIdGeneration: Boolean = true,
         workoutId: Int = Random.nextInt(1, 100),
+        generateExercises: Boolean = true,
         excludedIds: List<Int> = emptyList(),
         preSelectedExerciseIds: List<Int> = emptyList()
     ): WorkoutDetailsDto {
@@ -276,16 +278,18 @@ object MockupDataGeneratorV2 {
         }
 
         val muscleGroup = MuscleGroup.getSupportedMuscleGroups().random()
-        val isSelected = Random.nextBoolean()
+        val isFavorite = Random.nextBoolean()
         val name = workoutNames.random()
 
-        val exercises = generateExerciseList(
-            muscleGroup = muscleGroup,
-            isDistinct = true,
-            enableSetIdGeneration = enableSetIdGeneration,
-            workoutId = updatedWorkoutId,
-            preSelectedExerciseIds = preSelectedExerciseIds
-        ).sortedBy { it.exerciseId }.toMutableList()
+        val exercises = if (generateExercises) {
+            generateExerciseList(
+                muscleGroup = muscleGroup,
+                isDistinct = true,
+                enableSetIdGeneration = enableSetIdGeneration,
+                workoutId = updatedWorkoutId,
+                preSelectedExerciseIds = preSelectedExerciseIds
+            ).sortedBy { it.exerciseId }.toMutableList()
+        } else listOf()
 
         val workoutConfiguration = generateWorkoutConfiguration(workoutId)
 
@@ -295,7 +299,7 @@ object MockupDataGeneratorV2 {
             description = "Description of $name $updatedWorkoutId",
             muscleGroup = muscleGroup,
             exercises = exercises,
-            isSelected = isSelected,
+            isFavorite = isFavorite,
             configuration = workoutConfiguration
         )
     }
@@ -321,7 +325,7 @@ object MockupDataGeneratorV2 {
             muscleGroup = workoutDetails.muscleGroup,
             snapshot = "snapshot${workoutDetails.workoutId}.png",
             totalExercises = workoutDetails.exercises.size,
-            isSelected = workoutDetails.isSelected
+            isFavorite = workoutDetails.isFavorite
         )
 
         return Pair(workout, workoutDetails)

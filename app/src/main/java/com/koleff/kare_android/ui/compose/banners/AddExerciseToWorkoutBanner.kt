@@ -52,8 +52,13 @@ fun AddExerciseToWorkoutBanner(
     val circleColor = MaterialTheme.colorScheme.onSurface
     val addNewWorkoutTint = Color.Green
 
-    val titleTextStyle = MaterialTheme.typography.titleMedium
-    val subtitleTextStyle = MaterialTheme.typography.titleSmall
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor
+    )
+
+    val subtitleTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = subtitleTextColor
+    )
 
     Card(
         modifier = Modifier
@@ -75,8 +80,7 @@ fun AddExerciseToWorkoutBanner(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 0.80f },
+                    .align(Alignment.TopStart),
                 colorFilter = ColorFilter.tint(primaryColor, BlendMode.Multiply)
             )
 

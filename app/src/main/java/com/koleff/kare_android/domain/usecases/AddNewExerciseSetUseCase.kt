@@ -2,6 +2,7 @@ package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
+import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
@@ -13,8 +14,12 @@ import java.util.UUID
 
 class AddNewExerciseSetUseCase(private val exerciseRepository: ExerciseRepository) {
 
-    suspend operator fun invoke(exerciseId: Int, workoutId: Int): Flow<ExerciseState> =
-        exerciseRepository.addNewExerciseSet(exerciseId, workoutId).map { apiResult ->
+    suspend operator fun invoke(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ExerciseState> =
+        exerciseRepository.addNewExerciseSet(exerciseId, workoutId, currentSets).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> ExerciseState(
                     isError = true,

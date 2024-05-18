@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -36,7 +37,7 @@ fun WorkoutSegmentButton(
     )
 
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
-    val options = listOf("MyWorkout", "Workouts")
+    val options = listOf("Saved Workouts", "All Workouts")
 
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
@@ -66,7 +67,7 @@ fun WorkoutSegmentButton(
                         0 -> {
 
                             //MyWorkout screen
-                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.SelectedWorkout)
+                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.FavoriteWorkouts)
                         }
 
                         1 -> {
@@ -90,7 +91,7 @@ fun WorkoutSegmentButton(
 @Composable
 private fun WorkoutSegmentButtonEnabledPreview() {
     WorkoutSegmentButton(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxWidth(),
         selectedOptionIndex = 1, //Workouts screen
         isDisabled = false,
         onWorkoutFilter = {
@@ -104,7 +105,7 @@ private fun WorkoutSegmentButtonEnabledPreview() {
 @Composable
 private fun WorkoutSegmentButtonDisabledPreview() {
     WorkoutSegmentButton(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxWidth(),
         selectedOptionIndex = 1, //MyWorkout screen
         isDisabled = true,
         onWorkoutFilter = {
@@ -118,7 +119,7 @@ private fun WorkoutSegmentButtonDisabledPreview() {
 @Composable
 private fun WorkoutSegmentButtonEnabled2Preview() {
     WorkoutSegmentButton(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxWidth(),
         selectedOptionIndex = 0, //Workouts screen
         isDisabled = false,
         onWorkoutFilter = {
@@ -132,7 +133,7 @@ private fun WorkoutSegmentButtonEnabled2Preview() {
 @Composable
 private fun WorkoutSegmentButtonDisabled2Preview() {
     WorkoutSegmentButton(
-        modifier = Modifier,
+        modifier = Modifier.fillMaxWidth(),
         selectedOptionIndex = 0, //MyWorkout screen
         isDisabled = true,
         onWorkoutFilter = {
