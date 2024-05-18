@@ -52,6 +52,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             delay(Constants.fakeDelay)
 
             workoutDao.favoriteWorkoutById(workoutId)
+            workoutDetailsDao.favoriteWorkoutDetailsById(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()
@@ -66,6 +67,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             delay(Constants.fakeDelay)
 
             workoutDao.unfavoriteWorkoutById(workoutId)
+            workoutDetailsDao.unfavoriteWorkoutDetailsById(workoutId)
 
             val result = ServerResponseData(
                 BaseResponse()

@@ -76,13 +76,44 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
         }
     }
 
-    override suspend fun selectWorkoutDetailsById(workoutId: Int) {
-        workoutDetailsDB.map {
+    override suspend fun favoriteWorkoutDetailsById(workoutId: Int) {
+        val index = workoutDetailsDB.map {
             it.workoutDetails
-        }.forEach {
-            it.isFavorite = it.workoutDetailsId == workoutId
+        }.indexOfFirst { it.workoutDetailsId == workoutId }
+
+        //WorkoutDetails found
+        if (index != -1) {
+
+            val updatedWorkoutDetails = workoutDetailsDB[index].workoutDetails.copy(isFavorite = true)
+            workoutDetailsDB[index] = workoutDetailsDB[index].copy(workoutDetails = updatedWorkoutDetails)
+        } else {
+
+            //No WorkoutDetails found
+        }
+
+//        workoutDetailsDB
+//            .map { it.workoutDetails }
+//            .filter { it.workoutDetailsId == workoutId }
+//            .map { it.isFavorite = true }
+
+    }
+
+    override suspend fun unfavoriteWorkoutDetailsById(workoutId: Int) {
+        val index = workoutDetailsDB.map {
+            it.workoutDetails
+        }.indexOfFirst { it.workoutDetailsId == workoutId }
+
+        //WorkoutDetails found
+        if (index != -1) {
+
+            val updatedWorkoutDetails = workoutDetailsDB[index].workoutDetails.copy(isFavorite = false)
+            workoutDetailsDB[index] = workoutDetailsDB[index].copy(workoutDetails = updatedWorkoutDetails)
+        } else {
+
+            //No WorkoutDetails found
         }
     }
+
 
     override fun getWorkoutDetailsOrderedById(): List<WorkoutDetailsWithExercises> {
         return workoutDetailsDB.sortedBy { it.workoutDetails.workoutDetailsId }
@@ -393,6 +424,7 @@ class WorkoutDetailsDaoFakeV2 : WorkoutDetailsDao, WorkoutConfigurationChangeLis
             }
         }
     }
+
     override fun clearDB() {
         workoutDetailsDB.clear()
     }

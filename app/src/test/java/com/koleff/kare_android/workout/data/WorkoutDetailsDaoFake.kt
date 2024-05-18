@@ -101,7 +101,7 @@
 //        }
 //    }
 //
-//    override suspend fun selectWorkoutDetailsById(workoutId: Int) {
+//    override suspend fun favoriteWorkoutDetailsById(workoutId: Int) {
 //        workoutDetailsDB.map {
 //            it.workoutDetails
 //        }.forEach {

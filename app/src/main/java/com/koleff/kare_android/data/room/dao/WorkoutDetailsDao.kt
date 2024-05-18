@@ -43,7 +43,11 @@ interface WorkoutDetailsDao {
 
     @Transaction
     @Query("UPDATE workout_details_table SET isFavorite = 1 WHERE workoutDetailsId = :workoutId")
-    suspend fun selectWorkoutDetailsById(workoutId: Int)
+    suspend fun favoriteWorkoutDetailsById(workoutId: Int)
+
+    @Transaction
+    @Query("UPDATE workout_details_table SET isFavorite = 0 WHERE workoutDetailsId = :workoutId")
+    suspend fun unfavoriteWorkoutDetailsById(workoutId: Int)
 
     @Transaction
     @Query("SELECT * FROM workout_details_table ORDER BY workoutDetailsId")
