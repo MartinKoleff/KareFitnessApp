@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,6 +23,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.components.SettingsList
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
+import com.koleff.kare_android.ui.compose.dialogs.LogoutDialog
 import com.koleff.kare_android.ui.view_model.BaseViewModel
 import com.koleff.kare_android.ui.view_model.SettingsViewModel
 
@@ -28,6 +31,69 @@ import com.koleff.kare_android.ui.view_model.SettingsViewModel
 fun SettingsScreen(
     settingsViewModel: SettingsViewModel = hiltViewModel()
 ) {
+
+    val logoutState = settingsViewModel.logoutState.collectAsState()
+
+    val context = LocalContext.current
+
+    //Used for API 33 below -> custom prompt
+    var showNotificationDialog by remember {
+        mutableStateOf(false)
+    }
+
+    val notificationCallback: () -> Unit = {
+        showNotificationDialog = PermissionManager.requestNotificationPermission(context)
+    }
+
+    var notificationIsChecked by remember {
+        mutableStateOf(PermissionManager.hasNotificationPermission(context))
+    }
+
+    val openNotificationSettingsCallback = {
+        NotificationManager.openNotificationSettings(context)
+
+        showNotificationDialog = false
+    }
+
+    val biometricsCallback: () -> Unit = {}
+    var biometricsIsChecked by remember {
+        mutableStateOf(PermissionManager.hasBiometricsPermission(context))
+    }
+
+    var showLogoutDialog by remember {
+        mutableStateOf(false)
+    }
+
+    val onLogout = {
+        settingsViewModel.logout()
+
+        showLogoutDialog = false
+    }
+
+    //Update switch states on Activity OnResume.
+    observeLifecycleEvent { event ->
+        if (event == Lifecycle.Event.ON_RESUME) {
+            notificationIsChecked = PermissionManager.hasNotificationPermission(context)
+        }
+    }
+
+    if (showNotificationDialog) {
+        EnableNotificationsDialog(
+            onClick = openNotificationSettingsCallback,
+            onDismiss = {
+                showNotificationDialog = false
+                notificationIsChecked = PermissionManager.hasNotificationPermission(context)
+            }
+        )
+    }
+
+    if (showLogoutDialog) {
+        LogoutDialog(
+            onClick = onLogout,
+            onDismiss = { showLogoutDialog = false }
+        )
+    }
+
     MainScreenScaffold(
         "Settings",
         onNavigateToDashboard = { settingsViewModel.onNavigateToDashboard() },
@@ -38,49 +104,6 @@ fun SettingsScreen(
         val modifier = Modifier
             .padding(innerPadding)
             .fillMaxSize()
-
-        val context = LocalContext.current
-
-        //Used for API 33 below -> custom prompt
-        var showNotificationDialog by remember {
-            mutableStateOf(false)
-        }
-
-        val notificationCallback: () -> Unit = {
-            showNotificationDialog = PermissionManager.requestNotificationPermission(context)
-        }
-
-        var notificationIsChecked by remember {
-            mutableStateOf(PermissionManager.hasNotificationPermission(context))
-        }
-
-        val openNotificationSettingsCallback = {
-            NotificationManager.openNotificationSettings(context)
-
-            showNotificationDialog = false
-        }
-
-        //Update switch states on Activity OnResume.
-        observeLifecycleEvent { event ->
-            if (event == Lifecycle.Event.ON_RESUME) {
-                notificationIsChecked = PermissionManager.hasNotificationPermission(context)
-            }
-        }
-
-        if (showNotificationDialog) {
-            EnableNotificationsDialog(
-                onClick = openNotificationSettingsCallback,
-                onDismiss = {
-                    showNotificationDialog = false
-                    notificationIsChecked = PermissionManager.hasNotificationPermission(context)
-                }
-            )
-        }
-
-        val biometricsCallback: () -> Unit = {}
-        var biometricsIsChecked by remember {
-            mutableStateOf(PermissionManager.hasBiometricsPermission(context))
-        }
 
         SettingsList(
             modifier = modifier,
@@ -95,6 +118,9 @@ fun SettingsScreen(
                 biometricsIsChecked = newState
 
                 biometricsCallback()
+            },
+            onLogout = {
+                showLogoutDialog = true
             }
         )
     }
