@@ -390,7 +390,7 @@ fun DeleteButton(
         Text(
             text = title,
             style = textStyle,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center
         )

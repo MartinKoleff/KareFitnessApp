@@ -420,16 +420,16 @@ fun StartWorkoutTitleAndSubtitle(
         PaddingValues(
             top = 8.dp,
             bottom = 0.dp,
-            start = 8.dp,
-            end = 8.dp
+            start = 32.dp,
+            end = 32.dp
         )
 
     val subtitlePadding =
         PaddingValues(
             top = 2.dp,
             bottom = 64.dp,
-            start = 8.dp,
-            end = 8.dp
+            start = 32.dp,
+            end = 32.dp
         )
 
     //Title
