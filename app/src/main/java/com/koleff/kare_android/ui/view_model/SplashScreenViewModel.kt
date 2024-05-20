@@ -7,9 +7,7 @@ import com.koleff.kare_android.common.Constants.splashScreenDelay
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.preferences.Preferences
-import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.model.dto.Tokens
-import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.ui.state.LoginState
 import com.koleff.kare_android.ui.state.SplashScreenState
@@ -39,7 +37,7 @@ class SplashScreenViewModel @Inject constructor(
         getCredentials()
     }
 
-    private fun getCredentials() {
+    fun getCredentials() {
         viewModelScope.launch {
             delay(splashScreenDelay)
 
