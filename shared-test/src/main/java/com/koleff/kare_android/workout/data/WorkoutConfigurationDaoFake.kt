@@ -1,10 +1,8 @@
 package com.koleff.kare_android.workout.data
 
-import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationId
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
-import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 import com.koleff.kare_android.utils.FakeDao
 
 class WorkoutConfigurationDaoFake(

@@ -2,7 +2,6 @@ package com.koleff.kare_android.authentication.data
 
 import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.data.room.entity.User
-import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.utils.FakeDao
 import java.util.UUID
 

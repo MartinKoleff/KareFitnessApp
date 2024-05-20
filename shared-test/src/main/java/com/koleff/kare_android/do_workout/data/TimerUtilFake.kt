@@ -2,7 +2,12 @@ package com.koleff.kare_android.do_workout.data
 
 import com.koleff.kare_android.common.timer.DoWorkoutTimer
 import com.koleff.kare_android.data.model.dto.ExerciseTime
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class TimerUtilFake : DoWorkoutTimer {
     private var job: Job? = null

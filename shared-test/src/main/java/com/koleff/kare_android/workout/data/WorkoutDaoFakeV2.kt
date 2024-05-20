@@ -2,9 +2,6 @@ package com.koleff.kare_android.workout.data
 
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.entity.Workout
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
-import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
 import com.koleff.kare_android.utils.FakeDao
 
 class WorkoutDaoFakeV2(

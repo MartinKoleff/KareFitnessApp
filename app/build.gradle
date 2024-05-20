@@ -120,7 +120,7 @@ dependencies {
     implementation "androidx.activity:activity-compose:$compose_activity_version"
     implementation "androidx.biometric:biometric:$androidx_biometric_version"
     implementation "androidx.core:core-splashscreen:$androidx_core_splash_screen_version"
-//    implementation "androidx.appcompat:appcompat:$app_compat_version"
+    implementation "androidx.appcompat:appcompat:$app_compat_version"
 
     //Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle_version"
@@ -225,6 +225,10 @@ dependencies {
 
     androidTestImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     androidTestImplementation project(':app')
+
+    //Shared mutual test resources
+    testImplementation(project(":shared-test"))
+    androidTestImplementation(project(":shared-test"))
 
     //JUnit platform
     testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")

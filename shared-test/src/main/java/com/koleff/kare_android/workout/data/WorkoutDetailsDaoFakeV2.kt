@@ -5,8 +5,8 @@ import com.koleff.kare_android.data.room.dao.WorkoutDetailsId
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.ExerciseWithSets
-import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
+import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.koleff.kare_android.data.room.entity.WorkoutDetailsWithExercises
 import com.koleff.kare_android.exercise.data.ExerciseSetChangeListener
 import com.koleff.kare_android.utils.FakeDao
