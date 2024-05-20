@@ -3,12 +3,15 @@ package com.koleff.kare_android.data.datasource
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.network.Network
+import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
+import com.koleff.kare_android.data.model.request.RegenerateTokenRequest
 import com.koleff.kare_android.data.model.request.RegistrationRequest
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.domain.wrapper.LoginWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
+import com.koleff.kare_android.domain.wrapper.TokenWrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -48,6 +51,16 @@ class AuthenticationRemoteDataSource @Inject constructor(
         return Network.executeApiCall(dispatcher, {
             ServerResponseData(
                 authenticationApi.logout(body)
+            )
+        })
+    }
+
+    override suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> {
+        val body = RegenerateTokenRequest(tokens)
+
+        return Network.executeApiCall(dispatcher, {
+            TokenWrapper(
+                authenticationApi.regenerateToken(body)
             )
         })
     }
