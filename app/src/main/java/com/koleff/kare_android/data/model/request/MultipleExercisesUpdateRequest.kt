@@ -7,5 +7,5 @@ data class MultipleExercisesUpdateRequest(
     @field:Json(name = "workout_id")
     val workoutId: Int,
     @field:Json(name = "exercises")
-    val exerciseList: List<ExerciseDto,>
+    val exerciseList: List<ExerciseDto>
 )
