@@ -23,13 +23,11 @@ import com.koleff.kare_android.domain.usecases.LogoutUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.params.ParameterizedTest
@@ -45,8 +43,6 @@ class AuthenticationTest {
         private lateinit var credentialsValidator: CredentialsValidator
         private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
         private lateinit var authenticationUseCases: AuthenticationUseCases
-        private lateinit var loginUseCase: LoginUseCase
-        private lateinit var registerUseCase: RegisterUseCase
         private lateinit var authenticationRepository: AuthenticationRepository
         private lateinit var authenticationDataSource: AuthenticationDataSource
         private lateinit var userRepository: UserRepository
@@ -445,10 +441,7 @@ class AuthenticationTest {
             credentials.toEntity()
         )
 
-        val loginState = authenticationUseCases.loginUseCase.invoke(
-            credentials.username,
-            credentials.password
-        ).toList()
+        val loginState = authenticationUseCases.loginUseCase.invoke(credentials).toList()
 
         logger.i(TAG, "Login -> isLoading state raised.")
         assertTrue { loginState[0].isLoading }
@@ -479,10 +472,7 @@ class AuthenticationTest {
             credentials.toEntity()
         )
 
-        val loginState = authenticationUseCases.loginUseCase.invoke(
-            credentials.username,
-            credentials.password
-        ).toList()
+        val loginState = authenticationUseCases.loginUseCase.invoke(credentials).toList()
 
         logger.i(TAG, "Login -> isLoading state raised.")
         assertTrue { loginState[0].isLoading }
