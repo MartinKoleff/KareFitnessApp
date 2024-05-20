@@ -1,4 +1,4 @@
-package com.koleff.kare_android
+package com.koleff.kare_android.view_model.authentication
 
 import app.cash.turbine.test
 import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake
@@ -30,6 +30,7 @@ import com.koleff.kare_android.utils.TestLogger
 import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
@@ -40,13 +41,14 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Test
 
 class SplashScreenViewModelTest {
 
     companion object {
-        private val dispatcher = StandardTestDispatcher()
+        private lateinit var dispatcher: CoroutineDispatcher
 
         private lateinit var credentialsAuthenticator: CredentialsAuthenticator
         private lateinit var credentialsValidator: CredentialsValidator
@@ -105,16 +107,23 @@ class SplashScreenViewModelTest {
                 logoutUseCase = LogoutUseCase(authenticationRepository)
             )
 
-            preferences = mockk<Preferences>()
-
-            splashScreenViewModel = SplashScreenViewModel(
-                authenticationUseCases = authenticationUseCases,
-                preferences = preferences,
-                dispatcher = dispatcher
-            )
+            dispatcher = StandardTestDispatcher()
 
             logger = TestLogger(isLogging)
         }
+    }
+
+    @Before
+    fun setUp() {
+        preferences = mockk()
+        authenticationUseCases = mockk()
+        authenticationUseCases = mockk()
+        dispatcher = mockk()
+        splashScreenViewModel = SplashScreenViewModel(
+            preferences = preferences,
+            authenticationUseCases = authenticationUseCases,
+            dispatcher = dispatcher
+        )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
