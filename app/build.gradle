@@ -232,6 +232,7 @@ dependencies {
 
     //JUnit platform
     testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
+    androidTestImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
 
     //Mockk - Mocking
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"
