@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CredentialsAuthenticator {
     
-    suspend fun checkLoginCredentials(username: String, password: String): Flow<BaseState>
+    suspend fun checkLoginCredentials(credentials: Credentials): Flow<BaseState>
 
     suspend fun checkRegisterCredentials(credentials: Credentials): Flow<BaseState>
 

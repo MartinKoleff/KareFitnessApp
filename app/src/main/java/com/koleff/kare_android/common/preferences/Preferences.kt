@@ -18,6 +18,7 @@ interface Preferences {
     fun initializeUserTable()
     fun saveCredentials(credentials: Credentials)
     fun getCredentials(): Credentials?
+    fun deleteCredentials()
     fun saveTokens(tokens: Tokens)
     fun getTokens(): Tokens?
 

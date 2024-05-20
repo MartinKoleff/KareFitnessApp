@@ -38,8 +38,8 @@ class CredentialsAuthenticatorImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkLoginCredentials(username: String, password: String): Flow<BaseState> = flow {
-        when (val data = credentialsValidator.validateLogin(username, password)) {
+    override suspend fun checkLoginCredentials(credentials: Credentials): Flow<BaseState> = flow {
+        when (val data = credentialsValidator.validateLogin(credentials)) {
             is ResultWrapper.ApiError ->
                 emit(
                     BaseState(

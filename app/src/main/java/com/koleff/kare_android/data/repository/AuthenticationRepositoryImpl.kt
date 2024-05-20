@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.repository
 
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
@@ -11,13 +12,16 @@ import kotlinx.coroutines.flow.Flow
 class AuthenticationRepositoryImpl(private val authenticationDataSource: AuthenticationDataSource) :
     AuthenticationRepository {
     override suspend fun login(
-        username: String,
-        password: String
+        credentials: Credentials
     ): Flow<ResultWrapper<LoginWrapper>> {
-        return authenticationDataSource.login(username, password)
+        return authenticationDataSource.login(credentials)
     }
 
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         return authenticationDataSource.register(user)
+    }
+
+    override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
+        return authenticationDataSource.logout(user)
     }
 }

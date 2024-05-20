@@ -1,6 +1,7 @@
 package com.koleff.kare_android.domain.usecases
 
 import android.util.Log
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.repository.AuthenticationRepository
@@ -15,17 +16,17 @@ class LoginUseCase(
     private val authenticationRepository: AuthenticationRepository,
     private val credentialsAuthenticator: CredentialsAuthenticator
 ) {
-    suspend operator fun invoke(username: String, password: String): Flow<LoginState> = flow {
+    suspend operator fun invoke(credentials: Credentials): Flow<LoginState> = flow {
 
         //Initial loading
         emit(LoginState(isLoading = true))
 
         //Validate credentials
-        val state = credentialsAuthenticator.checkLoginCredentials(username, password).firstOrNull()
+        val state = credentialsAuthenticator.checkLoginCredentials(credentials).firstOrNull()
 
         //Valid credentials -> proceed with login
         if (state?.isSuccessful == true) {
-            authenticationRepository.login(username, password).collect { apiResult ->
+            authenticationRepository.login(credentials).collect { apiResult ->
                 when (apiResult) {
                     is ResultWrapper.ApiError -> {
                         emit(
@@ -41,7 +42,7 @@ class LoginUseCase(
                     }
 
                     is ResultWrapper.Success -> {
-                        Log.d("LoginUseCase", "User $username has logged in successfully!")
+                        Log.d("LoginUseCase", "User ${credentials.username} has logged in successfully!")
 
                         with(apiResult.data) {
 

@@ -160,6 +160,8 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+
+    //TODO: migrate to use case...
     private fun removeWorkoutFromShownWorkoutList(workoutId: Int) {
         _shownWorkoutList.removeAll {
             it.workoutId == workoutId
@@ -200,6 +202,7 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+    //TODO: migrate to use case...
     private fun updateShownWorkoutList(workoutId: Int, isFavorite: Boolean) {
 
         /**
@@ -287,6 +290,7 @@ class WorkoutViewModel @Inject constructor(
         }
     }
 
+    //TODO: migrate to use case...
     private fun updateShownWorkoutList(workout: WorkoutDto) {
 
         /**

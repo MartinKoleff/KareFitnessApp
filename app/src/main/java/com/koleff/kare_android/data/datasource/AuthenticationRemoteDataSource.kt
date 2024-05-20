@@ -1,9 +1,9 @@
 package com.koleff.kare_android.data.datasource
 
-import com.koleff.kare_android.common.network.Network
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.network.Network
 import com.koleff.kare_android.data.model.dto.UserDto
-import com.koleff.kare_android.data.model.request.LoginRequest
 import com.koleff.kare_android.data.model.request.RegistrationRequest
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.domain.wrapper.LoginWrapper
@@ -14,18 +14,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
+typealias SignInRequest = RegistrationRequest
+
 class AuthenticationRemoteDataSource @Inject constructor(
     private val authenticationApi: AuthenticationApi,
     @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthenticationDataSource {
     override suspend fun login(
-        username: String,
-        password: String
+        credentials: Credentials
     ): Flow<ResultWrapper<LoginWrapper>> {
-        val body = LoginRequest(
-            username,
-            password
-        )
+        val body = SignInRequest(credentials)
 
         return Network.executeApiCall(dispatcher, {
             LoginWrapper(
@@ -35,13 +33,21 @@ class AuthenticationRemoteDataSource @Inject constructor(
     }
 
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
-        val body = RegistrationRequest(
-            user
-        )
+        val body = RegistrationRequest(user)
 
         return Network.executeApiCall(dispatcher, {
             ServerResponseData(
                 authenticationApi.register(body)
+            )
+        })
+    }
+
+    override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
+        val body = RegistrationRequest(user)
+
+        return Network.executeApiCall(dispatcher, {
+            ServerResponseData(
+                authenticationApi.logout(body)
             )
         })
     }

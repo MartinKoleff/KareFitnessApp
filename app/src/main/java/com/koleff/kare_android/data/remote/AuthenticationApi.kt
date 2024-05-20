@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.remote
 
-import com.koleff.kare_android.data.model.request.LoginRequest
+import com.koleff.kare_android.data.datasource.SignInRequest
 import com.koleff.kare_android.data.model.request.RegistrationRequest
 import com.koleff.kare_android.data.model.response.LoginResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
@@ -12,7 +12,7 @@ interface AuthenticationApi {
 
     @POST("api/v1/auth/login")
     suspend fun login(
-        @Body body: LoginRequest
+        @Body body: SignInRequest
     ): LoginResponse
 
     @POST("api/v1/auth/register")
@@ -21,7 +21,9 @@ interface AuthenticationApi {
     ): BaseResponse
 
     @GET("api/v1/auth/logout")
-    suspend fun logout() //TODO: implement...
+    suspend fun logout(
+        @Body body: RegistrationRequest
+    ): BaseResponse
 
     @POST("api/v1/auth/changepassword")
     suspend fun changePassword() //TODO: implement...

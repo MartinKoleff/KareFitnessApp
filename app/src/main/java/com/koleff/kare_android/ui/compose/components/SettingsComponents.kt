@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -20,7 +21,23 @@ import androidx.compose.ui.res.painterResource
 import com.koleff.kare_android.R
 
 @Composable
+fun LogoutSettingsListItem(
+    title: String,
+    icon: Painter,
+    description: String,
+    onLogout: () -> Unit
+) {
+    SettingsListItem(
+        modifier = Modifier.clickable { onLogout() },
+        title = title,
+        icon = icon,
+        description = description
+    )
+}
+
+@Composable
 fun SettingsListItem(
+    modifier: Modifier = Modifier,
     title: String,
     icon: ImageVector,
     description: String,
@@ -34,6 +51,7 @@ fun SettingsListItem(
     )
 
     ListItem(
+        modifier = modifier,
         headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
@@ -57,6 +75,7 @@ fun SettingsListItem(
 
 @Composable
 fun SettingsListItem(
+    modifier: Modifier = Modifier,
     title: String,
     icon: Painter,
     description: String,
@@ -71,6 +90,7 @@ fun SettingsListItem(
     )
 
     ListItem(
+        modifier = modifier,
         headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
@@ -111,46 +131,59 @@ fun SettingsList(
     notificationIsChecked: Boolean,
     biometricsIsChecked: Boolean,
     onNotificationSwitchChange: (Boolean) -> Unit,
-    onBiometricsSwitchChange: (Boolean) -> Unit
+    onBiometricsSwitchChange: (Boolean) -> Unit,
+    onLogout: () -> Unit
 ) {
     Column(modifier = modifier) {
-        SettingsListItem(
-            "Logout",
-            painterResource(R.drawable.ic_vector_logout),
-            "Logout from account"
+        LogoutSettingsListItem(
+            title = "Logout",
+            icon = painterResource(R.drawable.ic_vector_logout),
+            description = "Logout from account",
+            onLogout = onLogout
         )
-        SettingsListItem("Change email", Icons.Default.Email, "Change login email")
         SettingsListItem(
-            "Change password",
-            painterResource(R.drawable.ic_vector_password),
-            "Change password"
+            title = "Change email",
+            icon = Icons.Default.Email,
+            description = "Change login email"
+        )
+        SettingsListItem(
+            title = "Change password",
+            icon = painterResource(R.drawable.ic_vector_password),
+            description = "Change password"
         )
 
         SettingsListItem(
-            "Push notifications",
-            Icons.Default.Notifications,
-            "Push notifications settings",
-            true,
+            title = "Push notifications",
+            icon = Icons.Default.Notifications,
+            description = "Push notifications settings",
+            hasSwitch = true,
             isChecked = notificationIsChecked,
             onCheckedChange = onNotificationSwitchChange
         )
-
         SettingsListItem(
-            "Change language",
-            painterResource(R.drawable.ic_vector_language),
-            "Change language"
+            title = "Change language",
+            icon = painterResource(R.drawable.ic_vector_language),
+            description = "Change language"
         )
         SettingsListItem(
-            "Biometric authentication",
-            painterResource(R.drawable.ic_faceid),
-            "Biometric authentication",
-            true,
+            title = "Biometric authentication",
+            icon = painterResource(R.drawable.ic_faceid),
+            description = "Biometric authentication",
+            hasSwitch = true,
             isChecked = biometricsIsChecked,
             onCheckedChange = onBiometricsSwitchChange
         )
 
-        SettingsCategory("Privacy policy")
-        SettingsListItem("Privacy policy", Icons.Default.Info, "Privacy policy")
-        SettingsListItem("Support", Icons.Default.MailOutline, "Contact us via email")
+        SettingsCategory(title = "Privacy policy")
+        SettingsListItem(
+            title = "Privacy policy",
+            icon = Icons.Default.Info,
+            description = "Privacy policy"
+        )
+        SettingsListItem(
+            title = "Support",
+            icon = Icons.Default.MailOutline,
+            description = "Contact us via email"
+        )
     }
 }
