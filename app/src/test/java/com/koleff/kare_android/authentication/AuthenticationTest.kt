@@ -446,8 +446,7 @@ class AuthenticationTest {
         )
 
         val loginState = authenticationUseCases.loginUseCase.invoke(
-            credentials.username,
-            credentials.password
+            credentials
         ).toList()
 
         logger.i(TAG, "Login -> isLoading state raised.")
@@ -480,8 +479,7 @@ class AuthenticationTest {
         )
 
         val loginState = authenticationUseCases.loginUseCase.invoke(
-            credentials.username,
-            credentials.password
+            credentials
         ).toList()
 
         logger.i(TAG, "Login -> isLoading state raised.")
