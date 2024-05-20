@@ -1,11 +1,9 @@
 package com.koleff.kare_android.common.network
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresExtension
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -31,12 +29,30 @@ object Network {
             if (apiResult.isSuccessful) {
                 emit(ResultWrapper.Success(apiResult))
             } else {
-                emit(
-                    ResultWrapper.ApiError(
-                        apiResult.error,
-                        apiResult
-                    )
-                )
+                when(apiResult.error){
+
+                    //Regenerate token and try again
+                    KareError.TOKEN_EXPIRED -> {
+                        regenerateToken() //TODO: broadcast?
+                        return@flow
+                    }
+
+                    //Logout
+                    KareError.INVALID_TOKEN -> {
+                        logout()
+                        return@flow
+                    }
+
+                    //Default case
+                    else -> {
+                        emit(
+                            ResultWrapper.ApiError(
+                                apiResult.error,
+                                apiResult
+                            )
+                        )
+                    }
+                }
             }
         } catch (throwable: Throwable) {
             throwable.printStackTrace()
@@ -48,6 +64,15 @@ object Network {
             emitAll(doRetryCall(dispatcher, apiCall, error, unsuccessfulRetriesCount))
         }
     }.flowOn(dispatcher)
+
+    private fun logout() {
+        Log.d("Network", "Invalid token. Logging out.")
+    }
+
+    //TODO: create regenerate token listener/service that on call/trigger regenerates...
+    private fun regenerateToken() {
+        Log.d("Network", "Token regenerating...")
+    }
 
     private suspend fun <T> doRetryCall(
         dispatcher: CoroutineDispatcher,
