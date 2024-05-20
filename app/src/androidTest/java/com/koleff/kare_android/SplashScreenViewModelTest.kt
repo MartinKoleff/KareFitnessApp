@@ -31,17 +31,17 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.internal.NopCollector.emit
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Test
+import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.BeforeClass
+import org.junit.Test
 
 class SplashScreenViewModelTest {
 
@@ -75,8 +75,9 @@ class SplashScreenViewModelTest {
 
         private const val TAG = "AuthenticationTest"
 
+        @OptIn(ExperimentalCoroutinesApi::class)
         @JvmStatic
-        @BeforeAll
+        @BeforeClass
         fun setup() {
             Dispatchers.setMain(dispatcher)
 
@@ -116,13 +117,15 @@ class SplashScreenViewModelTest {
         }
     }
 
-    @AfterEach
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
     fun tearDown() {
         Dispatchers.resetMain()
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `test login with valid cached credentials`() = runTest {
+    fun loginWithValidCachedCredentialsTest() = runTest {
         every { preferences.getCredentials() } returns validCredentials
         every { preferences.getTokens() } returns validTokens
         coEvery { authenticationUseCases.loginUseCase(validCredentials) } returns flow {
@@ -150,8 +153,9 @@ class SplashScreenViewModelTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `test login with no cached credentials`() = runTest {
+    fun loginWithNoCachedCredentialsTest() = runTest {
         every { preferences.getCredentials() } returns null
         every { preferences.getTokens() } returns null
 
@@ -165,8 +169,9 @@ class SplashScreenViewModelTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun `test login with invalid cached credentials`() = runTest {
+    fun loginWithInvalidCachedCredentialsTest() = runTest {
         every { preferences.getCredentials() } returns validCredentials
         every { preferences.getTokens() } returns validTokens
         coEvery { authenticationUseCases.loginUseCase(validCredentials) } returns flow {
