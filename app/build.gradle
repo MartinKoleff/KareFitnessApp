@@ -233,12 +233,16 @@ dependencies {
     //JUnit platform
     testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
 
-    //Mockk
+    //Mockk - Mocking
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"
     testImplementation "io.mockk:mockk:$mockk_version"
 
-    //Espresso
+    //Espresso - UI tests
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+
+    //Turbine - Flow testing
+    testImplementation "app.cash.turbine:turbine:$turbine_version"
+    androidTestImplementation "app.cash.turbine:turbine:$turbine_version"
 
     //BOMs
     implementation platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_bom_version")
