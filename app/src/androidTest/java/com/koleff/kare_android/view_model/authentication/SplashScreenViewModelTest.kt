@@ -81,6 +81,7 @@ class SplashScreenViewModelTest {
         @JvmStatic
         @BeforeClass
         fun setup() {
+            dispatcher = StandardTestDispatcher()
             Dispatchers.setMain(dispatcher)
 
             userDao = UserDaoFake()
@@ -106,8 +107,6 @@ class SplashScreenViewModelTest {
                 ),
                 logoutUseCase = LogoutUseCase(authenticationRepository)
             )
-
-            dispatcher = StandardTestDispatcher()
 
             logger = TestLogger(isLogging)
         }
