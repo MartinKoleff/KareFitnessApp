@@ -1,6 +1,5 @@
 package com.koleff.kare_android.common.di
 
-import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.common.auth.CredentialsDataStore
@@ -19,6 +18,7 @@ import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.LogoutUseCase
+import com.koleff.kare_android.domain.usecases.RegenerateTokenUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import dagger.Module
 import dagger.Provides
@@ -83,7 +83,8 @@ object AuthenticationModule {
         return AuthenticationUseCases(
             loginUseCase = LoginUseCase(authenticationRepository, credentialsAuthenticator),
             registerUseCase = RegisterUseCase(authenticationRepository, credentialsAuthenticator),
-            logoutUseCase = LogoutUseCase(authenticationRepository)
+            logoutUseCase = LogoutUseCase(authenticationRepository),
+            regenerateTokenUseCase = RegenerateTokenUseCase(authenticationRepository)
         )
     }
 }

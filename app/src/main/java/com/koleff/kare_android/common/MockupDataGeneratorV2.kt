@@ -5,6 +5,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
@@ -329,5 +330,13 @@ object MockupDataGeneratorV2 {
         )
 
         return Pair(workout, workoutDetails)
+    }
+
+    //TODO: generate random access_token and keep the same refresh_token...
+    fun generateTokens(): Tokens {
+        return Tokens(
+            accessToken = "access_token",
+            refreshToken = "refresh_token"
+        )
     }
 }
