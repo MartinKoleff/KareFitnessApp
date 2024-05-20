@@ -35,10 +35,10 @@ class CredentialsValidatorImpl @Inject constructor(
         }
     }
 
-    override suspend fun validateLogin(username: String, password: String): ResultWrapper<ServerResponseData> {
+    override suspend fun validateLogin(credentials: Credentials): ResultWrapper<ServerResponseData> {
         return try {
-            validateUsername(username)
-            validatePassword(password)
+            validateUsername(credentials.username)
+            validatePassword(credentials.password)
 
             ResultWrapper.Success(
                 ServerResponseData(

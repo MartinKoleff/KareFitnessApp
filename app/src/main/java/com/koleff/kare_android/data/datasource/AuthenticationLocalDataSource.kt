@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.response.LoginResponse
@@ -23,18 +24,18 @@ class AuthenticationLocalDataSource(
     private val credentialsAuthenticator: CredentialsAuthenticator
 ) : AuthenticationDataSource {
     override suspend fun login(
-        username: String,
-        password: String
+        credentials: Credentials
     ): Flow<ResultWrapper<LoginWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             //Validate credentials
-            val state= credentialsAuthenticator.checkLoginCredentials(username, password).firstOrNull()
+            val state =
+                credentialsAuthenticator.checkLoginCredentials(credentials).firstOrNull()
 
             if (state?.isSuccessful == true) {
-                val user = userDao.getUserByUsername(username) ?: run {
+                val user = userDao.getUserByUsername(credentials.username) ?: run {
                     //No user was found...
                     emit(ResultWrapper.ApiError(error = KareError.USER_NOT_FOUND))
                     return@flow
