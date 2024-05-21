@@ -30,4 +30,11 @@ object Constants {
 
     const val isTestingFirebaseCrashlytics = false
     const val CATALOG_EXERCISE_ID = 777
+
+    /**
+     * Broadcast intents
+     */
+    const val ACTION_LOGOUT = "com.koleff.kare_android.ACTION_LOGOUT"
+    const val ACTION_REGENERATE_TOKEN = "com.koleff.kare_android.ACTION_REGENERATE_TOKEN"
+
 }
