@@ -2,7 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.common.network.Network
+import com.koleff.kare_android.common.network.NetworkManager
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.request.RegenerateTokenRequest
@@ -21,6 +21,7 @@ typealias SignInRequest = RegistrationRequest
 
 class AuthenticationRemoteDataSource @Inject constructor(
     private val authenticationApi: AuthenticationApi,
+    private val networkManager: NetworkManager,
     @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthenticationDataSource {
     override suspend fun login(
@@ -28,7 +29,7 @@ class AuthenticationRemoteDataSource @Inject constructor(
     ): Flow<ResultWrapper<LoginWrapper>> {
         val body = SignInRequest(credentials)
 
-        return Network.executeApiCall(dispatcher, {
+        return networkManager.executeApiCall(dispatcher, {
             LoginWrapper(
                 authenticationApi.login(body)
             )
@@ -38,30 +39,27 @@ class AuthenticationRemoteDataSource @Inject constructor(
     override suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         val body = RegistrationRequest(user)
 
-        return Network.executeApiCall(dispatcher, {
-            ServerResponseData(
-                authenticationApi.register(body)
-            )
-        })
+        return networkManager.executeApiCall(
+            dispatcher,
+            { ServerResponseData(authenticationApi.register(body)) }
+        )
     }
 
     override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         val body = RegistrationRequest(user)
 
-        return Network.executeApiCall(dispatcher, {
-            ServerResponseData(
-                authenticationApi.logout(body)
-            )
-        })
+        return networkManager.executeApiCall(
+            dispatcher,
+            { ServerResponseData(authenticationApi.logout(body)) }
+        )
     }
 
     override suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> {
         val body = RegenerateTokenRequest(tokens)
 
-        return Network.executeApiCall(dispatcher, {
-            TokenWrapper(
-                authenticationApi.regenerateToken(body)
-            )
-        })
+        return networkManager.executeApiCall(
+            dispatcher,
+            { TokenWrapper(authenticationApi.regenerateToken(body)) }
+        )
     }
 }

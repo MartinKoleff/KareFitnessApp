@@ -6,6 +6,7 @@ import com.koleff.kare_android.common.auth.CredentialsDataStore
 import com.koleff.kare_android.common.auth.CredentialsDataStoreImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
+import com.koleff.kare_android.common.network.NetworkManager
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
@@ -56,7 +57,8 @@ object AuthenticationModule {
     fun provideAuthenticationDataSource(
         authenticationApi: AuthenticationApi,
         userDao: UserDao,
-        credentialsAuthenticator: CredentialsAuthenticator
+        credentialsAuthenticator: CredentialsAuthenticator,
+        networkManager: NetworkManager
     ): AuthenticationDataSource {
         val useRemoteAPI = false //Temporary testing authentication with remote API and other functionalities with local impl.
 
@@ -64,7 +66,8 @@ object AuthenticationModule {
             userDao = userDao,
             credentialsAuthenticator = credentialsAuthenticator
         ) else AuthenticationRemoteDataSource(
-            authenticationApi = authenticationApi
+            authenticationApi = authenticationApi,
+            networkManager = networkManager
         )
     }
 

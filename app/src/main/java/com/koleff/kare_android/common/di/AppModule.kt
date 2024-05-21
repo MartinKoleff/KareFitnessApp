@@ -4,10 +4,12 @@ import android.app.Application
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.BuildConfig
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
+import com.koleff.kare_android.common.network.NetworkManager
 import com.koleff.kare_android.common.network.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
@@ -68,24 +70,24 @@ import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.UnfavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.FindDuplicateExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetAllDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
+import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
+import com.koleff.kare_android.domain.usecases.GetDoWorkoutPerformanceMetricsUseCase
+import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
+import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetFavoriteWorkoutsUseCase
+import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
-import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
-import com.koleff.kare_android.domain.usecases.GetDoWorkoutPerformanceMetricsUseCase
-import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
-import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
@@ -93,10 +95,10 @@ import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
 import com.koleff.kare_android.domain.usecases.SaveAllDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.SaveDoWorkoutPerformanceMetricsUseCase
-import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
+import com.koleff.kare_android.domain.usecases.UnfavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
@@ -375,14 +377,18 @@ object AppModule {
         exerciseApi: ExerciseApi,
         exerciseDao: ExerciseDao,
         exerciseDetailsDao: ExerciseDetailsDao,
-        exerciseSetDao: ExerciseSetDao
+        exerciseSetDao: ExerciseSetDao,
+        networkManager: NetworkManager
     ): ExerciseDataSource {
         return if (useLocalDataSource) ExerciseLocalDataSourceV2(
             exerciseDao = exerciseDao,
             exerciseDetailsDao = exerciseDetailsDao,
             exerciseSetDao = exerciseSetDao
         )
-        else ExerciseRemoteDataSource(exerciseApi)
+        else ExerciseRemoteDataSource(
+            exerciseApi = exerciseApi,
+            networkManager = networkManager
+        )
     }
 
 
@@ -395,6 +401,7 @@ object AppModule {
         workoutDetailsDao: WorkoutDetailsDao,
         exerciseSetDao: ExerciseSetDao,
         workoutConfigurationDao: WorkoutConfigurationDao,
+        networkManager: NetworkManager,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
         return if (useLocalDataSource) WorkoutLocalDataSourceV2(
@@ -405,7 +412,11 @@ object AppModule {
             workoutConfigurationDao = workoutConfigurationDao
 
         )
-        else WorkoutRemoteDataSource(workoutApi, dispatcher)
+        else WorkoutRemoteDataSource(
+            workoutApi = workoutApi,
+            networkManager = networkManager,
+            dispatcher = dispatcher
+        )
     }
 
     @Provides
@@ -419,12 +430,17 @@ object AppModule {
     fun provideUserDataSource(
         userDao: UserDao,
         userApi: UserApi,
+        networkManager: NetworkManager,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): UserDataSource {
         return if (useLocalDataSource) UserLocalDataSource(
             userDao = userDao
         )
-        else UserRemoteDataSource(userApi, dispatcher)
+        else UserRemoteDataSource(
+            userApi = userApi,
+            networkManager = networkManager,
+            dispatcher = dispatcher
+        )
     }
 
     @Provides
@@ -588,5 +604,15 @@ object AppModule {
     @Singleton
     fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
         return DefaultPreferences(sharedPreferences)
+    }
+
+    /**
+     * Network
+     */
+
+    @Provides
+    @Singleton
+    fun provideNetworkManager(): NetworkManager {
+        return NetworkManager()
     }
 }

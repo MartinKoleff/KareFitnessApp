@@ -1,9 +1,11 @@
 package com.koleff.kare_android.common.network
 
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -11,9 +13,16 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
+import javax.inject.Inject
 
-object Network {
-    private const val MAX_RETRY_COUNT = 1
+@AndroidEntryPoint
+class NetworkManager {
+
+    @Inject
+    lateinit var broadcastManager: LocalBroadcastManager
+    companion object{
+        private const val MAX_RETRY_COUNT = 1
+    }
 
     suspend fun <T> executeApiCall(
         dispatcher: CoroutineDispatcher,
@@ -31,9 +40,10 @@ object Network {
             } else {
                 when(apiResult.error){
 
-                    //Regenerate token and try again
+                    //Regenerate token
+                    //TODO: on success -> doRetryCall...
                     KareError.TOKEN_EXPIRED -> {
-                        regenerateToken() //TODO: broadcast?
+                        regenerateToken() //TODO: await response?
                         return@flow
                     }
 
@@ -67,9 +77,9 @@ object Network {
 
     private fun logout() {
         Log.d("Network", "Invalid token. Logging out.")
+
     }
 
-    //TODO: create regenerate token listener/service that on call/trigger regenerates...
     private fun regenerateToken() {
         Log.d("Network", "Token regenerating...")
     }
