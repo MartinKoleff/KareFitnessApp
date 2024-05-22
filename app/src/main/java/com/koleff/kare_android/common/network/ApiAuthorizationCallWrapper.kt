@@ -16,18 +16,14 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class NetworkManager @Inject constructor(
-//    private val broadcastManager: LocalBroadcastManager,
-//    private val regenerateTokenNotifier: RegenerateTokenNotifier
+/**
+ * Used for API requests that require authorization tokens
+ */
+class ApiAuthorizationCallWrapper @Inject constructor(
+    private val broadcastManager: LocalBroadcastManager,
+    private val regenerateTokenNotifier: RegenerateTokenNotifier
 ) {
-    @Inject
-    lateinit var broadcastManager: LocalBroadcastManager
-
-    @Inject
-    lateinit var regenerateTokenNotifier: RegenerateTokenNotifier
-
     companion object {
         private const val MAX_RETRY_COUNT = 1
     }
@@ -40,7 +36,7 @@ class NetworkManager @Inject constructor(
         try {
             emit(ResultWrapper.Loading())
 
-            Log.d("Network", "Network request sent.")
+            Log.d("ApiAuthorizationCallWrapper", "Network request sent.")
             val apiResult = apiCall.invoke()
 
             if (apiResult.isSuccessful) {
@@ -89,20 +85,20 @@ class NetworkManager @Inject constructor(
     }.flowOn(dispatcher)
 
     private fun logout() {
-        Log.d("Network", "Invalid token. Logging out.")
+        Log.d("ApiAuthorizationCallWrapper", "Invalid token. Logging out.")
 
         val intent = Intent(Constants.ACTION_LOGOUT)
         broadcastManager.sendBroadcast(intent)
     }
 
     private suspend fun regenerateToken(onSuccess: suspend () -> Unit) {
-        Log.d("Network", "Token regenerating...")
+        Log.d("ApiAuthorizationCallWrapper", "Token regenerating...")
 
         val intent = Intent(Constants.ACTION_REGENERATE_TOKEN)
         broadcastManager.sendBroadcast(intent)
 
         regenerateTokenNotifier.regenerateTokenState.collect { result ->
-            Log.d("Network", "Regenerate token state received. State: $result")
+            Log.d("ApiAuthorizationCallWrapper", "Regenerate token state received. State: $result")
 
             if (result.isSuccessful){
 
@@ -122,13 +118,13 @@ class NetworkManager @Inject constructor(
         error: KareError,
         unsuccessfulRetriesCount: Int = 0
     ): Flow<ResultWrapper<T>> where T : ServerResponseData {
-        Log.d("Network", "Network request failed. Retrying...")
+        Log.d("ApiAuthorizationCallWrapper", "Network request failed. Retrying...")
 
         return if (unsuccessfulRetriesCount < MAX_RETRY_COUNT) {
             executeApiCall(dispatcher, apiCall, unsuccessfulRetriesCount + 1)
         } else {
             Log.d(
-                "Network",
+                "ApiAuthorizationCallWrapper",
                 "Network request failed. Error: $error."
             )
 

@@ -2,7 +2,7 @@ package com.koleff.kare_android.common.di
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.network.NetworkManager
+import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.data.datasource.WorkoutDataSource
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSourceV2
 import com.koleff.kare_android.data.datasource.WorkoutRemoteDataSource
@@ -85,7 +85,7 @@ object WorkoutModule {
         workoutDetailsDao: WorkoutDetailsDao,
         exerciseSetDao: ExerciseSetDao,
         workoutConfigurationDao: WorkoutConfigurationDao,
-        networkManager: NetworkManager,
+        apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): WorkoutDataSource {
         return if (Constants.useLocalDataSource) WorkoutLocalDataSourceV2(
@@ -98,7 +98,7 @@ object WorkoutModule {
         )
         else WorkoutRemoteDataSource(
             workoutApi = workoutApi,
-            networkManager = networkManager,
+            apiAuthorizationCallWrapper = apiAuthorizationCallWrapper,
             dispatcher = dispatcher
         )
     }

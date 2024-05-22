@@ -4,11 +4,12 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
-import com.koleff.kare_android.common.preferences.CredentialsDataStore
-import com.koleff.kare_android.common.preferences.CredentialsDataStoreImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
-import com.koleff.kare_android.common.network.NetworkManager
+import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
+import com.koleff.kare_android.common.network.ApiCallWrapper
+import com.koleff.kare_android.common.preferences.CredentialsDataStore
+import com.koleff.kare_android.common.preferences.CredentialsDataStoreImpl
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
@@ -89,16 +90,19 @@ object AuthenticationModule {
         authenticationApi: AuthenticationApi,
         userDao: UserDao,
         credentialsAuthenticator: CredentialsAuthenticator,
-        networkManager: NetworkManager
+        apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
+        apiCallWrapper: ApiCallWrapper
     ): AuthenticationDataSource {
-        val useRemoteAPI = false //Temporary testing authentication with remote API and other functionalities with local impl.
+        val useRemoteAPI =
+            false //Temporary testing authentication with remote API and other functionalities with local impl.
 
         return if (!useRemoteAPI) AuthenticationLocalDataSource(
             userDao = userDao,
             credentialsAuthenticator = credentialsAuthenticator
         ) else AuthenticationRemoteDataSource(
             authenticationApi = authenticationApi,
-            networkManager = networkManager
+            apiAuthorizationCallWrapper = apiAuthorizationCallWrapper,
+            apiCallWrapper = apiCallWrapper
         )
     }
 

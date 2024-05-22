@@ -2,7 +2,7 @@ package com.koleff.kare_android.common.di
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.network.NetworkManager
+import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.data.datasource.DashboardDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource
 import com.koleff.kare_android.data.datasource.UserLocalDataSource
@@ -54,7 +54,7 @@ object UserModule {
     fun provideUserDataSource(
         userDao: UserDao,
         userApi: UserApi,
-        networkManager: NetworkManager,
+        apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
         @IoDispatcher dispatcher: CoroutineDispatcher
     ): UserDataSource {
         return if (Constants.useLocalDataSource) UserLocalDataSource(
@@ -62,7 +62,7 @@ object UserModule {
         )
         else UserRemoteDataSource(
             userApi = userApi,
-            networkManager = networkManager,
+            apiAuthorizationCallWrapper = apiAuthorizationCallWrapper,
             dispatcher = dispatcher
         )
     }

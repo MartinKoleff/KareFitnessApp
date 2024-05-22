@@ -1,8 +1,10 @@
 package com.koleff.kare_android.common.di
 
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
-import com.koleff.kare_android.common.network.NetworkManager
+import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
+import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.common.preferences.TokenDataStore
 import com.koleff.kare_android.common.preferences.TokenDataStoreImpl
@@ -29,15 +31,18 @@ abstract class NetworkBindModule {
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
+    /**
+     * Requiring authorization
+     */
     @Provides
     @Singleton
-    fun provideNetworkManager(
-//        broadcastManager: LocalBroadcastManager,
-//        regenerateTokenNotifier: RegenerateTokenNotifier
-    ): NetworkManager {
-        return NetworkManager(
-//            broadcastManager = broadcastManager,
-//            regenerateTokenNotifier = regenerateTokenNotifier
+    fun provideApiAuthorizationCallWrapper(
+        broadcastManager: LocalBroadcastManager,
+        regenerateTokenNotifier: RegenerateTokenNotifier
+    ): ApiAuthorizationCallWrapper {
+        return ApiAuthorizationCallWrapper(
+            broadcastManager = broadcastManager,
+            regenerateTokenNotifier = regenerateTokenNotifier
         )
     }
 
@@ -61,5 +66,15 @@ object NetworkModule {
         return TokenDataStoreImpl(
             preferences = preferences
         )
+    }
+
+    /**
+     * Not requiring authorization
+     */
+
+    @Provides
+    @Singleton
+    fun provideApiCallWrapper(): ApiCallWrapper {
+        return ApiCallWrapper()
     }
 }
