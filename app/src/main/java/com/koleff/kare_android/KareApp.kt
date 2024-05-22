@@ -2,6 +2,7 @@ package com.koleff.kare_android
 
 import android.content.IntentFilter
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
 import com.koleff.kare_android.common.Constants
@@ -104,10 +105,10 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
         }
     }
 
-//    override fun onDestroy(owner: LifecycleOwner) {
-//        super.onDestroy(owner)
-//
-//        broadcastManager.unregisterReceiver(regenerateTokenBroadcastReceiver)
-//        broadcastManager.unregisterReceiver(logoutBroadcastReceiver)
-//    }
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+
+        broadcastManager.unregisterReceiver(regenerateTokenBroadcastReceiver)
+        broadcastManager.unregisterReceiver(logoutBroadcastReceiver)
+    }
 }
