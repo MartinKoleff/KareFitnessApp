@@ -12,11 +12,12 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Provider
 
 class RegenerateTokenHandler @Inject constructor(
-    private val authenticationUseCases: AuthenticationUseCases,
+    private val authenticationUseCases: Provider<AuthenticationUseCases>,
     private val tokenDataStore: TokenDataStore
-): RegenerateTokenNotifier {
+) : RegenerateTokenNotifier {
 
     private val _regenerateTokenState = MutableSharedFlow<TokenState>(replay = 1)
     override val regenerateTokenState: Flow<TokenState> = _regenerateTokenState.asSharedFlow()
@@ -39,7 +40,7 @@ class RegenerateTokenHandler @Inject constructor(
                 return@launch
             }
 
-            authenticationUseCases.regenerateTokenUseCase.invoke(tokens)
+            authenticationUseCases.get().regenerateTokenUseCase.invoke(tokens)
                 .collect { regenerateTokenState ->
                     Log.d(
                         "RegenerateTokenHandler",

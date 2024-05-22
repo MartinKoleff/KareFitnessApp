@@ -7,7 +7,6 @@ import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.BuildConfig
 import com.koleff.kare_android.common.network.BearerTokenInterceptor
-import com.koleff.kare_android.common.network.RegenerateTokenInterceptor
 import com.koleff.kare_android.common.network.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
@@ -46,12 +45,11 @@ object AppModule {
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        bearerTokenInterceptor: BearerTokenInterceptor,
-        regenerateTokenInterceptor: RegenerateTokenInterceptor
+        bearerTokenInterceptor: BearerTokenInterceptor
     ): OkHttpClient {
         val okHttpClientBuilder = OkHttpClient.Builder()
             .addInterceptor(bearerTokenInterceptor)
-            .addInterceptor(regenerateTokenInterceptor)
+//            .addInterceptor(regenerateTokenInterceptor)
 
         //Logging
         val logging = HttpLoggingInterceptor()

@@ -14,6 +14,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -49,7 +50,7 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideRegenerateTokenHandler(
-        authenticationUseCases: AuthenticationUseCases,
+        authenticationUseCases: Provider<AuthenticationUseCases>,
         tokenDataStore: TokenDataStore
     ): RegenerateTokenHandler {
         return RegenerateTokenHandler(

@@ -45,6 +45,7 @@ import org.junit.Assert.assertNotNull
 import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
+import javax.inject.Provider
 
 @RunWith(AndroidJUnit4::class)
 class AuthenticationBroadcastReceiverTest {
@@ -56,6 +57,7 @@ class AuthenticationBroadcastReceiverTest {
         private lateinit var credentialsValidator: CredentialsValidator
         private lateinit var credentialsDataStoreFake: CredentialsDataStoreFake
         private lateinit var authenticationUseCases: AuthenticationUseCases
+        private lateinit var authenticationUseCasesProvider: Provider<AuthenticationUseCases>
         private lateinit var authenticationRepository: AuthenticationRepository
         private lateinit var authenticationDataSource: AuthenticationDataSource
         private lateinit var userRepository: UserRepository
@@ -108,10 +110,11 @@ class AuthenticationBroadcastReceiverTest {
                 logoutUseCase = LogoutUseCase(authenticationRepository),
                 regenerateTokenUseCase = RegenerateTokenUseCase(authenticationRepository)
             )
+            authenticationUseCasesProvider = Provider { authenticationUseCases }
 
             navigationControllerFake = NavigationControllerFake()
             logoutHandler = LogoutHandler(
-                authenticationUseCases = authenticationUseCases,
+                authenticationUseCases = authenticationUseCasesProvider,
                 credentialsDataStore = credentialsDataStoreFake,
                 navigationController = navigationControllerFake
             )
@@ -121,7 +124,7 @@ class AuthenticationBroadcastReceiverTest {
             )
 
             regenerateTokenHandler = RegenerateTokenHandler(
-                authenticationUseCases = authenticationUseCases,
+                authenticationUseCases = authenticationUseCasesProvider,
                 tokenDataStore = tokenDataStoreFake
             )
             regenerateTokenBroadcastReceiver = RegenerateTokenBroadcastReceiver(

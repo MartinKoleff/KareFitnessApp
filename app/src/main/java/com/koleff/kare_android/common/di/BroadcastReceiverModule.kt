@@ -11,6 +11,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Provider
 import javax.inject.Singleton
 
 @Module
@@ -38,7 +39,7 @@ object BroadcastReceiverModule {
     @Provides
     @Singleton
     fun provideLogoutHandler(
-        authenticationUseCases: AuthenticationUseCases,
+        authenticationUseCases: Provider<AuthenticationUseCases>,
         credentialsDataStore: CredentialsDataStore,
         navigationController: NavigationController
     ): LogoutHandler {
