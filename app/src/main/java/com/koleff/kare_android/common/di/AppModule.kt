@@ -6,7 +6,8 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.BuildConfig
-import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.network.BearerTokenInterceptor
+import com.koleff.kare_android.common.network.RegenerateTokenInterceptor
 import com.koleff.kare_android.common.network.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
@@ -30,7 +31,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import javax.inject.Singleton
@@ -45,38 +45,13 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(preferences: Preferences): OkHttpClient {
-        val accessToken = preferences.getTokens()?.accessToken ?: ""
-
+    fun provideOkHttpClient(
+        bearerTokenInterceptor: BearerTokenInterceptor,
+        regenerateTokenInterceptor: RegenerateTokenInterceptor
+    ): OkHttpClient {
         val okHttpClientBuilder = OkHttpClient.Builder()
-            .addInterceptor(Interceptor { chain ->
-                val original = chain.request()
-
-                val newUrl = original.url.newBuilder()
-                    .scheme(Constants.SCHEME)
-                    .host(Constants.BASE_URL)
-//                    .port(Constants.PORT) //if port is needed
-//                    .addQueryParameter("access_key", Constants.API_KEY) //if API key is needed
-                    .build()
-
-                val requestBuilder = original.newBuilder()
-                    .method(original.method, original.body)
-                    .url(newUrl)
-
-                val unauthorizedRequestPaths = listOf("/login", "/register")
-                val requestPath = original.url.encodedPath
-
-                //Add token authorization for all requests except auth ones
-                if (!requestPath.endsWith(unauthorizedRequestPaths[0]) && !requestPath.endsWith(
-                        unauthorizedRequestPaths[1]
-                    )
-                ) {
-                    requestBuilder.addHeader("Authorization", "Bearer $accessToken")
-                }
-
-                val request = requestBuilder.build()
-                chain.proceed(request)
-            })
+            .addInterceptor(bearerTokenInterceptor)
+            .addInterceptor(regenerateTokenInterceptor)
 
         //Logging
         val logging = HttpLoggingInterceptor()
