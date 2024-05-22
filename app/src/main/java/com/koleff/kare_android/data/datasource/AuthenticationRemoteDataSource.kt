@@ -2,7 +2,6 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
@@ -22,7 +21,6 @@ typealias SignInRequest = RegistrationRequest
 
 class AuthenticationRemoteDataSource @Inject constructor(
     private val authenticationApi: AuthenticationApi,
-    private val apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
     private val apiCallWrapper: ApiCallWrapper,
     @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : AuthenticationDataSource {
@@ -50,7 +48,7 @@ class AuthenticationRemoteDataSource @Inject constructor(
     override suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>> {
         val body = RegistrationRequest(user)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ServerResponseData(authenticationApi.logout(body)) }
         )
@@ -59,7 +57,7 @@ class AuthenticationRemoteDataSource @Inject constructor(
     override suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> {
         val body = RegenerateTokenRequest(tokens)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { TokenWrapper(authenticationApi.regenerateToken(body)) }
         )

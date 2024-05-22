@@ -54,20 +54,20 @@ class RegenerateTokenInterceptor @Inject constructor(
     }
 
     private fun logout() {
-        Log.d("ApiAuthorizationCallWrapper", "Invalid token. Logging out.")
+        Log.d("ApiCallWrapper", "Invalid token. Logging out.")
 
         val intent = Intent(Constants.ACTION_LOGOUT)
         broadcastManager.sendBroadcast(intent)
     }
 
     private fun regenerateToken(onSuccess: () -> Unit) = runBlocking {
-        Log.d("ApiAuthorizationCallWrapper", "Token regenerating...")
+        Log.d("ApiCallWrapper", "Token regenerating...")
 
         val intent = Intent(Constants.ACTION_REGENERATE_TOKEN)
         broadcastManager.sendBroadcast(intent)
 
         regenerateTokenNotifier.regenerateTokenState.collect { result ->
-            Log.d("ApiAuthorizationCallWrapper", "Regenerate token state received. State: $result")
+            Log.d("ApiCallWrapper", "Regenerate token state received. State: $result")
 
             if (result.isSuccessful) {
 

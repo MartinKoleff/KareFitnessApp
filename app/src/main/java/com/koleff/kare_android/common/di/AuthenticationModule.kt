@@ -6,7 +6,6 @@ import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
-import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.common.preferences.CredentialsDataStore
 import com.koleff.kare_android.common.preferences.CredentialsDataStoreImpl
@@ -90,7 +89,6 @@ object AuthenticationModule {
         authenticationApi: AuthenticationApi,
         userDao: UserDao,
         credentialsAuthenticator: CredentialsAuthenticator,
-        apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
         apiCallWrapper: ApiCallWrapper
     ): AuthenticationDataSource {
         val useRemoteAPI =
@@ -101,7 +99,6 @@ object AuthenticationModule {
             credentialsAuthenticator = credentialsAuthenticator
         ) else AuthenticationRemoteDataSource(
             authenticationApi = authenticationApi,
-            apiAuthorizationCallWrapper = apiAuthorizationCallWrapper,
             apiCallWrapper = apiCallWrapper
         )
     }

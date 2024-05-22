@@ -2,7 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
-import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
+import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.request.AddNewExerciseSetRequest
 import com.koleff.kare_android.data.model.request.DeleteExerciseSetRequest
@@ -21,7 +21,7 @@ import javax.inject.Inject
 
 class ExerciseRemoteDataSource @Inject constructor(
     private val exerciseApi: ExerciseApi,
-    private val apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
+    private val apiCallWrapper: ApiCallWrapper,
     @IoDispatcher val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : ExerciseDataSource {
 
@@ -31,7 +31,7 @@ class ExerciseRemoteDataSource @Inject constructor(
     ): Flow<ResultWrapper<ExerciseWrapper>> {
         val body = FetchExerciseRequest(exerciseId, Constants.CATALOG_EXERCISE_ID)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ExerciseWrapper(exerciseApi.getExercise(body)) }
         )
@@ -40,7 +40,7 @@ class ExerciseRemoteDataSource @Inject constructor(
     override suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>> {
         val body = FetchExerciseRequest(exerciseId, Constants.CATALOG_EXERCISE_ID)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ExerciseWrapper(exerciseApi.getCatalogExercise(body)) }
         )
@@ -49,7 +49,7 @@ class ExerciseRemoteDataSource @Inject constructor(
     override suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>> {
         val body = FetchExercisesByMuscleGroupRequest(muscleGroupId)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ExerciseListWrapper(exerciseApi.getCatalogExercises(body)) }
         )
@@ -61,7 +61,7 @@ class ExerciseRemoteDataSource @Inject constructor(
     ): Flow<ResultWrapper<ExerciseDetailsWrapper>> {
         val body = FetchExerciseRequest(exerciseId, workoutId)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ExerciseDetailsWrapper(exerciseApi.getExerciseDetails(body)) }
         )
@@ -74,7 +74,7 @@ class ExerciseRemoteDataSource @Inject constructor(
     ): Flow<ResultWrapper<ExerciseWrapper>> {
         val body = AddNewExerciseSetRequest(exerciseId, workoutId, currentSets)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ExerciseWrapper(exerciseApi.addNewExerciseSet(body)) }
         )
@@ -88,7 +88,7 @@ class ExerciseRemoteDataSource @Inject constructor(
     ): Flow<ResultWrapper<ExerciseWrapper>> {
         val body = DeleteExerciseSetRequest(exerciseId, workoutId, setId, currentSets)
 
-        return apiAuthorizationCallWrapper.executeApiCall(
+        return apiCallWrapper.executeApiCall(
             dispatcher,
             { ExerciseWrapper(exerciseApi.deleteExerciseSet(body)) }
         )

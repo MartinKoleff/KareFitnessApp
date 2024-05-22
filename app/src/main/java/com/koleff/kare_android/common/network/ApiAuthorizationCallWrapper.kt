@@ -20,6 +20,7 @@ import javax.inject.Inject
 /**
  * Used for API requests that require authorization tokens
  */
+@Deprecated("Circular dependency issue")
 class ApiAuthorizationCallWrapper @Inject constructor(
     private val broadcastManager: LocalBroadcastManager,
     private val regenerateTokenNotifier: RegenerateTokenNotifier

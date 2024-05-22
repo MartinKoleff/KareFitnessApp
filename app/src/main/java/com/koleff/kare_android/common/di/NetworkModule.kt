@@ -1,9 +1,7 @@
 package com.koleff.kare_android.common.di
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
-import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.common.preferences.TokenDataStore
@@ -34,17 +32,17 @@ object NetworkModule {
     /**
      * Requiring authorization
      */
-    @Provides
-    @Singleton
-    fun provideApiAuthorizationCallWrapper(
-        broadcastManager: LocalBroadcastManager,
-        regenerateTokenNotifier: RegenerateTokenNotifier
-    ): ApiAuthorizationCallWrapper {
-        return ApiAuthorizationCallWrapper(
-            broadcastManager = broadcastManager,
-            regenerateTokenNotifier = regenerateTokenNotifier
-        )
-    }
+//    @Provides
+//    @Singleton
+//    fun provideApiAuthorizationCallWrapper(
+//        broadcastManager: LocalBroadcastManager,
+//        regenerateTokenNotifier: RegenerateTokenNotifier
+//    ): ApiAuthorizationCallWrapper {
+//        return ApiAuthorizationCallWrapper(
+//            broadcastManager = broadcastManager,
+//            regenerateTokenNotifier = regenerateTokenNotifier
+//        )
+//    }
 
     @Provides
     @Singleton
