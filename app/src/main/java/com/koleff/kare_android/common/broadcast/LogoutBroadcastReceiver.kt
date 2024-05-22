@@ -10,23 +10,19 @@ import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@AndroidEntryPoint
-class LogoutBroadcastReceiver : BroadcastReceiver() {
+@Singleton
+class LogoutBroadcastReceiver @Inject constructor(
+    private val authenticationUseCases: AuthenticationUseCases,
+    private val preferences: Preferences,
+    private val navigationController: NavigationController
+) : BroadcastReceiver() {
 
-    @Inject
-    lateinit var authenticationUseCases: AuthenticationUseCases
-
-    @Inject
-    lateinit var preferences: Preferences
-
-    @Inject
-    lateinit var navigationController: NavigationController
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("LogoutBroadcastReceiver", "Logout broadcast received.")
 
