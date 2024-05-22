@@ -16,5 +16,6 @@ interface AuthenticationRepository {
     suspend fun register(user: UserDto): Flow<ResultWrapper<ServerResponseData>>
 
     suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>>
+
     suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>>
 }

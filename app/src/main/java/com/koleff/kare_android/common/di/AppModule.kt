@@ -10,6 +10,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.network.NetworkManager
+import com.koleff.kare_android.common.network.RegenerateTokenNotifier
 import com.koleff.kare_android.common.network.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
@@ -579,13 +580,27 @@ object AppModule {
         doWorkoutPerformanceMetricsRepository: DoWorkoutPerformanceMetricsRepository
     ): DoWorkoutPerformanceMetricsUseCases {
         return DoWorkoutPerformanceMetricsUseCases(
-            deleteDoWorkoutPerformanceMetricsUseCase = DeleteDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
-            updateDoWorkoutPerformanceMetricsUseCase = UpdateDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
-            getAllDoWorkoutPerformanceMetricsUseCase = GetAllDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
-            getDoWorkoutPerformanceMetricsUseCase = GetDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository),
-            saveAllDoWorkoutExerciseSetUseCase = SaveAllDoWorkoutExerciseSetUseCase(doWorkoutPerformanceMetricsRepository),
-            saveDoWorkoutExerciseSetUseCase = SaveDoWorkoutExerciseSetUseCase(doWorkoutPerformanceMetricsRepository),
-            saveDoWorkoutPerformanceMetricsUseCase = SaveDoWorkoutPerformanceMetricsUseCase(doWorkoutPerformanceMetricsRepository)
+            deleteDoWorkoutPerformanceMetricsUseCase = DeleteDoWorkoutPerformanceMetricsUseCase(
+                doWorkoutPerformanceMetricsRepository
+            ),
+            updateDoWorkoutPerformanceMetricsUseCase = UpdateDoWorkoutPerformanceMetricsUseCase(
+                doWorkoutPerformanceMetricsRepository
+            ),
+            getAllDoWorkoutPerformanceMetricsUseCase = GetAllDoWorkoutPerformanceMetricsUseCase(
+                doWorkoutPerformanceMetricsRepository
+            ),
+            getDoWorkoutPerformanceMetricsUseCase = GetDoWorkoutPerformanceMetricsUseCase(
+                doWorkoutPerformanceMetricsRepository
+            ),
+            saveAllDoWorkoutExerciseSetUseCase = SaveAllDoWorkoutExerciseSetUseCase(
+                doWorkoutPerformanceMetricsRepository
+            ),
+            saveDoWorkoutExerciseSetUseCase = SaveDoWorkoutExerciseSetUseCase(
+                doWorkoutPerformanceMetricsRepository
+            ),
+            saveDoWorkoutPerformanceMetricsUseCase = SaveDoWorkoutPerformanceMetricsUseCase(
+                doWorkoutPerformanceMetricsRepository
+            )
         )
     }
 
@@ -612,7 +627,23 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideNetworkManager(): NetworkManager {
-        return NetworkManager()
+    fun provideNetworkManager(
+        broadcastManager: LocalBroadcastManager,
+        regenerateTokenNotifier: RegenerateTokenNotifier
+    ): NetworkManager {
+        return NetworkManager(
+            broadcastManager = broadcastManager,
+            regenerateTokenNotifier = regenerateTokenNotifier
+        )
+    }
+
+    /**
+     * Broadcast manager
+     */
+
+    @Provides
+    @Singleton
+    fun provideLocalBroadcastManager(@ApplicationContext context: Context): LocalBroadcastManager {
+        return LocalBroadcastManager.getInstance(context)
     }
 }
