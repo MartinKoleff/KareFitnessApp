@@ -1,4 +1,4 @@
-package com.koleff.kare_android.view_model.authentication
+package com.koleff.kare_android.authentication.view_model
 
 import app.cash.turbine.test
 import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake

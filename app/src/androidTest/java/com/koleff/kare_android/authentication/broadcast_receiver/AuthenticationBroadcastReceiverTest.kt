@@ -1,9 +1,12 @@
-package com.koleff.kare_android.broadcast_receiver.authentication
+package com.koleff.kare_android.authentication.broadcast_receiver
 
 import android.content.Intent
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import app.cash.turbine.test
 import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake
 import com.koleff.kare_android.authentication.data.NavigationControllerFake
+import com.koleff.kare_android.authentication.data.RegenerateTokenNotifierFake
 import com.koleff.kare_android.authentication.data.TokenDataStoreFake
 import com.koleff.kare_android.authentication.data.UserDaoFake
 import com.koleff.kare_android.common.Constants
@@ -33,13 +36,17 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertTrue
 import org.junit.BeforeClass
 import org.junit.Test
+import org.junit.runner.RunWith
 
+@RunWith(AndroidJUnit4::class)
 class AuthenticationBroadcastReceiverTest {
 
     companion object {
@@ -65,6 +72,8 @@ class AuthenticationBroadcastReceiverTest {
         private lateinit var tokenDataStoreFake: TokenDataStoreFake
         private lateinit var regenerateTokenHandler: RegenerateTokenHandler
         private lateinit var regenerateTokenBroadcastReceiver: RegenerateTokenBroadcastReceiver
+
+        private lateinit var regenerateTokenNotifierFake: RegenerateTokenNotifierFake
 
         private const val TAG = "AuthenticationBroadcastReceiverTest"
 
@@ -123,6 +132,12 @@ class AuthenticationBroadcastReceiverTest {
         }
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
+
     @Test
     fun logoutUseCaseTest() = runTest {
         val logoutIntent = Intent(Constants.ACTION_LOGOUT)
@@ -131,9 +146,9 @@ class AuthenticationBroadcastReceiverTest {
 
         logoutBroadcastReceiver.onReceive(appContext, logoutIntent)
 
-        assertTrue(credentialsDataStoreFake.isCleared)
+        assertEquals(credentialsDataStoreFake.isCleared, true)
 
-        assertTrue(navigationControllerFake.isBackstackCleared)
+        assertEquals(navigationControllerFake.isBackstackCleared, true)
         assertNotNull(navigationControllerFake.lastDestination)
     }
 
@@ -143,8 +158,10 @@ class AuthenticationBroadcastReceiverTest {
 
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
 
-        regenerateTokenBroadcastReceiver.onReceive(appContext, regenerateTokenIntent)
+        regenerateTokenHandler.regenerateTokenState.test {
+            regenerateTokenBroadcastReceiver.onReceive(appContext, regenerateTokenIntent)
 
-        assertNotNull(tokenDataStoreFake.getTokens())
+            assertNotNull(tokenDataStoreFake.getTokens())
+        }
     }
 }
