@@ -7,8 +7,6 @@ import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.BuildConfig
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.network.NetworkManager
-import com.koleff.kare_android.common.network.RegenerateTokenNotifier
 import com.koleff.kare_android.common.network.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
@@ -244,22 +242,6 @@ object AppModule {
     @Singleton
     fun providePreferences(sharedPreferences: SharedPreferences): Preferences {
         return DefaultPreferences(sharedPreferences)
-    }
-
-    /**
-     * Network
-     */
-
-    @Provides
-    @Singleton
-    fun provideNetworkManager(
-        broadcastManager: LocalBroadcastManager,
-        regenerateTokenNotifier: RegenerateTokenNotifier
-    ): NetworkManager {
-        return NetworkManager(
-            broadcastManager = broadcastManager,
-            regenerateTokenNotifier = regenerateTokenNotifier
-        )
     }
 
     /**

@@ -1,7 +1,9 @@
 package com.koleff.kare_android.common.di
 
 import com.koleff.kare_android.common.broadcast.LogoutBroadcastReceiver
+import com.koleff.kare_android.common.broadcast.LogoutHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenBroadcastReceiver
+import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
@@ -18,24 +20,29 @@ object BroadcastReceiverModule {
     @Provides
     @Singleton
     fun provideRegenerateTokenBroadcastReceiver(
-        authenticationUseCases: AuthenticationUseCases,
-        preferences: Preferences
+        regenerateTokenHandler: RegenerateTokenHandler
     ): RegenerateTokenBroadcastReceiver {
         return RegenerateTokenBroadcastReceiver(
-            authenticationUseCases = authenticationUseCases,
-            preferences = preferences
+            regenerateTokenHandler = regenerateTokenHandler
         )
     }
-
 
     @Provides
     @Singleton
     fun provideLogoutBroadcastReceiver(
+        logoutHandler: LogoutHandler
+    ): LogoutBroadcastReceiver {
+       return LogoutBroadcastReceiver(logoutHandler)
+    }
+
+    @Provides
+    @Singleton
+    fun provideLogoutHandler(
         authenticationUseCases: AuthenticationUseCases,
         preferences: Preferences,
         navigationController: NavigationController
-    ): LogoutBroadcastReceiver {
-        return LogoutBroadcastReceiver(
+    ): LogoutHandler {
+        return LogoutHandler(
             authenticationUseCases = authenticationUseCases,
             preferences = preferences,
             navigationController = navigationController
