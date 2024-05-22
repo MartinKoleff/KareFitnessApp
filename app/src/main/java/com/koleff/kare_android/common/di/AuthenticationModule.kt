@@ -1,5 +1,7 @@
 package com.koleff.kare_android.common.di
 
+import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.common.auth.CredentialsDataStore
@@ -21,15 +23,40 @@ import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.LogoutUseCase
 import com.koleff.kare_android.domain.usecases.RegenerateTokenUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
+import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthenticationModule {
+
+    /**
+     * API
+     */
+
+    @Provides
+    @Singleton
+    fun provideAuthenticationApi(okHttpClient: OkHttpClient, moshi: Moshi): AuthenticationApi {
+        return Retrofit.Builder()
+            .baseUrl(Constants.BASE_URL_FULL)
+            .client(okHttpClient)
+            .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .addConverterFactory(MoshiConverterFactory.create(moshi))
+//            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(AuthenticationApi::class.java)
+    }
+
+    /**
+     * Components
+     */
 
     @Provides
     @Singleton
@@ -52,6 +79,10 @@ object AuthenticationModule {
         return CredentialsAuthenticatorImpl(credentialsValidator, credentialsDataStore)
     }
 
+    /**
+     * Data source
+     */
+
     @Provides
     @Singleton
     fun provideAuthenticationDataSource(
@@ -71,11 +102,19 @@ object AuthenticationModule {
         )
     }
 
+    /**
+     * Repository
+     */
+
     @Provides
     @Singleton
     fun provideAuthenticationRepository(authenticationDataSource: AuthenticationDataSource): AuthenticationRepository {
         return AuthenticationRepositoryImpl(authenticationDataSource)
     }
+
+    /**
+     * Use cases
+     */
 
     @Provides
     @Singleton
