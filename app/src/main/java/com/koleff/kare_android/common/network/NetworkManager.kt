@@ -4,6 +4,7 @@ import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
@@ -17,15 +18,19 @@ import retrofit2.HttpException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class NetworkManager @Inject constructor(
-    private val broadcastManager: LocalBroadcastManager,
-    private val regenerateTokenNotifier: RegenerateTokenNotifier
+//    private val broadcastManager: LocalBroadcastManager,
+//    private val regenerateTokenNotifier: RegenerateTokenNotifier
 ) {
+    @Inject
+    lateinit var broadcastManager: LocalBroadcastManager
+
+    @Inject
+    lateinit var regenerateTokenNotifier: RegenerateTokenNotifier
+
     companion object {
         private const val MAX_RETRY_COUNT = 1
     }
-
 
     suspend fun <T> executeApiCall(
         dispatcher: CoroutineDispatcher,

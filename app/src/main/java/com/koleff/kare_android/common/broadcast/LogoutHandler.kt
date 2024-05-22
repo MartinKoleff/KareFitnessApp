@@ -13,7 +13,6 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
 class LogoutHandler @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases,
     private val preferences: Preferences,

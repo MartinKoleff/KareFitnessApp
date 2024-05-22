@@ -12,10 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
-//TODO: remove dependencies causing circular dependency...
-@Singleton
 class RegenerateTokenHandler @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases,
     private val preferences: Preferences

@@ -1,6 +1,5 @@
 package com.koleff.kare_android.common.di
 
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
 import com.koleff.kare_android.common.network.NetworkManager
@@ -26,16 +25,18 @@ abstract class NetworkBindModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-object NetworkModule{
+object NetworkModule {
+
+    //TODO: removed due to circular dependency...
     @Provides
     @Singleton
     fun provideNetworkManager(
-        broadcastManager: LocalBroadcastManager,
-        regenerateTokenNotifier: RegenerateTokenNotifier
+//        broadcastManager: LocalBroadcastManager,
+//        regenerateTokenNotifier: RegenerateTokenNotifier
     ): NetworkManager {
         return NetworkManager(
-            broadcastManager = broadcastManager,
-            regenerateTokenNotifier = regenerateTokenNotifier
+//            broadcastManager = broadcastManager,
+//            regenerateTokenNotifier = regenerateTokenNotifier
         )
     }
 

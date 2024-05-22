@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 class LogoutBroadcastReceiver @Inject constructor(
     private val logoutHandler: LogoutHandler
 ) : BroadcastReceiver() {
