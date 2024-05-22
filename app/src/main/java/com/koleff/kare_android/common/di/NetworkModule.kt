@@ -4,6 +4,8 @@ import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
 import com.koleff.kare_android.common.network.NetworkManager
 import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.common.preferences.TokenDataStore
+import com.koleff.kare_android.common.preferences.TokenDataStoreImpl
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import dagger.Binds
 import dagger.Module
@@ -27,7 +29,6 @@ abstract class NetworkBindModule {
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    //TODO: removed due to circular dependency...
     @Provides
     @Singleton
     fun provideNetworkManager(
@@ -44,10 +45,20 @@ object NetworkModule {
     @Singleton
     fun provideRegenerateTokenHandler(
         authenticationUseCases: AuthenticationUseCases,
-        preferences: Preferences
+        tokenDataStore: TokenDataStore
     ): RegenerateTokenHandler {
         return RegenerateTokenHandler(
             authenticationUseCases = authenticationUseCases,
+            tokenDataStore = tokenDataStore
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideTokenDataStore(
+        preferences: Preferences
+    ): TokenDataStore {
+        return TokenDataStoreImpl(
             preferences = preferences
         )
     }

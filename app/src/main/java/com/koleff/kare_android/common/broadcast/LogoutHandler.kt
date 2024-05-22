@@ -3,26 +3,25 @@ package com.koleff.kare_android.common.broadcast
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import com.koleff.kare_android.common.preferences.CredentialsDataStore
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
-import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class LogoutHandler @Inject constructor(
     private val authenticationUseCases: AuthenticationUseCases,
-    private val preferences: Preferences,
+    private val credentialsDataStore: CredentialsDataStore,
     private val navigationController: NavigationController
 ) {
 
      fun logout(context: Context){
         Log.d("LogoutHandler", "Logout handler received.")
 
-        val credentials = preferences.getCredentials() ?: return
+        val credentials = credentialsDataStore.getCredentials() ?: return
 
         CoroutineScope(Dispatchers.IO).launch {
             authenticationUseCases.logoutUseCase.invoke(credentials)

@@ -5,7 +5,7 @@ import com.koleff.kare_android.common.broadcast.LogoutHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenBroadcastReceiver
 import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
 import com.koleff.kare_android.common.navigation.NavigationController
-import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.common.preferences.CredentialsDataStore
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import dagger.Module
 import dagger.Provides
@@ -39,12 +39,12 @@ object BroadcastReceiverModule {
     @Singleton
     fun provideLogoutHandler(
         authenticationUseCases: AuthenticationUseCases,
-        preferences: Preferences,
+        credentialsDataStore: CredentialsDataStore,
         navigationController: NavigationController
     ): LogoutHandler {
         return LogoutHandler(
             authenticationUseCases = authenticationUseCases,
-            preferences = preferences,
+            credentialsDataStore = credentialsDataStore,
             navigationController = navigationController
         )
     }

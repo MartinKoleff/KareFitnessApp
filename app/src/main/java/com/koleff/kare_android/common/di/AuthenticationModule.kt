@@ -4,8 +4,8 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
-import com.koleff.kare_android.common.auth.CredentialsDataStore
-import com.koleff.kare_android.common.auth.CredentialsDataStoreImpl
+import com.koleff.kare_android.common.preferences.CredentialsDataStore
+import com.koleff.kare_android.common.preferences.CredentialsDataStoreImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.common.network.NetworkManager

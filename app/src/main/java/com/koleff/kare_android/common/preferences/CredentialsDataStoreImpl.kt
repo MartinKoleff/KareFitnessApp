@@ -1,8 +1,9 @@
-package com.koleff.kare_android.common.auth
+package com.koleff.kare_android.common.preferences
 
-import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.common.auth.Credentials
+import javax.inject.Inject
 
-class CredentialsDataStoreImpl(
+class CredentialsDataStoreImpl @Inject constructor(
     private val preferences: Preferences
 ): CredentialsDataStore {
     override fun getCredentials(): Credentials? {
@@ -11,5 +12,9 @@ class CredentialsDataStoreImpl(
 
     override fun saveCredentials(credentials: Credentials) {
         preferences.saveCredentials(credentials)
+    }
+
+    override fun deleteCredentials() {
+        preferences.deleteCredentials()
     }
 }
