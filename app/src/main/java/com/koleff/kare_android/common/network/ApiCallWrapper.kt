@@ -1,11 +1,9 @@
 package com.koleff.kare_android.common.network
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresExtension
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -14,8 +12,15 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 
-object Network {
-    private const val MAX_RETRY_COUNT = 1
+/**
+ * Used for API requests that don't require authorization tokens
+ * - Login
+ * - Register
+ */
+class ApiCallWrapper {
+    companion object {
+        private const val MAX_RETRY_COUNT = 1
+    }
 
     suspend fun <T> executeApiCall(
         dispatcher: CoroutineDispatcher,
@@ -25,7 +30,7 @@ object Network {
         try {
             emit(ResultWrapper.Loading())
 
-            Log.d("Network", "Network request sent.")
+            Log.d("ApiCallWrapper", "Network request sent.")
             val apiResult = apiCall.invoke()
 
             if (apiResult.isSuccessful) {
@@ -55,13 +60,13 @@ object Network {
         error: KareError,
         unsuccessfulRetriesCount: Int = 0
     ): Flow<ResultWrapper<T>> where T : ServerResponseData {
-        Log.d("Network", "Network request failed. Retrying...")
+        Log.d("ApiCallWrapper", "Network request failed. Retrying...")
 
         return if (unsuccessfulRetriesCount < MAX_RETRY_COUNT) {
             executeApiCall(dispatcher, apiCall, unsuccessfulRetriesCount + 1)
         } else {
             Log.d(
-                "Network",
+                "ApiCallWrapper",
                 "Network request failed. Error: $error."
             )
 

@@ -44,6 +44,18 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <receiver android:name=".common.broadcast.LogoutBroadcastReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.koleff.kare_android.ACTION_LOGOUT" />
+            </intent-filter>
+        </receiver>
+
+        <receiver android:name=".common.broadcast.RegenerateTokenBroadcastReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="com.koleff.kare_android.ACTION_REGENERATE_TOKEN" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

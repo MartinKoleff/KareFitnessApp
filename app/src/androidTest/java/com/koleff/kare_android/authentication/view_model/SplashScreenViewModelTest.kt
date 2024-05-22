@@ -1,4 +1,4 @@
-package com.koleff.kare_android.view_model.authentication
+package com.koleff.kare_android.authentication.view_model
 
 import app.cash.turbine.test
 import com.koleff.kare_android.authentication.data.CredentialsDataStoreFake
@@ -22,6 +22,7 @@ import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.LogoutUseCase
+import com.koleff.kare_android.domain.usecases.RegenerateTokenUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.ui.state.LoginData
 import com.koleff.kare_android.ui.state.LoginState
@@ -105,7 +106,8 @@ class SplashScreenViewModelTest {
                     authenticationRepository,
                     credentialsAuthenticator
                 ),
-                logoutUseCase = LogoutUseCase(authenticationRepository)
+                logoutUseCase = LogoutUseCase(authenticationRepository),
+                regenerateTokenUseCase = RegenerateTokenUseCase(authenticationRepository)
             )
 
             logger = TestLogger(isLogging)

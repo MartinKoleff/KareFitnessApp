@@ -10,7 +10,6 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import java.lang.NullPointerException
 import java.lang.reflect.Type
 
 
@@ -186,5 +185,16 @@ class DefaultPreferences(
                 else -> throw ex
             }
         }
+    }
+
+    override fun deleteTokens() {
+        sharedPref.edit()
+            .putString(Preferences.TOKENS, "")
+            .apply()
+    }
+
+    override fun updateTokens(tokens: Tokens) {
+        deleteTokens()
+        saveTokens(tokens)
     }
 }

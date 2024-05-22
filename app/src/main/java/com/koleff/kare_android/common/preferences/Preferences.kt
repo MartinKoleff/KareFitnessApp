@@ -21,6 +21,8 @@ interface Preferences {
     fun deleteCredentials()
     fun saveTokens(tokens: Tokens)
     fun getTokens(): Tokens?
+    fun deleteTokens()
+    fun updateTokens(tokens: Tokens)
 
     companion object {
         const val DASHBOARD_MUSCLE_GROUP_LIST = "dashboard_muscle_group_list"

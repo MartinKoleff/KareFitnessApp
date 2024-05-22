@@ -20,6 +20,7 @@ import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
 import com.koleff.kare_android.domain.usecases.LoginUseCase
 import com.koleff.kare_android.domain.usecases.LogoutUseCase
+import com.koleff.kare_android.domain.usecases.RegenerateTokenUseCase
 import com.koleff.kare_android.domain.usecases.RegisterUseCase
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.utils.TestLogger
@@ -224,7 +225,8 @@ class AuthenticationTest {
                     authenticationRepository,
                     credentialsAuthenticator
                 ),
-                logoutUseCase = LogoutUseCase(authenticationRepository)
+                logoutUseCase = LogoutUseCase(authenticationRepository),
+                regenerateTokenUseCase = RegenerateTokenUseCase(authenticationRepository)
             )
 
             logger = TestLogger(isLogging)
@@ -536,4 +538,7 @@ class AuthenticationTest {
         logger.i(TAG, "Data: $registerState")
         assertTrue { registerState[1].isError && registerState[1].error == KareError.INVALID_CREDENTIALS }
     }
+
+    //TODO: [Test] logout...
+    //TODO: [Test] regenerate token on expire...
 }
