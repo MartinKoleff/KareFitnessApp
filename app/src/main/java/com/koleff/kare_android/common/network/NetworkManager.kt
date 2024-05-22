@@ -1,11 +1,12 @@
 package com.koleff.kare_android.common.network
 
+import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
@@ -14,15 +15,17 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import retrofit2.HttpException
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@AndroidEntryPoint
-class NetworkManager {
-
-    @Inject
-    lateinit var broadcastManager: LocalBroadcastManager
-    companion object{
+@Singleton
+class NetworkManager @Inject constructor(
+    private val broadcastManager: LocalBroadcastManager,
+    private val regenerateTokenNotifier: RegenerateTokenNotifier
+) {
+    companion object {
         private const val MAX_RETRY_COUNT = 1
     }
+
 
     suspend fun <T> executeApiCall(
         dispatcher: CoroutineDispatcher,
@@ -38,12 +41,17 @@ class NetworkManager {
             if (apiResult.isSuccessful) {
                 emit(ResultWrapper.Success(apiResult))
             } else {
-                when(apiResult.error){
+                when (apiResult.error) {
 
                     //Regenerate token
-                    //TODO: on success -> doRetryCall...
                     KareError.TOKEN_EXPIRED -> {
-                        regenerateToken() //TODO: await response?
+                        regenerateToken {
+
+                            //Retry API call
+                            emitAll(
+                                doRetryCall(dispatcher, apiCall, apiResult.error, unsuccessfulRetriesCount)
+                            )
+                        }
                         return@flow
                     }
 
@@ -78,10 +86,29 @@ class NetworkManager {
     private fun logout() {
         Log.d("Network", "Invalid token. Logging out.")
 
+        val intent = Intent(Constants.ACTION_LOGOUT)
+        broadcastManager.sendBroadcast(intent)
     }
 
-    private fun regenerateToken() {
+    private suspend fun regenerateToken(onSuccess: suspend () -> Unit) {
         Log.d("Network", "Token regenerating...")
+
+        val intent = Intent(Constants.ACTION_REGENERATE_TOKEN)
+        broadcastManager.sendBroadcast(intent)
+
+        regenerateTokenNotifier.regenerateTokenState.collect { result ->
+            Log.d("Network", "Regenerate token state received. State: $result")
+
+            if (result.isSuccessful){
+
+                //Retry API call
+                onSuccess()
+            }else if(result.isError){
+
+                //Logout
+                logout()
+            }
+        }
     }
 
     private suspend fun <T> doRetryCall(
