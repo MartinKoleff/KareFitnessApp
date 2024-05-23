@@ -15,8 +15,8 @@ import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.common.broadcast.LogoutBroadcastReceiver
-import com.koleff.kare_android.common.broadcast.handler.LogoutHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenBroadcastReceiver
+import com.koleff.kare_android.common.broadcast.handler.LogoutHandler
 import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenHandler
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
@@ -46,6 +46,8 @@ import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import javax.inject.Provider
+
+//TODO: wire with DI...
 
 @RunWith(AndroidJUnit4::class)
 class AuthenticationBroadcastReceiverTest {
