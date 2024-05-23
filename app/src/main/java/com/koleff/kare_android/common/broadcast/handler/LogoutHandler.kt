@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common.broadcast
+package com.koleff.kare_android.common.broadcast.handler
 
 import android.content.Context
 import android.util.Log

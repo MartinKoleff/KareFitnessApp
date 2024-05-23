@@ -1,8 +1,8 @@
 package com.koleff.kare_android.common.di
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
-import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenHandler
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenNotifier
 import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.common.preferences.Preferences

@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common.broadcast
+package com.koleff.kare_android.common.broadcast.handler
 
 import com.koleff.kare_android.ui.state.TokenState
 import kotlinx.coroutines.flow.Flow

@@ -1,6 +1,6 @@
 package com.koleff.kare_android.authentication.data
 
-import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenNotifier
 import com.koleff.kare_android.ui.state.TokenState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

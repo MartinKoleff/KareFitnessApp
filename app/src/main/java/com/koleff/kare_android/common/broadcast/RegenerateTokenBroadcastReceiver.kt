@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenHandler
 import javax.inject.Inject
 
 class RegenerateTokenBroadcastReceiver @Inject constructor(
