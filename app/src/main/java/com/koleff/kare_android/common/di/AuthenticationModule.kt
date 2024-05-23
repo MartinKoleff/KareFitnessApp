@@ -93,10 +93,7 @@ object AuthenticationModule {
         apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
         apiCallWrapper: ApiCallWrapper
     ): AuthenticationDataSource {
-        val useRemoteAPI =
-            false //Temporary testing authentication with remote API and other functionalities with local impl.
-
-        return if (!useRemoteAPI) AuthenticationLocalDataSource(
+        return if (Constants.useLocalDataSource) AuthenticationLocalDataSource(
             userDao = userDao,
             credentialsAuthenticator = credentialsAuthenticator
         ) else AuthenticationRemoteDataSource(

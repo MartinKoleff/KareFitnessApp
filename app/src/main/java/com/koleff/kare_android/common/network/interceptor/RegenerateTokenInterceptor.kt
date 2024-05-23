@@ -1,10 +1,10 @@
-package com.koleff.kare_android.common.network
+package com.koleff.kare_android.common.network.interceptor
 
 import android.content.Intent
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.broadcast.RegenerateTokenNotifier
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenNotifier
 import com.koleff.kare_android.common.preferences.Preferences
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

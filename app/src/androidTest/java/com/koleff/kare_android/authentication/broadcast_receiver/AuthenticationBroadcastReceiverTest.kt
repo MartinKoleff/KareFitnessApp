@@ -15,9 +15,9 @@ import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
 import com.koleff.kare_android.common.broadcast.LogoutBroadcastReceiver
-import com.koleff.kare_android.common.broadcast.LogoutHandler
+import com.koleff.kare_android.common.broadcast.handler.LogoutHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenBroadcastReceiver
-import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenHandler
 import com.koleff.kare_android.data.datasource.AuthenticationDataSource
 import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
 import com.koleff.kare_android.data.datasource.UserDataSource

@@ -1,9 +1,9 @@
 package com.koleff.kare_android.common.di
 
 import com.koleff.kare_android.common.broadcast.LogoutBroadcastReceiver
-import com.koleff.kare_android.common.broadcast.LogoutHandler
+import com.koleff.kare_android.common.broadcast.handler.LogoutHandler
 import com.koleff.kare_android.common.broadcast.RegenerateTokenBroadcastReceiver
-import com.koleff.kare_android.common.broadcast.RegenerateTokenHandler
+import com.koleff.kare_android.common.broadcast.handler.RegenerateTokenHandler
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.preferences.CredentialsDataStore
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases

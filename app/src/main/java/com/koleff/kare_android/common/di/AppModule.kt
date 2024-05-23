@@ -6,8 +6,8 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.BuildConfig
-import com.koleff.kare_android.common.network.BearerTokenInterceptor
-import com.koleff.kare_android.common.network.UUIDJsonAdapter
+import com.koleff.kare_android.common.network.interceptor.BearerTokenInterceptor
+import com.koleff.kare_android.common.network.json_adapter.UUIDJsonAdapter
 import com.koleff.kare_android.common.preferences.DefaultPreferences
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao

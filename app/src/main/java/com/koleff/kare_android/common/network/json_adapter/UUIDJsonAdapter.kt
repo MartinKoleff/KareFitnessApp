@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common.network
+package com.koleff.kare_android.common.network.json_adapter
 
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
