@@ -4,10 +4,9 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 
 ## Table of Contents
 - [Features](#features)
-- [Cool Stuff](#cool-stuff)
+- [Cool Features](#cool-features)
 - [Screens](#screens)
 - [Installation](#installation)
-- [Usage](#usage)
 - [Dependencies](#dependencies)
 - [Contributing](#contributing)
 - [License](#license)
@@ -20,7 +19,7 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 - Track and save your workouts.
 - Set up notifications and more in settings.
 
-## Cool Stuff
+## Cool Features
 
 - Push notifications
 - Local and remote data sources
@@ -34,6 +33,11 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 - Instrumental tests
 - Custom navigation
 - Multi-modular project using clean architecture (UI, domain, and data layers)
+
+![wallpaper 1](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/6c7ef7cc-62f9-4177-ac63-53f35a327019)
+![wallpaper 2](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/5f24c532-b716-45fd-9cbf-4ca280295804)
+![wallpaper 5](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/d52082b0-270b-41bd-b448-da98188cc9cb)
+![wallpaper 4](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/fe35ab5c-b958-46d4-b4d4-f892c24e0e05)
 
 ## Screens
 
@@ -81,15 +85,6 @@ Features a video background with options to log in or register.
     ```
 2. Open the project in Android Studio.
 3. Build the project to download all dependencies.
-
-## Usage
-
-1. Register or log in to your account.
-2. Navigate through the dashboard to select a muscle group.
-3. Filter exercises and view details.
-4. Create workouts by adding exercises.
-5. Track your progress and update your exercise data during workouts.
-6. Manage your settings as needed.
 
 ## Dependencies
 
