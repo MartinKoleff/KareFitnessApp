@@ -67,7 +67,7 @@ View a list of exercises sorted by muscle group. Add multiple exercises to your 
 Logout and enable push notifications. More settings coming soon.
 
 ### Do Workout Screen
-The main functionality of Kare. Includes a timer, exercise data sheet, cooldown screen, and the ability to skip sets. Ends with workout data saving.
+The main functionality of Kare. Includes a timer, exercise data sheet, cooldown screen, and the ability to skip sets. Ends with workout data saving. Statistics and workout history screens coming soon!
 
 ### Login Screen
 Log into the app.
