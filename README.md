@@ -82,7 +82,7 @@ Features a video background with options to log in or register.
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/kare.git
+    git clone https://github.com/MartinKoleff/KareFitnessApp.git
     ```
 2. Open the project in Android Studio.
 3. Build the project to download all dependencies.
