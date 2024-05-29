@@ -4,7 +4,7 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 
 ## Table of Contents
 - [Features](#features)
-- [Cool Features](#cool-features)
+- [App Functionalities](#app-functionalities)
 - [Screens](#screens)
 - [Installation](#installation)
 - [Dependencies](#dependencies)
@@ -19,7 +19,7 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 - Track and save your workouts.
 - Set up notifications and more in settings.
 
-## Cool Features
+## App Functionalities
 
 - Push notifications
 - Local and remote data sources
