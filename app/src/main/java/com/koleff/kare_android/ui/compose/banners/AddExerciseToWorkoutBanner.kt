@@ -32,6 +32,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
@@ -46,6 +47,19 @@ fun AddExerciseToWorkoutBanner(
     val screenWidth = configuration.screenWidthDp.dp
 
     val primaryColor = MaterialTheme.colorScheme.primary
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val subtitleTextColor = MaterialTheme.colorScheme.onSurface
+    val circleColor = MaterialTheme.colorScheme.onSurface
+    val addNewWorkoutTint = Color.Green
+
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor
+    )
+
+    val subtitleTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = subtitleTextColor
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -66,8 +80,7 @@ fun AddExerciseToWorkoutBanner(
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxSize()
-                    .align(Alignment.TopStart)
-                    .graphicsLayer { alpha = 0.80f },
+                    .align(Alignment.TopStart),
                 colorFilter = ColorFilter.tint(primaryColor, BlendMode.Multiply)
             )
 
@@ -81,11 +94,11 @@ fun AddExerciseToWorkoutBanner(
                     .padding(end = 16.dp)
                     .drawBehind {
                         drawCircle(
-                            color = Color.White,
+                            color = circleColor,
                             radius = this.size.maxDimension / 2
                         )
                     },
-                colorFilter = ColorFilter.tint(Color.Green)
+                colorFilter = ColorFilter.tint(addNewWorkoutTint)
             )
 
             //Text
@@ -102,7 +115,7 @@ fun AddExerciseToWorkoutBanner(
                 ) {
 
                     //Title
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -112,17 +125,13 @@ fun AddExerciseToWorkoutBanner(
                             )
                         ),
                         text = "Want to add exercise to your workout?",
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = titleTextStyle,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
                     )
 
                     //Sub-title (description)
-                    Text( //TODO: and cooler font...
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
@@ -132,11 +141,7 @@ fun AddExerciseToWorkoutBanner(
                             )
                         ),
                         text = "Click to select an exercise.",
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
+                        style = subtitleTextStyle,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -147,6 +152,7 @@ fun AddExerciseToWorkoutBanner(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun AddExerciseToWorkoutBannerPreview() {
     AddExerciseToWorkoutBanner() {

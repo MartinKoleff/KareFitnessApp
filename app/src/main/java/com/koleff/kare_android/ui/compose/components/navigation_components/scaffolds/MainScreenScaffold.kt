@@ -1,8 +1,10 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,7 +25,8 @@ fun MainScreenScaffold(
     modifierPadding: @Composable (paddingValues: PaddingValues) -> Unit
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+        Modifier.fillMaxSize(),
         topBar = {
             if (animatedToolbarState.showToolbar) {
                 Toolbar(

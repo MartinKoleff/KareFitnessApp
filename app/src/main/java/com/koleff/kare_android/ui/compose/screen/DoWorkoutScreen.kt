@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
@@ -60,18 +61,19 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
-import com.koleff.kare_android.common.navigation.Destination
-import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.DoWorkoutFooter
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
+import com.koleff.kare_android.ui.compose.components.ExerciseDataSheetModal2
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
@@ -104,6 +106,10 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     }
 
     var showWorkoutCompletedDialog by remember {
+        mutableStateOf(false)
+    }
+
+    var showExitWorkoutDialog by remember {
         mutableStateOf(false)
     }
 
@@ -151,6 +157,22 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
                 doWorkoutViewModel.navigateToDashboard()
+
+                showWorkoutCompletedDialog = false
+            }
+        )
+    }
+
+    if(showExitWorkoutDialog){
+        ExitWorkoutDialog(
+            workoutName = state.doWorkoutData.workout.name,
+            onClick = {
+                onExitWorkoutAction()
+
+                showExitWorkoutDialog = false
+            },
+            onDismiss = {
+                showExitWorkoutDialog = false
             }
         )
     }
@@ -190,7 +212,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 
                     //Disable exit workout button when NextExerciseCountdownScreen is visible
                     if (!state.doWorkoutData.isBetweenExerciseCountdown) {
-                        onExitWorkoutAction()
+                        showExitWorkoutDialog = true
                     }
                 },
                 onNextExerciseAction = {
@@ -245,7 +267,8 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
 }
 
 //Cant be separate screen because of navigation delay...
-//Rather be overlay on the existing DoWorkoutScreen blurring the background until it gets configured (next exercise, reset timer, etc...)
+//Rather be overlay on the existing DoWorkoutScreen blurring the background until it gets configured
+// (next exercise, reset timer, etc...)
 @Composable
 fun NextExerciseCountdownScreen(
     nextExercise: ExerciseDto,
@@ -278,7 +301,6 @@ fun NextExerciseCountdownScreen(
             },
         verticalArrangement = Arrangement.Top
     ) {
-        val textColor = Color.White
         val exerciseText = if (isWorkoutComplete) {
             "Workout completed!"
         } else {
@@ -288,16 +310,25 @@ fun NextExerciseCountdownScreen(
         val setText =
             "Currently doing set $currentSetNumber out of $totalSets total sets."
 
+        val textColor = MaterialTheme.colorScheme.onSurface
+        val titleTextStyle = MaterialTheme.typography.displaySmall.copy(
+            color = textColor
+        )
+
+        val subtitleTextStyle = MaterialTheme.typography.headlineSmall.copy(
+            color = textColor
+        )
+
+        val timerTextStyle = MaterialTheme.typography.displayLarge.copy(
+            color = textColor
+        )
+
         //Texts
         Text(
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 6.dp),
             text = exerciseText,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 36.sp,
-                fontWeight = FontWeight.ExtraBold
-            ),
+            style = titleTextStyle,
             maxLines = 3,
             overflow = TextOverflow.Ellipsis
         )
@@ -306,11 +337,7 @@ fun NextExerciseCountdownScreen(
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 6.dp),
             text = setText,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Medium
-            ),
+            style = subtitleTextStyle,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
@@ -325,11 +352,7 @@ fun NextExerciseCountdownScreen(
             Text(
                 modifier = Modifier.padding(countdownNumberPadding),
                 text = countdownTime.toSeconds().toString(),
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 64.sp,
-                    fontWeight = FontWeight.Medium
-                ),
+                style = timerTextStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -352,429 +375,4 @@ fun NextExerciseCountdownScreenPreview() {
         countdownTime = countdownTime,
         defaultTotalSets = defaultTotalSets
     )
-}
-
-@Composable
-fun HalfTransparentColumn(alpha: Float = 0.3f, content: @Composable ColumnScope.() -> Unit) {
-    Column {
-        content()
-
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val height = size.height / 2
-            drawRect(
-                color = Color.Black.copy(alpha = alpha),
-                size = Size(size.width, height)
-            )
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun DoWorkoutFooterWithModal(
-    totalTime: ExerciseTime,
-    timeLeft: ExerciseTime,
-    exercise: ExerciseDto,
-    currentSetNumber: Int, //Used for CurrentExerciseInfoRow
-    defaultTotalSets: Int, //Used for CurrentExerciseInfoRow
-    isNextExercise: Boolean,
-    onSaveExerciseData: (ExerciseProgressDto) -> Unit
-) {
-    val currentSet = exercise.sets[currentSetNumber - 1]
-
-    ExerciseDataSheetModal2(
-        exercise = exercise,
-        currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets,
-        isNextExercise = isNextExercise,
-        onSaveExerciseData = onSaveExerciseData
-    ) {
-
-        //Footer
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            DoWorkoutFooter(
-                totalTime = totalTime,
-                timeLeft = timeLeft,
-                currentSet = currentSet
-            )
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun DoWorkoutFooterWithModalPreview() {
-    val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
-    val timeLeft = ExerciseTime(hours = 0, minutes = 1, seconds = 15)
-    val exercise = MockupDataGeneratorV2.generateExercise()
-    val currentSetNumber = 1
-    val defaultTotalSets = 4
-    val workoutTimer = TimerUtil(time.toSeconds())
-    val onTimePassed: (ExerciseTime) -> Unit = {
-
-    }
-    val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {
-
-    }
-
-    DoWorkoutFooterWithModal(
-        totalTime = time,
-        timeLeft = timeLeft,
-        exercise = exercise,
-        currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets,
-        isNextExercise = false,
-        onSaveExerciseData = onSaveExerciseData
-    )
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Composable
-fun DoWorkoutFooter(
-    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
-    totalTime: ExerciseTime,
-    timeLeft: ExerciseTime,
-    currentSet: ExerciseSetDto
-) {
-    val exerciseDataPadding = PaddingValues(4.dp)
-    val textColor = Color.White
-
-    val repsText = currentSet.reps.toString()
-    val weightText = if (currentSet.weight == 0.0f) "--" else currentSet.weight.toString()
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(exerciseTimerStyle.timerRadius * 1.5f)
-    ) {
-
-        //reps
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                modifier = Modifier.padding(
-                    exerciseDataPadding
-                ),
-                text = repsText,
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                modifier = Modifier.padding(
-                    exerciseDataPadding
-                ),
-                text = "Reps",
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-
-        //timer
-        ExerciseTimer(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(2.5f),
-            timeLeft = timeLeft,
-            totalTime = totalTime
-        )
-
-        //weight
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                modifier = Modifier.padding(
-                    exerciseDataPadding
-                ),
-                text = weightText,
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.ExtraBold
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Text(
-                modifier = Modifier.padding(
-                    exerciseDataPadding
-                ),
-                text = "Weight",
-                style = TextStyle(
-                    color = textColor,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Normal
-                ),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-        }
-    }
-}
-
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun DoWorkoutFooterPreview() {
-    val time = ExerciseTime(hours = 0, minutes = 1, seconds = 30)
-    val timeLeft = ExerciseTime(hours = 0, minutes = 1, seconds = 15)
-    val currentSet = MockupDataGeneratorV2.generateExerciseSet(
-        workoutId = Random.nextInt(1, 100),
-        exerciseId = Random.nextInt(1, 100)
-    )
-    val workoutTimer = TimerUtil(time.toSeconds())
-    val onTimePassed: (ExerciseTime) -> Unit = {
-
-    }
-    DoWorkoutFooter(
-        totalTime = time,
-        timeLeft = timeLeft,
-        currentSet = currentSet
-    )
-}
-
-
-//When set list is empty there are no rows showing
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExerciseDataSheetModal() {
-    val sheetState = rememberModalBottomSheetState()
-    var isSheetOpen by rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    if (isSheetOpen) {
-        ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = {
-                isSheetOpen = false
-            },
-            dragHandle = {
-                GrabHandle()
-            }
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_default),
-                contentDescription = null
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun ExerciseDataSheetModalPreview() {
-    ExerciseDataSheetModal()
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExerciseDataSheetModal2(
-    exercise: ExerciseDto,
-    currentSetNumber: Int,
-    defaultTotalSets: Int,
-    isNextExercise: Boolean = false,
-    onSaveExerciseData: (ExerciseProgressDto) -> Unit,
-    content: @Composable (paddingValues: PaddingValues) -> Unit
-) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val sheetPeekHeight = 88.dp
-
-    var updatedExerciseWithProgressSets by remember {
-        mutableStateOf(
-            ExerciseProgressDto(
-                exerciseId = exercise.exerciseId,
-                workoutId = exercise.workoutId,
-                name = exercise.name,
-                muscleGroup = exercise.muscleGroup,
-                machineType = exercise.machineType,
-                snapshot = exercise.snapshot,
-                sets = emptyList(),
-            )
-        )
-    }
-
-    //Sets are inserted in exercise internally
-    val onExerciseDataChange: (ExerciseProgressDto) -> Unit = { updatedExercise ->
-        updatedExerciseWithProgressSets = updatedExercise
-    }
-
-    //Save data before changing the exercise in ExerciseDataSheet
-    LaunchedEffect(isNextExercise) {
-        if (isNextExercise) {
-            onSaveExerciseData(updatedExerciseWithProgressSets)
-        }
-    }
-
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    BottomSheetScaffold(
-        modifier = Modifier
-            .fillMaxWidth(),
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            CurrentExerciseInfoRow(
-                currentExercise = exercise,
-                currentSetNumber = currentSetNumber,
-                defaultTotalSets = defaultTotalSets
-            )
-
-            ExerciseDataSheet(exercise = exercise, onExerciseDataChange = onExerciseDataChange)
-        },
-        sheetDragHandle = {
-            GrabHandle()
-        },
-        sheetPeekHeight = sheetPeekHeight
-    ) {
-
-        //Screen
-        content(it)
-    }
-}
-
-@Composable
-fun CurrentExerciseInfoRow(
-    currentExercise: ExerciseDto,
-    currentSetNumber: Int,
-    defaultTotalSets: Int
-) {
-    val textColor = Color.White
-    val setsTextColor = Color.Yellow
-    val cornerSize = 24.dp
-
-    val totalSets =
-        if (currentExercise.sets.isNotEmpty()) currentExercise.sets.size else defaultTotalSets
-
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .clip(
-                RoundedCornerShape(cornerSize)
-            )
-            .border(
-                border = BorderStroke(2.dp, color = Color.White),
-                shape = RoundedCornerShape(cornerSize)
-            )
-            .background(Color.Gray),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(
-                    horizontal = 8.dp
-                )
-                .weight(5f),
-            text = currentExercise.name,
-            style = TextStyle(
-                color = textColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-
-        Text(
-            modifier = Modifier
-                .padding(
-                    horizontal = 8.dp
-                )
-                .weight(1f),
-            text = "$currentSetNumber of $totalSets",
-            style = TextStyle(
-                color = setsTextColor,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
-}
-
-@Preview
-@Composable
-fun CurrentExerciseInfoRowInfoRowPreview() {
-    val currentExercise = MockupDataGeneratorV2.generateExercise()
-    val currentSetNumber = 1
-    val defaultTotalSets = 4
-    CurrentExerciseInfoRow(
-        currentExercise = currentExercise,
-        currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets
-    )
-}
-
-@Preview
-@Composable
-fun ExerciseDataSheetModal2Preview() {
-    val exercise = MockupDataGeneratorV2.generateExercise()
-    val currentSetNumber = 1
-    val defaultTotalSets = 4
-    val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {}
-    ExerciseDataSheetModal2(
-        exercise = exercise,
-        currentSetNumber = currentSetNumber,
-        defaultTotalSets = defaultTotalSets,
-        isNextExercise = false,
-        onSaveExerciseData = onSaveExerciseData
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black)
-        )
-    }
-}
-
-@Composable
-fun GrabHandle(modifier: Modifier = Modifier) {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-
-    Box(
-        modifier = modifier
-            .width(screenWidth / 2 - 75.dp) //.fillMaxWidth()
-            .padding(16.dp)
-            .height(5.dp)
-            .background(
-                color = Color.LightGray,
-                shape = RoundedCornerShape(50)
-            )
-    )
-}
-
-@Preview
-@Composable
-fun GrabHandlePreview() {
-    GrabHandle()
 }

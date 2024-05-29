@@ -22,6 +22,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -61,24 +62,35 @@ fun ExerciseSetRow(
     val setNumber = set.number
 
     val cornerSize = 16.dp
-    val backgroundColor = Color.Black
-    val textColor = Color.White
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
     Column(modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(horizontal = 16.dp, vertical = 4.dp)
-                .background(color = backgroundColor, shape = RoundedCornerShape(cornerSize))
-                .border(2.dp, Color.Gray, RoundedCornerShape(cornerSize)),
+                .background(
+                    color = backgroundColor,
+                    shape = RoundedCornerShape(cornerSize)
+                )
+                .border(
+                    border = BorderStroke(1.5.dp, outlineColor),
+                    shape = RoundedCornerShape(cornerSize)
+                ),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 text = "Set $setNumber",
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Bold,
-                color = textColor
+                style = textStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
 
             RepsTextField(
@@ -115,7 +127,7 @@ fun ExerciseSetRowFooter(
     onDelete: (ExerciseSetDto) -> Unit,
     setToDelete: ExerciseSetDto
 ) {
-    val dividerColor = Color.White
+    val dividerColor = MaterialTheme.colorScheme.outlineVariant
     val imageSize = 30.dp
     Box(
         modifier = modifier
@@ -123,7 +135,7 @@ fun ExerciseSetRowFooter(
             .height(imageSize),
         contentAlignment = Alignment.Center
     ) {
-        HorizontalDivider(thickness = 2.dp, color = dividerColor)
+        HorizontalDivider(thickness = 3.dp, color = dividerColor)
 
         Box(
             modifier = Modifier
@@ -194,9 +206,13 @@ fun ExerciseSetTextField(
 ) {
 
     //For dark theme...
-    val textColor = Color.White
-    val backgroundColor = Color.DarkGray
-    val outlineColor = Color.Gray
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val textStyle = MaterialTheme.typography.bodyLarge.copy(
+        color = textColor
+    )
     val cornerSize = 16.dp
     BasicTextField(
         modifier = modifier,
@@ -204,10 +220,7 @@ fun ExerciseSetTextField(
         onValueChange = { text ->
             onTextChange(text)
         },
-        textStyle = TextStyle(
-            color = textColor,
-            fontWeight = FontWeight.Bold
-        ),
+        textStyle = textStyle,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         maxLines = 1,
         decorationBox = { innerTextField ->
@@ -215,9 +228,8 @@ fun ExerciseSetTextField(
                 modifier = Modifier
                     .clip(shape = RoundedCornerShape(cornerSize))
                     .border(
-                        1.dp,
-                        outlineColor,
-                        RoundedCornerShape(cornerSize)
+                        border = BorderStroke(1.dp, outlineColor),
+                        shape = RoundedCornerShape(cornerSize)
                     )
                     .background(backgroundColor),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -226,8 +238,7 @@ fun ExerciseSetTextField(
                 Text(
                     modifier = Modifier.padding(horizontal = 6.dp),
                     text = label,
-                    color = textColor,
-                    fontWeight = FontWeight.Medium,
+                    style = textStyle
                 )
                 innerTextField()
             }
@@ -256,7 +267,7 @@ fun ExerciseSetRepsTextFieldPreview() {
     Box(
         modifier = Modifier
             .size(500.dp)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         RepsTextField(
             modifier = Modifier
@@ -275,7 +286,7 @@ fun ExerciseSetWeightTextFieldPreview() {
     Box(
         modifier = Modifier
             .size(500.dp)
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.surface)
     ) {
         WeightTextField(
             modifier = Modifier
@@ -292,9 +303,14 @@ fun ExerciseSetWeightTextFieldPreview() {
 fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
     val height = 50.dp
     val cornerSize = 24.dp
-    val color = Color.Black
-    val strokeColor = Color.White
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+    
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -302,11 +318,11 @@ fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
             .padding(horizontal = 32.dp)
             .clip(RoundedCornerShape(cornerSize))
             .border(
-                border = BorderStroke(1.dp, color = strokeColor),
+                border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = color,
+                color = backgroundColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable { onAddNewSetAction() },
@@ -324,14 +340,9 @@ fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
 
         Text(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-            ,
+                .padding(horizontal = 16.dp),
             text = "Add new set",
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            ),
+            style = textStyle,
             textAlign = TextAlign.Start,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis

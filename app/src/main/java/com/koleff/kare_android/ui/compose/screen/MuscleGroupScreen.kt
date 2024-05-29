@@ -47,7 +47,7 @@ fun MuscleGroupScreen(
 
     //Error handling
     var error by remember { mutableStateOf<KareError?>(null) }
-    LaunchedEffect(exerciseListState){
+    LaunchedEffect(exerciseListState) {
         showErrorDialog =
             exerciseListState.isError
         error = exerciseListState.error
@@ -89,7 +89,7 @@ fun MuscleGroupScreen(
                 modifier = buttonModifier,
                 selectedOptionIndex = -1,
                 isDisabled = exerciseListState.isLoading,
-                exerciseListViewModel = exerciseListViewModel
+                onFilterSelected = exerciseListViewModel::onFilterExercisesEvent
             )
 
             if (exerciseListState.isLoading) {

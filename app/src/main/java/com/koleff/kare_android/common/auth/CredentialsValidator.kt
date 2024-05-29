@@ -6,7 +6,7 @@ import com.koleff.kare_android.domain.wrapper.ServerResponseData
 interface CredentialsValidator {
 
     suspend fun validateRegister(credentials: Credentials): ResultWrapper<ServerResponseData>
-    suspend fun validateLogin(username: String, password: String): ResultWrapper<ServerResponseData>
+    suspend fun validateLogin(credentials: Credentials): ResultWrapper<ServerResponseData>
     fun validatePassword(password: String)
     suspend fun validateEmail(email: String)
     suspend fun validateUsername(username: String)

@@ -10,6 +10,7 @@ import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.ui.state.ExerciseDetailsState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,27 +50,38 @@ class ExerciseDetailsViewModel @Inject constructor(
 
     private fun getExerciseDetails(exerciseId: Int) {
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.getExerciseDetailsUseCase(exerciseId, Constants.CATALOG_EXERCISE_ID).collect { exerciseDetailsState ->
+            exerciseUseCases.getExerciseDetailsUseCase(exerciseId, Constants.CATALOG_EXERCISE_ID)
+                .collect { exerciseDetailsState ->
 
-                //Don't clear the exercise initial muscle group data...
-                if (exerciseDetailsState.isLoading) {
-                    _state.value = state.value.copy(
-                        isLoading = true
-                    )
-                } else {
-                    _state.value = exerciseDetailsState
+                    //Don't clear the exercise initial muscle group data...
+                    if (exerciseDetailsState.isLoading) {
+                        _state.value = state.value.copy(
+                            isLoading = true
+                        )
+                    } else {
+                        _state.value = exerciseDetailsState
+                    }
                 }
-            }
         }
     }
 
     //Navigation
     fun navigateToSearchWorkout() {
-        super.onNavigationEvent(
-            NavigationEvent.NavigateTo(
-                Destination.SearchWorkoutsScreen(state.value.exercise.id, Constants.CATALOG_EXERCISE_ID)
+        if (state.value.exercise.id == -1) {
+            _state.value = ExerciseDetailsState(
+                isError = true,
+                error = KareError.INVALID_EXERCISE
             )
-        )
+        } else {
+            super.onNavigationEvent(
+                NavigationEvent.NavigateTo(
+                    Destination.SearchWorkoutsScreen(
+                        state.value.exercise.id,
+                        Constants.CATALOG_EXERCISE_ID
+                    )
+                )
+            )
+        }
     }
 
     override fun clearError() {

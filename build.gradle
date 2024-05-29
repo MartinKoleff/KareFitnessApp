@@ -44,7 +44,7 @@ buildscript {
     ext.compose_material_version = "1.6.1"
 
     //https://developer.android.com/jetpack/androidx/releases/compose-ui
-    ext.compose_ui_version = "1.6.1"
+    ext.compose_ui_version = "1.6.7"
 
     //https://developer.android.com/jetpack/androidx/releases/compose-material3
     ext.compose_material3_version = "1.2.0"
@@ -134,6 +134,9 @@ buildscript {
 
     //https://developer.android.com/media/media3/exoplayer
     ext.media3_version = "1.2.1"
+
+    //https://github.com/cashapp/turbine
+    ext.turbine_version = "1.1.0"
 
     dependencies {
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$compose_navigation_version"

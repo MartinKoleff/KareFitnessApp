@@ -37,7 +37,7 @@ data class WorkoutDetailsWithExercises(
             exercises = (exercises?.map {
                 it.toDto()
             } ?: emptyList()),
-            isSelected = workoutDetails.isSelected,
+            isFavorite = workoutDetails.isFavorite,
             configuration = configuration?.toDto()
                 ?: WorkoutConfigurationDto(workoutId = workoutDetails.workoutDetailsId) //Default configuration if there is no in DB...
         )

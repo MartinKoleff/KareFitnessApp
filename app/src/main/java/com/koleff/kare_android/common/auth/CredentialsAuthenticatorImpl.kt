@@ -1,5 +1,6 @@
 package com.koleff.kare_android.common.auth
 
+import com.koleff.kare_android.common.preferences.CredentialsDataStore
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.ui.state.BaseState
@@ -38,8 +39,8 @@ class CredentialsAuthenticatorImpl @Inject constructor(
         }
     }
 
-    override suspend fun checkLoginCredentials(username: String, password: String): Flow<BaseState> = flow {
-        when (val data = credentialsValidator.validateLogin(username, password)) {
+    override suspend fun checkLoginCredentials(credentials: Credentials): Flow<BaseState> = flow {
+        when (val data = credentialsValidator.validateLogin(credentials)) {
             is ResultWrapper.ApiError ->
                 emit(
                     BaseState(

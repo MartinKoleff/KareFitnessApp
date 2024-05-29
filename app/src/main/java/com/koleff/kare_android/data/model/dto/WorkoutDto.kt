@@ -15,8 +15,8 @@ data class WorkoutDto(
     val snapshot: String = "", //TODO: image...
     @field:Json(name = "total_exercises")
     val totalExercises: Int = 0,
-    @field:Json(name = "is_selected")
-    val isSelected: Boolean = false,
+    @field:Json(name = "is_favorite")
+    val isFavorite: Boolean = false,
 ): KareEntity<Workout> {
     override fun toEntity(): Workout {
         return Workout(
@@ -25,7 +25,7 @@ data class WorkoutDto(
             muscleGroup = muscleGroup,
             snapshot = snapshot,
             totalExercises = totalExercises,
-            isSelected = isSelected
+            isFavorite = isFavorite
         )
     }
 }

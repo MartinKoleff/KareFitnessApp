@@ -1,11 +1,15 @@
 package com.koleff.kare_android.data.remote
 
+import com.koleff.kare_android.data.datasource.FindDuplicateExercisesRequest
 import com.koleff.kare_android.data.model.request.ExerciseAddRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
+import com.koleff.kare_android.data.model.response.GetDuplicateExercisesResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
@@ -20,18 +24,18 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 
 interface WorkoutApi {
-    @PUT("api/v1/workout/selectworkout")
-    suspend fun selectWorkout(
+    @PUT("api/v1/workout/favoriteworkout")
+    suspend fun favoriteWorkout(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
-    @PUT("api/v1/workout/deselectworkout")
-    suspend fun deselectWorkout(
+    @PUT("api/v1/workout/unfavoriteworkout")
+    suspend fun unfavoriteWorkout(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
 
-    @GET("api/v1/workout/getselectedworkout")
-    suspend fun getSelectedWorkout(): SelectedWorkoutResponse
+    @GET("api/v1/workout/getfavoriteworkouts")
+    suspend fun getFavoriteWorkouts(): WorkoutsListResponse
 
     @GET("api/v1/workout/getworkout")
     suspend fun getWorkout(
@@ -60,14 +64,29 @@ interface WorkoutApi {
         @Body body: ExerciseDeletionRequest
     ): WorkoutDetailsResponse
 
+    @DELETE("api/v1/workout/deletemultipleexercises")
+    suspend fun deleteMultipleExercises(
+        @Body body: MultipleExercisesDeletionRequest
+    ): WorkoutDetailsResponse
+
     @POST("api/v1/workout/addexercise")
     fun addExercise(
         @Body body: ExerciseAddRequest
     ): WorkoutDetailsResponse
 
+    @POST("api/v1/workout/addmultipleexercises")
+    fun addMultipleExercises(
+        @Body body: MultipleExercisesUpdateRequest
+    ): WorkoutDetailsResponse
+
     @POST("api/v1/workout/submitexercise")
     fun submitExercise(
         @Body body: ExerciseAddRequest
+    ): WorkoutDetailsResponse
+
+    @POST("api/v1/workout/submitmultipleexercises")
+    fun submitMultipleExercises(
+        @Body body: MultipleExercisesUpdateRequest
     ): WorkoutDetailsResponse
 
     @PUT("api/v1/workout/updateworkoutdetails")
@@ -112,4 +131,9 @@ interface WorkoutApi {
     fun deleteWorkoutConfiguration(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
+
+    @GET("api/v1/workout/findduplicateexercises")
+    fun findDuplicateExercises(
+        @Body body: FindDuplicateExercisesRequest
+    ): GetDuplicateExercisesResponse
 }

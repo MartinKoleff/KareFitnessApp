@@ -99,7 +99,7 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
                 }
             }
 
-            is OnExerciseUpdateEvent.OnExerciseSubmit -> { //TODO: not working...
+            is OnExerciseUpdateEvent.OnExerciseSubmit -> {
                 selectedWorkout = selectedWorkoutState.value.workoutDetails
                 val exercise = event.exercise
 
@@ -151,13 +151,13 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         }
     }
 
-    //TODO: wire with dialog...
     fun deleteSet(selectedExerciseSet: ExerciseSetDto) {
         viewModelScope.launch(dispatcher) {
             exerciseUseCases.deleteExerciseSetUseCase(
                 exerciseId = selectedExerciseSet.exerciseId,
                 workoutId = selectedExerciseSet.workoutId,
-                setId = selectedExerciseSet.setId
+                setId = selectedExerciseSet.setId,
+                currentSets = _exerciseState.value.exercise.sets
             ).collect { deleteSetState ->
                 _exerciseState.value = deleteSetState
             }
@@ -167,7 +167,8 @@ class ExerciseDetailsConfiguratorViewModel @Inject constructor(
         viewModelScope.launch(dispatcher) {
             exerciseUseCases.addNewExerciseSetUseCase(
                 exerciseId = exerciseId,
-                workoutId = workoutId
+                workoutId = workoutId,
+                currentSets = _exerciseState.value.exercise.sets
             ).collect { addNewSetState ->
                 _exerciseState.value = addNewSetState
             }

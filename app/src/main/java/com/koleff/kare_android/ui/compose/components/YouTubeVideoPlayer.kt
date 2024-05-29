@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,15 +22,18 @@ fun YoutubeVideoPlayer(
     youtubeVideoId: String,
     lifecycleOwner: LifecycleOwner
 ) {
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val cornerSize = 16.dp
+
     AndroidView(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
             .border(
-                border = BorderStroke(5.dp, color = Color.White),
-                shape = RoundedCornerShape(16.dp)
+                border = BorderStroke(5.dp, color = outlineColor),
+                shape = RoundedCornerShape(cornerSize)
             )
-            .clip(RoundedCornerShape(16.dp)),
+            .clip(RoundedCornerShape(cornerSize)),
         factory = { context ->
             YouTubePlayerView(context = context).apply {
                 lifecycleOwner.lifecycle.addObserver(this)

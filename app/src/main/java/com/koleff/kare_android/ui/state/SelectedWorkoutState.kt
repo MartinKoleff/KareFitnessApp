@@ -5,6 +5,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
+@Deprecated("Unused.")
 data class SelectedWorkoutState (
     val selectedWorkout: WorkoutDto? = null,
     override val isSuccessful: Boolean = false,

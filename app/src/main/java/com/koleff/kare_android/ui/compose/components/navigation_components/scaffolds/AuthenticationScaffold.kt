@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.toolbar.AuthenticationToolbar
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 
 @Composable
 fun AuthenticationScaffold(
@@ -33,6 +34,7 @@ fun AuthenticationScaffold(
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
+    val backgroundGradientColor = LocalExtendedColorScheme.current.authenticationScreenBackgroundGradient
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -40,33 +42,20 @@ fun AuthenticationScaffold(
             AuthenticationToolbar(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(screenHeight / 2.5f)
-                    .background(
-                        color = Color.Transparent
-                    )
-                    .border(
-                        border = BorderStroke(2.dp, color = Color.White),
-                        shape = RoundedToolbarShape(hasTopOutline = false)
-                    ),
+                    .height(screenHeight / 2.5f),
                 onNavigateBackAction = onNavigateBackAction
             )
         },
     ) { innerPadding ->
 
-        //Background image
+        //Background gradient
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .drawWithContent {
-                    val colors = listOf(
-                        Color.Red,
-                        Color.Red,
-                        Color.Black,
-                        Color.Blue
-                    )
                     drawContent()
                     drawRect(
-                        brush = Brush.linearGradient(colors),
+                        brush = Brush.linearGradient(backgroundGradientColor),
                         blendMode = BlendMode.Overlay //ColorBurn
                     )
                 }

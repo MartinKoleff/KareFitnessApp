@@ -1,9 +1,15 @@
 package com.koleff.kare_android.ui.compose.banners
 
+import android.os.Build
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +29,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +38,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
@@ -45,6 +54,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -52,8 +62,8 @@ import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -67,22 +77,25 @@ fun ExerciseBannerV1(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
     Box(
         modifier = modifier
             .clickable { onClick.invoke() }
             .background(
                 brush = Brush.verticalGradient(
-                    listOf(Color.Transparent, Color.Black)
+                    listOf(Color.Transparent, Color.Black) //Flowing effect
                 )
             ),
     ) {
-        //Parallax effect
         Image(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopStart),
-            painter = painterResource(id = R.drawable.background_exercise_banner_effect), //TODO: change to url
+            painter = painterResource(id = R.drawable.background_exercise_banner_dark),
             contentDescription = "Background",
             contentScale = ContentScale.Crop
         )
@@ -97,10 +110,7 @@ fun ExerciseBannerV1(
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = exercise.name,
-                style = TextStyle(
-                    color = Color.White,
-                    fontSize = 16.sp,
-                ),
+                style = titleTextStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -112,7 +122,7 @@ fun ExerciseBannerV1(
                 .fillMaxHeight()
                 .width(screenWidth / 2)
                 .align(Alignment.TopEnd),
-            painter = painterResource(id = R.drawable.ic_chest), //TODO: change to url
+            painter = painterResource(id = MuscleGroup.getImage(exercise.muscleGroup)),
             contentDescription = exercise.name,
             contentScale = ContentScale.Crop
         )
@@ -120,28 +130,92 @@ fun ExerciseBannerV1(
 }
 
 @Composable
-fun ExerciseBannerV2(
+fun SelectedExerciseBanner(
     modifier: Modifier,
     exercise: ExerciseDto,
     hasDescription: Boolean = false,
     onClick: (ExerciseDto) -> Unit
+) {
+    val selectedColor = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val cornerSize = 16.dp
+
+    val selectedModifier = modifier
+        .clip(RoundedCornerShape(cornerSize))
+        .border(
+            border = BorderStroke(3.dp, color = selectedColor),
+            shape = RoundedCornerShape(cornerSize)
+        )
+
+    var isSelected by remember { mutableStateOf(false) }
+
+    val appliedModifier = if (isSelected) selectedModifier else modifier
+
+    //Banner
+    ExerciseBannerV2(
+        modifier = appliedModifier,
+        exercise = exercise,
+        hasDescription = hasDescription,
+        onClick = {
+            isSelected = !isSelected
+            onClick(it)
+        }
+    )
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ExerciseBannerV2(
+    modifier: Modifier,
+    exercise: ExerciseDto,
+    hasDescription: Boolean = false,
+    onClick: (ExerciseDto) -> Unit,
+    onLongPress: () -> Unit = {}
 ) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-   val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
+    val exerciseImage = MuscleGroup.getImage(exercise.muscleGroup)
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor,
+    )
+
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = descriptionTextColor,
+    )
+
+    val bannerImage = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (configuration.isNightModeActive) {
+            R.drawable.background_exercise_banner_dark
+        } else {
+            R.drawable.background_exercise_banner_light
+        }
+    } else {
+
+        //No dark mode supported -> default banner
+        R.drawable.background_exercise_banner_dark
+    }
 
     Card(
         modifier = modifier
             .fillMaxSize()
-            .padding(8.dp),
+            .padding(8.dp)
+            .combinedClickable(
+                onLongClick = onLongPress,
+                onClick = {
+                    onClick(exercise)
+                }
+            ),
         shape = RoundedCornerShape(15.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 5.dp
         ),
-        onClick = { onClick.invoke(exercise) }
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
 
@@ -150,9 +224,18 @@ fun ExerciseBannerV2(
                 modifier = Modifier
                     .fillMaxHeight()
                     .width(screenWidth / 2)
-                    .graphicsLayer { alpha = 0.95f }
-                    .background(color = Color.Black) //TODO: add blend mode...
-                    .align(Alignment.TopStart),
+                    .align(Alignment.TopStart)
+                    .drawBehind {
+
+                        //Fixes white rectangle on left half side
+                        drawRect(
+                            color = Color.Black,
+                            size = this.size.copy(
+                                width = (screenWidth / 2).toPx()
+                            )
+                        )
+                    }
+                    .graphicsLayer { alpha = 0.80f }
             )
 
 
@@ -162,14 +245,14 @@ fun ExerciseBannerV2(
                     .fillMaxHeight()
                     .width(screenWidth / 2)
                     .align(Alignment.TopEnd),
-                painter = painterResource(id = exerciseImage), //TODO: change to url
+                painter = painterResource(id = exerciseImage),
                 contentDescription = exercise.name,
                 contentScale = ContentScale.Crop
             )
 
             //Parallax effect overflowing into exercise snapshot
             Image(
-                painter = painterResource(R.drawable.background_exercise_banner_effect),
+                painter = painterResource(bannerImage),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -197,60 +280,47 @@ fun ExerciseBannerV2(
                     }
             )
 
-            //Exercise Title TextBox
-            Box(
+            //Texts
+            Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(screenWidth / 2),
+                    .width(screenWidth / 2)
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 8.dp),
-                    verticalArrangement = Arrangement.Center,
-                ) {
 
-                    //Exercise title
-                    Text( //TODO: and cooler font...
+                //Exercise title
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = exercise.name,
+                    style = titleTextStyle,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
+
+                //Exercise sub-title (description)
+                if (hasDescription) {
+                    Text(
                         modifier = Modifier.padding(
                             PaddingValues(
                                 start = 16.dp,
                                 end = 16.dp,
-                                top = 16.dp,
+                                top = 8.dp,
                                 bottom = 0.dp
                             )
                         ),
-                        text = exercise.name,
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 2,
+                        text = "Description", //TODO: wire with ExerciseDTO...
+                        style = descriptionTextStyle,
+                        maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-
-                    //Exercise sub-title (description)
-                    if (hasDescription) {
-                        Text( //TODO: and cooler font...
-                            modifier = Modifier.padding(
-                                PaddingValues(
-                                    start = 16.dp,
-                                    end = 16.dp,
-                                    top = 8.dp,
-                                    bottom = 0.dp
-                                )
-                            ),
-                            text = "Description", //TODO: wire with ExerciseDTO...
-                            style = TextStyle(
-                                color = Color.White,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
                 }
             }
         }
@@ -279,9 +349,10 @@ fun ExerciseList(
                     .fillMaxWidth()
                     .height(200.dp),
                 exercise = exercise,
-            ) {
-                navigateToExerciseDetails(exercise)
-            }
+                onClick = {
+                    navigateToExerciseDetails(exercise)
+                }
+            )
         }
     }
 }
@@ -292,7 +363,9 @@ fun SwipeableExerciseBanner(
     exercise: ExerciseDto,
     hasDescription: Boolean = true,
     onClick: (ExerciseDto) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    onLongPress: () -> Unit,
+    isSelected: Boolean //isDeleteMode enabled
 ) {
     val configuration = LocalConfiguration.current
 
@@ -308,9 +381,23 @@ fun SwipeableExerciseBanner(
         .height(200.dp) //Banner height
         .width(deleteBoxWidth)
 
+    val deleteColor = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val cornerSize = 16.dp
+
+    val selectedModifier = modifier
+        .clip(RoundedCornerShape(cornerSize))
+        .border(
+            border = BorderStroke(3.dp, color = deleteColor),
+            shape = RoundedCornerShape(cornerSize)
+        )
+
+    val appliedModifier = if (isSelected) selectedModifier else modifier
+
     Box {
         ExerciseBannerV2(
-            modifier = modifier
+            modifier = appliedModifier
                 .offset { IntOffset(offsetX.roundToInt(), 0) }
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { change, dragAmount ->
@@ -322,7 +409,8 @@ fun SwipeableExerciseBanner(
                 },
             exercise = exercise,
             hasDescription = hasDescription,
-            onClick = onClick
+            onClick = onClick,
+            onLongPress = onLongPress,
         )
 
         //Delete option
@@ -374,6 +462,7 @@ fun ExerciseBannerV1AndV2ComparingPreview() {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun SwipeableExerciseBannerPreview() {
     val exercise = MockupDataGeneratorV2.generateExercise()
@@ -384,17 +473,35 @@ fun SwipeableExerciseBannerPreview() {
             .height(200.dp),
         exercise = exercise,
         onClick = {},
-        onDelete = {}
+        onDelete = {},
+        onLongPress = {},
+        isSelected = false
     )
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun ExerciseListPreview() {
     val n = 5
     val exercisesList = MockupDataGeneratorV2.generateExerciseList(n)
 
-    ExerciseList(exerciseList = exercisesList){ exercise ->
+    ExerciseList(exerciseList = exercisesList) { exercise ->
 
     }
+}
+
+@Preview
+@PreviewLightDark
+@Composable
+private fun SelectedExerciseBannerPreview() {
+    val exercise = MockupDataGeneratorV2.generateExercise()
+
+    SelectedExerciseBanner(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(200.dp),
+        exercise = exercise,
+        onClick = {}
+    )
 }

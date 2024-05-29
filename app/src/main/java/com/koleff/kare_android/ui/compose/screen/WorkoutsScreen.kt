@@ -47,7 +47,9 @@ import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.dialogs.DeleteWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.FavoriteWorkoutDialog
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutViewModel
 import kotlinx.coroutines.launch
@@ -65,6 +67,162 @@ fun WorkoutsScreen(
         onNavigateBackAction = { workoutListViewModel.onNavigateBack() },
         onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() }
     ) { innerPadding ->
+
+        //Pull to refresh
+        val pullRefreshState = rememberPullRefreshState(
+            refreshing = workoutListViewModel.isRefreshing,
+            onRefresh = {
+                workoutListViewModel.onRefresh()
+            }
+        )
+
+        //States
+        val workoutState by workoutListViewModel.state.collectAsState()
+        val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
+        val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
+        val favoriteWorkoutState by workoutListViewModel.favoriteWorkoutState.collectAsState()
+        val unfavoriteWorkoutState by workoutListViewModel.unfavoriteWorkoutState.collectAsState()
+
+        //Refresh screen
+        LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
+            Log.d(
+                "WorkoutsScreen",
+                "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdated}."
+            )
+            workoutListViewModel.getWorkouts()
+        }
+
+        //Dialog visibility
+        var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
+        var showFavoriteDialog by remember { mutableStateOf(false) }
+        var showUnfavoriteDialog by remember { mutableStateOf(false) }
+        var showDeleteDialog by remember { mutableStateOf(false) }
+        var showErrorDialog by remember { mutableStateOf(false) }
+        var showLoadingDialog by remember { mutableStateOf(false) }
+        var showFooter by remember {
+            mutableStateOf(workoutState.isSuccessful && !showLoadingDialog) //&& workoutState.workoutList.isNotEmpty()
+        }
+
+        //Dialog callbacks
+        var selectedWorkout by remember { mutableStateOf<WorkoutDto?>(null) }
+
+        val onDeleteWorkout: () -> Unit = {
+            selectedWorkout?.let {
+                workoutListViewModel.deleteWorkout(selectedWorkout!!.workoutId)
+
+                showDeleteDialog = false
+            }
+        }
+
+        val onFavoriteWorkout: () -> Unit = {
+            selectedWorkout?.let {
+                workoutListViewModel.favoriteWorkout(selectedWorkout!!.workoutId)
+
+                showFavoriteDialog = false
+            }
+        }
+
+        val onUnfavoriteWorkout: () -> Unit = {
+            selectedWorkout?.let {
+                workoutListViewModel.unfavoriteWorkout(selectedWorkout!!.workoutId)
+
+                showUnfavoriteDialog = false
+            }
+        }
+
+        val onEditWorkoutName: (String) -> Unit = { newName ->
+            selectedWorkout?.let {
+                selectedWorkout = selectedWorkout!!.copy(name = newName)
+
+                //Update workout
+                workoutListViewModel.updateWorkout(selectedWorkout!!)
+
+                showEditWorkoutNameDialog = false
+            }
+        }
+
+        //Error handling
+        val onErrorDialogDismiss = {
+            showErrorDialog = false
+            workoutListViewModel.clearError() //Enters launched effect to update showErrorDialog...
+        }
+
+        var error by remember { mutableStateOf<KareError?>(null) }
+        LaunchedEffect(
+            workoutState,
+            deleteWorkoutState,
+            updateWorkoutState,
+            favoriteWorkoutState,
+            unfavoriteWorkoutState
+        ) {
+            val states = listOf(
+                workoutState,
+                deleteWorkoutState,
+                updateWorkoutState,
+                favoriteWorkoutState,
+                unfavoriteWorkoutState
+            )
+
+            val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
+            error = errorState.error
+            showErrorDialog = errorState.isError
+            Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
+
+            val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
+            showLoadingDialog = loadingState.isLoading || workoutListViewModel.isRefreshing
+
+//            showFooter = states
+//                .firstOrNull { it.isSuccessful }?.let {
+//                    !showLoadingDialog
+//                } ?: run {
+//                false
+//            }
+
+//            showFooter = !showLoadingDialog
+
+            showFooter =
+                workoutState.isSuccessful && !showLoadingDialog //&& workoutState.workoutList.isNotEmpty()
+            Log.d("WorkoutsScreen", "Show footer -> $showFooter")
+        }
+
+        if (showErrorDialog) {
+            error?.let {
+                ErrorDialog(it, onErrorDialogDismiss)
+            }
+        }
+
+        //Dialogs
+        if (showEditWorkoutNameDialog && selectedWorkout != null) {
+            EditWorkoutDialog(
+                currentName = selectedWorkout!!.name,
+                onDismiss = { showEditWorkoutNameDialog = false },
+                onConfirm = onEditWorkoutName
+            )
+        }
+
+        if (showDeleteDialog && selectedWorkout != null) {
+            DeleteWorkoutDialog(
+                onClick = onDeleteWorkout,
+                onDismiss = { showDeleteDialog = false }
+            )
+        }
+
+
+        if (showFavoriteDialog && selectedWorkout != null) {
+            FavoriteWorkoutDialog(actionTitle = "Favorite Workout",
+                onClick = onFavoriteWorkout,
+                onDismiss = { showFavoriteDialog = false }
+            )
+        }
+
+        if (showUnfavoriteDialog && selectedWorkout != null) {
+            FavoriteWorkoutDialog(actionTitle = "Unfavorite Workout",
+                onClick = onUnfavoriteWorkout,
+                onDismiss = { showUnfavoriteDialog = false }
+            )
+        }
+
+        //Modifiers
         val buttonModifier = Modifier
             .fillMaxWidth()
             .padding(
@@ -91,129 +249,8 @@ fun WorkoutsScreen(
             .fillMaxWidth()
             .height(200.dp)
 
-        //Pull to refresh
-        val pullRefreshState = rememberPullRefreshState(
-            refreshing = workoutListViewModel.isRefreshing,
-            onRefresh = { workoutListViewModel.getWorkouts() }
-        )
-
-        //States
-        val workoutState by workoutListViewModel.state.collectAsState()
-        val deleteWorkoutState by workoutListViewModel.deleteWorkoutState.collectAsState()
-        val updateWorkoutState by workoutListViewModel.updateWorkoutState.collectAsState()
-
-        //Refresh screen
-        LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
-            Log.d(
-                "WorkoutsScreen",
-                "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdated}."
-            )
-            workoutListViewModel.getWorkouts()
-        }
-
-        //Dialog visibility
-        var showEditWorkoutNameDialog by remember { mutableStateOf(false) }
-        var showSelectDialog by remember { mutableStateOf(false) }
-        var showDeleteDialog by remember { mutableStateOf(false) }
-        var showErrorDialog by remember { mutableStateOf(false) }
-        var showLoadingDialog by remember { mutableStateOf(false) }
-
-        //Dialog callbacks
-        var selectedWorkout by remember { mutableStateOf<WorkoutDto?>(null) }
-
-        val onDeleteWorkout: () -> Unit = {
-            selectedWorkout?.let {
-                workoutListViewModel.deleteWorkout(selectedWorkout!!.workoutId)
-
-                showDeleteDialog = false
-            }
-        }
-
-        val onSelectWorkout: () -> Unit = {
-            selectedWorkout?.let {
-                workoutListViewModel.selectWorkout(selectedWorkout!!.workoutId)
-
-                showSelectDialog = false
-            }
-        }
-
-        val onEditWorkoutName: (String) -> Unit = { newName ->
-            selectedWorkout?.let {
-                selectedWorkout = selectedWorkout!!.copy(name = newName)
-
-                //Update workout
-                workoutListViewModel.updateWorkout(selectedWorkout!!)
-
-                showEditWorkoutNameDialog = false
-            }
-        }
-
-        //Error handling
-        val onErrorDialogDismiss = {
-            showErrorDialog = false
-            workoutListViewModel.clearError() //Enters launched effect to update showErrorDialog...
-        }
-
-        var error by remember { mutableStateOf<KareError?>(null) }
-        LaunchedEffect(
-            workoutState,
-            deleteWorkoutState,
-            updateWorkoutState
-        ) {
-            val states = listOf(
-                workoutState,
-                deleteWorkoutState,
-                updateWorkoutState
-            )
-
-            val errorState: BaseState = states.firstOrNull { it.isError } ?: BaseState()
-            error = errorState.error
-            showErrorDialog = errorState.isError
-            Log.d("WorkoutsScreen", "Error detected -> $showErrorDialog")
-
-            val loadingState: BaseState = states.firstOrNull { it.isLoading } ?: BaseState()
-            showLoadingDialog = loadingState.isLoading || workoutListViewModel.isRefreshing
-        }
-
-        if (showErrorDialog) {
-            error?.let {
-                ErrorDialog(it, onErrorDialogDismiss)
-            }
-        }
-
-        //Dialogs
-        if (showEditWorkoutNameDialog && selectedWorkout != null) {
-            EditWorkoutDialog(
-                currentName = selectedWorkout!!.name,
-                onDismiss = { showEditWorkoutNameDialog = false },
-                onConfirm = onEditWorkoutName
-            )
-        }
-
-        if (showDeleteDialog && selectedWorkout != null) {
-            WarningDialog(
-                title = "Delete Workout",
-                description = "Are you sure you want to delete this workout? This action cannot be undone.",
-                actionButtonTitle = "Delete",
-                onClick = onDeleteWorkout,
-                onDismiss = { showDeleteDialog = false }
-            )
-        }
-
-        if (showSelectDialog && selectedWorkout != null) {
-            val selectWord = if (selectedWorkout!!.isSelected) "De-select" else "Select"
-
-            WarningDialog(
-                title = "$selectWord Workout",
-                description = "Are you sure you want to ${selectWord.lowercase(Locale.getDefault())} this workout?",
-                actionButtonTitle = selectWord,
-                onClick = onSelectWorkout,
-                onDismiss = { showSelectDialog = false }
-            )
-        }
-
         Box(
-            Modifier
+            modifier = Modifier
                 .fillMaxSize()
                 .pullRefresh(pullRefreshState)
         ) {
@@ -227,36 +264,42 @@ fun WorkoutsScreen(
                 WorkoutSegmentButton(
                     modifier = buttonModifier,
                     selectedOptionIndex = 1, //Workouts screen
-                    isDisabled = workoutState.isLoading,
-                    workoutListViewModel = workoutListViewModel
+                    isDisabled = showLoadingDialog,
+                    onWorkoutFilter = workoutListViewModel::onWorkoutFilterEvent
                 )
 
-                if (showLoadingDialog) { //Don't show loader if retrieved from cache...
+                //Don't show loader if retrieved from cache...
+                if (showLoadingDialog) {
                     LoadingWheel(
                         innerPadding = innerPadding,
                         hideScreen = true
                     )
                 } else {
+                    LazyColumn(modifier = contentModifier) {
 
-                    //MyWorkout Screen
-                    if (workoutState.isMyWorkoutScreen) {
-                        val workout = workoutState.workoutList.firstOrNull {
-                            it.isSelected
-                        }
+                        //Workout List
+                        items(workoutListViewModel.selectedWorkoutList.size) { workoutId ->
+                            val workout = workoutListViewModel.selectedWorkoutList[workoutId]
 
-                        workout?.let {
                             SwipeableWorkoutBanner(
                                 modifier = workoutBannerModifier,
                                 workout = workout,
-                                hasDescription = true,
                                 onDelete = {
                                     showDeleteDialog = true
                                     selectedWorkout = workout
                                 },
-                                onSelect = { showSelectDialog = true },
+                                onFavorite = {
+                                    if (workout.isFavorite) {
+                                        showUnfavoriteDialog = true
+                                    } else {
+                                        showFavoriteDialog = true
+                                    }
+
+                                    selectedWorkout = workout
+                                },
                                 onClick = {
                                     workoutListViewModel.navigateToWorkoutDetails(
-                                        workout = it
+                                        workout = workout
                                     )
                                 },
                                 onEdit = {
@@ -264,54 +307,20 @@ fun WorkoutsScreen(
                                     selectedWorkout = workout
                                 }
                             )
-                        } ?: run {
-
-                            //No workout is selected
-                            NoWorkoutSelectedBanner {
-
-                                //Navigate to SearchWorkoutsScreen...
-                                workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
-                            }
                         }
-                    } else {
 
-                        //All Workouts Screen
-                        LazyColumn(modifier = contentModifier) {
-
-                            //Workout List
-                            items(workoutState.workoutList.size) { workoutId ->
-                                val workout = workoutState.workoutList[workoutId]
-
-                                SwipeableWorkoutBanner(
-                                    modifier = workoutBannerModifier,
-                                    workout = workout,
-                                    onDelete = {
-                                        showDeleteDialog = true
-                                        selectedWorkout = workout
-                                    },
-                                    onSelect = {
-                                        showSelectDialog = true
-                                        selectedWorkout = workout
-                                    },
-                                    onClick = {
-                                        workoutListViewModel.navigateToWorkoutDetails(
-                                            workout = workout
-                                        )
-                                    },
-                                    onEdit = {
-                                        showEditWorkoutNameDialog = true
-                                        selectedWorkout = workout
-                                    }
-                                )
-                            }
-
-                            //Footer
+                        //Footer
+                        if (showFooter) { //Workouts are fetched
                             item {
-                                if (workoutState.workoutList.isEmpty()) {
+                                if (workoutListViewModel.selectedWorkoutList.isEmpty()) {
                                     NoWorkoutSelectedBanner {
 
+                                        //TODO: refactor and fix...
                                         //Navigate to SearchWorkoutsScreen...
-                                        workoutListViewModel.navigateToSearchWorkout(-1, -1) //TODO: test
+//                                        workoutListViewModel.navigateToSearchWorkout(
+//                                            -1,
+//                                            -1
+//                                        )
                                     }
                                 } else {
                                     AddWorkoutBanner {

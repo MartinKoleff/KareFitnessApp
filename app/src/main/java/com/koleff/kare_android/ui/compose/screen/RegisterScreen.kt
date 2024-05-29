@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -28,7 +29,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.AuthenticationButton
+import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
+import com.koleff.kare_android.ui.compose.components.CustomTextField
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.PasswordTextField
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
@@ -36,17 +41,6 @@ import com.koleff.kare_android.ui.view_model.RegisterViewModel
 
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val cornerSize = 36.dp
-
-    val gymImageModifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight * 0.33f)
 
     //State and callbacks
     val registerState by registerViewModel.state.collectAsState()
@@ -107,6 +101,18 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         )
     }
 
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
+    val cornerSize = 36.dp
+
+    val gymImageModifier = Modifier
+        .fillMaxWidth()
+        .height(screenHeight * 0.33f)
+
     AuthenticationScaffold(
         screenTitle = "",
         onNavigateBackAction = {
@@ -116,7 +122,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
 
         //Loading screen
         if (showLoadingDialog) {
-            LoadingWheel(innerPadding = PaddingValues(top = 46.dp))
+            LoadingWheel(innerPadding = PaddingValues(top = 72.dp))
         }
 
         //Screen
@@ -142,31 +148,44 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
                 subtitle = "Create an account so you can become part of the family!"
             )
 
-            //User text box
-            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
-                username = it
-            }
+            LazyColumn {
+                item {
 
-            //Password text box
-            PasswordTextField(label = "Password") {
-                password = it
-            }
+                    //User text box
+                    CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
+                        username = it
+                    }
+                }
 
-            //User text box
-            CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
-                email = it
-            }
+                item {
 
-            AuthenticationButton(
-                text = "Sign up",
-                onAction = onSignUp,
-                credentials =
-                Credentials(
-                    username = username,
-                    password = password,
-                    email = email
-                )
-            )
+                    //Password text box
+                    PasswordTextField(label = "Password") {
+                        password = it
+                    }
+                }
+
+                item {
+
+                    //User text box
+                    CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
+                        email = it
+                    }
+                }
+
+                item {
+                    AuthenticationButton(
+                        text = "Sign up",
+                        onAction = onSignUp,
+                        credentials =
+                        Credentials(
+                            username = username,
+                            password = password,
+                            email = email
+                        )
+                    )
+                }
+            }
         }
     }
 }

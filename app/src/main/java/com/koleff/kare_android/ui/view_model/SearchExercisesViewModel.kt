@@ -1,9 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
@@ -11,15 +8,15 @@ import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
-import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.state.ExerciseListState
-import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.event.OnExerciseUpdateEvent
+import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
+import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
+import com.koleff.kare_android.ui.state.DuplicateExercisesState
+import com.koleff.kare_android.ui.state.ExerciseListState
+import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
-import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -52,22 +49,11 @@ class SearchExercisesViewModel @Inject constructor(
     val updateWorkoutState: StateFlow<WorkoutDetailsState>
         get() = _updateWorkoutState
 
-//    val searchState = _searchState
-//        .debounce(Constants.fakeSmallDelay)
-//        .onEach { exercisesState ->  exercisesState.isSearching = true }
-//        .combine(_state) { searchState, exercisesState ->
-//            when {
-//                searchState.searchText.isNotEmpty() -> exercisesState.exerciseList.filter { exercises ->
-//                    exercises.name.contains(searchState.searchText, ignoreCase = true)
-//                }
-//
-//                else -> exercisesState.exerciseList
-//            }
-//        }.stateIn(
-//            scope = viewModelScope,
-//            initialValue = _searchState,
-//            started = SharingStarted.WhileSubscribed(5000L)
-//        )
+    private var _duplicateExercisesState: MutableStateFlow<DuplicateExercisesState> =
+        MutableStateFlow(DuplicateExercisesState())
+
+    val duplicateExercisesState: StateFlow<DuplicateExercisesState>
+        get() = _duplicateExercisesState
 
     init {
         getExercises(MuscleGroup.ALL.muscleGroupId)
@@ -120,27 +106,63 @@ class SearchExercisesViewModel @Inject constructor(
         }
     }
 
-    //Navigation
-    fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
+
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = ExerciseListState()
+        }
+        if (updateWorkoutState.value.isError) {
+            _updateWorkoutState.value = WorkoutDetailsState()
+        }
+    }
+
+    fun onMultipleExercisesUpdateEvent(event: OnMultipleExercisesUpdateEvent) {
+        when (event) {
+            is OnMultipleExercisesUpdateEvent.OnMultipleExercisesSubmit -> {
+                val exercises = event.exerciseList
+
+                viewModelScope.launch(dispatcher) {
+                    workoutUseCases.submitMultipleExercisesUseCase(
+                        workoutId = workoutId,
+                        exerciseList = exercises
+                    ).collect { updateWorkoutState ->
+                        _updateWorkoutState.value = updateWorkoutState
+
+                        //Go to workout details
+                        if (updateWorkoutState.isSuccessful) {
+                            navigateToWorkoutDetails()
+                        }
+                    }
+                }
+            }
+            else -> {}
+        }
+    }
+
+    private fun navigateToWorkoutDetails() {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
-                popUpToRoute = Destination.Workouts.route,
-                destinationRoute = Destination.ExerciseDetailsConfigurator(
-                    exerciseId,
-                    muscleGroupId,
+                destinationRoute = Destination.WorkoutDetails(
                     workoutId
                 ).route,
+                popUpToRoute = Destination.Workouts.route,
                 inclusive = false
             )
         )
     }
 
-    override fun clearError() {
-        if(state.value.isError){
-            _state.value = ExerciseListState()
+    fun findDuplicateExercises(selectedExercises: List<ExerciseDto>) {
+        viewModelScope.launch(dispatcher) {
+            workoutUseCases.findDuplicateExercisesUseCase(workoutId, selectedExercises).collect { duplicateExercisesState ->
+                _duplicateExercisesState.value = duplicateExercisesState
+            }
         }
     }
 
+
+    /**
+     * Unused
+     */
     fun onExerciseUpdateEvent(event: OnExerciseUpdateEvent) {
         when (event) {
             is OnExerciseUpdateEvent.OnExerciseDelete -> {
@@ -154,7 +176,7 @@ class SearchExercisesViewModel @Inject constructor(
                         _updateWorkoutState.value = updateWorkoutState
 
                         //Go to workout details
-                        if(updateWorkoutState.isSuccessful){
+                        if (updateWorkoutState.isSuccessful) {
                             navigateToWorkoutDetails()
                         }
                     }
@@ -176,15 +198,34 @@ class SearchExercisesViewModel @Inject constructor(
         }
     }
 
-    private fun navigateToWorkoutDetails() {
+    fun navigateToExerciseDetailsConfigurator(exerciseId: Int, workoutId: Int, muscleGroupId: Int) {
         super.onNavigationEvent(
             NavigationEvent.PopUpToAndNavigateTo(
-                destinationRoute = Destination.WorkoutDetails(
+                popUpToRoute = Destination.Workouts.route,
+                destinationRoute = Destination.ExerciseDetailsConfigurator(
+                    exerciseId,
+                    muscleGroupId,
                     workoutId
                 ).route,
-                popUpToRoute = Destination.Workouts.route,
                 inclusive = false
             )
         )
     }
 }
+
+//    val searchState = _searchState
+//        .debounce(Constants.fakeDelay)
+//        .onEach { exercisesState ->  exercisesState.isSearching = true }
+//        .combine(_state) { searchState, exercisesState ->
+//            when {
+//                searchState.searchText.isNotEmpty() -> exercisesState.exerciseList.filter { exercises ->
+//                    exercises.name.contains(searchState.searchText, ignoreCase = true)
+//                }
+//
+//                else -> exercisesState.exerciseList
+//            }
+//        }.stateIn(
+//            scope = viewModelScope,
+//            initialValue = _searchState,
+//            started = SharingStarted.WhileSubscribed(5000L)
+//        )

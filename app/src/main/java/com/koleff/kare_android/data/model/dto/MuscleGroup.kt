@@ -9,11 +9,11 @@ enum class MuscleGroup(
     val description: String,
     val imageId: Int
 ) {
-    CHEST(1, "Chest", "", R.drawable.ic_chest),
-    BACK(2, "Back", "", R.drawable.ic_back),
-    TRICEPS(3, "Triceps", "", R.drawable.background_triceps),
-    BICEPS(4, "Biceps", "", R.drawable.ic_biceps),
-    SHOULDERS(5, "Shoulders", "", R.drawable.background_shoulders),
+    CHEST(1, "Chest", "", R.drawable.background_chest_2),
+    BACK(2, "Back", "", R.drawable.background_back),
+    TRICEPS(3, "Triceps", "", R.drawable.background_triceps_3),
+    BICEPS(4, "Biceps", "", R.drawable.background_biceps),
+    SHOULDERS(5, "Shoulders", "", R.drawable.background_shoulders_2),
     LEGS(6, "Legs", "", R.drawable.background_legs),
     ABS(7, "Abs", "", -1),
     CARDIO(8, "Cardio", "", -1),
@@ -40,7 +40,7 @@ enum class MuscleGroup(
             entries.find { it.muscleGroupId == id } ?: NONE
 
         fun getImage(muscleGroup: MuscleGroup): Int {
-            return if (muscleGroup.imageId != -1) muscleGroup.imageId else R.drawable.ic_default
+            return if (muscleGroup.imageId != -1) muscleGroup.imageId else R.drawable.background_muscle_default
         }
 
         fun getTotalExercises(muscleGroup: MuscleGroup): Int {
@@ -53,13 +53,13 @@ enum class MuscleGroup(
                     muscleGroup.muscleGroupName
                 }
                 UPPER_LOWER_BODY -> {
-                    "Upper Body ○ Lower Body"
+                    "Upper Body ⚬ Lower Body"
                 }
                 ARMS -> {
-                    "Triceps ○ Biceps ○ Forearms"
+                    "Triceps ⚬ Biceps ⚬ Forearms"
                 }
                 PUSH_PULL_LEGS -> {
-                    muscleGroup.muscleGroupName.replace(" ", " ○ ")
+                    muscleGroup.muscleGroupName.replace(" ", " ⚬ ")
                 }
                 else -> { //OTHER, ALL, NONE
                     ""

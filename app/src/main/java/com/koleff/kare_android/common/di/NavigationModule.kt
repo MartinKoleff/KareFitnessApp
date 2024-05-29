@@ -5,13 +5,14 @@ import com.koleff.kare_android.common.navigation.NavigationControllerImpl
 import com.koleff.kare_android.common.navigation.NavigationNotifier
 import dagger.Binds
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class NavigationModule {
+abstract class NavigationBindModule {
 
     @Binds
     @Singleton
@@ -20,4 +21,14 @@ abstract class NavigationModule {
     @Binds
     @Singleton
     abstract fun bindNavigationNotifier(impl: NavigationControllerImpl): NavigationNotifier
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+object NavigationModule{
+    @Provides
+    @Singleton
+    fun provideNavigationControllerImpl(): NavigationControllerImpl {
+        return NavigationControllerImpl()
+    }
 }

@@ -14,9 +14,8 @@ object Constants {
 
     const val useLocalDataSource = true
     const val useMockupDataSource = true
-    const val fakeDelay: Long = 2000L
-    const val fakeSmallDelay: Long = 750L
-    
+    const val fakeDelay: Long = 350L
+
     const val navigationDelay: Long = 333L
 
     const val splashScreenDelay: Long = 2000L
@@ -31,4 +30,11 @@ object Constants {
 
     const val isTestingFirebaseCrashlytics = false
     const val CATALOG_EXERCISE_ID = 777
+
+    /**
+     * Broadcast intents
+     */
+    const val ACTION_LOGOUT = "com.koleff.kare_android.ACTION_LOGOUT"
+    const val ACTION_REGENERATE_TOKEN = "com.koleff.kare_android.ACTION_REGENERATE_TOKEN"
+
 }

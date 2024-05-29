@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -20,15 +22,15 @@ fun ExerciseDetailsBottomNavigationBar(
     exerciseId: Int,
     onNavigateSubmitExercise: () -> Unit
 ) {
-    val isBlocked = mutableStateOf(exerciseId == -1)
-    val submitExerciseAction = if (isBlocked.value) {
-        {}
-    } else {
-        onNavigateSubmitExercise
+    val isBlocked by remember {
+        mutableStateOf(exerciseId == -1)
     }
 
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
+    val tintColor = MaterialTheme.colorScheme.onSurface
+
     BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.secondary,
+        containerColor = backgroundColor,
         tonalElevation = 5.dp,
         actions = {
             Spacer(Modifier.weight(1f))
@@ -36,8 +38,8 @@ fun ExerciseDetailsBottomNavigationBar(
             NavigationItem(
                 icon = painterResource(id = R.drawable.ic_vector_add),
                 label = "Add to workout",
-                tint = Color.White,
-                onNavigateAction = submitExerciseAction
+                tint = tintColor,
+                onNavigateAction = onNavigateSubmitExercise
             )
 
             Spacer(Modifier.weight(1f))

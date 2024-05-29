@@ -7,8 +7,8 @@ import com.koleff.kare_android.data.model.dto.WorkoutDto
 
 interface Preferences {
     fun saveDashboardMuscleGroupList(muscleGroupList: List<MuscleGroup>)
-    fun saveSelectedWorkout(selectedWorkout: WorkoutDto)
-    fun loadSelectedWorkout(): WorkoutDto?
+    fun saveFavoriteWorkouts(favoriteWorkouts: List<WorkoutDto>)
+    fun loadFavoriteWorkouts(): List<WorkoutDto>
     fun loadDashboardMuscleGroupList(): List<MuscleGroup>
     fun hasInitializedExerciseTable(): Boolean
     fun hasInitializedWorkoutTable(): Boolean
@@ -18,8 +18,11 @@ interface Preferences {
     fun initializeUserTable()
     fun saveCredentials(credentials: Credentials)
     fun getCredentials(): Credentials?
+    fun deleteCredentials()
     fun saveTokens(tokens: Tokens)
     fun getTokens(): Tokens?
+    fun deleteTokens()
+    fun updateTokens(tokens: Tokens)
 
     companion object {
         const val DASHBOARD_MUSCLE_GROUP_LIST = "dashboard_muscle_group_list"
@@ -27,7 +30,7 @@ interface Preferences {
         const val HAS_INITIALIZED_WORKOUT_TABLE = "has_initialized_workout_table"
         const val HAS_INITIALIZED_USER_TABLE = "has_initialized_user_table"
         const val HAS_TOKENS = "has_tokens"
-        const val SELECTED_WORKOUT = "selected_workout"
+        const val FAVORITE_WORKOUTS = "favorite_workouts"
         const val CREDENTIALS = "credentials"
         const val TOKENS = "tokens"
     }

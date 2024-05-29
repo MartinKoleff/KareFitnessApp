@@ -1,9 +1,15 @@
 package com.koleff.kare_android
 
+import android.content.IntentFilter
 import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.multidex.MultiDexApplication
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.Constants.useLocalDataSource
 import com.koleff.kare_android.common.NotificationManager
+import com.koleff.kare_android.common.broadcast.LogoutBroadcastReceiver
+import com.koleff.kare_android.common.broadcast.RegenerateTokenBroadcastReceiver
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.data.room.manager.UserDBManager
@@ -18,6 +24,11 @@ import javax.inject.Inject
 @HiltAndroidApp
 class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
+
+    /**
+     * Local Room DB Managers
+     */
+
     @Inject
     lateinit var exerciseDBManager: ExerciseDBManagerV2
 
@@ -27,8 +38,29 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
     @Inject
     lateinit var userDBManager: UserDBManager
 
+    /**
+     * Shared preferences
+     */
+
     @Inject
     lateinit var preferences: Preferences
+
+    /**
+     * Broadcast Manager
+     */
+
+    @Inject
+    lateinit var broadcastManager: LocalBroadcastManager
+
+    /**
+     * Broadcast Receivers
+     */
+
+    @Inject
+    lateinit var regenerateTokenBroadcastReceiver: RegenerateTokenBroadcastReceiver
+
+    @Inject
+    lateinit var logoutBroadcastReceiver: LogoutBroadcastReceiver
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate() {
@@ -52,6 +84,18 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
             }
 
         }
+
+        //Register broadcast receivers
+        broadcastManager.registerReceiver(
+            regenerateTokenBroadcastReceiver,
+            IntentFilter(Constants.ACTION_REGENERATE_TOKEN)
+        )
+
+        broadcastManager.registerReceiver(
+            logoutBroadcastReceiver,
+            IntentFilter(Constants.ACTION_LOGOUT)
+        )
+
         //Create push notification channel
         NotificationManager.createNotificationChannel(this@KareApp)
 
@@ -59,5 +103,12 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
         GlobalScope.launch(Dispatchers.IO) {
             NotificationManager.subscribeToTopic()
         }
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        super.onDestroy(owner)
+
+        broadcastManager.unregisterReceiver(regenerateTokenBroadcastReceiver)
+        broadcastManager.unregisterReceiver(logoutBroadcastReceiver)
     }
 }

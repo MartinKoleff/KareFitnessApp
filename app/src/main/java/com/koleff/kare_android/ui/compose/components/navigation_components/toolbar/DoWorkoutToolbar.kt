@@ -32,14 +32,22 @@ fun DoWorkoutToolbar(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
 
+    val tintColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
     CenterAlignedTopAppBar(
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = textColor,
         ),
         title = {
             Text(
                 text = title,
+                style = textStyle,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center
@@ -50,7 +58,7 @@ fun DoWorkoutToolbar(
                 icon = painterResource(id = R.drawable.ic_vector_close),
                 label = "Exit workout",
                 onNavigateAction = onExitWorkoutAction,
-                tint = Color.White
+                tint = tintColor
             )
         },
         actions = {
@@ -58,7 +66,7 @@ fun DoWorkoutToolbar(
                 icon = painterResource(id = R.drawable.ic_forward),
                 label = "Go to next exercise",
                 onNavigateAction = onNextExerciseAction,
-                tint = Color.White
+                tint = tintColor
             )
         },
         scrollBehavior = scrollBehavior

@@ -11,6 +11,7 @@ import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
+import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
 import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
@@ -20,16 +21,16 @@ import javax.inject.Inject
 class WorkoutRepositoryImpl @Inject constructor(
     private val workoutDataSource: WorkoutDataSource
 ) : WorkoutRepository {
-    override suspend fun selectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
-        return workoutDataSource.selectWorkout(workoutId)
+    override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.favoriteWorkout(workoutId)
     }
 
-    override suspend fun deselectWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
-        return workoutDataSource.deselectWorkout(workoutId)
+    override suspend fun unfavoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
+        return workoutDataSource.unfavoriteWorkout(workoutId)
     }
 
-    override suspend fun getSelectedWorkout(): Flow<ResultWrapper<SelectedWorkoutWrapper>> {
-        return workoutDataSource.getSelectedWorkout()
+    override suspend fun getFavoriteWorkouts(): Flow<ResultWrapper<WorkoutListWrapper>> {
+        return workoutDataSource.getFavoriteWorkouts()
     }
 
     override suspend fun getWorkout(workoutId: Int): Flow<ResultWrapper<WorkoutWrapper>> {
@@ -59,6 +60,13 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.deleteExercise(workoutId, exerciseId)
     }
 
+    override suspend fun deleteMultipleExercises(
+        workoutId: Int,
+        exerciseIds: List<Int>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        return workoutDataSource.deleteMultipleExercises(workoutId, exerciseIds)
+    }
+
     override suspend fun addExercise(
         workoutId: Int,
         exercise: ExerciseDto
@@ -66,11 +74,32 @@ class WorkoutRepositoryImpl @Inject constructor(
         return workoutDataSource.addExercise(workoutId, exercise)
     }
 
+    override suspend fun addMultipleExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        return workoutDataSource.addMultipleExercises(workoutId, exerciseList)
+    }
+
     override suspend fun submitExercise(
         workoutId: Int,
         exercise: ExerciseDto
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
         return workoutDataSource.submitExercise(workoutId, exercise)
+    }
+
+    override suspend fun submitMultipleExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        return workoutDataSource.submitMultipleExercises(workoutId, exerciseList)
+    }
+
+    override suspend fun findDuplicateExercises(
+        workoutId: Int,
+        exerciseList: List<ExerciseDto>
+    ): Flow<ResultWrapper<DuplicateExercisesWrapper>> {
+        return workoutDataSource.findDuplicateExercises(workoutId, exerciseList)
     }
 
     override suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {

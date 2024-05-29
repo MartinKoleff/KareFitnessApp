@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.remote
 
+import com.koleff.kare_android.data.model.request.AddNewExerciseSetRequest
 import com.koleff.kare_android.data.model.request.DeleteExerciseSetRequest
 import com.koleff.kare_android.data.model.request.FetchExerciseRequest
 import com.koleff.kare_android.data.model.request.FetchExercisesByMuscleGroupRequest
@@ -32,7 +33,7 @@ interface ExerciseApi {
     ): ExerciseDetailsResponse
 
     @GET("api/v1/exercise/addnewexerciseset") //TODO: update endpoint...
-    fun addNewExerciseSet(body: FetchExerciseRequest): ExerciseResponse
+    fun addNewExerciseSet(body: AddNewExerciseSetRequest): ExerciseResponse
 
     @GET("api/v1/exercise/deleteexerciseset") //TODO: update endpoint...
     fun deleteExerciseSet(body: DeleteExerciseSetRequest): ExerciseResponse

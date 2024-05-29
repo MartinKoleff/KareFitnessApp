@@ -18,8 +18,8 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 9
-        versionName "2.0"
+        versionCode 14
+        versionName "2.5"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -44,6 +44,17 @@ android {
             unitTests.returnDefaultValues = true
             unitTests.includeAndroidResources = true
         }
+
+        //Share mutual test resources - worked pre chipmunk IDE
+//        sourceSets {
+//            String sharedTestDir = 'src/sharedTest/java'
+//            test {
+//                java.srcDir sharedTestDir
+//            }
+//            androidTest {
+//                java.srcDir sharedTestDir
+//            }
+//        }
     }
 
     buildTypes {
@@ -97,6 +108,11 @@ kapt {
 //    useJUnitPlatform()
 //}
 
+//Legacy way of sharing mutual test resources
+//tasks.withType(Test).configureEach {
+//    android.sourceSets.main.res.srcDirs += 'src/test-common/res'
+//}
+
 dependencies {
 
     //AndroidX
@@ -104,7 +120,7 @@ dependencies {
     implementation "androidx.activity:activity-compose:$compose_activity_version"
     implementation "androidx.biometric:biometric:$androidx_biometric_version"
     implementation "androidx.core:core-splashscreen:$androidx_core_splash_screen_version"
-//    implementation "androidx.appcompat:appcompat:$app_compat_version"
+    implementation "androidx.appcompat:appcompat:$app_compat_version"
 
     //Lifecycle
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$androidx_lifecycle_version"
@@ -124,7 +140,7 @@ dependencies {
     implementation "androidx.compose.ui:ui:$compose_ui_version"
     implementation "androidx.compose.ui:ui-graphics:$compose_ui_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_ui_version"
-    implementation 'androidx.media3:media3-exoplayer:1.2.1'
+    implementation "androidx.compose.ui:ui-text-google-fonts:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_ui_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_ui_version"
     implementation "androidx.compose.material3:material3:$compose_material3_version"
@@ -207,15 +223,27 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter-params:$junit_jupiter_version"
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junit_jupiter_version")
 
+    androidTestImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
+    androidTestImplementation project(':app')
+
+    //Shared mutual test resources
+    testImplementation(project(":shared-test"))
+    androidTestImplementation(project(":shared-test"))
+
     //JUnit platform
     testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
+    androidTestImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
 
-    //Mockk
+    //Mockk - Mocking
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"
     testImplementation "io.mockk:mockk:$mockk_version"
 
-    //Espresso
+    //Espresso - UI tests
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+
+    //Turbine - Flow testing
+    testImplementation "app.cash.turbine:turbine:$turbine_version"
+    androidTestImplementation "app.cash.turbine:turbine:$turbine_version"
 
     //BOMs
     implementation platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_bom_version")

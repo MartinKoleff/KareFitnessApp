@@ -2,12 +2,14 @@ package com.koleff.kare_android.ui.compose.components
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Paint.Style
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,16 +37,32 @@ fun ExerciseTimer(
     modifier: Modifier = Modifier,
     timeLeft: ExerciseTime,
     totalTime: ExerciseTime,
-    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(),
+    exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle(
+        lineColor = MaterialTheme.colorScheme.outline
+    ),
     isLogging: Boolean = false
 ) {
-    val timePercentageLeftState  = remember {
+    val timePercentageLeftState = remember {
         mutableFloatStateOf(100.0f)
     }
 
     val markedLinesState = remember {
         mutableIntStateOf(exerciseTimerStyle.totalLines)
     }
+
+    val configuration = LocalConfiguration.current
+    val textColor = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (configuration.isNightModeActive) {
+            Color.WHITE
+        } else {
+            Color.BLACK
+        }
+    } else {
+
+        //No dark mode supported -> default color
+        Color.BLACK
+    }
+
 
     // Update state variables within LaunchedEffect when timeLeft changes
     LaunchedEffect(timeLeft) {
@@ -55,7 +74,10 @@ fun ExerciseTimer(
         )
 
         if (isLogging) {
-            Log.d("ExerciseTimer", "Percentage of Time Left: ${timePercentageLeftState.floatValue}%")
+            Log.d(
+                "ExerciseTimer",
+                "Percentage of Time Left: ${timePercentageLeftState.floatValue}%"
+            )
             Log.d("ExerciseTimer", "Marked Lines: ${markedLinesState.intValue}")
         }
     }
@@ -91,7 +113,8 @@ fun ExerciseTimer(
                 circleCenter.x,
                 circleCenter.y - 10.dp.toPx(),
                 Paint().apply {
-                    color = Color.WHITE
+                    color = textColor
+                    style = Style.FILL
                     textSize = 20.sp.toPx()
                     textAlign = Paint.Align.CENTER
                 }
@@ -139,7 +162,9 @@ fun ExerciseTimerPreview() {
     var currentTime by remember {
         mutableStateOf(ExerciseTime(totalTime.hours, totalTime.minutes, totalTime.seconds))
     }
-    val exerciseTimerStyle = ExerciseTimerStyle()
+    val exerciseTimerStyle = ExerciseTimerStyle(
+        lineColor = MaterialTheme.colorScheme.outline
+    )
     val workoutTimer = TimerUtil()
     LaunchedEffect(Unit) {
         workoutTimer.startTimer(totalTime.toSeconds()) {
@@ -151,7 +176,7 @@ fun ExerciseTimerPreview() {
         modifier = Modifier
             .fillMaxSize()
 //            .size(exerciseTimerStyle.timerRadius * 2)
-            .background(androidx.compose.ui.graphics.Color.Black),
+            .background(MaterialTheme.colorScheme.surface),
         timeLeft = currentTime,
         totalTime = totalTime
     )

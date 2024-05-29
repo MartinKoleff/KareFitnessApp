@@ -46,7 +46,19 @@ fun WorkoutFooterBanner(
     val screenHeight = configuration.screenHeightDp.dp
     val screenWidth = configuration.screenWidthDp.dp
 
-    val primaryColor = MaterialTheme.colorScheme.primary
+    val tintColor = MaterialTheme.colorScheme.tertiary
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = titleTextColor,
+    )
+
+    val descriptionTextColor = MaterialTheme.colorScheme.onSurface
+    val descriptionTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = descriptionTextColor,
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,7 +81,7 @@ fun WorkoutFooterBanner(
                     .fillMaxSize()
                     .align(Alignment.TopStart)
                     .graphicsLayer { alpha = 0.80f },
-                colorFilter = ColorFilter.tint(primaryColor, BlendMode.Multiply)
+                colorFilter = ColorFilter.tint(tintColor, BlendMode.Multiply)
             )
 
             Image(
@@ -82,7 +94,7 @@ fun WorkoutFooterBanner(
                     .padding(end = 16.dp)
                     .drawBehind {
                         drawCircle(
-                            color = Color.White,
+                            color = outlineColor,
                             radius = this.size.maxDimension / 2
                         )
                     },
@@ -90,58 +102,45 @@ fun WorkoutFooterBanner(
             )
 
             //Text
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .width(screenWidth / 2),
+                    .width(screenWidth / 2)
+                    .padding(end = 8.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(end = 8.dp),
-                    verticalArrangement = Arrangement.Center,
-                ) {
 
-                    //Title
-                    Text( //TODO: and cooler font...
-                        modifier = Modifier.padding(
-                            PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 16.dp,
-                                bottom = 0.dp
-                            )
-                        ),
-                        text = title,
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                //Title
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 16.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = title,
+                    style = titleTextStyle,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
+                )
 
-                    //Sub-title (description)
-                    Text( //TODO: and cooler font...
-                        modifier = Modifier.padding(
-                            PaddingValues(
-                                start = 16.dp,
-                                end = 16.dp,
-                                top = 8.dp,
-                                bottom = 0.dp
-                            )
-                        ),
-                        text = description,
-                        style = TextStyle(
-                            color = Color.White,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
+                //Sub-title (description)
+                Text(
+                    modifier = Modifier.padding(
+                        PaddingValues(
+                            start = 16.dp,
+                            end = 16.dp,
+                            top = 8.dp,
+                            bottom = 0.dp
+                        )
+                    ),
+                    text = description,
+                    style = descriptionTextStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
     }

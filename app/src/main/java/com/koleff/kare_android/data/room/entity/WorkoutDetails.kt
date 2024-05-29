@@ -27,7 +27,7 @@ data class WorkoutDetails(
     val name: String,
     val description: String,
     val muscleGroup: MuscleGroup,
-    var isSelected: Boolean
+    var isFavorite: Boolean
 ): KareDtoExtended2<WorkoutDetailsDto, MutableList<ExerciseDto>, WorkoutConfigurationDto> {
     override fun toDto(exercises: MutableList<ExerciseDto>, configuration: WorkoutConfigurationDto): WorkoutDetailsDto {
         return WorkoutDetailsDto(
@@ -36,7 +36,7 @@ data class WorkoutDetails(
             description = description,
             muscleGroup = muscleGroup,
             exercises = exercises,
-            isSelected = isSelected,
+            isFavorite = isFavorite,
             configuration = configuration
         )
     }

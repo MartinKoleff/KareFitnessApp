@@ -30,17 +30,14 @@ class LoginViewModel @Inject constructor(
     private var _state: MutableStateFlow<LoginState> = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> = _state
 
-
     fun login(credentials: Credentials) {
         viewModelScope.launch(dispatcher) {
-            authenticationUseCases.loginUseCase.invoke(
-                credentials.username,
-                credentials.password
-            ).collect { loginState ->
+            authenticationUseCases.loginUseCase.invoke(credentials)
+                .collect { loginState ->
 
-                Log.d("LoginViewModel", "$loginState")
-                _state.value = loginState
-            }
+                    Log.d("LoginViewModel", "$loginState")
+                    _state.value = loginState
+                }
         }
     }
 
@@ -54,7 +51,7 @@ class LoginViewModel @Inject constructor(
         onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
     }
 
-    fun saveCredentials() = with(state.value.data){
+    fun saveCredentials() = with(state.value.data) {
         preferences.saveCredentials(user)
 
         saveTokens(accessToken, refreshToken)

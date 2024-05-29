@@ -10,7 +10,6 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import java.lang.NullPointerException
 import java.lang.reflect.Type
 
 
@@ -28,26 +27,35 @@ class DefaultPreferences(
             .apply()
     }
 
-    override fun saveSelectedWorkout(selectedWorkout: WorkoutDto) {
-        val json = gson.toJson(selectedWorkout)
+    override fun saveFavoriteWorkouts(favoriteWorkouts: List<WorkoutDto>) {
+        val json = gson.toJson(favoriteWorkouts)
 
         sharedPref.edit()
-            .putString(Preferences.SELECTED_WORKOUT, json)
+            .putString(Preferences.FAVORITE_WORKOUTS, json)
             .apply()
 
     }
 
-    override fun loadSelectedWorkout(): WorkoutDto? {
-        val selectedWorkoutJson: String =
-            sharedPref.getString(Preferences.SELECTED_WORKOUT, "") ?: ""
+    override fun loadFavoriteWorkouts(): List<WorkoutDto> {
+        val favoriteWorkoutsJson: String =
+            sharedPref.getString(Preferences.FAVORITE_WORKOUTS, "") ?: ""
 
-        return try {
-            Log.d("DefaultPreferences", "Selected workout json: $selectedWorkoutJson")
-            gson.fromJson(selectedWorkoutJson, WorkoutDto::class.java)
+        val type: Type = object : TypeToken<List<WorkoutDto>>() {}.type
+
+        //Parse to List<WorkoutDto>
+        try {
+            Log.d("DefaultPreferences", "Favorite workouts json: $favoriteWorkoutsJson")
+            val workoutsList: List<WorkoutDto> = gson.fromJson(favoriteWorkoutsJson, type)
+
+            if (workoutsList.isEmpty()) {
+                return emptyList()
+            }
+
+            return workoutsList
         } catch (ex: Exception) {
             when (ex) {
                 is IllegalAccessException, is NullPointerException -> {
-                    null
+                    return emptyList()
                 }
 
                 else -> throw ex
@@ -147,6 +155,12 @@ class DefaultPreferences(
         }
     }
 
+    override fun deleteCredentials() {
+        sharedPref.edit()
+            .putString(Preferences.CREDENTIALS, "")
+            .apply()
+    }
+
     override fun saveTokens(tokens: Tokens) {
         val json = gson.toJson(tokens)
 
@@ -171,5 +185,16 @@ class DefaultPreferences(
                 else -> throw ex
             }
         }
+    }
+
+    override fun deleteTokens() {
+        sharedPref.edit()
+            .putString(Preferences.TOKENS, "")
+            .apply()
+    }
+
+    override fun updateTokens(tokens: Tokens) {
+        deleteTokens()
+        saveTokens(tokens)
     }
 }

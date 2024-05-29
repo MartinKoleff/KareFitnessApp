@@ -21,6 +21,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
@@ -28,7 +29,11 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 
 @Composable
 fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
-    val primaryContainerColor = MaterialTheme.colorScheme.primaryContainer
+    val tintColor = MaterialTheme.colorScheme.tertiaryContainer
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor,
+    )
 
     HorizontalDivider(thickness = 5.dp)
 
@@ -47,16 +52,12 @@ fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
                 .fillMaxSize()
                 .align(Alignment.TopStart)
                 .graphicsLayer { alpha = 0.75f },
-            colorFilter = ColorFilter.tint(primaryContainerColor, BlendMode.Darken)
+            colorFilter = ColorFilter.tint(tintColor, BlendMode.Darken)
         )
 
         Text(
             text = currentMuscleGroup.name,
-            style = TextStyle(
-                color = Color.White,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            ),
+            style = textStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
@@ -66,6 +67,7 @@ fun MuscleGroupHeader(currentMuscleGroup: MuscleGroup) {
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun MuscleGroupHeaderPreview() {
     val muscleGroup = MuscleGroup.BACK

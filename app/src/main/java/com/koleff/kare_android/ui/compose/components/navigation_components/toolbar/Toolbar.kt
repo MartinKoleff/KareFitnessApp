@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 
@@ -34,21 +35,30 @@ fun Toolbar(
     onNavigateToAction: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+    val tintColor = MaterialTheme.colorScheme.onSurface
+    val textColor = MaterialTheme.colorScheme.onSurface
+
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
 
     CenterAlignedTopAppBar(
         modifier = modifier,
         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.primary,
+            titleContentColor = textColor,
         ),
         title = {
             if (hasTitle) {
                 Box(
-                    modifier = Modifier.fillMaxSize().alpha(textAlpha),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(textAlpha),
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = title,
+                        style = textStyle,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis,
                         textAlign = TextAlign.Center
@@ -61,6 +71,7 @@ fun Toolbar(
                 modifier = Modifier.fillMaxHeight(),
                 icon = Icons.AutoMirrored.Filled.ArrowBackIos,
                 label = "Go back",
+                tint = tintColor,
                 onNavigateAction = onNavigateBackAction
             )
         },
@@ -69,6 +80,7 @@ fun Toolbar(
                 modifier = Modifier.fillMaxHeight(),
                 icon = Icons.Filled.Settings,
                 label = "Settings",
+                tint = tintColor,
                 onNavigateAction = onNavigateToAction
             )
         },
@@ -77,6 +89,7 @@ fun Toolbar(
 }
 
 @Preview
+@PreviewLightDark
 @Composable
 fun ToolbarPreview() {
     //Adding modifier moves all components up. Without modifier all components are centered.
