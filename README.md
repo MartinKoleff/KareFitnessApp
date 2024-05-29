@@ -34,6 +34,7 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 - Custom navigation
 - Multi-modular project using clean architecture (UI, domain, and data layers)
 
+![wallpaper 3](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/8ad9ec0a-f2dc-4603-ad3b-536696dd4d69)
 ![wallpaper 1](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/6c7ef7cc-62f9-4177-ac63-53f35a327019)
 ![wallpaper 2](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/5f24c532-b716-45fd-9cbf-4ca280295804)
 ![wallpaper 5](https://github.com/MartinKoleff/KareFitnessApp/assets/52703399/d52082b0-270b-41bd-b448-da98188cc9cb)
