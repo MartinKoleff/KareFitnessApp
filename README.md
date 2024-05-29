@@ -22,14 +22,16 @@ Welcome to **Kare**, an Android app designed to help you create, manage, and per
 ## App Functionalities
 
 - Push notifications
-- Local and remote data sources
+- Local and remote data sources (local datasource as backup when no internet connection coming soon!)
 - Use cases and MVVM architecture
-- Jetpack Compose for UI
+- Jetpack Compose for UI using Material 3 guidelines
+- Dark/Light themes
 - Splash Screen API for splash screen
 - Broadcast receivers
-- Regenerate access token + access token header for HTTP requests
+- Access token authentication
+- Regenerate access token functionality
 - Interceptors for OkHttp client
-- Complex use cases tests with high test coverage
+- Complex use cases unit tests with high test coverage
 - Instrumental tests
 - Custom navigation
 - Multi-modular project using clean architecture (UI, domain, and data layers)
