@@ -50,7 +50,7 @@ Filter exercises based on their machine type (barbell, dumbbell, calisthenics, m
 ### Exercise Details Screen
 View a video of the exercise, see how it is done properly, and read a description. Add exercises to workouts.
 
-### Add Exercise to Workout Screen
+### Add Exercise to Workout Screen (from Exercise Details Screen)
 Select a workout to add the chosen exercise to.
 
 ### Workouts Screen
@@ -59,7 +59,7 @@ View all user-created workouts, with an option to filter and see only the saved 
 ### Workout Details Screen
 Configure and view all exercises in a specific workout. Edit workout name, save/bookmark workout, delete exercises, and configure workout before starting.
 
-### Add Exercises to Workout Screen
+### Add Exercises to Workout Screen (from Workout Details Screen)
 View a list of exercises sorted by muscle group. Add multiple exercises to your selected workout.
 
 ### Settings Screen
