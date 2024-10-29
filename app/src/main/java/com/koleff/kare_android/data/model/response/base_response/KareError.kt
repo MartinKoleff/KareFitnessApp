@@ -24,8 +24,8 @@ enum class KareError(
     DO_WORKOUT_PERFORMANCE_METRICS_NOT_FOUND("error_do_workout_performance_metrics_not_found", R.string.text_do_workout_performance_metrics_not_found, ErrorType.INTERNAL),
     WORKOUT_CONFIGURATION_NOT_FOUND("error_workout_configuration_not_found", R.string.text_workout_configuration_not_found, ErrorType.INTERNAL),
     TOKEN_EXPIRED("error_token_expired", R.string.text_token_expired, ErrorType.INTERNAL),
-    INVALID_TOKEN("error_invalid_token", R.string.text_invalid_token, ErrorType.INTERNAL);
-
+    INVALID_TOKEN("error_invalid_token", R.string.text_invalid_token, ErrorType.INTERNAL),
+    CHANGE_LANGUAGE_FAILED("error_change_language_failed", R.string.text_change_language_failed, ErrorType.INTERNAL);
 
 
     companion object {
