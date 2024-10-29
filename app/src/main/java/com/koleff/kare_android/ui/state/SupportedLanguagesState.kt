@@ -3,7 +3,7 @@ package com.koleff.kare_android.ui.state
 import com.koleff.kare_android.data.model.dto.KareLanguage
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
-class SupportedLanguagesState(
+data class SupportedLanguagesState(
     val supportedLanguages: List<KareLanguage> = emptyList(),
     override val isSuccessful: Boolean = false,
     override val isLoading: Boolean = false,
