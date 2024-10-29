@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.repository
 
+import android.content.Context
 import com.koleff.kare_android.data.datasource.LanguageDataSource
 import com.koleff.kare_android.data.model.dto.KareLanguage
 import com.koleff.kare_android.domain.repository.LanguageRepository
@@ -17,7 +18,10 @@ class LanguageRepositoryImpl @Inject constructor(
         return languageDataSource.getSupportedLanguages()
     }
 
-    override suspend fun changeLanguage(selectedLanguage: KareLanguage): Flow<ResultWrapper<ServerResponseData>> {
-        TODO("Not yet implemented") //TODO: not needed? (use use case only)
+    override suspend fun changeLanguage(
+        context: Context,
+        selectedLanguage: KareLanguage
+    ): Flow<ResultWrapper<ServerResponseData>> {
+        return languageDataSource.changeLanguage(context, selectedLanguage)
     }
 }
