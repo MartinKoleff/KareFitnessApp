@@ -76,6 +76,14 @@ sealed interface Destination {
         const val ROUTE = "settings"
     }
 
+    //Change language
+    data object ChangeLanguage : Destination {
+        override val route: String
+            get() = "change_language"
+
+        const val ROUTE = "change_language"
+    }
+
     //Select workout where exercise will be added
     data class SearchWorkoutsScreen(private val exerciseId: Int, private val workoutId: Int) : Destination {
         override val route: String

@@ -12,7 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.ui.compose.screen.ChangeLanguageScreen
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
@@ -146,6 +146,9 @@ private fun NavGraphBuilder.addDestinations() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DoWorkoutScreen()
         }
+    }
+    composable(Destination.ChangeLanguage.ROUTE) { backStackEntry ->
+        ChangeLanguageScreen()
     }
 }
 
