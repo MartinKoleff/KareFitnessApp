@@ -1,14 +1,17 @@
 package com.koleff.kare_android.ui.compose.screen
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,11 +35,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.model.dto.KareLanguage
+import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ChangeLanguageDialog
+import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.view_model.ChangeLanguageViewModel
 
 @Composable
@@ -50,7 +57,8 @@ fun ChangeLanguageScreen(
     }
 
     LaunchedEffect(state) {
-        supportedLanguages = state.supportedLanguages
+        supportedLanguages =
+            state.supportedLanguages //TODO: pre-load them on app initial launch for first time...
     }
 
     val titleTextColor = MaterialTheme.colorScheme.onSurface
@@ -59,7 +67,19 @@ fun ChangeLanguageScreen(
     )
 
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var showLoadingDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<KareError?>(null) }
+
     val context = LocalContext.current
+
+    LaunchedEffect(state) {
+        error = state.error
+        showErrorDialog = state.isError
+        Log.d("ChangeLanguageScreen", "Error detected -> $showErrorDialog")
+
+        showLoadingDialog = state.isLoading
+    }
 
     var selectedLanguage by remember {
         mutableStateOf(KareLanguage())
@@ -82,34 +102,60 @@ fun ChangeLanguageScreen(
         )
     }
 
-    LazyColumn(contentPadding = PaddingValues(2.dp)) {
-
-        //Title
-        item {
-            Box(
+    MainScreenScaffold(
+        screenTitle = "Choose app language",
+        onNavigateToDashboard = { languageViewModel.onNavigateToDashboard() },
+        onNavigateToWorkouts = { languageViewModel.onNavigateToWorkouts() },
+        onNavigateBackAction = { languageViewModel.onNavigateBack() },
+        onNavigateToSettings = { languageViewModel.onNavigateToSettings() },
+    ) { innerPadding ->
+        if (showLoadingDialog) {
+            LoadingDialog(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 4.dp),
-                contentAlignment = Alignment.Center
+                    .fillMaxSize()
+                    .padding(innerPadding),
+                onDismiss = { showLoadingDialog = false }
+            )
+        } else {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(
+                        top = 2.dp,
+                        start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
+                        end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
+                        bottom = 2.dp + innerPadding.calculateBottomPadding()
+                    )
             ) {
-                Text(
-                    modifier = Modifier.padding(
-                        all = 8.dp
-                    ),
-                    text = "Choose app language",
-                    style = titleTextStyle,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
 
-        //Language lazy list
-        items(supportedLanguages.size) {
-            LanguageRow(supportedLanguages[it]) {
-                selectedLanguage = supportedLanguages[it]
+//                //Title
+//                item {
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .padding(horizontal = 4.dp),
+//                        contentAlignment = Alignment.Center
+//                    ) {
+//                        Text(
+//                            modifier = Modifier.padding(
+//                                all = 8.dp
+//                            ),
+//                            text = "Choose app language",
+//                            style = titleTextStyle,
+//                            maxLines = 2,
+//                            overflow = TextOverflow.Ellipsis
+//                        )
+//                    }
+//                }
 
-                showConfirmDialog = true
+                //Language lazy list
+                items(supportedLanguages.size) {
+                    LanguageRow(supportedLanguages[it]) {
+                        selectedLanguage = supportedLanguages[it]
+
+                        showConfirmDialog = true
+                    }
+                }
             }
         }
     }
