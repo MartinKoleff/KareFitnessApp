@@ -12,16 +12,18 @@ class GetSupportedLanguagesUseCase(
 ) {
     suspend operator fun invoke(): Flow<SupportedLanguagesState> =
         languageRepository.getSupportedLanguages().map { apiResult ->
-            when(apiResult){
+            when (apiResult) {
                 is ResultWrapper.ApiError -> {
                     SupportedLanguagesState(
                         isError = true,
                         error = apiResult.error ?: KareError.GENERIC
                     )
                 }
+
                 is ResultWrapper.Loading -> {
                     SupportedLanguagesState(isLoading = true)
                 }
+
                 is ResultWrapper.Success -> {
                     SupportedLanguagesState(
                         isSuccessful = true,
@@ -30,5 +32,4 @@ class GetSupportedLanguagesUseCase(
                 }
             }
         }
-    }
 }

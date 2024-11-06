@@ -57,6 +57,10 @@ class ChangeLanguageViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             languageUseCases.changeLanguageUseCase(context, selectedLanguage).collect { apiResult ->
                _changeLanguageState.value = apiResult
+
+                if(apiResult.isSuccessful){
+                    onNavigateBack()
+                }
             }
         }
     }
