@@ -581,9 +581,9 @@ class WorkoutUseCasesUnitTest {
                 workoutUseCases.updateWorkoutDetailsUseCase(modifiedWorkoutDetails).toList()
 
             logger.i(TAG, "Update workout details -> isSuccessful state raised.")
-            assertTrue { updateWorkoutDetailsState[1].isSuccessful }
+            assertTrue { updateWorkoutDetailsState[0].isSuccessful }
 
-            val updateWorkoutDetails = updateWorkoutDetailsState[1].workoutDetails
+            val updateWorkoutDetails = updateWorkoutDetailsState[0].workoutDetails
             logger.i(
                 TAG,
                 "Mocked workout details inserted successfully. Updated workout details: $updateWorkoutDetails"
@@ -844,7 +844,6 @@ class WorkoutUseCasesUnitTest {
      * ---------------------------
      * ExerciseSetDao.getSetById()
      */
-    //TODO: document tests...
     @RepeatedTest(50)
     @DisplayName("Add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test")
     fun `add exercise using AddExerciseUseCase test and delete exercise using DeleteExerciseUseCase test`() =
@@ -2235,7 +2234,7 @@ class WorkoutUseCasesUnitTest {
      * Test 2 - not favorited workout to unfavorite again
      * Test 3 - fetch all favorite workouts
      */
-    @RepeatedTest(50)
+    @RepeatedTest(50) //TODO: fix...
     @DisplayName("unfavorite workout using UnfavoriteWorkoutUseCase test and get favorite workout using GetFavoriteWorkoutsUseCase test")
     fun `unfavorite workout using UnfavoriteWorkoutUseCase test and get favorite workout using GetFavoriteWorkoutsUseCase test`() =
         runTest {
@@ -2338,6 +2337,7 @@ class WorkoutUseCasesUnitTest {
             assertTrue { getFavoriteWorkoutsState[1].isSuccessful }
 
             logger.i(TAG, "Favorite workouts: ${getFavoriteWorkoutsState[1].workoutList}")
+            logger.i(TAG, "Favorite workouts size: ${getFavoriteWorkoutsState[1].workoutList.size}")
             logger.i(TAG, "Assert favorite workouts are 0")
             assertTrue { getFavoriteWorkoutsState[1].workoutList.isEmpty() }
         }

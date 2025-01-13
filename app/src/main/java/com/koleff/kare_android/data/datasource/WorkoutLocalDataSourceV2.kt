@@ -467,8 +467,8 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             }
 
             //Create workout configuration
-            val workoutConfiguration = WorkoutConfigurationDto(workoutId = workoutDetailsId.toInt())
-            workoutConfigurationDao.insertWorkoutConfiguration(workoutConfiguration.toEntity())
+//            val workoutConfiguration = WorkoutConfigurationDto(workoutId = workoutDetailsId.toInt())
+            workoutConfigurationDao.insertWorkoutConfiguration(workoutDetailsDto.configuration.toEntity())
 
             //Favorite
             if (workoutDetailsDto.isFavorite) {
@@ -623,11 +623,19 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
                 return@flow
             }
 
+            val configuration = workoutConfigurationDao.getWorkoutConfiguration(workoutId) ?: run {
+                emit(ResultWrapper.ApiError(error = KareError.WORKOUT_CONFIGURATION_NOT_FOUND))
+                return@flow
+            }
+
             //Add sets to all exercises
             val updatedWorkoutDetailsWithSets = addSetsToWorkout(workoutDetails)
+            val updatedWorkoutDetailsWithConfiguration = updatedWorkoutDetailsWithSets.copy(
+            configuration = configuration.toDto()
+            )
 
             val result = WorkoutDetailsWrapper(
-                WorkoutDetailsResponse(updatedWorkoutDetailsWithSets)
+                WorkoutDetailsResponse(updatedWorkoutDetailsWithConfiguration)
             )
 
             emit(ResultWrapper.Success(result))
