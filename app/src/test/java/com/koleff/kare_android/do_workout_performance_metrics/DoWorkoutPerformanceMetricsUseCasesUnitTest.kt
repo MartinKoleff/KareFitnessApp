@@ -173,9 +173,29 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository)
             )
 
+            //Do workout performance metrics
+//        doWorkoutExerciseSetDao = DoWorkoutExerciseSetDaoFake()
+//        doWorkoutPerformanceMetricsDao = DoWorkoutPerformanceMetricsDaoFake(doWorkoutExerciseSetDao)
+//        doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
+//            doWorkoutPerformanceMetricsDao,
+//            doWorkoutExerciseSetDao
+//        )
+            doWorkoutPerformanceMetricsMediator =
+                DoWorkoutPerformanceMetricsMediator(
+                    exerciseChangeListener = workoutDetailsDao,
+                    workoutConfigurationChangeListener = workoutDetailsDao,
+                    workoutDetailsChangeListener = workoutDetailsDao,
+                    logger = logger
+                ) //Fixes circular dependency
+            doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
+                doWorkoutPerformanceMetricsMediator,
+                doWorkoutPerformanceMetricsMediator,
+                doWorkoutPerformanceMetricsMediator
+            )
+
             //Workout
             workoutFakeDataSource = WorkoutFakeDataSource(
-                workoutDao = workoutDao,
+                workoutDao = doWorkoutPerformanceMetricsMediator, //TODO: test...
                 exerciseDao = exerciseDao,
                 workoutDetailsDao = workoutDetailsDao,
                 exerciseSetDao = exerciseSetDao,
@@ -206,25 +226,19 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 getFavoriteWorkoutsUseCase = GetFavoriteWorkoutsUseCase(workoutRepository),
                 createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
                 createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(
+                    workoutRepository
+                ),
                 getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
-                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
-                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
-            )
-
-            //Do workout performance metrics
-//        doWorkoutExerciseSetDao = DoWorkoutExerciseSetDaoFake()
-//        doWorkoutPerformanceMetricsDao = DoWorkoutPerformanceMetricsDaoFake(doWorkoutExerciseSetDao)
-//        doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
-//            doWorkoutPerformanceMetricsDao,
-//            doWorkoutExerciseSetDao
-//        )
-            doWorkoutPerformanceMetricsMediator =
-                DoWorkoutPerformanceMetricsMediator() //Fixes circular dependency
-            doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
-                doWorkoutPerformanceMetricsMediator,
-                doWorkoutPerformanceMetricsMediator
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(
+                    workoutRepository
+                ),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(
+                    workoutRepository
+                ),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(
+                    workoutRepository
+                )
             )
 
             doWorkoutPerformanceMetricsRepository =
@@ -258,7 +272,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 exerciseSetDao = exerciseSetDao,
                 exerciseDetailsDao = exerciseDetailsDao,
                 exerciseDao = exerciseDao,
-                workoutDao = workoutDao,
+                workoutDao = doWorkoutPerformanceMetricsMediator, //TODO: test...
                 workoutDetailsDao = workoutDetailsDao,
                 hasInitializedDB = false
             )
@@ -295,6 +309,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         workoutDetailsDao.clearDB()
         workoutDao.clearDB()
         workoutConfigurationDao.clearDB()
+        doWorkoutPerformanceMetricsDao.clearDB()
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")
@@ -323,9 +338,14 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 //Generate workout performance metrics for generated workout
                 val workoutPerformanceMetrics = DoWorkoutPerformanceMetricsDto(
                     id = 0,
-                    workoutId = workout1.workoutId,
+                    workout = workout1.toWorkout().copy(workoutId = 3),
                     doWorkoutExerciseSets = emptyList(),
                     date = Date()
+                )
+
+                logger.i(
+                    TAG,
+                    "Workout 1 -> $workoutPerformanceMetrics"
                 )
 
                 val savePerformanceMetricsState =
@@ -348,20 +368,20 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 //Fetch workout performance metrics from DB
                 val getPerformanceMetricsState =
                     doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                        workoutId = workoutPerformanceMetrics.workoutId
+                        workoutId = workoutPerformanceMetrics.workout.workoutId
                     ).toList()
 
                 logger.i(
                     TAG,
                     "Get do workout performance metrics for workout 1 -> isLoading state raised."
                 )
-                assertTrue { savePerformanceMetricsState[0].isLoading }
+                assertTrue { getPerformanceMetricsState[0].isLoading }
 
                 logger.i(
                     TAG,
                     "Get do workout performance metrics for workout 1 -> isSuccessful state raised."
                 )
-                assertTrue { savePerformanceMetricsState[1].isSuccessful }
+                assertTrue { getPerformanceMetricsState[1].isSuccessful }
 
                 val fetchedWorkoutPerformanceMetrics =
                     getPerformanceMetricsState[1].doWorkoutPerformanceMetricsList.first()
@@ -379,7 +399,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 //Save another do workout performance metrics
                 val workoutPerformanceMetrics2 = DoWorkoutPerformanceMetricsDto(
                     id = 0,
-                    workoutId = workout2.workoutId,
+                    workout = workout2.toWorkout(),
                     doWorkoutExerciseSets = emptyList(),
                     date = Date()
                 )
@@ -424,7 +444,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                 //Fetch only for workout 2
                 val getPerformanceMetricsState2 =
                     doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                        workoutId = workoutPerformanceMetrics2.workoutId
+                        workoutId = workoutPerformanceMetrics2.workout.workoutId
                     ).toList()
 
                 logger.i(
@@ -456,7 +476,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                     TAG,
                     "Assert only one entry is fetched for workout 2"
                 )
-                assertTrue { getPerformanceMetricsState2[1].doWorkoutPerformanceMetricsList.size == 1 }
+                assertTrue { getPerformanceMetricsState2[1].doWorkoutPerformanceMetricsList.size == 1 } //TODO: error here...
             }
 
 
@@ -556,7 +576,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         private suspend fun preparePerformanceMetrics(workoutDetails: WorkoutDetailsDto): DoWorkoutPerformanceMetricsDto {
             val performanceMetrics = DoWorkoutPerformanceMetricsDto(
                 id = 0,
-                workoutId = workoutDetails.workoutId,
+                workout = workoutDetails.toWorkout(),
                 doWorkoutExerciseSets = emptyList(),
                 date = Date()
             )
@@ -583,8 +603,8 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         fun validateComplexSetup() = runTest {
             assertNotNull(performanceMetricsWorkout1)
             assertNotNull(performanceMetricsWorkout2)
-            assertEquals(workout1.workoutId, performanceMetricsWorkout1.workoutId)
-            assertEquals(workout2.workoutId, performanceMetricsWorkout2.workoutId)
+            assertEquals(workout1.workoutId, performanceMetricsWorkout1.workout.workoutId)
+            assertEquals(workout2.workoutId, performanceMetricsWorkout2.workout.workoutId)
             assertEquals(performanceMetricsWorkout1.id, 1)
             assertEquals(performanceMetricsWorkout2.id, 2)
         }
@@ -603,7 +623,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             val workoutExerciseSet = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout1.id,
-                workoutId = performanceMetricsWorkout1.workoutId,
+                workoutId = performanceMetricsWorkout1.workout.workoutId,
                 exerciseId = selectedExerciseWorkout1.exerciseId,
                 templateSetId = firstSetWorkout1.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
@@ -631,7 +651,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             //Fetch do workout exercise set for workout 1
             val fetchWorkoutExerciseSetsState1 =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutId = performanceMetricsWorkout1.workoutId,
+                    workoutId = performanceMetricsWorkout1.workout.workoutId,
                     null,
                     null
                 ).toList()
@@ -668,7 +688,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             val workoutExerciseSet2 = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout2.id,
-                workoutId = performanceMetricsWorkout2.workoutId,
+                workoutId = performanceMetricsWorkout2.workout.workoutId,
                 exerciseId = selectedExerciseWorkout2.exerciseId,
                 templateSetId = firstSetWorkout2.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
@@ -696,7 +716,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             //Fetch do workout exercise set for workout 1
             val fetchWorkoutExerciseSetsState2 =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutId = performanceMetricsWorkout2.workoutId,
+                    workoutId = performanceMetricsWorkout2.workout.workoutId,
                     null,
                     null
                 ).toList()
@@ -728,7 +748,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 
             val fetchWorkoutExerciseSetsState3 =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutId = performanceMetricsWorkout1.workoutId,
+                    workoutId = performanceMetricsWorkout1.workout.workoutId,
                     null,
                     null
                 ).toList()
@@ -748,7 +768,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             val workoutExerciseSet3 = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout2.id,
-                workoutId = performanceMetricsWorkout2.workoutId,
+                workoutId = performanceMetricsWorkout2.workout.workoutId,
                 exerciseId = selectedExercise2Workout2.exerciseId,
                 templateSetId = firstSet2Workout2.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
@@ -806,7 +826,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             val workoutExerciseSet4 = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout1.id,
-                workoutId = performanceMetricsWorkout1.workoutId,
+                workoutId = performanceMetricsWorkout1.workout.workoutId,
                 exerciseId = selectedExercise2Workout1.exerciseId,
                 templateSetId = firstSet2Workout1.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
@@ -822,7 +842,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             val workoutExerciseSet5 = DoWorkoutExerciseSetDto(
                 instanceId = UUID.randomUUID(),
                 workoutPerformanceMetricsId = performanceMetricsWorkout1.id,
-                workoutId = performanceMetricsWorkout1.workoutId,
+                workoutId = performanceMetricsWorkout1.workout.workoutId,
                 exerciseId = selectedExercise3Workout1.exerciseId,
                 templateSetId = firstSet3Workout1.setId
                     ?: throw IllegalArgumentException("Invalid exercise set id"),
@@ -855,7 +875,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
             //Fetch to see the update in workout 1 do workout performance metrics
             val getPerformanceMetricsState =
                 doWorkoutPerformanceMetricsUseCases.getDoWorkoutPerformanceMetricsUseCase(
-                    workoutId = performanceMetricsWorkout1.workoutId,
+                    workoutId = performanceMetricsWorkout1.workout.workoutId,
                     null,
                     null
                 ).toList()
