@@ -135,4 +135,13 @@ sealed interface Destination {
                 "do_workout/{workout_id}"
         }
     }
+
+    //Workout history (done workouts) screen
+    data object WorkoutHistory : Destination {
+
+        override val route: String
+            get() = "workout_history"
+
+        const val ROUTE = "workout_history"
+    }
 }

@@ -24,6 +24,7 @@ import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutHistoryScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import kotlinx.coroutines.Dispatchers
@@ -146,6 +147,9 @@ private fun NavGraphBuilder.addDestinations() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DoWorkoutScreen()
         }
+    }
+    composable(Destination.WorkoutHistory.ROUTE) { backStackEntry ->
+        WorkoutHistoryScreen()
     }
 }
 
