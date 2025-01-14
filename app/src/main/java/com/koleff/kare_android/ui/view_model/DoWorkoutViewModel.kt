@@ -79,6 +79,10 @@ class DoWorkoutViewModel @Inject constructor(
     val saveDoWorkoutPerformanceMetricsState: StateFlow<DoWorkoutPerformanceMetricsState>
         get() = _saveDoWorkoutPerformanceMetricsState
 
+    private val _playerState: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
+    val playerState: StateFlow<BaseState>
+        get() = _playerState
+
     override fun clearError() {
         if (state.value.isError) {
             _state.value = DoWorkoutState()
@@ -488,5 +492,14 @@ class DoWorkoutViewModel @Inject constructor(
     //Used when workout is completed
     fun navigateToDashboard() {
         onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
+    }
+
+    //Show player icon for a second
+    fun showPlayerOverlay() {
+        viewModelScope.launch {
+            _playerState.value = BaseState(isLoading = true)
+            delay(1000)
+            _playerState.value = BaseState(isLoading = false, isSuccessful = true)
+        }
     }
 }

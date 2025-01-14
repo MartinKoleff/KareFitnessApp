@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -49,6 +50,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -89,6 +91,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val state by doWorkoutViewModel.state.collectAsState()
     val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
+    val playerState by doWorkoutViewModel.playerState.collectAsState()
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -148,6 +151,14 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
     }
 
+
+    var showPlayerOverlay by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playerState) {
+        showPlayerOverlay = playerState.isLoading
+    }
+
     //Error dialog
     if (showErrorDialog) {
         error?.let {
@@ -166,7 +177,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         )
     }
 
-    if(showExitWorkoutDialog){
+    if (showExitWorkoutDialog) {
         ExitWorkoutDialog(
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
@@ -191,9 +202,17 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 .fillMaxSize()
                 .alpha(0.15f)
         }
-    } else Modifier.fillMaxSize().clickable{
-        doWorkoutViewModel.onScreenClick() //Pause/Resume click listener
-    }
+    } else Modifier
+        .fillMaxSize()
+        .clickable {
+            doWorkoutViewModel
+                .onScreenClick()
+                .also {
+                    isPaused = !isPaused
+
+                    doWorkoutViewModel.showPlayerOverlay()
+                } //Pause/Resume click listener
+        }
 
     //Loading screen
     if (showLoadingDialog) {
@@ -265,6 +284,22 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                         start = exerciseDataSheetPaddingValues.calculateStartPadding(LayoutDirection.Ltr),
                         end = exerciseDataSheetPaddingValues.calculateEndPadding(LayoutDirection.Ltr)
                     ) //sheetPeekHeight = 88.dp //exerciseDataSheetPaddingValues
+                )
+            }
+        }
+
+        if (showPlayerOverlay) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(75.dp),
+                    painter = painterResource(
+                        if (isPaused) R.drawable.ic_pause else R.drawable.ic_resume
+                    ),
+                    contentDescription = "Pause/Resume",
+                    contentScale = ContentScale.Crop
                 )
             }
         }
