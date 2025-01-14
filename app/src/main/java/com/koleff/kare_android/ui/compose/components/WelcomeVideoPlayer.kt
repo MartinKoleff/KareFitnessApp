@@ -16,11 +16,28 @@ import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.koleff.kare_android.R
 
-@OptIn(UnstableApi::class)
 @Composable
 fun WelcomeVideoPlayer() {
     val context = LocalContext.current
     val videoUri = "android.resource://${context.packageName}/${R.raw.login_video_no_watermark}"
+    DownloadedVideoPlayer(videoUri)
+}
+
+@Composable
+fun WorkoutVideoPlayer(videoId: Int) {
+    val context = LocalContext.current
+    val videoRaw = if (videoId == -1) return
+    else R.raw.login_video_no_watermark
+    
+    val videoUri = "android.resource://${context.packageName}/${videoRaw}"
+    DownloadedVideoPlayer(videoUri)
+}
+
+@OptIn(UnstableApi::class)
+@Composable
+fun DownloadedVideoPlayer(videoUri: String) {
+    val context = LocalContext.current
+
     val exoPlayer = remember {
 
         //Prepare the player with the source.

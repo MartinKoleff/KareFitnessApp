@@ -49,6 +49,7 @@ import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -71,6 +72,7 @@ import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheetModal2
 import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.WorkoutVideoPlayer
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
@@ -224,8 +226,10 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 }
             ) {
 
-                //Video player...
-                //TODO: video player of current exercise...
+                //Video player
+                WorkoutVideoPlayer(
+                    videoId = if(showNextExerciseCountdown) -1 else 0 //TODO: add all workout videos in project
+                )
 
                 //Exercise Timer, weight and reps
                 Box(
