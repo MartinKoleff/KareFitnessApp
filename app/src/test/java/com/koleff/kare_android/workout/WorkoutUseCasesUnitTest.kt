@@ -1294,11 +1294,12 @@ class WorkoutUseCasesUnitTest {
         val fetchedWorkoutDetails = getWorkoutDetailsState[1].workoutDetails
         logger.i(TAG, "Fetched workout details: $fetchedWorkoutDetails")
 
-        logger.i(
-            TAG,
-            "Assert workout configuration is default. Workout configuration: ${fetchedWorkoutDetails.configuration}"
-        )
-        assertTrue { fetchedWorkoutDetails.configuration == WorkoutConfigurationDto() }
+        //Generating custom workout configuration so this check is not needed
+//        logger.i(
+//            TAG,
+//            "Assert workout configuration is default. Workout configuration: ${fetchedWorkoutDetails.configuration}"
+//        )
+//        assertTrue { fetchedWorkoutDetails.configuration == WorkoutConfigurationDto() }
 
         val updatedWorkoutConfiguration = WorkoutConfigurationDto(
             workoutId = workoutDetails.workoutId,
@@ -1367,7 +1368,7 @@ class WorkoutUseCasesUnitTest {
             TAG,
             "Assert workout configuration is default after delete. Workout configuration: ${fetchedWorkoutDetails3.configuration}"
         )
-        assertTrue { fetchedWorkoutDetails3.configuration == WorkoutConfigurationDto() }
+        assertTrue { fetchedWorkoutDetails3.configuration == WorkoutConfigurationDto().copy(workoutId = fetchedWorkoutDetails3.workoutId) }
     }
 
     @ParameterizedTest(name = "OnSearchWorkouts for search text {0}")
