@@ -6,5 +6,6 @@ data class DoWorkoutUseCases(
     val addNewExerciseSetUseCase: AddNewExerciseSetUseCase,
     val deleteExerciseSetUseCase: DeleteExerciseSetUseCase,
     val startTimerUseCase: StartTimerUseCase,
-    val resetTimerUseCase: ResetTimerUseCase
-)
+    val resetTimerUseCase: ResetTimerUseCase,
+    val resumeTimerUseCase: ResumeTimerUseCase,
+    val pauseTimerUseCase: PauseTimer
