@@ -32,4 +32,6 @@ class StartTimerUseCase() {
         channel.receiveAsFlow().collect { timeUpdate ->
             emit(timeUpdate)
         }
+    }
+}
 

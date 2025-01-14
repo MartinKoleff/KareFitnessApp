@@ -33,7 +33,12 @@ data class WorkoutDetailsDto(
 
     override fun toWorkout(): WorkoutDto {
         return WorkoutDto(
-            //TODO: add...
+            workoutId = workoutId,
+            name = name,
+            muscleGroup = muscleGroup,
+            isFavorite = isFavorite,
+            totalExercises = exercises.size,
+            snapshot = "snapshot ${workoutId}.png"
         )
     }
 }

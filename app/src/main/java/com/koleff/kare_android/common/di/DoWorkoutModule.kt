@@ -59,7 +59,7 @@ object DoWorkoutModule {
         doWorkoutApi: DoWorkoutApi,
         apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
     ): DoWorkoutDataSource {
-        return  if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
+        return if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
         else DoWorkoutRemoteDataSource(
             doWorkoutApi = doWorkoutApi,
             apiAuthorizationCallWrapper = apiAuthorizationCallWrapper
@@ -95,4 +95,8 @@ object DoWorkoutModule {
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             startTimerUseCase = StartTimerUseCase(),
             resetTimerUseCase = ResetTimerUseCase(),
-            pauseTimerUseCa
+            pauseTimerUseCase = PauseTimerUseCase(),
+            resumeTimerUseCase = ResumeTimerUseCase(),
+        )
+    }
+}
