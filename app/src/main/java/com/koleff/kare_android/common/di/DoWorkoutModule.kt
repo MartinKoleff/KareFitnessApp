@@ -95,4 +95,8 @@ object DoWorkoutModule {
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             startTimerUseCase = StartTimerUseCase(),
             resetTimerUseCase = ResetTimerUseCase(),
-            pauseTimerUseCa
+            pauseTimerUseCase = PauseTimerUseCase(),
+            resumeTimerUseCase = ResumeTimerUseCase()
+        )
+    }
+}
