@@ -32,8 +32,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             delay(Constants.fakeDelay)
 
             val id = doWorkoutPerformanceMetricsDao.insertWorkoutPerformanceMetrics(performanceMetrics.toEntity()).toInt()
-
-//            workoutDao.insertWorkout(performanceMetrics.workout.toEntity()) //With new relations its no longer needed...
+            workoutDao.insertWorkout(performanceMetrics.workout.toEntity()) //With new relations its no longer needed...
 
             val result = DoWorkoutPerformanceMetricsWrapper(
                 DoWorkoutPerformanceMetricsResponse(

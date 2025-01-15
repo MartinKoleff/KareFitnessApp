@@ -533,6 +533,8 @@ class DoWorkoutUseCasesUnitTest {
             assertTrue { resetTime == defaultTime }
         }
 
+    //TODO: pause/resume timer test...
+
     @RepeatedTest(5)
     @DisplayName("validate that do workout is set up correctly")
     fun validateComplexSetup() = runTest {

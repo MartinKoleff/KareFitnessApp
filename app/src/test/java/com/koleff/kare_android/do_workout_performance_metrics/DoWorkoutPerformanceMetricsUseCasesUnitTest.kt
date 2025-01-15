@@ -180,6 +180,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
 //            doWorkoutPerformanceMetricsDao,
 //            doWorkoutExerciseSetDao
 //        )
+
             doWorkoutPerformanceMetricsMediator =
                 DoWorkoutPerformanceMetricsMediator(
                     exerciseChangeListener = workoutDetailsDao,
@@ -187,6 +188,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
                     workoutDetailsChangeListener = workoutDetailsDao,
                     logger = logger
                 ) //Fixes circular dependency
+
             doWorkoutPerformanceMetricsDataSource = DoWorkoutPerformanceMetricsFakeDataSource(
                 doWorkoutPerformanceMetricsMediator,
                 doWorkoutPerformanceMetricsMediator,
@@ -309,7 +311,7 @@ class DoWorkoutPerformanceMetricsUseCasesUnitTest {
         workoutDetailsDao.clearDB()
         workoutDao.clearDB()
         workoutConfigurationDao.clearDB()
-        doWorkoutPerformanceMetricsDao.clearDB()
+        doWorkoutPerformanceMetricsMediator.clearDB()
 
         logger.i("tearDown", "DB cleared!")
         logger.i("tearDown", "ExerciseDao: ${exerciseDao.getAllExercises()}")

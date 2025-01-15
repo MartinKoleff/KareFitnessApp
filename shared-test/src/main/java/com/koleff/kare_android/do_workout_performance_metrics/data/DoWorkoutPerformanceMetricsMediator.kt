@@ -127,7 +127,7 @@ class DoWorkoutPerformanceMetricsMediator(
         updatedSets.add(exerciseSet)
 
         val updatedPerformanceMetricsWithSets = performanceMetricsWithSets.copy(
-            exerciseSets = updatedSets
+            exerciseSets = updatedSets.distinct()
         )
 
         //Update entry
