@@ -2241,7 +2241,7 @@ class WorkoutUseCasesUnitTest {
         runTest {
 
             /**
-             * Test 1 - favorited workout to favorite again
+             * Test 1 - favorited workout to unfavorite
              */
 
             //Generate workout
@@ -2261,14 +2261,14 @@ class WorkoutUseCasesUnitTest {
             val savedWorkout = createCustomWorkoutState[1].workout
             logger.i(TAG, "Saved workout: $savedWorkout")
 
-            val favoriteWorkoutState =
-                workoutUseCases.favoriteWorkoutUseCase(savedWorkout.workoutId).toList()
+            val unfavoriteWorkoutState =
+                workoutUseCases.unfavoriteWorkoutUseCase(savedWorkout.workoutId).toList()
 
-            logger.i(TAG, "Favorite workout -> isLoading state raised.")
-            assertTrue { favoriteWorkoutState[0].isLoading }
+            logger.i(TAG, "Unfavorite workout -> isLoading state raised.")
+            assertTrue { unfavoriteWorkoutState[0].isLoading }
 
-            logger.i(TAG, "Favorite workout -> isSuccessful state raised.")
-            assertTrue { favoriteWorkoutState[1].isSuccessful }
+            logger.i(TAG, "Unfavorite workout -> isSuccessful state raised.")
+            assertTrue { unfavoriteWorkoutState[1].isSuccessful }
 
             val getWorkoutState =
                 workoutUseCases.getWorkoutUseCase(savedWorkout.workoutId).toList()
@@ -2279,11 +2279,11 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Get favorited workout -> isSuccessful state raised.")
             assertTrue { getWorkoutState[1].isSuccessful }
 
-            logger.i(TAG, "Assert workout is still favorite in DB.")
-            assertTrue { getWorkoutState[1].workout.isFavorite  }
+            logger.i(TAG, "Assert workout is not favorite in DB.")
+            assertTrue { !getWorkoutState[1].workout.isFavorite  }
 
             /**
-             * Test 2 - not favorited workout to favorite
+             * Test 2 - not favorited workout to unfavorite again
              */
 
             //Generate workout
@@ -2303,14 +2303,14 @@ class WorkoutUseCasesUnitTest {
             val savedWorkout2 = createCustomWorkoutState2[1].workout
             logger.i(TAG, "Saved workout 2: $savedWorkout2")
 
-            val favoriteWorkoutState2 =
-                workoutUseCases.favoriteWorkoutUseCase(savedWorkout2.workoutId).toList()
+            val unfavoriteWorkoutState2 =
+                workoutUseCases.unfavoriteWorkoutUseCase(savedWorkout2.workoutId).toList()
 
-            logger.i(TAG, "Favorite workout 2 -> isLoading state raised.")
-            assertTrue { favoriteWorkoutState2[0].isLoading }
+            logger.i(TAG, "Unfavorite workout 2 -> isLoading state raised.")
+            assertTrue { unfavoriteWorkoutState2[0].isLoading }
 
-            logger.i(TAG, "Favorite workout 2 -> isSuccessful state raised.")
-            assertTrue { favoriteWorkoutState2[1].isSuccessful }
+            logger.i(TAG, "Unfavorite workout 2 -> isSuccessful state raised.")
+            assertTrue { unfavoriteWorkoutState2[1].isSuccessful }
 
             val getWorkoutState2 =
                 workoutUseCases.getWorkoutUseCase(savedWorkout2.workoutId).toList()
@@ -2321,8 +2321,8 @@ class WorkoutUseCasesUnitTest {
             logger.i(TAG, "Get favorited workout 2 -> isSuccessful state raised.")
             assertTrue { getWorkoutState2[1].isSuccessful }
 
-            logger.i(TAG, "Assert workout 2 is favorite in DB.")
-            assertTrue { getWorkoutState2[1].workout.isFavorite  }
+            logger.i(TAG, "Assert workout 2 is not favorite in DB.")
+            assertTrue { !getWorkoutState2[1].workout.isFavorite  }
 
             /**
              * Test 3 - fetch all favorite workouts
