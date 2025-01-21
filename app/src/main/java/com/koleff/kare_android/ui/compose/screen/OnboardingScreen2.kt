@@ -30,6 +30,19 @@ import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
 
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.outlined.RadioButtonUnchecked
+import androidx.compose.runtime.*
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
+
 @Preview
 @Composable
 fun SliderAdvancedExample(
@@ -143,7 +156,7 @@ fun SliderWithLines(
         SliderAdvancedExample(
             start = onboardingSliderStyle.startBound.toFloat(),
             end = onboardingSliderStyle.endBound.toFloat(),
-            steps = if(hasSteps) onboardingSliderStyle.totalLines / onboardingSliderStyle.interval else 1,
+            steps = if (hasSteps) onboardingSliderStyle.totalLines / onboardingSliderStyle.interval else 1,
             initialValue = onboardingSliderStyle.initialValue.toFloat()
         ) {
             sliderValue = it
@@ -194,5 +207,63 @@ private fun SliderWithLinesPreview() {
             ),
             hasSteps = false
         )
+    }
+}
+
+@Composable
+fun GenderSelectionBox(
+    title: String,
+    isSelected: Boolean,
+    onClick: (String) -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(
+                color = if (isSelected) androidx.compose.ui.graphics.Color(0xFFE8F5E9) else androidx.compose.ui.graphics.Color(
+                    0xFFF5F5F5
+                ),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .clickable { onClick(title) }
+            .padding(vertical = 12.dp, horizontal = 16.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = androidx.compose.ui.graphics.Color.Black
+                ),
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                imageVector = if (isSelected) Icons.Default.CheckCircle else Icons.Outlined.RadioButtonUnchecked,
+                contentDescription = if (isSelected) "Selected" else "Not Selected",
+                tint = if (isSelected) androidx.compose.ui.graphics.Color(0xFF4CAF50) else androidx.compose.ui.graphics.Color.Gray
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GenderSelectionGroup() {
+    var selectedGender by remember { mutableStateOf("Male") }
+    val options = listOf("Male", "Female")
+
+    Column(modifier = Modifier.fillMaxWidth()) {
+        options.forEach { option ->
+            GenderSelectionBox(
+                title = option,
+                isSelected = option == selectedGender,
+                onClick = { selectedGender = it }
+            )
+        }
     }
 }
