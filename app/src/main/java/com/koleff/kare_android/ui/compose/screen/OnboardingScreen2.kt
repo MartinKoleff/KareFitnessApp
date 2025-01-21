@@ -48,9 +48,9 @@ fun SliderAdvancedExample(
                 onValueChange(it)
             },
             colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.secondary, //Green
-                activeTrackColor = MaterialTheme.colorScheme.secondary,
-                inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+                thumbColor = MaterialTheme.colorScheme.primary,
+                activeTrackColor = androidx.compose.ui.graphics.Color.Green,
+                inactiveTrackColor = androidx.compose.ui.graphics.Color.Cyan //Light Green...
             ),
             steps = steps - 1,
             valueRange = start..end
