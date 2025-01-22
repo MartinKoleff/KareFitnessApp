@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose.screen
 
 import android.graphics.Color
 import android.graphics.Paint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,11 +27,9 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.ui.state.OnboardingSliderStyle
-import kotlin.math.absoluteValue
 import kotlin.math.roundToInt
-
-
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,9 +38,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.runtime.*
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 
 @Preview
 @Composable
@@ -167,48 +168,179 @@ fun SliderWithLines(
 
 @Preview
 @Composable
-private fun SliderWithLinesPreview() {
-    Column {
-        SliderWithLines(
-            sliderTitle = "Height",
-            sliderMetrics = "CM",
-            onboardingSliderStyle = OnboardingSliderStyle(
-                lineColor = MaterialTheme.colorScheme.outline,
-                initialValue = 170,
-                startBound = 140,
-                endBound = 210,
-                interval = 5
-            ),
-            hasSteps = true
+private fun OnboardingScreenPreview() {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.weight(11f)) {
+            OnboardingTitleAndSubtitle("User metrics", "Please fill in the following information.")
+            Spacer(modifier = Modifier.size(16.dp))
+
+            GenderSelectionGroup()
+            Spacer(modifier = Modifier.size(32.dp))
+
+            SliderWithLines(
+                sliderTitle = "Height",
+                sliderMetrics = "CM",
+                onboardingSliderStyle = OnboardingSliderStyle(
+                    lineColor = MaterialTheme.colorScheme.outline,
+                    initialValue = 170,
+                    startBound = 140,
+                    endBound = 210,
+                    interval = 5
+                ),
+                hasSteps = true
+            )
+
+            SliderWithLines(
+                sliderTitle = "Age",
+                sliderMetrics = "Years",
+                onboardingSliderStyle = OnboardingSliderStyle(
+                    lineColor = MaterialTheme.colorScheme.outline,
+                    initialValue = 22,
+                    startBound = 10,
+                    endBound = 100,
+                    interval = 5
+                ),
+                hasSteps = false
+            )
+
+            SliderWithLines(
+                sliderTitle = "Weight",
+                sliderMetrics = "KG",
+                onboardingSliderStyle = OnboardingSliderStyle(
+                    lineColor = MaterialTheme.colorScheme.outline,
+                    initialValue = 79,
+                    startBound = 35,
+                    endBound = 200,
+                    interval = 15
+                ),
+                hasSteps = false
+            )
+        }
+
+        //Footer
+        OnboardingButton(modifier = Modifier.weight(1f), "Proceed") {
+
+        }
+    }
+}
+
+
+//Same as AuthenticationTitleAndSubtitle
+//TODO: extract universally used components in the app
+@Composable
+fun OnboardingTitleAndSubtitle(title: String, subtitle: String) {
+    val titleTextColor = MaterialTheme.colorScheme.onSurface
+
+    val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
+        color = titleTextColor
+    )
+
+    val subtitleTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = titleTextColor
+    )
+
+    val titlePadding =
+        PaddingValues(
+            top = 8.dp,
+            bottom = 0.dp,
+            start = 8.dp,
+            end = 8.dp
         )
 
-        SliderWithLines(
-            sliderTitle = "Age",
-            sliderMetrics = "Years",
-            onboardingSliderStyle = OnboardingSliderStyle(
-                lineColor = MaterialTheme.colorScheme.outline,
-                initialValue = 22,
-                startBound = 10,
-                endBound = 100,
-                interval = 5
-            ),
-            hasSteps = false
+    val subtitlePadding =
+        PaddingValues(
+            top = 2.dp,
+            bottom = 8.dp,
+            start = 8.dp,
+            end = 8.dp
         )
 
-        SliderWithLines(
-            sliderTitle = "Weight",
-            sliderMetrics = "KG",
-            onboardingSliderStyle = OnboardingSliderStyle(
-                lineColor = MaterialTheme.colorScheme.outline,
-                initialValue = 79,
-                startBound = 35,
-                endBound = 200,
-                interval = 15
+    //Title
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(
+                titlePadding
             ),
-            hasSteps = false
+            text = title,
+            style = titleTextStyle,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+
+    //Subtitle
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 4.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.padding(
+                subtitlePadding
+            ),
+            text = subtitle,
+            style = subtitleTextStyle,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
+
+@Composable
+fun OnboardingButton(
+    modifier: Modifier,
+    text: String,
+    onClick: () -> Unit
+) {
+    val cornerSize = 24.dp
+    val paddingValues = PaddingValues(
+        horizontal = 32.dp,
+        vertical = 8.dp
+    )
+    val textColor = MaterialTheme.colorScheme.onSurface
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.primaryContainer
+
+    val buttonTextStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(paddingValues)
+            .height(50.dp)
+            .clip(RoundedCornerShape(cornerSize))
+            .border(
+                border = BorderStroke(2.dp, color = outlineColor),
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(cornerSize)
+            )
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+
+        Text(
+            modifier = Modifier.padding(
+                PaddingValues(8.dp)
+            ),
+            text = text,
+            style = buttonTextStyle,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
 
 @Composable
 fun GenderSelectionBox(
@@ -219,12 +351,13 @@ fun GenderSelectionBox(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .height(75.dp)
+            .padding(vertical = 8.dp, horizontal = 8.dp)
             .background(
                 color = if (isSelected) androidx.compose.ui.graphics.Color(0xFFE8F5E9) else androidx.compose.ui.graphics.Color(
                     0xFFF5F5F5
                 ),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(16.dp)
             )
             .clickable { onClick(title) }
             .padding(vertical = 12.dp, horizontal = 16.dp)
@@ -257,7 +390,12 @@ fun GenderSelectionGroup() {
     var selectedGender by remember { mutableStateOf("Male") }
     val options = listOf("Male", "Female")
 
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         options.forEach { option ->
             GenderSelectionBox(
                 title = option,
@@ -267,3 +405,6 @@ fun GenderSelectionGroup() {
         }
     }
 }
+
+//TODO: lazy grid for options like the sites for looking for jobs...
+
