@@ -33,8 +33,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
+import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBackIos
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.outlined.RadioButtonUnchecked
 import androidx.compose.runtime.*
@@ -43,6 +44,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import com.koleff.kare_android.ui.view_model.OnboardingViewModel
 
 @Preview
 @Composable
@@ -166,12 +170,18 @@ fun SliderWithLines(
     }
 }
 
-@Preview
 @Composable
-private fun OnboardingScreenPreview() {
+fun OnboardingScreen(onboardingViewModel: OnboardingViewModel = hiltViewModel()) {
     Column(modifier = Modifier.fillMaxSize()) {
+
+        //Screen
         Column(modifier = Modifier.weight(11f)) {
-            OnboardingTitleAndSubtitle("User metrics", "Please fill in the following information.")
+            OnboardingToolbar(
+                "User metrics",
+                "Please fill in the following information.",
+            ) {
+                onboardingViewModel.onNavigateBack()
+            }
             Spacer(modifier = Modifier.size(16.dp))
 
             GenderSelectionGroup()
@@ -224,11 +234,19 @@ private fun OnboardingScreenPreview() {
     }
 }
 
-
-//Same as AuthenticationTitleAndSubtitle
-//TODO: extract universally used components in the app
+@Preview
 @Composable
-fun OnboardingTitleAndSubtitle(title: String, subtitle: String) {
+private fun OnboardingScreenPreview() {
+    OnboardingScreen()
+}
+
+
+@Composable
+fun OnboardingToolbar(
+    title: String,
+    subtitle: String,
+    onBack: () -> Unit
+) {
     val titleTextColor = MaterialTheme.colorScheme.onSurface
 
     val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
@@ -255,40 +273,66 @@ fun OnboardingTitleAndSubtitle(title: String, subtitle: String) {
             end = 8.dp
         )
 
-    //Title
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 4.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            modifier = Modifier.padding(
-                titlePadding
-            ),
-            text = title,
-            style = titleTextStyle,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
-        )
-    }
 
-    //Subtitle
     Box(
-        modifier = Modifier
+        Modifier
             .fillMaxWidth()
-            .padding(horizontal = 4.dp),
+            .height(100.dp),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            modifier = Modifier.padding(
-                subtitlePadding
-            ),
-            text = subtitle,
-            style = subtitleTextStyle,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+        val tintColor = MaterialTheme.colorScheme.onSurface
+        NavigationItem(
+            modifier = Modifier
+                .fillMaxHeight()
+                .align(Alignment.CenterStart),
+            icon = Icons.AutoMirrored.Filled.ArrowBackIos,
+            label = "Go back",
+            tint = tintColor,
+            onNavigateAction = onBack
         )
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 4.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            //Title
+            Text(
+                modifier = Modifier.padding(
+                    titlePadding
+                ),
+                text = title,
+                style = titleTextStyle,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+
+            //Subtitle
+            Text(
+                modifier = Modifier.padding(
+                    subtitlePadding
+                ),
+                text = subtitle,
+                style = subtitleTextStyle,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
+    }
+}
+
+
+@Preview
+@Composable
+private fun OnboardingToolbarPreview() {
+    OnboardingToolbar(
+        "User metrics",
+        "Please fill in the following information.",
+    ) {
+
     }
 }
 
