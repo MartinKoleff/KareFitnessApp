@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.compose.screen
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -46,7 +47,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.data.model.dto.Gender
+import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.OnboardingFormViewModel
 
 @Composable
@@ -174,6 +179,11 @@ fun SliderWithLines(
 
 @Composable
 fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hiltViewModel()) {
+    val state by onboardingFormViewModel.saveOnboardingDataState.collectAsState()
+    var showLoadingDialog by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<KareError?>(null) }
+
     var gender by remember {
         mutableStateOf(Gender.MALE)
     }
@@ -190,81 +200,114 @@ fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hilt
         mutableIntStateOf(60)
     }
 
+
+    LaunchedEffect(state) {
+        val errorState: BaseState = if (state.isError) state else BaseState()
+        error = errorState.error
+        showErrorDialog = errorState.isError
+        Log.d("OnboardingFormScreen", "Error detected -> $showErrorDialog")
+
+        val loadingState = if (state.isLoading) state else BaseState()
+        showLoadingDialog = loadingState.isLoading
+        Log.d("OnboardingFormScreen", "Show loading dialog -> $showLoadingDialog")
+    }
+
+    //Dialog callbacks
+    val onErrorDialogDismiss = {
+        showErrorDialog = false
+        onboardingFormViewModel.clearError()
+    }
+
+    //Error dialog
+    if (showErrorDialog) {
+        error?.let {
+            ErrorDialog(it, onErrorDialogDismiss)
+        }
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
 
-        //Screen
-        Column(modifier = Modifier.weight(11f)) {
-            OnboardingToolbar(
-                "User metrics",
-                "Please fill in the following information.",
-            ) {
-                onboardingFormViewModel.onNavigateBack()
+        if (showLoadingDialog) {
+            LoadingWheel( //TODO: test...
+                modifier = Modifier.fillMaxSize(),
+                hideScreen = true
+            )
+        } else {
+
+            //Screen
+            Column(modifier = Modifier.weight(11f)) {
+                OnboardingToolbar(
+                    "User metrics",
+                    "Please fill in the following information.",
+                ) {
+                    onboardingFormViewModel.onNavigateBack()
+                }
+                Spacer(modifier = Modifier.size(16.dp))
+
+                GenderSelectionGroup(gender) {
+                    gender = it
+                }
+
+                Spacer(modifier = Modifier.size(32.dp))
+
+                SliderWithLines(
+                    sliderTitle = "Height",
+                    sliderMetrics = "CM",
+                    onboardingSliderStyle = OnboardingSliderStyle(
+                        lineColor = MaterialTheme.colorScheme.outline,
+                        initialValue = height,
+                        startBound = 140,
+                        endBound = 210,
+                        interval = 5
+                    ),
+                    hasSteps = true,
+                    onValueChange = {
+                        height = it.toInt()
+                    }
+                )
+
+                SliderWithLines(
+                    sliderTitle = "Age",
+                    sliderMetrics = "Years",
+                    onboardingSliderStyle = OnboardingSliderStyle(
+                        lineColor = MaterialTheme.colorScheme.outline,
+                        initialValue = age,
+                        startBound = 10,
+                        endBound = 100,
+                        interval = 5
+                    ),
+                    hasSteps = false,
+                    onValueChange = {
+                        age = it.toInt()
+                    }
+                )
+
+                SliderWithLines(
+                    sliderTitle = "Weight",
+                    sliderMetrics = "KG",
+                    onboardingSliderStyle = OnboardingSliderStyle(
+                        lineColor = MaterialTheme.colorScheme.outline,
+                        initialValue = weight,
+                        startBound = 35,
+                        endBound = 200,
+                        interval = 15
+                    ),
+                    hasSteps = false,
+                    onValueChange = {
+                        weight = it.toInt()
+                    }
+                )
             }
-            Spacer(modifier = Modifier.size(16.dp))
 
-            GenderSelectionGroup(gender) {
-                gender = it
+            //Footer
+            OnboardingButton(modifier = Modifier.weight(1f), "Proceed") {
+                onboardingFormViewModel.completeOnboarding(
+                    gender,
+                    height,
+                    age,
+                    weight,
+                )
             }
-
-            Spacer(modifier = Modifier.size(32.dp))
-
-            SliderWithLines(
-                sliderTitle = "Height",
-                sliderMetrics = "CM",
-                onboardingSliderStyle = OnboardingSliderStyle(
-                    lineColor = MaterialTheme.colorScheme.outline,
-                    initialValue = height,
-                    startBound = 140,
-                    endBound = 210,
-                    interval = 5
-                ),
-                hasSteps = true,
-                onValueChange = {
-                    height = it.toInt()
-                }
-            )
-
-            SliderWithLines(
-                sliderTitle = "Age",
-                sliderMetrics = "Years",
-                onboardingSliderStyle = OnboardingSliderStyle(
-                    lineColor = MaterialTheme.colorScheme.outline,
-                    initialValue = age,
-                    startBound = 10,
-                    endBound = 100,
-                    interval = 5
-                ),
-                hasSteps = false,
-                onValueChange = {
-                    age = it.toInt()
-                }
-            )
-
-            SliderWithLines(
-                sliderTitle = "Weight",
-                sliderMetrics = "KG",
-                onboardingSliderStyle = OnboardingSliderStyle(
-                    lineColor = MaterialTheme.colorScheme.outline,
-                    initialValue = weight,
-                    startBound = 35,
-                    endBound = 200,
-                    interval = 15
-                ),
-                hasSteps = false,
-                onValueChange = {
-                    weight = it.toInt()
-                }
-            )
-        }
-
-        //Footer
-        OnboardingButton(modifier = Modifier.weight(1f), "Proceed") {
-            onboardingFormViewModel.completeOnboarding(
-                gender,
-                height,
-                age,
-                weight,
-            )
         }
     }
 }

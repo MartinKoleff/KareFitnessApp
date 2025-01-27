@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.MainDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
@@ -58,7 +59,16 @@ class OnboardingFormViewModel @Inject constructor(
                 )
             ).collect { saveOnboardingDataState ->
                 _saveOnboardingDataState.value = saveOnboardingDataState
+
+                if (saveOnboardingDataState.isSuccessful) {
+                    navigateToWelcomeScreen()
+                    preferences.saveHasOnboarded(true)
+                }
             }
         }
+    }
+
+    private fun navigateToWelcomeScreen() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Welcome))
     }
 }
