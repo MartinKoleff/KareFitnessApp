@@ -19,6 +19,8 @@ import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScre
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.LoginScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
+import com.koleff.kare_android.ui.compose.screen.OnboardingFormScreen
+import com.koleff.kare_android.ui.compose.screen.OnboardingScreen
 import com.koleff.kare_android.ui.compose.screen.RegisterScreen
 import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
@@ -119,6 +121,7 @@ fun AppNavigation(
 
 private fun NavGraphBuilder.addDestinations() {
     addWelcomeGraph()
+    addOnboardingGraph()
     composable(Destination.Dashboard.ROUTE) { backStackEntry ->
         DashboardScreen()
     }
@@ -162,5 +165,14 @@ internal fun NavGraphBuilder.addWelcomeGraph() {
     }
     composable(Destination.Register.ROUTE) { backStackEntry ->
         RegisterScreen()
+    }
+}
+
+internal fun NavGraphBuilder.addOnboardingGraph() {
+    composable(Destination.Onboarding.ROUTE) { backStackEntry ->
+        OnboardingScreen()
+    }
+    composable(Destination.OnboardingForm.ROUTE) { backStackEntry ->
+        OnboardingFormScreen()
     }
 }
