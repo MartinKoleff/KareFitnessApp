@@ -40,7 +40,8 @@ import kotlinx.coroutines.flow.flowOn
 @Composable
 fun AppNavigation(
     navigationNotifier: NavigationNotifier,
-    hasSignedIn: Boolean = false
+    hasSignedIn: Boolean = false,
+    hasOnboarded: Boolean = false
 ) {
     val navController = rememberNavController()
 
@@ -99,9 +100,12 @@ fun AppNavigation(
     //No cached data -> go to welcome screen (first time launch).
     //Cached data -> go to dashboard screen (already signed in).
     Log.d("AppNavigation", "Has credentials -> $hasSignedIn")
-    val startingDestination = if(hasSignedIn) {
+    Log.d("AppNavigation", "Has onboarded -> $hasOnboarded")
+    val startingDestination = if (hasSignedIn) {
         Destination.Dashboard.route
-    }else{
+    } else if (!hasOnboarded) {
+        Destination.Onboarding.route
+    } else {
         Destination.Welcome.route
     }
 
