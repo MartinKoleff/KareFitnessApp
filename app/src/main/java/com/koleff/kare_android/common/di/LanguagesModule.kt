@@ -7,6 +7,7 @@ import com.koleff.kare_android.domain.repository.LanguageRepository
 import com.koleff.kare_android.domain.usecases.ChangeLanguageUseCase
 import com.koleff.kare_android.domain.usecases.GetSupportedLanguagesUseCase
 import com.koleff.kare_android.domain.usecases.LanguageUseCases
+import com.koleff.kare_android.domain.usecases.OnSearchLanguageUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -33,8 +34,9 @@ object LanguagesModule {
     @Singleton
     fun provideLanguageUseCases(languageRepository: LanguageRepository): LanguageUseCases {
         return LanguageUseCases(
-            ChangeLanguageUseCase(languageRepository),
-            GetSupportedLanguagesUseCase(languageRepository)
+            changeLanguageUseCase = ChangeLanguageUseCase(languageRepository),
+            getSupportedLanguagesUseCase = GetSupportedLanguagesUseCase(languageRepository),
+            onSearchLanguageUseCase = OnSearchLanguageUseCase()
         )
     }
 }
