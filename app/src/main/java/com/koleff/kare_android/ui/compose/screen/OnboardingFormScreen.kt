@@ -26,7 +26,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.koleff.kare_android.ui.state.OnboardingSliderStyle
+import com.koleff.kare_android.ui.style.OnboardingSliderStyle
 import kotlin.math.roundToInt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -45,10 +45,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.koleff.kare_android.data.model.dto.Gender
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
-import com.koleff.kare_android.ui.view_model.OnboardingViewModel
+import com.koleff.kare_android.ui.view_model.OnboardingFormViewModel
 
-@Preview
 @Composable
 fun SliderAdvancedExample(
     start: Float,
@@ -139,7 +139,8 @@ fun SliderWithLines(
     ),
     sliderTitle: String,
     sliderMetrics: String,
-    hasSteps: Boolean = false
+    hasSteps: Boolean = false,
+    onValueChange: (Float) -> Unit
 ) {
     var sliderValue by remember { mutableFloatStateOf(onboardingSliderStyle.initialValue.toFloat()) }
     Column(
@@ -165,13 +166,30 @@ fun SliderWithLines(
             initialValue = onboardingSliderStyle.initialValue.toFloat()
         ) {
             sliderValue = it
+            onValueChange(it)
         }
         SliderLines(onboardingSliderStyle)
     }
 }
 
 @Composable
-fun OnboardingScreen(onboardingViewModel: OnboardingViewModel = hiltViewModel()) {
+fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hiltViewModel()) {
+    var gender by remember {
+        mutableStateOf(Gender.MALE)
+    }
+
+    var height by remember {
+        mutableIntStateOf(170)
+    }
+
+    var age by remember {
+        mutableIntStateOf(22)
+    }
+
+    var weight by remember {
+        mutableIntStateOf(60)
+    }
+
     Column(modifier = Modifier.fillMaxSize()) {
 
         //Screen
@@ -180,11 +198,14 @@ fun OnboardingScreen(onboardingViewModel: OnboardingViewModel = hiltViewModel())
                 "User metrics",
                 "Please fill in the following information.",
             ) {
-                onboardingViewModel.onNavigateBack()
+                onboardingFormViewModel.onNavigateBack()
             }
             Spacer(modifier = Modifier.size(16.dp))
 
-            GenderSelectionGroup()
+            GenderSelectionGroup(gender) {
+                gender = it
+            }
+
             Spacer(modifier = Modifier.size(32.dp))
 
             SliderWithLines(
@@ -192,12 +213,15 @@ fun OnboardingScreen(onboardingViewModel: OnboardingViewModel = hiltViewModel())
                 sliderMetrics = "CM",
                 onboardingSliderStyle = OnboardingSliderStyle(
                     lineColor = MaterialTheme.colorScheme.outline,
-                    initialValue = 170,
+                    initialValue = height,
                     startBound = 140,
                     endBound = 210,
                     interval = 5
                 ),
-                hasSteps = true
+                hasSteps = true,
+                onValueChange = {
+                    height = it.toInt()
+                }
             )
 
             SliderWithLines(
@@ -205,12 +229,15 @@ fun OnboardingScreen(onboardingViewModel: OnboardingViewModel = hiltViewModel())
                 sliderMetrics = "Years",
                 onboardingSliderStyle = OnboardingSliderStyle(
                     lineColor = MaterialTheme.colorScheme.outline,
-                    initialValue = 22,
+                    initialValue = age,
                     startBound = 10,
                     endBound = 100,
                     interval = 5
                 ),
-                hasSteps = false
+                hasSteps = false,
+                onValueChange = {
+                    age = it.toInt()
+                }
             )
 
             SliderWithLines(
@@ -218,26 +245,34 @@ fun OnboardingScreen(onboardingViewModel: OnboardingViewModel = hiltViewModel())
                 sliderMetrics = "KG",
                 onboardingSliderStyle = OnboardingSliderStyle(
                     lineColor = MaterialTheme.colorScheme.outline,
-                    initialValue = 79,
+                    initialValue = weight,
                     startBound = 35,
                     endBound = 200,
                     interval = 15
                 ),
-                hasSteps = false
+                hasSteps = false,
+                onValueChange = {
+                    weight = it.toInt()
+                }
             )
         }
 
         //Footer
         OnboardingButton(modifier = Modifier.weight(1f), "Proceed") {
-
+            onboardingFormViewModel.completeOnboarding(
+                gender,
+                height,
+                age,
+                weight,
+            )
         }
     }
 }
 
 @Preview
 @Composable
-private fun OnboardingScreenPreview() {
-    OnboardingScreen()
+private fun OnboardingFormScreenPreview() {
+    OnboardingFormScreen()
 }
 
 
@@ -388,22 +423,26 @@ fun OnboardingButton(
 
 @Composable
 fun GenderSelectionBox(
-    title: String,
+    gender: Gender,
     isSelected: Boolean,
-    onClick: (String) -> Unit
+    onClick: (Gender) -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(75.dp)
             .padding(vertical = 8.dp, horizontal = 8.dp)
+//            .background(
+//                color = if (isSelected) androidx.compose.ui.graphics.Color(0xFFE8F5E9) else androidx.compose.ui.graphics.Color(
+//                    0xFFF5F5F5
+//                ),
+//                shape = RoundedCornerShape(16.dp)
+//            )
             .background(
-                color = if (isSelected) androidx.compose.ui.graphics.Color(0xFFE8F5E9) else androidx.compose.ui.graphics.Color(
-                    0xFFF5F5F5
-                ),
+                color = MaterialTheme.colorScheme.surface,
                 shape = RoundedCornerShape(16.dp)
             )
-            .clickable { onClick(title) }
+            .clickable { onClick(gender) }
             .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         Row(
@@ -411,7 +450,7 @@ fun GenderSelectionBox(
             modifier = Modifier.fillMaxWidth()
         ) {
             Text(
-                text = title,
+                text = gender.text,
                 style = TextStyle(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Normal,
@@ -428,11 +467,10 @@ fun GenderSelectionBox(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-fun GenderSelectionGroup() {
-    var selectedGender by remember { mutableStateOf("Male") }
-    val options = listOf("Male", "Female")
+fun GenderSelectionGroup(initialValue: Gender, onValueChange: (Gender) -> Unit) {
+    var selectedGender by remember { mutableStateOf(initialValue) }
+    val options = Gender.getGenderList()
 
     Column(
         modifier = Modifier
@@ -442,9 +480,12 @@ fun GenderSelectionGroup() {
     ) {
         options.forEach { option ->
             GenderSelectionBox(
-                title = option,
+                gender = option,
                 isSelected = option == selectedGender,
-                onClick = { selectedGender = it }
+                onClick = {
+                    selectedGender = it
+                    onValueChange(it)
+                }
             )
         }
     }

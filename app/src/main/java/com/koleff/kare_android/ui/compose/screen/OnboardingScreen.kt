@@ -39,12 +39,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
-import com.koleff.kare_android.data.model.dto.OnBoardingData
+import com.koleff.kare_android.ui.style.OnboardingDataUI
 import com.koleff.kare_android.ui.theme.Poppins
+import com.koleff.kare_android.ui.view_model.OnboardingViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -53,12 +55,15 @@ import kotlinx.coroutines.launch
 @ExperimentalPagerApi
 @Composable
 fun OnBoardingPager(
-    item: List<OnBoardingData>,
+    modifier: Modifier = Modifier,
+    item: List<OnboardingDataUI>,
     pagerState: PagerState,
-    modifier: Modifier = Modifier
+    onNavigateToFormsScreen: () -> Unit,
+    onSkipAction: () -> Unit
 ) {
 
     Box(modifier = modifier) {
+
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             HorizontalPager(state = pagerState) { page ->
                 Column(
@@ -75,8 +80,6 @@ fun OnBoardingPager(
                         modifier = Modifier
                             .fillMaxWidth()
                     )
-
-
                 }
             }
         }
@@ -123,6 +126,8 @@ fun OnBoardingPager(
 
                 }
             }
+
+
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -134,10 +139,30 @@ fun OnBoardingPager(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
 
-
-                    if (pagerState.currentPage != 2) {
+                    //Go to previous page button
+                    if (pagerState.currentPage != 0 && pagerState.currentPage != item.lastIndex) {
                         TextButton(onClick = {
-                            //skip
+                            GlobalScope.launch {
+                                pagerState.scrollToPage(
+                                    pagerState.currentPage - 1,
+                                    pageOffset = 0f
+                                )
+                            }
+                        }) {
+                            Text(
+                                text = "Previous",
+                                color = Color(0xFF292D32),
+                                fontFamily = Poppins,
+                                textAlign = TextAlign.Left,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    } else if (pagerState.currentPage == 0) {
+
+                        //Skip onboarding button
+                        TextButton(onClick = {
+                            onSkipAction()
                         }) {
                             Text(
                                 text = "Skip Now",
@@ -148,7 +173,11 @@ fun OnBoardingPager(
                                 fontWeight = FontWeight.SemiBold
                             )
                         }
+                    }
 
+                    if (pagerState.currentPage != item.lastIndex) {
+
+                        //Go to next page button
                         OutlinedButton(
                             onClick = {
                                 GlobalScope.launch {
@@ -175,9 +204,11 @@ fun OnBoardingPager(
                             )
                         }
                     } else {
+
+                        //Get started button
                         Button(
                             onClick = {
-                                //show home screen
+                                onNavigateToFormsScreen()
                             },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(
@@ -203,7 +234,7 @@ fun OnBoardingPager(
 
 
 @Composable
-fun PagerIndicator(currentPage: Int, items: List<OnBoardingData>) {
+fun PagerIndicator(currentPage: Int, items: List<OnboardingDataUI>) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.padding(top = 20.dp)
@@ -248,59 +279,68 @@ fun rememberPagerState(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class, DelicateCoroutinesApi::class)
 @Preview
 @Composable
 private fun OnboardingScreensPreview() {
+    OnboardingScreen()
+}
+
+
+@OptIn(ExperimentalPagerApi::class, DelicateCoroutinesApi::class)
+@Composable
+fun OnboardingScreen(
+    onboardingViewModel: OnboardingViewModel = hiltViewModel()
+) {
+    val items = ArrayList<OnboardingDataUI>()
+
+    items.add(
+        OnboardingDataUI(
+            R.drawable.fruit,
+            "Track Your Progress",
+            "Monitor your fitness journey with detailed stats. Keep track of your workouts, progress, and milestones all in one place.",
+            backgroundColor = Color(0xFF0189C5),
+            mainColor = Color(0xFF64B5F6)
+        )
+    )
+
+    items.add(
+        OnboardingDataUI(
+            R.drawable.food,
+            "Personalized Workouts",
+            "Enjoy tailored workouts that fit your goals and lifestyle. Create routines and get step-by-step guidance for every exercise.",
+            backgroundColor = Color(0xFFE4AF19),
+            mainColor = Color(0xFFFFE082)
+        )
+    )
+
+    items.add(
+        OnboardingDataUI(
+            R.drawable.cooking,
+            "Achieve Your Goals",
+            "Set your fitness goals and crush them. Whether it's building strength, losing weight, or staying active, we've got you covered!",
+            backgroundColor = Color(0xFF96E172),
+            mainColor = Color(0xFF81C784)
+        )
+    )
+
+
+    val pagerState = rememberPagerState(
+        pageCount = items.size,
+        initialOffscreenLimit = 2,
+        infiniteLoop = false,
+        initialPage = 0,
+    )
+
     Surface(modifier = Modifier.fillMaxSize()) {
-
-        val items = ArrayList<OnBoardingData>()
-
-        items.add(
-            OnBoardingData(
-                R.drawable.fruit,
-                "Hmmm, Healthy Food",
-                "A variety of healthy foods made by the best chefs. Ingredients are easy to find. all delicious flavors can only be found at cookbunda",
-                backgroundColor = Color(0xFF0189C5),
-                mainColor = Color(0xFF00B5EA)
-            )
-        )
-
-        items.add(
-            OnBoardingData(
-                R.drawable.food,
-                "Fresh Drinks, Stay Fresh",
-                "Not only food. we provide clear healthy drink options for you. Fresh taste always accompanies you",
-                backgroundColor = Color(0xFFE4AF19),
-                mainColor = Color.Yellow
-            )
-        )
-
-        items.add(
-            OnBoardingData(
-                R.drawable.cooking,
-                "Let’s Cooking",
-                "Are you ready to make a dish for your friends or family? create an account and cook",
-                backgroundColor = Color(0xFF96E172),
-                mainColor = Color.Green
-            )
-        )
-
-
-        val pagerState = rememberPagerState(
-            pageCount = items.size,
-            initialOffscreenLimit = 2,
-            infiniteLoop = false,
-            initialPage = 0,
-        )
-
-
         OnBoardingPager(
-            item = items, pagerState = pagerState, modifier = Modifier
+            modifier = Modifier
                 .fillMaxWidth()
-                .background(color = Color.Blue)
+                .background(color = Color.Blue),
+            item = items,
+            pagerState = pagerState,
+            onSkipAction = { onboardingViewModel.skip() },
+            onNavigateToFormsScreen = { onboardingViewModel.navigateToFormsScreen() }
         )
-
     }
 }
 //This code is taken from:
@@ -311,3 +351,4 @@ private fun OnboardingScreensPreview() {
 //Inspiration for Onboarding:
 //https://mir-s3-cdn-cf.behance.net/project_modules/1400/c1023894294605.5e7b4f5db0a44.jpg
 //https://www.google.com/search?client=safari&sca_esv=01c9daa3c61022a2&rls=en&q=fitness+onboarding+ui+app&udm=2&fbs=AEQNm0Aa4sjWe7Rqy32pFwRj0UkWd8nbOJfsBGGB5IQQO6L3JyJJclJuzBPl12qJyPx7ESJehObpS5jg6J88CCM-RK72sNV8xvbUxy-SoOtM-WmPLIjZzuRzEJJ0u2V8OeDS2QzrFq0l6uL0u5ydk68vXkBqxln9Kbinx1HZnJEg4P6VfVQ98eE&sa=X&ved=2ahUKEwjni-DY4_mKAxWdQvEDHb2dEOQQtKgLegQIGBAB&biw=1440&bih=772&dpr=2#vhid=ss8PlYK1loeoaM&vssid=mosaic
+//https://www.google.com/url?sa=i&url=https%3A%2F%2Fdribbble.com%2Fshots%2F8575014-Mobile-app-onboarding-process&psig=AOvVaw2vl3euHXo4jxYzaofmGEwE&ust=1737790309827000&source=images&cd=vfe&opi=89978449&ved=0CBQQjRxqFwoTCLi2wsLrjYsDFQAAAAAdAAAAABAQ
