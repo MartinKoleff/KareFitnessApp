@@ -10,7 +10,7 @@ import com.koleff.kare_android.data.model.dto.OnboardingDataDto
     tableName = "onboarding_data_table"
 )
 data class OnboardingData(
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey(autoGenerate = true)
     val id: Long,
     val gender: Gender,
     val age: Int,

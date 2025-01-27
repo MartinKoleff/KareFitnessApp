@@ -51,6 +51,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.OnboardingFormViewModel
 
@@ -228,9 +229,11 @@ fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hilt
     Column(modifier = Modifier.fillMaxSize()) {
 
         if (showLoadingDialog) {
-            LoadingWheel( //TODO: test...
-                modifier = Modifier.fillMaxSize(),
-                hideScreen = true
+            LoadingDialog(
+                modifier = Modifier,
+                onDismiss = {
+                    showLoadingDialog = false
+                }
             )
         } else {
 

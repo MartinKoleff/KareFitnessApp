@@ -4,7 +4,7 @@ import com.koleff.kare_android.data.KareEntity
 import com.koleff.kare_android.data.room.entity.OnboardingData
 
 data class OnboardingDataDto(
-    val id: Long = -1,
+    val id: Long = 0,
     val gender: Gender = Gender.NONE,
     val height: Int = -1,
     val age: Int = -1,
