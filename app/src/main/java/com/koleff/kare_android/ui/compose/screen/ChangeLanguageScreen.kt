@@ -41,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.model.dto.KareLanguage
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ChangeLanguageDialog
 import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
@@ -109,24 +110,32 @@ fun ChangeLanguageScreen(
         onNavigateBackAction = { languageViewModel.onNavigateBack() },
         onNavigateToSettings = { languageViewModel.onNavigateToSettings() },
     ) { innerPadding ->
+        val modifier = Modifier
+            .fillMaxSize()
+            .padding(innerPadding)
+
         if (showLoadingDialog) {
             LoadingDialog(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+                modifier = modifier,
                 onDismiss = { showLoadingDialog = false }
             )
         } else {
             LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                contentPadding = PaddingValues(
-                        top = 2.dp,
-                        start = 8.dp + innerPadding.calculateStartPadding(LayoutDirection.Rtl),
-                        end = 8.dp + innerPadding.calculateEndPadding(LayoutDirection.Rtl),
-                        bottom = 2.dp + innerPadding.calculateBottomPadding()
-                    )
+                modifier = modifier,
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
             ) {
+                item {
+                    SearchBar(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        onSearch = { text ->
+                            languageViewModel.onTextChange(text)
+                        },
+                        onToggleSearch = {
+                            languageViewModel.onToggleSearch()
+                        })
+                }
 
 //                //Title
 //                item {
