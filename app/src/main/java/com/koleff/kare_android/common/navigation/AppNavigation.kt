@@ -12,7 +12,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
@@ -45,7 +44,7 @@ fun AppNavigation(
     val navController = rememberNavController()
 
     //Navigation observer
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navController) {
         Log.d("AppNavigation", "Successfully registered navigation events observer!")
 
         navigationNotifier.navigationEvents
