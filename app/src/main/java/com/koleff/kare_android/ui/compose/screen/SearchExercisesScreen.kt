@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.common.navigation.Destination
@@ -33,6 +31,7 @@ import com.koleff.kare_android.ui.compose.components.SearchExercisesList
 import com.koleff.kare_android.ui.compose.components.SelectedExercisesRow
 import com.koleff.kare_android.ui.compose.components.SubmitExercisesRow
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.SearchListScaffold
+import com.koleff.kare_android.ui.compose.components.rememberMutableStateListOf
 import com.koleff.kare_android.ui.compose.dialogs.DuplicateExercisesFoundDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
@@ -49,10 +48,7 @@ fun SearchExercisesScreen(
     val exercisesState by searchExercisesViewModel.state.collectAsState()
     val updateWorkoutState by searchExercisesViewModel.updateWorkoutState.collectAsState()
     val duplicateExercisesState by searchExercisesViewModel.duplicateExercisesState.collectAsState()
-
-    val selectedExercises = remember {
-        mutableStateListOf<ExerciseDto>()
-    }
+    val selectedExercises = rememberMutableStateListOf<ExerciseDto>()
 
     val onSubmitExercises: () -> Unit = {  //(List<ExerciseDto>) -> Unit
         searchExercisesViewModel.onMultipleExercisesUpdateEvent(
@@ -61,9 +57,9 @@ fun SearchExercisesScreen(
     }
 
     val onSelectExercise: (ExerciseDto) -> Unit = { selectedExercise ->
-       val isNewExercise = selectedExercises.map { it.exerciseId }
+        val isNewExercise = selectedExercises.map { it.exerciseId }
             .contains(selectedExercise.exerciseId)
-        
+
         if (isNewExercise) {
             selectedExercises.removeAll { it.exerciseId == selectedExercise.exerciseId }
         } else {
@@ -212,9 +208,4 @@ fun SearchExercisesScreen(
     }
 }
 
-@Preview
-@Composable
-fun SearchExercisesScreenPreview() {
-
-}
 

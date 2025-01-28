@@ -15,6 +15,7 @@ import com.koleff.kare_android.ui.event.OnMultipleExercisesUpdateEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.ui.state.DuplicateExercisesState
 import com.koleff.kare_android.ui.state.ExerciseListState
+import com.koleff.kare_android.ui.state.HasUpdated
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class SearchExercisesViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val workoutUseCases: WorkoutUseCases,
     private val navigationController: NavigationController,
+    private val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController) {
     val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
@@ -54,6 +56,12 @@ class SearchExercisesViewModel @Inject constructor(
 
     val duplicateExercisesState: StateFlow<DuplicateExercisesState>
         get() = _duplicateExercisesState
+
+//    private var _selectedExercisesState: MutableStateFlow<SelectedExercisesState> =
+//        MutableStateFlow(SelectedExercisesState())
+//
+//    val selectedExercisesState: StateFlow<SelectedExercisesState>
+//        get() = _selectedExercisesState
 
     init {
         getExercises(MuscleGroup.ALL.muscleGroupId)
@@ -130,6 +138,7 @@ class SearchExercisesViewModel @Inject constructor(
 
                         //Go to workout details
                         if (updateWorkoutState.isSuccessful) {
+                            hasUpdated.notifyUpdate(true)
                             navigateToWorkoutDetails()
                         }
                     }
@@ -177,6 +186,7 @@ class SearchExercisesViewModel @Inject constructor(
 
                         //Go to workout details
                         if (updateWorkoutState.isSuccessful) {
+                            hasUpdated.notifyUpdate(true)
                             navigateToWorkoutDetails()
                         }
                     }
@@ -212,6 +222,22 @@ class SearchExercisesViewModel @Inject constructor(
         )
     }
 }
+
+//fun onSelectExercise(selectedExercise: ExerciseDto) {
+//    val isNewExercise = _selectedExercisesState.value.selectedExercises.map { it.exerciseId }
+//        .contains(selectedExercise.exerciseId)
+//
+//    if (isNewExercise) {
+//        val editedExercises = _selectedExercisesState.value.selectedExercises.filter { it.exerciseId == selectedExercise.exerciseId }
+//        _selectedExercisesState.value = _selectedExercisesState.value.copy(selectedExercises = editedExercises)
+//    } else {
+//        val editedExercises = _selectedExercisesState.value.selectedExercises.toMutableList()
+//        editedExercises.add(
+//            selectedExercise.copy(workoutId = workoutId)
+//        )
+//        _selectedExercisesState.value = _selectedExercisesState.value.copy(selectedExercises = editedExercises)
+//    }
+//}
 
 //    val searchState = _searchState
 //        .debounce(Constants.fakeDelay)
