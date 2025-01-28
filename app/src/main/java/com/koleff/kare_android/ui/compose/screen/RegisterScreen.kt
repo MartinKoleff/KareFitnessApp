@@ -177,7 +177,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
                             imeAction = ImeAction.Next
                         ),
                         keyboardActions = KeyboardActions(
-                            onDone = {
+                            onNext = {
                                 emailFocusRequester.requestFocus()
                             }
                         ),

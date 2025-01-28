@@ -195,6 +195,8 @@ fun ExerciseDataSheetRow(
     set: ExerciseSetDto,
     onSetChange: (ExerciseSetProgressDto) -> Unit
 ) {
+
+    //Keyboard
     val repsFocusRequester = remember { FocusRequester() }
     val weightFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
