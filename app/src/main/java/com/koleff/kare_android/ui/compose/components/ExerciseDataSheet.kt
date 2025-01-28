@@ -23,20 +23,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
@@ -201,9 +199,9 @@ fun ExerciseDataSheetRow(
 
     //Forcing Re-composition on set change -> new exercise in ExerciseDataSheet
     key(set.setId) {
-        var reps by remember { mutableStateOf(set.reps.toString()) }
-        var weight by remember { mutableStateOf(set.weight.toString()) }
-        var isDone by remember { mutableStateOf(false) }
+        var reps by rememberSaveable { mutableStateOf(set.reps.toString()) }
+        var weight by rememberSaveable { mutableStateOf(set.weight.toString()) }
+        var isDone by rememberSaveable { mutableStateOf(false) }
 
         //On data change -> callback called and updates up the ladder via state hoisting
         LaunchedEffect(reps, weight, isDone) {

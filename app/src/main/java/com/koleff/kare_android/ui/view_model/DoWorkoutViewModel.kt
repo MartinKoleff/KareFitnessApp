@@ -3,16 +3,15 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
-import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -28,7 +27,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 import java.util.Date
 import javax.inject.Inject
 
@@ -223,10 +221,6 @@ class DoWorkoutViewModel @Inject constructor(
         val updatedData = _state.value.doWorkoutData.copy(isBetweenExerciseCountdown = true)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
         isCountdownScreen = true
-    }
-
-    private fun showWorkoutCompletedScreen() {
-        TODO("Not yet implemented")
     }
 
     private fun startCountdownTimer() = with(state.value.doWorkoutData) {
