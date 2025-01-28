@@ -84,10 +84,10 @@ fun WorkoutsScreen(
         val unfavoriteWorkoutState by workoutListViewModel.unfavoriteWorkoutState.collectAsState()
 
         //Refresh screen
-        LaunchedEffect(workoutListViewModel.hasUpdated) { //Update has happened in WorkoutDetails screen
+        LaunchedEffect(workoutListViewModel.hasUpdatedState) { //Update has happened in WorkoutDetails screen
             Log.d(
                 "WorkoutsScreen",
-                "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdated}."
+                "WorkoutsScreen updated -> hasUpdated: ${workoutListViewModel.hasUpdatedState}."
             )
             workoutListViewModel.getWorkouts()
         }
