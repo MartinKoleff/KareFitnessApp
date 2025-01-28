@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.MaterialTheme
@@ -27,16 +29,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
@@ -191,6 +195,11 @@ fun ExerciseDataSheetRow(
     set: ExerciseSetDto,
     onSetChange: (ExerciseSetProgressDto) -> Unit
 ) {
+    val repsFocusRequester = remember { FocusRequester() }
+    val weightFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val textColor = MaterialTheme.colorScheme.onSurface
     val textStyle = MaterialTheme.typography.titleMedium.copy(
         color = textColor
@@ -242,26 +251,41 @@ fun ExerciseDataSheetRow(
             ExerciseDataSheetTextField(
                 modifier = Modifier
                     .padding(4.dp)
-                    .weight(1.5f),
+                    .weight(1.5f)
+                    .focusRequester(repsFocusRequester),
                 text = reps,
                 onValueChange = {
                     reps = it
-
-                    //Calls launched effect...
-                }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        weightFocusRequester.requestFocus()
+                    }
+                )
             )
 
             //Weight
             ExerciseDataSheetTextField(
                 modifier = Modifier
                     .padding(4.dp)
-                    .weight(1.5f),
+                    .weight(1.5f)
+                    .focusRequester(weightFocusRequester),
                 text = weight,
                 onValueChange = {
                     weight = it
-
-                    //Calls launched effect...
-                }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
             )
 
             //Checkbox
@@ -275,8 +299,6 @@ fun ExerciseDataSheetRow(
                 checked = isDone,
                 onCheckedChange = {
                     isDone = it
-
-                    //Calls launched effect...
                 }
             )
         }
@@ -287,7 +309,9 @@ fun ExerciseDataSheetRow(
 fun ExerciseDataSheetTextField(
     modifier: Modifier = Modifier,
     text: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     val cornerSize = 16.dp
     val textColor = MaterialTheme.colorScheme.onSurface
@@ -311,7 +335,9 @@ fun ExerciseDataSheetTextField(
             ),
         value = text,
         textStyle = textStyle,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions
     )
 }
 
