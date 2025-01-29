@@ -3,11 +3,12 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,7 +20,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,11 +31,13 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.AuthenticationButton
 import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
 import com.koleff.kare_android.ui.compose.components.CustomTextField
-import com.koleff.kare_android.ui.compose.components.LoadingWheel
+import com.koleff.kare_android.ui.compose.components.ForgotPasswordFooter
 import com.koleff.kare_android.ui.compose.components.PasswordTextField
 import com.koleff.kare_android.ui.compose.components.SignInFooter
+import com.koleff.kare_android.ui.compose.components.SignUpHypertext
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.view_model.LoginViewModel
 
 @Composable
@@ -110,7 +112,7 @@ fun LoginScreen(
 
         //Loading screen
         if (showLoadingDialog) {
-            LoadingWheel(innerPadding = PaddingValues(top = 72.dp))
+            LoadingDialog(onDismiss = onDismiss)
         }
 
         //Screen
@@ -132,8 +134,8 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Top
         ) {
             AuthorizationTitleAndSubtitle(
-                title = "Welcome back!",
-                subtitle = "We missed you!"
+                title = "Sign in",
+                subtitle = "Welcome back"
             )
 
             //User text box
@@ -146,17 +148,49 @@ fun LoginScreen(
                 password = it
             }
 
-            AuthenticationButton(
-                text = "Sign in",
-                onAction = onSignIn,
-                credentials =
-                Credentials(
-                    username = username,
-                    password = password
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        PaddingValues(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 12.dp,
+                            bottom = 8.dp
+                        )
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AuthenticationButton(
+                    modifier = Modifier.weight(2f),
+                    text = "Sign in",
+                    onAction = onSignIn,
+                    credentials =
+                    Credentials(
+                        username = username,
+                        password = password
+                    )
                 )
-            )
+
+                ForgotPasswordFooter(modifier = Modifier.weight(1f)) {
+                    loginViewModel.forgotPassword()
+                }
+            }
+
             SignInFooter(onGoogleSign = onGoogleSign)
-            //TODO: add don't have an account register redirect to registerScreen...
+        }
+
+        //Footer
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 10.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            SignUpHypertext {
+                loginViewModel.navigateToSignUp()
+            }
         }
     }
 }

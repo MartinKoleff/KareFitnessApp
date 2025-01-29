@@ -3,13 +3,12 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -20,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
@@ -34,6 +32,8 @@ import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtit
 import com.koleff.kare_android.ui.compose.components.CustomTextField
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.PasswordTextField
+import com.koleff.kare_android.ui.compose.components.SignInFooter
+import com.koleff.kare_android.ui.compose.components.SignInHypertext
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
@@ -101,17 +101,10 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         )
     }
 
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    val cornerSize = 36.dp
-
-    val gymImageModifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight * 0.33f)
+    val onGoogleSign: () -> Unit = {} //TODO: wire with OAuth2...
 
     AuthenticationScaffold(
         screenTitle = "",
@@ -144,47 +137,58 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             verticalArrangement = Arrangement.Top
         ) {
             AuthorizationTitleAndSubtitle(
-                title = "Welcome to Kare!",
-                subtitle = "Create an account so you can become part of the family!"
+                title = "Sign up",
+                subtitle = "Create your account"
             )
 
-            LazyColumn {
-                item {
+            //User text box
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
+                username = it
+            }
 
-                    //User text box
-                    CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
-                        username = it
-                    }
-                }
+            //Password text box
+            PasswordTextField(label = "Password") {
+                password = it
+            }
 
-                item {
+            //Email text box
+            CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
+                email = it
+            }
 
-                    //Password text box
-                    PasswordTextField(label = "Password") {
-                        password = it
-                    }
-                }
-
-                item {
-
-                    //User text box
-                    CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
-                        email = it
-                    }
-                }
-
-                item {
-                    AuthenticationButton(
-                        text = "Sign up",
-                        onAction = onSignUp,
-                        credentials =
-                        Credentials(
-                            username = username,
-                            password = password,
-                            email = email
+            AuthenticationButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        PaddingValues(
+                            start = 32.dp,
+                            end = 32.dp,
+                            top = 12.dp,
+                            bottom = 8.dp
                         )
-                    )
-                }
+                    ),
+                text = "Sign up",
+                onAction = onSignUp,
+                credentials =
+                Credentials(
+                    username = username,
+                    password = password,
+                    email = email
+                )
+            )
+
+            SignInFooter(onGoogleSign = onGoogleSign)
+        }
+
+        //Footer
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 10.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            SignInHypertext {
+                registerViewModel.navigateToLogin()
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.compose.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,7 +15,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -38,28 +41,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.ColorManager.colorFromResource
 import com.koleff.kare_android.common.auth.Credentials
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @Composable
 fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
         color = titleTextColor
     )
 
+    val subtitleTextColor = LocalExtendedColors.current.subtitle
     val subtitleTextStyle = MaterialTheme.typography.titleSmall.copy(
-        color = titleTextColor
+        color = subtitleTextColor
     )
 
     val titlePadding =
@@ -115,6 +127,12 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     }
 }
 
+@Preview
+@Composable
+private fun AuthorizationTitleAndSubtitlePreview() {
+    AuthorizationTitleAndSubtitle("Sign in", "Welcome back")
+}
+
 @Composable
 fun CustomTextField(
     label: String,
@@ -130,11 +148,11 @@ fun CustomTextField(
         vertical = 8.dp
     )
 
-    val cornerSize = 8.dp //Slight rounded corners
+    val cornerSize = 32.dp
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val labelTextColor = MaterialTheme.colorScheme.onSurface
-    val tintColor = MaterialTheme.colorScheme.onSurface
+    val labelTextColor = LocalExtendedColors.current.label
+    val tintColor = LocalExtendedColors.current.label
 
     val labelTextStyle = MaterialTheme.typography.labelLarge.copy(
         color = labelTextColor
@@ -208,11 +226,12 @@ fun PasswordTextField(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val cornerSize = 8.dp //slight round corners
+
+    val cornerSize = 32.dp
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val labelTextColor = MaterialTheme.colorScheme.onSurface
-    val tintColor = MaterialTheme.colorScheme.onSurface
+    val labelTextColor = LocalExtendedColors.current.label
+    val tintColor = LocalExtendedColors.current.label
 
     val labelTextStyle = MaterialTheme.typography.labelLarge.copy(
         color = labelTextColor
@@ -281,15 +300,14 @@ fun PasswordTextFieldPreview() {
 
 @Composable
 fun HorizontalLineWithText(
-    text: String,
-    outlineColor: Color = MaterialTheme.colorScheme.outlineVariant //onSurface
+    text: String
 ) {
     val paddingValues = PaddingValues(
-        horizontal = 32.dp,
-        vertical = 8.dp
+        horizontal = 32.dp
     )
-    val labelTextColor = MaterialTheme.colorScheme.onSurface
 
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant //onSurface
+    val labelTextColor = LocalExtendedColors.current.label
     val labelTextStyle = MaterialTheme.typography.titleMedium.copy(
         color = labelTextColor
     )
@@ -304,11 +322,7 @@ fun HorizontalLineWithText(
             HorizontalDivider(color = outlineColor)
         }
 
-        //Login text
         Text(
-            modifier = Modifier.padding(
-                PaddingValues(8.dp)
-            ),
             text = text,
             style = labelTextStyle,
             maxLines = 1,
@@ -330,27 +344,26 @@ fun HorizontalLineWithTextPreview() {
 
 @Composable
 fun AuthenticationButton(
+    modifier: Modifier = Modifier,
     text: String,
     onAction: (Credentials) -> Unit,
     credentials: Credentials
 ) {
-    val cornerSize = 24.dp
-    val paddingValues = PaddingValues(
-        horizontal = 32.dp,
-        vertical = 8.dp
-    )
-    val textColor = MaterialTheme.colorScheme.onSurface
-    val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val backgroundColor = MaterialTheme.colorScheme.primaryContainer
+    val cornerSize = 32.dp
 
+//    val paddingValues = PaddingValues(
+//        horizontal = 32.dp,
+//        vertical = 16.dp
+//    )
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val backgroundColor = MaterialTheme.colorScheme.primary
+    val textColor = LocalExtendedColors.current.title
     val buttonTextStyle = MaterialTheme.typography.titleLarge.copy(
         color = textColor
     )
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(paddingValues)
+        modifier = modifier
             .height(50.dp)
             .clip(RoundedCornerShape(cornerSize))
             .border(
@@ -382,6 +395,7 @@ fun AuthenticationButton(
 @Composable
 fun SignInButtonPreview() {
     AuthenticationButton(
+        modifier = Modifier,
         text = "Sign in",
         onAction = {
 
@@ -392,11 +406,6 @@ fun SignInButtonPreview() {
 
 @Composable
 fun SignInFooter(onGoogleSign: () -> Unit) {
-    val configuration = LocalConfiguration.current
-
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-
     Column(
         modifier = Modifier
             .fillMaxWidth(),
@@ -417,19 +426,21 @@ fun SignInFooterPreview() {
 
 @Composable
 fun GoogleSignInBox(onGoogleSign: () -> Unit) {
-    val cornerSize = 16.dp
-    val backgroundColor = MaterialTheme.colorScheme.primaryContainer
+    val backgroundColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
+    val paddingValues = PaddingValues(
+        vertical = 4.dp
+    )
     Box(
         modifier = Modifier
-            .width(75.dp)
-            .height(50.dp)
-            .clip(RoundedCornerShape(cornerSize))
+            .size(40.dp)
+            .padding(paddingValues)
+            .clip(CircleShape)
             .background(color = backgroundColor)
             .border(
                 border = BorderStroke(2.dp, color = outlineColor),
-                shape = RoundedCornerShape(cornerSize)
+                shape = CircleShape
             )
             .clickable {
                 onGoogleSign()
@@ -451,4 +462,132 @@ fun GoogleSignInBox(onGoogleSign: () -> Unit) {
 @Composable
 fun GoogleSignInBoxPreview() {
     GoogleSignInBox(onGoogleSign = {})
+}
+
+@Composable
+fun ForgotPasswordFooter(modifier: Modifier = Modifier, onClick: () -> Unit) {
+    val paddingValues = PaddingValues(
+        bottom = 10.dp
+    )
+
+    val textColor = LocalExtendedColors.current.label
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            modifier = Modifier.clickable {
+                onClick()
+            },
+            text = "Forgot your password?",
+            style = textStyle,
+            maxLines = 2,
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ForgotPasswordFooterPreview() {
+    ForgotPasswordFooter{
+
+    }
+}
+
+@Composable
+fun HyperlinkText(
+    normalText: String,
+    hyperlinkText: String,
+    onClick: () -> Unit
+) {
+    val context = LocalContext.current
+
+    val textColor = LocalExtendedColors.current.label
+    val textStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
+
+    val paddingValues = PaddingValues(
+        vertical = 6.dp
+    )
+
+    val annotatedText = buildAnnotatedString {
+        withStyle(
+            style = SpanStyle(
+                color = textColor,
+            )
+        ) {
+            append(normalText)
+        }
+
+        pushStringAnnotation(
+            tag = "Hyperlink",
+            annotation = "Hyperlink"
+        )
+
+        withStyle(
+            style = SpanStyle(
+                color = colorFromResource(context, R.color.hyperlink),
+            )
+        ) {
+            append(hyperlinkText)
+        }
+        pop()
+    }
+
+    ClickableText(
+        modifier = Modifier.padding(paddingValues),
+        text = annotatedText,
+        style = textStyle,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        onClick = { offset ->
+            try {
+                annotatedText.getStringAnnotations(
+                    tag = "Hyperlink",
+                    start = offset,
+                    end = offset
+                )[0].let { annotation ->
+                    onClick()
+                }
+            }catch (e: IndexOutOfBoundsException){
+                Log.d("HyperlinkText", e.message.toString())
+            }
+        }
+    )
+}
+
+@Composable
+fun SignUpHypertext(onClick: () -> Unit) {
+    HyperlinkText(
+        normalText = "Don't have an account? ",
+        hyperlinkText = "Sign Up.",
+        onClick = onClick
+    )
+}
+
+@Composable
+fun SignInHypertext(onClick: () -> Unit) {
+    HyperlinkText(
+        normalText = "Already have an account? ",
+        hyperlinkText = "Sign In.",
+        onClick = onClick
+    )
+}
+
+@Preview
+@Composable
+private fun SignInHypertextPreview() {
+    SignInHypertext {  }
+}
+
+@Preview
+@Composable
+private fun SignUpHypertextPreview() {
+    SignUpHypertext {  }
 }

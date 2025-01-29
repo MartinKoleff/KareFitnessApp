@@ -68,4 +68,12 @@ class LoginViewModel @Inject constructor(
     fun navigateToWelcome() {
         onNavigationEvent(NavigationEvent.NavigateBack)
     }
+
+    fun navigateToSignUp(){
+        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Register))
+    }
+
+    fun forgotPassword() {
+        TODO("Not yet implemented")
+    }
 }
