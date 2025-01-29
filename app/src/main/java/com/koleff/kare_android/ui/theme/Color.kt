@@ -15,6 +15,8 @@ val primary = R.color.primary //For now same for both light and dark themes...
 val secondary = R.color.secondary
 val tertiary = R.color.tertiary
 
+val hyperlink = R.color.hyperlink
+
 //Old colors
 val primaryLight = Color(0xFF66558F)
 val onPrimaryLight = Color(0xFFFFFFFF)
