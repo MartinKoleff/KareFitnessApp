@@ -1,10 +1,21 @@
 package com.koleff.kare_android.ui.theme
 
 import androidx.compose.ui.graphics.Color
+import com.koleff.kare_android.R
 
-//TODO: change secondary color to pink?
-// secondary color currently unused.
+val titleDark = R.color.title_dark
+val titleLight = R.color.title_light
+val subtitleLight = R.color.subtitle_light
+val subtitleDark = R.color.subtitle_dark
+val labelLight = R.color.label_light
+val labelDark = R.color.label_dark
+val surfaceLight = R.color.surface_light
+val surfaceDark = R.color.surface_dark
+val primary = R.color.primary //For now same for both light and dark themes...
+val secondary = R.color.secondary
+val tertiary = R.color.tertiary
 
+//Old colors
 val primaryLight = Color(0xFF66558F)
 val onPrimaryLight = Color(0xFFFFFFFF)
 val primaryContainerLight = Color(0xFFE9DDFF)
@@ -23,7 +34,7 @@ val errorContainerLight = Color(0xFFFFDAD6)
 val onErrorContainerLight = Color(0xFF410002)
 val backgroundLight = Color(0xFFFEF7FF)
 val onBackgroundLight = Color(0xFF1D1B20)
-val surfaceLight = Color(0xFFFEF7FF)
+//val surfaceLight = Color(0xFFFEF7FF)
 val onSurfaceLight = Color(0xFF1D1B20)
 val surfaceVariantLight = Color(0xFFE7E0EB)
 val onSurfaceVariantLight = Color(0xFF49454E)
@@ -131,7 +142,7 @@ val errorContainerDark = Color(0xFF93000A)
 val onErrorContainerDark = Color(0xFFFFDAD6)
 val backgroundDark = Color(0xFF141218)
 val onBackgroundDark = Color(0xFFE6E0E9)
-val surfaceDark = Color(0xFF141218)
+//val surfaceDark = Color(0xFF141218)
 val onSurfaceDark = Color(0xFFE6E0E9)
 val surfaceVariantDark = Color(0xFF49454E)
 val onSurfaceVariantDark = Color(0xFFCAC4CF)
