@@ -64,7 +64,6 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -358,6 +357,8 @@ fun DeleteButton(
         color = textColor,
     )
 
+    val deleteButtonColor = MaterialTheme.colorScheme.tertiary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -368,7 +369,7 @@ fun DeleteButton(
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor,
+                color = deleteButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onDelete)
@@ -415,6 +416,8 @@ fun FavoriteButton(
         color = textColor,
     )
 
+    val favoriteButtonColor = MaterialTheme.colorScheme.tertiary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -425,7 +428,7 @@ fun FavoriteButton(
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor,
+                color = favoriteButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onFavorite)
@@ -475,6 +478,8 @@ fun EditButton(
         color = textColor,
     )
 
+    val editButtonColor = MaterialTheme.colorScheme.tertiary
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -485,7 +490,7 @@ fun EditButton(
                 shape = RoundedCornerShape(cornerSize)
             )
             .background(
-                color = LocalExtendedColorScheme.current.workoutBannerColors.editButtonColor,
+                color = editButtonColor,
                 shape = RoundedCornerShape(cornerSize)
             )
             .clickable(onClick = onEdit)

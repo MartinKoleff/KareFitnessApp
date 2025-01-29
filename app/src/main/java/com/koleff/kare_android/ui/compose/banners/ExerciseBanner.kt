@@ -63,7 +63,6 @@ import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 import kotlin.math.roundToInt
 
 @Composable
@@ -136,7 +135,7 @@ fun SelectedExerciseBanner(
     hasDescription: Boolean = false,
     onClick: (ExerciseDto) -> Unit
 ) {
-    val selectedColor = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor
+    val selectedColor = MaterialTheme.colorScheme.tertiary
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     val cornerSize = 16.dp
@@ -381,7 +380,7 @@ fun SwipeableExerciseBanner(
         .height(200.dp) //Banner height
         .width(deleteBoxWidth)
 
-    val deleteColor = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor
+    val deleteColor = MaterialTheme.colorScheme.tertiary
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     val cornerSize = 16.dp

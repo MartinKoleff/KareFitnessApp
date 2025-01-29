@@ -22,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 
 
 @Composable
@@ -109,7 +108,7 @@ fun SubmitExercisesRow(modifier: Modifier = Modifier, onSubmit: () -> Unit) {
     UpdateExercisesRow(
         modifier = modifier,
         text = "Add exercises",
-        backgroundColor = LocalExtendedColorScheme.current.workoutBannerColors.selectButtonColor,
+        backgroundColor = MaterialTheme.colorScheme.tertiary,
         onAction = onSubmit
     )
 }
@@ -119,7 +118,7 @@ fun DeleteExercisesRow(modifier: Modifier = Modifier, onDelete: () -> Unit) {
     UpdateExercisesRow(
         modifier = modifier,
         text = "Delete exercises",
-        backgroundColor = LocalExtendedColorScheme.current.workoutBannerColors.deleteButtonColor,
+        backgroundColor = MaterialTheme.colorScheme.tertiary,
         onAction = onDelete
     )
 }

@@ -56,7 +56,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 import kotlin.random.Random
 
 @Composable
@@ -372,7 +372,7 @@ fun CurrentExerciseInfoRow(
         color = textColor
     )
 
-    val setsTextColor = LocalExtendedColorScheme.current.doWorkoutColors.setsTextColor
+    val setsTextColor = LocalExtendedColors.current.subtitle
     val setTextStyle = MaterialTheme.typography.titleSmall.copy(
         color = setsTextColor
     )

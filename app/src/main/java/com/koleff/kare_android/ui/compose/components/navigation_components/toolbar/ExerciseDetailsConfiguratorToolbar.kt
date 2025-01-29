@@ -1,6 +1,5 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
-import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 
 
 @Composable
@@ -42,9 +40,6 @@ fun ExerciseDetailsConfiguratorToolbar(
     onSubmitExercise: () -> Unit,
     onNavigateBackAction: () -> Unit
 ) {
-    val configuration = LocalConfiguration.current
-
-    val backgroundColor = LocalExtendedColorScheme.current.detailsToolbarColor
     val tintColor = MaterialTheme.colorScheme.onSurface
     val circleColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant

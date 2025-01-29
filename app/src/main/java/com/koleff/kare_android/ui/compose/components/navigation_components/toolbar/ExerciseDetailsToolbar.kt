@@ -1,9 +1,7 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
-import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,9 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
@@ -35,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
 
 
 @Composable
@@ -45,11 +39,6 @@ fun ExerciseDetailsToolbar(
     onNavigateAction: () -> Unit,
     onNavigateBackAction: () -> Unit,
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
-
-    val backgroundColor = LocalExtendedColorScheme.current.detailsToolbarColor
     val tintColor = MaterialTheme.colorScheme.onSurface
     val circleColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant

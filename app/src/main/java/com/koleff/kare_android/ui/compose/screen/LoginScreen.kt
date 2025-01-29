@@ -42,17 +42,8 @@ import com.koleff.kare_android.ui.view_model.LoginViewModel
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-
-    val cornerSize = 36.dp
-
-    val gymImageModifier = Modifier
-        .fillMaxWidth()
-        .height(screenHeight * 0.33f)
 
     //State and callbacks
     val loginState by loginViewModel.state.collectAsState()

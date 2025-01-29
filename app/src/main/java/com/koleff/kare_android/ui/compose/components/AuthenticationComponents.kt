@@ -54,7 +54,6 @@ import com.koleff.kare_android.common.auth.Credentials
 @Composable
 fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     val titleTextColor = MaterialTheme.colorScheme.onSurface
-
     val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
         color = titleTextColor
     )
