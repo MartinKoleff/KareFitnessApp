@@ -16,9 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
-import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.ColorManager.colorFromResource
 
 @Composable
 fun lightColorScheme(context: Context) = lightColorScheme(
@@ -46,10 +46,6 @@ fun darkColorScheme(context: Context) = darkColorScheme(
     onSurface = colorFromResource(context, R.color.subtitle_dark),
 )
 
-@Composable
-fun colorFromResource(context: Context, resId: Int): Color {
-    return Color(ContextCompat.getColor(context, resId))
-}
 
 @Composable
 fun KareTheme(
