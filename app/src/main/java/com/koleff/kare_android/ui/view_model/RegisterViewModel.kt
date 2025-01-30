@@ -49,11 +49,17 @@ class RegisterViewModel @Inject constructor(
         _state.value = BaseState()
     }
 
-    fun navigateToWelcome(){
+    fun navigateToWelcome() {
         onNavigationEvent(NavigationEvent.NavigateBack)
     }
 
     fun navigateToLogin() {
-        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Login))
+        onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = Destination.Register.route,
+                destinationRoute = Destination.Login.route,
+                inclusive = false
+            )
+        )
     }
 }

@@ -3,12 +3,13 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -119,7 +120,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         }
 
         //Screen
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -136,59 +137,55 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            AuthorizationTitleAndSubtitle(
-                title = "Sign up",
-                subtitle = "Create your account"
-            )
-
-            //User text box
-            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
-                username = it
-            }
-
-            //Password text box
-            PasswordTextField(label = "Password") {
-                password = it
-            }
-
-            //Email text box
-            CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
-                email = it
-            }
-
-            AuthenticationButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        PaddingValues(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 12.dp,
-                            bottom = 8.dp
-                        )
-                    ),
-                text = "Sign up",
-                onAction = onSignUp,
-                credentials =
-                Credentials(
-                    username = username,
-                    password = password,
-                    email = email
+            item {
+                AuthorizationTitleAndSubtitle(
+                    title = "Sign up",
+                    subtitle = "Create your account"
                 )
-            )
 
-            SignInFooter(onGoogleSign = onGoogleSign)
-        }
+                //User text box
+                CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
+                    username = it
+                }
 
-        //Footer
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 10.dp),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            SignInHypertext {
-                registerViewModel.navigateToLogin()
+                //Password text box
+                PasswordTextField(label = "Password") {
+                    password = it
+                }
+
+                //Email text box
+                CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
+                    email = it
+                }
+
+                AuthenticationButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            PaddingValues(
+                                start = 32.dp,
+                                end = 32.dp,
+                                top = 12.dp,
+                                bottom = 8.dp
+                            )
+                        ),
+                    text = "Sign up",
+                    onAction = onSignUp,
+                    credentials =
+                    Credentials(
+                        username = username,
+                        password = password,
+                        email = email
+                    )
+                )
+
+                SignInFooter(onGoogleSign = onGoogleSign)
+                Spacer(modifier = Modifier.size(8.dp))
+
+                //Footer
+                SignInHypertext {
+                    registerViewModel.navigateToLogin()
+                }
             }
         }
     }

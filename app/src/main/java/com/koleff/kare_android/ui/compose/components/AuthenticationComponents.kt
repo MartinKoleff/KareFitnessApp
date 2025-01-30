@@ -85,7 +85,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
     val subtitlePadding =
         PaddingValues(
             top = 2.dp,
-            bottom = 32.dp,
+            bottom = 24.dp,
             start = 8.dp,
             end = 8.dp
         )

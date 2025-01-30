@@ -69,8 +69,14 @@ class LoginViewModel @Inject constructor(
         onNavigationEvent(NavigationEvent.NavigateBack)
     }
 
-    fun navigateToSignUp(){
-        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Register))
+    fun navigateToSignUp() {
+        onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = Destination.Login.route,
+                destinationRoute = Destination.Register.route,
+                inclusive = false
+            )
+        )
     }
 
     fun forgotPassword() {
