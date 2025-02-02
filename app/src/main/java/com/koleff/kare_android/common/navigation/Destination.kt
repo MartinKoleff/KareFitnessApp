@@ -144,6 +144,24 @@ sealed interface Destination {
         }
     }
 
+    //Onboarding
+    data object Onboarding : Destination {
+
+        override val route: String
+            get() = "onboarding"
+
+        const val ROUTE = "onboarding"
+    }
+
+
+    //Onboarding form
+    data object OnboardingForm : Destination {
+
+        override val route: String
+            get() = "onboarding_form"
+
+        const val ROUTE = "onboarding_form"
+
     //Workout history (done workouts) screen
     data object WorkoutHistory : Destination {
 

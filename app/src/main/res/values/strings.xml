@@ -16,5 +16,6 @@
     <string name="text_workout_details_not_found">Workout details not found.</string>
     <string name="text_token_expired">Token expired.</string>
     <string name="text_invalid_token">Invalid token.</string>
+    <string name="text_onboarding_data_not_found">Onboarding data not found.</string>
     <string name="text_change_language_failed">Language change failed.</string>
 </resources>

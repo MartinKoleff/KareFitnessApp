@@ -19,6 +19,8 @@ import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScre
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.LoginScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
+import com.koleff.kare_android.ui.compose.screen.OnboardingFormScreen
+import com.koleff.kare_android.ui.compose.screen.OnboardingScreen
 import com.koleff.kare_android.ui.compose.screen.RegisterScreen
 import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
@@ -41,7 +43,8 @@ import kotlinx.coroutines.flow.flowOn
 @Composable
 fun AppNavigation(
     navigationNotifier: NavigationNotifier,
-    hasSignedIn: Boolean = false
+    hasSignedIn: Boolean = false,
+    hasOnboarded: Boolean = false
 ) {
     val navController = rememberNavController()
 
@@ -100,9 +103,12 @@ fun AppNavigation(
     //No cached data -> go to welcome screen (first time launch).
     //Cached data -> go to dashboard screen (already signed in).
     Log.d("AppNavigation", "Has credentials -> $hasSignedIn")
-    val startingDestination = if(hasSignedIn) {
+    Log.d("AppNavigation", "Has onboarded -> $hasOnboarded")
+    val startingDestination = if (hasSignedIn) {
         Destination.Dashboard.route
-    }else{
+    } else if (!hasOnboarded) {
+        Destination.Onboarding.route
+    } else {
         Destination.Welcome.route
     }
 
@@ -116,6 +122,7 @@ fun AppNavigation(
 
 private fun NavGraphBuilder.addDestinations() {
     addWelcomeGraph()
+    addOnboardingGraph()
     composable(Destination.Dashboard.ROUTE) { backStackEntry ->
         DashboardScreen()
     }
@@ -165,5 +172,14 @@ internal fun NavGraphBuilder.addWelcomeGraph() {
     }
     composable(Destination.Register.ROUTE) { backStackEntry ->
         RegisterScreen()
+    }
+}
+
+internal fun NavGraphBuilder.addOnboardingGraph() {
+    composable(Destination.Onboarding.ROUTE) { backStackEntry ->
+        OnboardingScreen()
+    }
+    composable(Destination.OnboardingForm.ROUTE) { backStackEntry ->
+        OnboardingFormScreen()
     }
 }
