@@ -79,6 +79,10 @@ class DoWorkoutViewModel @Inject constructor(
     val saveDoWorkoutPerformanceMetricsState: StateFlow<DoWorkoutPerformanceMetricsState>
         get() = _saveDoWorkoutPerformanceMetricsState
 
+    private val _playerState: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
+    val playerState: StateFlow<BaseState>
+        get() = _playerState
+
     override fun clearError() {
         if (state.value.isError) {
             _state.value = DoWorkoutState()
@@ -99,6 +103,8 @@ class DoWorkoutViewModel @Inject constructor(
                 Log.d("DoWorkoutViewModel", "----------------Timers------------------")
                 Log.d("DoWorkoutViewModel", "Countdown time: ${countdownTimerState.value.time}")
                 Log.d("DoWorkoutViewModel", "Workout time: ${workoutTimerState.value.time}")
+                Log.d("DoWorkoutViewModel", "Workout timer is running: ${workoutTimer.isRunning()}")
+                Log.d("DoWorkoutViewModel", "Countdown timer is running: ${countdownTimer.isRunning()}")
                 delay(1000)
             }
         }
@@ -225,10 +231,6 @@ class DoWorkoutViewModel @Inject constructor(
         isCountdownScreen = true
     }
 
-    private fun showWorkoutCompletedScreen() {
-        TODO("Not yet implemented")
-    }
-
     private fun startCountdownTimer() = with(state.value.doWorkoutData) {
 
         //Show next exercise countdown screen
@@ -334,6 +336,75 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
+
+     fun resumeWorkoutTimer() = with(state.value.doWorkoutData) {
+        viewModelScope.launch(dispatcher) {
+
+            //Start workout timer
+            doWorkoutUseCases.resumeTimerUseCase(
+                timer = workoutTimer,
+                time = defaultExerciseTime
+            ).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        _workoutTimerState.value =
+                            _workoutTimerState.value.copy(time = result.data.time)
+
+                        //Hide next exercise countdown screen
+                        if (isCountdownScreen) {
+                            hideNextExerciseCountdownScreen()
+                        }
+
+                        //Timer has finished
+                        if (workoutTimerState.value.time.hasFinished()) {
+                            Log.d(
+                                "DoWorkoutViewModel",
+                                "Exercise timer finished! Starting countdown timer for next exercise."
+                            )
+                            selectNextExercise()
+                        }
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+
+
+    fun pauseWorkoutTimer() {
+        viewModelScope.launch(dispatcher) {
+
+            //Start workout timer
+            doWorkoutUseCases.pauseTimerUseCase(
+                timer = workoutTimer
+            ).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        Log.d(
+                            "DoWorkoutViewModel",
+                            "Workout timer has paused."
+                        )
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    fun onScreenClick(){
+        if(workoutTimer.isRunning()){
+            Log.d("DoWorkoutScreen", "Workout timer paused...")
+            pauseWorkoutTimer()
+        }else{
+            Log.d("DoWorkoutScreen", "Workout timer resumed...")
+            resumeWorkoutTimer()
+
+        }
+    }
+
     //Every exercise change -> add current do workout performance metrics to list
     //On workout finish -> save
     //On workout exited -> delete
@@ -421,5 +492,14 @@ class DoWorkoutViewModel @Inject constructor(
     //Used when workout is completed
     fun navigateToDashboard() {
         onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
+    }
+
+    //Show player icon for a second
+    fun showPlayerOverlay() {
+        viewModelScope.launch {
+            _playerState.value = BaseState(isLoading = true)
+            delay(1000)
+            _playerState.value = BaseState(isLoading = false, isSuccessful = true)
+        }
     }
 }
