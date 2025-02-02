@@ -60,6 +60,8 @@ import com.koleff.kare_android.ui.view_model.ExerciseDetailsConfiguratorViewMode
 fun ExerciseDetailsConfiguratorScreen(
     exerciseDetailsConfiguratorViewModel: ExerciseDetailsConfiguratorViewModel = hiltViewModel()
 ) {
+
+    //Keyboard
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 

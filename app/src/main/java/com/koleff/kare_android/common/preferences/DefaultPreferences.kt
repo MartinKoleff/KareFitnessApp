@@ -63,7 +63,7 @@ class DefaultPreferences(
         }
     }
 
-    override fun loadDashboardMuscleGroupList(): List<MuscleGroup>{
+    override fun loadDashboardMuscleGroupList(): List<MuscleGroup> {
         val muscleGroupListJson: String =
             sharedPref.getString(Preferences.DASHBOARD_MUSCLE_GROUP_LIST, "") ?: ""
 
@@ -196,5 +196,24 @@ class DefaultPreferences(
     override fun updateTokens(tokens: Tokens) {
         deleteTokens()
         saveTokens(tokens)
+    }
+
+    override fun getHasOnboarded(): Boolean {
+        val hasOnboarded: Boolean =
+            sharedPref.getBoolean(Preferences.HAS_ONBOARDED, false)
+
+        return hasOnboarded
+    }
+
+    override fun saveHasOnboarded(hasOnboarded: Boolean) {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_ONBOARDED, hasOnboarded)
+            .apply()
+    }
+
+    override fun deleteHasOnboarded() {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_ONBOARDED, false)
+            .apply()
     }
 }

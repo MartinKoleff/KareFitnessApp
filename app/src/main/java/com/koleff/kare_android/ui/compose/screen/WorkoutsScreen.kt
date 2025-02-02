@@ -47,6 +47,7 @@ import com.koleff.kare_android.ui.compose.banners.SwipeableWorkoutBanner
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WarningDialog
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.WorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.DeleteWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.FavoriteWorkoutDialog
@@ -60,12 +61,13 @@ import java.util.Locale
 fun WorkoutsScreen(
     workoutListViewModel: WorkoutViewModel = hiltViewModel(),
 ) {
-    MainScreenScaffold(
+    WorkoutScaffold(
         "Workouts",
         onNavigateToDashboard = { workoutListViewModel.onNavigateToDashboard() },
         onNavigateToWorkouts = { workoutListViewModel.onNavigateToWorkouts() },
         onNavigateBackAction = { workoutListViewModel.onNavigateBack() },
-        onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() }
+        onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() },
+        onWorkoutHistoryAction = { workoutListViewModel.navigateToWorkoutHistory() }
     ) { innerPadding ->
 
         //Pull to refresh
