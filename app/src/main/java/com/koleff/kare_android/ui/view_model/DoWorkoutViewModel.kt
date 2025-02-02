@@ -99,6 +99,8 @@ class DoWorkoutViewModel @Inject constructor(
                 Log.d("DoWorkoutViewModel", "----------------Timers------------------")
                 Log.d("DoWorkoutViewModel", "Countdown time: ${countdownTimerState.value.time}")
                 Log.d("DoWorkoutViewModel", "Workout time: ${workoutTimerState.value.time}")
+                Log.d("DoWorkoutViewModel", "Workout timer is running: ${workoutTimer.isRunning()}")
+                Log.d("DoWorkoutViewModel", "Countdown timer is running: ${countdownTimer.isRunning()}")
                 delay(1000)
             }
         }
@@ -145,7 +147,7 @@ class DoWorkoutViewModel @Inject constructor(
 
         val performanceMetrics = DoWorkoutPerformanceMetricsDto(
             id = 0, //Auto-generate
-            workoutId = workout.workoutId,
+            workout = workout.toWorkout(),
             date = Date(), //Current date of starting the workout
             doWorkoutExerciseSets = emptyList() //Will be filled as the workout continues...
         )
@@ -223,10 +225,6 @@ class DoWorkoutViewModel @Inject constructor(
         val updatedData = _state.value.doWorkoutData.copy(isBetweenExerciseCountdown = true)
         _state.value = _state.value.copy(doWorkoutData = updatedData)
         isCountdownScreen = true
-    }
-
-    private fun showWorkoutCompletedScreen() {
-        TODO("Not yet implemented")
     }
 
     private fun startCountdownTimer() = with(state.value.doWorkoutData) {
@@ -331,6 +329,75 @@ class DoWorkoutViewModel @Inject constructor(
                     else -> {}
                 }
             }
+        }
+    }
+
+
+     fun resumeWorkoutTimer() = with(state.value.doWorkoutData) {
+        viewModelScope.launch(dispatcher) {
+
+            //Start workout timer
+            doWorkoutUseCases.resumeTimerUseCase(
+                timer = workoutTimer,
+                time = defaultExerciseTime
+            ).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        _workoutTimerState.value =
+                            _workoutTimerState.value.copy(time = result.data.time)
+
+                        //Hide next exercise countdown screen
+                        if (isCountdownScreen) {
+                            hideNextExerciseCountdownScreen()
+                        }
+
+                        //Timer has finished
+                        if (workoutTimerState.value.time.hasFinished()) {
+                            Log.d(
+                                "DoWorkoutViewModel",
+                                "Exercise timer finished! Starting countdown timer for next exercise."
+                            )
+                            selectNextExercise()
+                        }
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+
+
+    fun pauseWorkoutTimer() {
+        viewModelScope.launch(dispatcher) {
+
+            //Start workout timer
+            doWorkoutUseCases.pauseTimerUseCase(
+                timer = workoutTimer
+            ).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        Log.d(
+                            "DoWorkoutViewModel",
+                            "Workout timer has paused."
+                        )
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    fun onScreenClick(){
+        if(workoutTimer.isRunning()){
+            Log.d("DoWorkoutScreen", "Workout timer paused...")
+            pauseWorkoutTimer()
+        }else{
+            Log.d("DoWorkoutScreen", "Workout timer resumed...")
+            resumeWorkoutTimer()
+
         }
     }
 
