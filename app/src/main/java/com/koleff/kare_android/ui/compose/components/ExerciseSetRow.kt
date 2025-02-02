@@ -10,17 +10,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,23 +27,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role.Companion.Button
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
@@ -59,6 +54,12 @@ fun ExerciseSetRow(
     onWeightChanged: (Float) -> Unit,
     onDelete: (ExerciseSetDto) -> Unit
 ) {
+    //Keyboard
+    val repsFocusRequester = remember { FocusRequester() }
+    val weightFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+
     val setNumber = set.number
 
     val cornerSize = 16.dp
@@ -96,18 +97,37 @@ fun ExerciseSetRow(
             RepsTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = 4.dp)
+                    .focusRequester(repsFocusRequester),
                 reps = set.reps,
-                onRepsChanged = onRepsChanged
+                onRepsChanged = onRepsChanged,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        weightFocusRequester.requestFocus()
+                    }
+                ),
             )
             Spacer(modifier = Modifier.width(8.dp))
 
             WeightTextField(
                 modifier = Modifier
                     .weight(1f)
-                    .padding(horizontal = 4.dp),
+                    .padding(horizontal = 4.dp)
+                    .focusRequester(weightFocusRequester),
                 weight = set.weight,
-                onWeightChanged = onWeightChanged
+                onWeightChanged = onWeightChanged,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
             )
         }
 
@@ -155,7 +175,9 @@ fun ExerciseSetRowFooter(
 fun WeightTextField(
     modifier: Modifier,
     weight: Float,
-    onWeightChanged: (Float) -> Unit
+    onWeightChanged: (Float) -> Unit,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     val weightState = remember {
         mutableStateOf(weight.toString())
@@ -178,7 +200,9 @@ fun WeightTextField(
 fun RepsTextField(
     modifier: Modifier,
     reps: Int,
-    onRepsChanged: (Int) -> Unit
+    onRepsChanged: (Int) -> Unit,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
     val repsState = remember {
         mutableStateOf(reps.toString())
@@ -193,7 +217,9 @@ fun RepsTextField(
                 it.toIntOrNull() ?: reps
             ) //Update the parent with the new value or retain the old value if null
         },
-        label = "Reps"
+        label = "Reps",
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions
     )
 }
 
@@ -202,7 +228,9 @@ fun ExerciseSetTextField(
     modifier: Modifier = Modifier,
     label: String,
     state: String,
-    onTextChange: (String) -> Unit
+    onTextChange: (String) -> Unit,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default
 ) {
 
     //For dark theme...
@@ -221,7 +249,6 @@ fun ExerciseSetTextField(
             onTextChange(text)
         },
         textStyle = textStyle,
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         maxLines = 1,
         decorationBox = { innerTextField ->
             Row(
@@ -242,7 +269,10 @@ fun ExerciseSetTextField(
                 )
                 innerTextField()
             }
-        })
+        },
+        keyboardOptions = keyboardOptions.copy(keyboardType = KeyboardType.Decimal),
+        keyboardActions = keyboardActions
+    )
 }
 
 @Preview
@@ -273,10 +303,9 @@ fun ExerciseSetRepsTextFieldPreview() {
             modifier = Modifier
                 .height(50.dp)
                 .width(200.dp),
-            reps = 12
-        ) {
-
-        }
+            reps = 12,
+            onRepsChanged = {}
+        )
     }
 }
 
@@ -292,10 +321,9 @@ fun ExerciseSetWeightTextFieldPreview() {
             modifier = Modifier
                 .height(50.dp)
                 .width(200.dp),
-            weight = 50.0f
-        ) {
-
-        }
+            weight = 50.0f,
+            onWeightChanged = {}
+        )
     }
 }
 
@@ -310,7 +338,7 @@ fun AddNewSetFooter(onAddNewSetAction: () -> Unit) {
     val textStyle = MaterialTheme.typography.titleLarge.copy(
         color = textColor
     )
-    
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
