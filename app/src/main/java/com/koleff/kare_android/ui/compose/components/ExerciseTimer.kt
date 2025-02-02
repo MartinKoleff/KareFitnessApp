@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseTime
-import com.koleff.kare_android.ui.state.ExerciseTimerStyle
+import com.koleff.kare_android.ui.style.ExerciseTimerStyle
 import kotlin.math.cos
 import kotlin.math.sin
 
