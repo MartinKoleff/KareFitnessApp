@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -34,10 +33,10 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.AuthenticationButton
 import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
 import com.koleff.kare_android.ui.compose.components.CustomTextField
-import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.PasswordTextField
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
 import com.koleff.kare_android.ui.view_model.RegisterViewModel
 
@@ -121,7 +120,9 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
 
         //Loading screen
         if (showLoadingDialog) {
-            LoadingWheel(innerPadding = PaddingValues(top = 72.dp))
+            LoadingDialog {
+                showLoadingDialog = false
+            } //innerPadding = PaddingValues(top = 72.dp)
         }
 
         //Screen

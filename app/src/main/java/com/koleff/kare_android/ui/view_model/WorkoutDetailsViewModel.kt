@@ -38,6 +38,7 @@ class WorkoutDetailsViewModel @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController), MainScreenNavigation {
     private var workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+    private val isNewWorkout = savedStateHandle.get<String>("is_new_workout").toBoolean()
 
     private var _getWorkoutDetailsState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -88,9 +89,6 @@ class WorkoutDetailsViewModel @Inject constructor(
         get() = _unfavoriteWorkoutState
 
     val isRefreshing by mutableStateOf(getWorkoutDetailsState.value.isLoading)
-
-    private val isNewWorkout = savedStateHandle.get<String>("is_new_workout").toBoolean()
-
     init {
         Log.d("WorkoutDetailsViewModel", "isNewWorkout: $isNewWorkout")
         Log.d("WorkoutDetailsViewModel", "WorkoutId: $workoutId")

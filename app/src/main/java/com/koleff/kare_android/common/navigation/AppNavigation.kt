@@ -49,7 +49,7 @@ fun AppNavigation(
     val navController = rememberNavController()
 
     //Navigation observer
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navController) {
         Log.d("AppNavigation", "Successfully registered navigation events observer!")
 
         navigationNotifier.navigationEvents

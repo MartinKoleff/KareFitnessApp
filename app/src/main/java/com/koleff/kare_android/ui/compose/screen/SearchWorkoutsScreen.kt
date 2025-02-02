@@ -41,8 +41,6 @@ fun SearchWorkoutsScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
 
-    var selectedWorkoutId by remember { mutableStateOf(-1) }
-
     val workoutDetailsState by searchWorkoutViewModel.selectedWorkoutState.collectAsState()
     val updateWorkoutState by searchWorkoutViewModel.updateWorkoutState.collectAsState()
 
@@ -52,15 +50,6 @@ fun SearchWorkoutsScreen(
     val screenTitle = remember { mutableStateOf("Select workout") }
 
     val exerciseState by exerciseViewModel.state.collectAsState()
-
-    LaunchedEffect(selectedWorkoutId) {
-        selectedWorkoutId != -1 || return@LaunchedEffect
-
-        searchWorkoutViewModel.getWorkoutDetails(selectedWorkoutId).also {
-            isUpdateLoading = true
-            screenTitle.value = "Loading..."
-        }
-    }
 
     LaunchedEffect(workoutDetailsState) {
 
@@ -174,9 +163,7 @@ fun SearchWorkoutsScreen(
                     modifier = Modifier.fillMaxSize(),
                     workoutList = workoutState.workoutList,
                 ) { workoutId ->
-
-                    //Updates WorkoutDetailsViewModel...
-                    selectedWorkoutId = workoutId
+//                    selectedWorkoutId = workoutId
                 }
             }
         }

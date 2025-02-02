@@ -1,6 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
@@ -8,28 +8,28 @@ import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.WorkoutDetailsState
 import com.koleff.kare_android.ui.state.WorkoutListState
-import com.koleff.kare_android.domain.usecases.WorkoutUseCases
-import com.koleff.kare_android.ui.state.WorkoutState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchWorkoutViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
+    private val savedStateHandle: SavedStateHandle,
     private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController) {
+
+    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+    private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
 
     private var _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
         MutableStateFlow(WorkoutDetailsState())
@@ -107,7 +107,7 @@ class SearchWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun getWorkoutDetails(workoutId: Int) {
+    fun getWorkoutDetails() {
         viewModelScope.launch(dispatcher) {
             workoutUseCases.getWorkoutDetailsUseCase(workoutId).collect { workoutDetailsState ->
                 _selectedWorkoutState.value = workoutDetailsState
