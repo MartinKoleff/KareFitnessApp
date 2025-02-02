@@ -18,8 +18,9 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 15
-        versionName "2.6"
+        versionCode 16
+        versionName "2.7"
+
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -55,6 +56,11 @@ android {
 //                java.srcDir sharedTestDir
 //            }
 //        }
+    }
+
+    //Per-app language support
+    androidResources {
+        generateLocaleConfig = true
     }
 
     buildTypes {
