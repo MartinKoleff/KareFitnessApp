@@ -3,6 +3,12 @@ package com.koleff.kare_android.ui.compose.screen
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +18,11 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,6 +40,11 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -48,12 +64,16 @@ import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 
+//TODO: show paused icon on pause timer...
+//TODO: show resume icon on resume timer... with 3 seconds countdown?
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val state by doWorkoutViewModel.state.collectAsState()
     val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
+    val playerState by doWorkoutViewModel.playerState.collectAsState()
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -113,6 +133,14 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
     }
 
+
+    var showPlayerOverlay by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playerState) {
+        showPlayerOverlay = playerState.isLoading
+    }
+
     //Error dialog
     if (showErrorDialog) {
         error?.let {
@@ -126,13 +154,12 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
                 doWorkoutViewModel.navigateToDashboard()
-
                 showWorkoutCompletedDialog = false
             }
         )
     }
 
-    if(showExitWorkoutDialog){
+    if (showExitWorkoutDialog) {
         ExitWorkoutDialog(
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
@@ -157,7 +184,17 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 .fillMaxSize()
                 .alpha(0.15f)
         }
-    } else Modifier.fillMaxSize()
+    } else Modifier
+        .fillMaxSize()
+        .clickable {
+            doWorkoutViewModel
+                .onScreenClick()
+                .also {
+                    isPaused = !isPaused
+
+                    doWorkoutViewModel.showPlayerOverlay()
+                } //Pause/Resume click listener
+        }
 
     //Loading screen
     if (showLoadingDialog) {
@@ -229,6 +266,22 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                         start = exerciseDataSheetPaddingValues.calculateStartPadding(LayoutDirection.Ltr),
                         end = exerciseDataSheetPaddingValues.calculateEndPadding(LayoutDirection.Ltr)
                     ) //sheetPeekHeight = 88.dp //exerciseDataSheetPaddingValues
+                )
+            }
+        }
+
+        if (showPlayerOverlay) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(75.dp),
+                    painter = painterResource(
+                        if (isPaused) R.drawable.ic_pause else R.drawable.ic_resume
+                    ),
+                    contentDescription = "Pause/Resume",
+                    contentScale = ContentScale.Crop
                 )
             }
         }

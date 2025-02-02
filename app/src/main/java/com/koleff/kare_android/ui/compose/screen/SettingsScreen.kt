@@ -19,18 +19,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.koleff.kare_android.common.NotificationManager
 import com.koleff.kare_android.common.PermissionManager
-import com.koleff.kare_android.common.navigation.Destination
-import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.ui.compose.components.LoadingWheel
-import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.components.SettingsList
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
 import com.koleff.kare_android.ui.compose.dialogs.EnableNotificationsDialog
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.compose.dialogs.LogoutDialog
 import com.koleff.kare_android.ui.state.BaseState
-import com.koleff.kare_android.ui.view_model.BaseViewModel
 import com.koleff.kare_android.ui.view_model.SettingsViewModel
 
 @Composable
@@ -160,6 +156,9 @@ fun SettingsScreen(
                 },
                 onLogout = {
                     showLogoutDialog = true
+                },
+                onChangeLanguage = {
+                    settingsViewModel.navigateToChangeLanguageScreen()
                 }
             )
         }

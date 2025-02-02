@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
-class StartTimerUseCase() {
+class ResumeTimerUseCase() {
     operator fun invoke(
         timer: DoWorkoutTimer,
         time: ExerciseTime
@@ -19,7 +19,7 @@ class StartTimerUseCase() {
         val channel =
             Channel<ResultWrapper<TimerWrapper>>(Channel.CONFLATED)
 
-        timer.startTimer(time.toSeconds()) { timeLeft ->
+        timer.resumeTimer() { timeLeft ->
             val result = TimerWrapper(
                 TimerResponse(
                     time = timeLeft
@@ -32,6 +32,7 @@ class StartTimerUseCase() {
         channel.receiveAsFlow().collect { timeUpdate ->
             emit(timeUpdate)
         }
+
+//        channel.close()
     }
 }
-
