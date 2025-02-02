@@ -20,6 +20,7 @@ android {
         targetSdk 34
         versionCode 16
         versionName "2.7"
+
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
