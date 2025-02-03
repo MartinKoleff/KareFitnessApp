@@ -8,5 +8,5 @@ data class DoWorkoutUseCases(
     val startTimerUseCase: StartTimerUseCase,
     val resetTimerUseCase: ResetTimerUseCase,
     val resumeTimerUseCase: ResumeTimerUseCase,
-    val pauseTimerUseCase: PauseTimerUseCase
+    val pauseTimerUseCase: PauseTimerUseCase,
 )

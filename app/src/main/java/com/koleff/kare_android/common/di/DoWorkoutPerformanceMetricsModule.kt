@@ -10,6 +10,7 @@ import com.koleff.kare_android.data.remote.DoWorkoutPerformanceMetricsApi
 import com.koleff.kare_android.data.repository.DoWorkoutPerformanceMetricsRepositoryImpl
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
+import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.domain.repository.DoWorkoutPerformanceMetricsRepository
 import com.koleff.kare_android.domain.usecases.DeleteDoWorkoutPerformanceMetricsUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
@@ -59,12 +60,14 @@ object DoWorkoutPerformanceMetricsModule {
     fun provideDoWorkoutPerformanceMetricsDataSource(
         doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
         doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
+        workoutDao: WorkoutDao,
         apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
         doWorkoutPerformanceMetricsApi: DoWorkoutPerformanceMetricsApi
     ): DoWorkoutPerformanceMetricsDataSource {
         return  if (Constants.useLocalDataSource) DoWorkoutPerformanceMetricsLocalDataSource(
             doWorkoutPerformanceMetricsDao = doWorkoutPerformanceMetricsDao,
-            doWorkoutExerciseSetDao = doWorkoutExerciseSetDao
+            doWorkoutExerciseSetDao = doWorkoutExerciseSetDao,
+            workoutDao = workoutDao
         ) else DoWorkoutPerformanceMetricsRemoteDataSource(
             doWorkoutPerformanceMetricsApi = doWorkoutPerformanceMetricsApi,
             apiAuthorizationCallWrapper = apiAuthorizationCallWrapper

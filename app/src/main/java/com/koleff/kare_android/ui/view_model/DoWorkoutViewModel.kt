@@ -149,7 +149,7 @@ class DoWorkoutViewModel @Inject constructor(
 
         val performanceMetrics = DoWorkoutPerformanceMetricsDto(
             id = 0, //Auto-generate
-            workoutId = workout.workoutId,
+            workout = workout.toWorkout(),
             date = Date(), //Current date of starting the workout
             doWorkoutExerciseSets = emptyList() //Will be filled as the workout continues...
         )

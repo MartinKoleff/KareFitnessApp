@@ -59,7 +59,7 @@ object DoWorkoutModule {
         doWorkoutApi: DoWorkoutApi,
         apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
     ): DoWorkoutDataSource {
-        return  if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
+        return if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
         else DoWorkoutRemoteDataSource(
             doWorkoutApi = doWorkoutApi,
             apiAuthorizationCallWrapper = apiAuthorizationCallWrapper
