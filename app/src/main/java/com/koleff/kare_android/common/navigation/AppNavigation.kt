@@ -12,18 +12,21 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.preferences.Preferences
+import com.koleff.kare_android.ui.compose.screen.ChangeLanguageScreen
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.LoginScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
+import com.koleff.kare_android.ui.compose.screen.OnboardingFormScreen
+import com.koleff.kare_android.ui.compose.screen.OnboardingScreen
 import com.koleff.kare_android.ui.compose.screen.RegisterScreen
 import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutHistoryScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
 import kotlinx.coroutines.Dispatchers
@@ -40,12 +43,13 @@ import kotlinx.coroutines.flow.flowOn
 @Composable
 fun AppNavigation(
     navigationNotifier: NavigationNotifier,
-    hasSignedIn: Boolean = false
+    hasSignedIn: Boolean = false,
+    hasOnboarded: Boolean = false
 ) {
     val navController = rememberNavController()
 
     //Navigation observer
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navController) {
         Log.d("AppNavigation", "Successfully registered navigation events observer!")
 
         navigationNotifier.navigationEvents
@@ -99,9 +103,12 @@ fun AppNavigation(
     //No cached data -> go to welcome screen (first time launch).
     //Cached data -> go to dashboard screen (already signed in).
     Log.d("AppNavigation", "Has credentials -> $hasSignedIn")
-    val startingDestination = if(hasSignedIn) {
+    Log.d("AppNavigation", "Has onboarded -> $hasOnboarded")
+    val startingDestination = if (hasSignedIn) {
         Destination.Dashboard.route
-    }else{
+    } else if (!hasOnboarded) {
+        Destination.Onboarding.route
+    } else {
         Destination.Welcome.route
     }
 
@@ -115,6 +122,7 @@ fun AppNavigation(
 
 private fun NavGraphBuilder.addDestinations() {
     addWelcomeGraph()
+    addOnboardingGraph()
     composable(Destination.Dashboard.ROUTE) { backStackEntry ->
         DashboardScreen()
     }
@@ -147,6 +155,12 @@ private fun NavGraphBuilder.addDestinations() {
             DoWorkoutScreen()
         }
     }
+    composable(Destination.ChangeLanguage.ROUTE) { backStackEntry ->
+        ChangeLanguageScreen()
+    }
+    composable(Destination.WorkoutHistory.ROUTE) { backStackEntry ->
+        WorkoutHistoryScreen()
+    }
 }
 
 internal fun NavGraphBuilder.addWelcomeGraph() {
@@ -158,5 +172,14 @@ internal fun NavGraphBuilder.addWelcomeGraph() {
     }
     composable(Destination.Register.ROUTE) { backStackEntry ->
         RegisterScreen()
+    }
+}
+
+internal fun NavGraphBuilder.addOnboardingGraph() {
+    composable(Destination.Onboarding.ROUTE) { backStackEntry ->
+        OnboardingScreen()
+    }
+    composable(Destination.OnboardingForm.ROUTE) { backStackEntry ->
+        OnboardingFormScreen()
     }
 }

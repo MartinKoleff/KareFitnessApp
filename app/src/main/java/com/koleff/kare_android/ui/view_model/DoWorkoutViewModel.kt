@@ -3,16 +3,15 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
-import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -28,7 +27,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 import java.util.Date
 import javax.inject.Inject
 
@@ -78,6 +76,10 @@ class DoWorkoutViewModel @Inject constructor(
         MutableStateFlow(DoWorkoutPerformanceMetricsState())
     val saveDoWorkoutPerformanceMetricsState: StateFlow<DoWorkoutPerformanceMetricsState>
         get() = _saveDoWorkoutPerformanceMetricsState
+
+    private val _playerState: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
+    val playerState: StateFlow<BaseState>
+        get() = _playerState
 
     override fun clearError() {
         if (state.value.isError) {
@@ -488,5 +490,14 @@ class DoWorkoutViewModel @Inject constructor(
     //Used when workout is completed
     fun navigateToDashboard() {
         onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
+    }
+
+    //Show player icon for a second
+    fun showPlayerOverlay() {
+        viewModelScope.launch {
+            _playerState.value = BaseState(isLoading = true)
+            delay(1000)
+            _playerState.value = BaseState(isLoading = false, isSuccessful = true)
+        }
     }
 }

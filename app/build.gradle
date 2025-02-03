@@ -18,8 +18,8 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 18
-        versionName "2.9"
+        versionCode 21
+        versionName "2.12"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -55,6 +55,11 @@ android {
 //                java.srcDir sharedTestDir
 //            }
 //        }
+    }
+
+    //Per-app language support
+    androidResources {
+        generateLocaleConfig = true
     }
 
     buildTypes {
@@ -149,6 +154,10 @@ dependencies {
 
     //Pull to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
+
+    //Pager
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation "com.google.accompanist:accompanist-pager:0.12.0" //This dependency is used for Horizontal Pager.
 
     //Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"

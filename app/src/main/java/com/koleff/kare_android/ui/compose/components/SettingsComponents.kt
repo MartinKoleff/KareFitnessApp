@@ -21,21 +21,6 @@ import androidx.compose.ui.res.painterResource
 import com.koleff.kare_android.R
 
 @Composable
-fun LogoutSettingsListItem(
-    title: String,
-    icon: Painter,
-    description: String,
-    onLogout: () -> Unit
-) {
-    SettingsListItem(
-        modifier = Modifier.clickable { onLogout() },
-        title = title,
-        icon = icon,
-        description = description
-    )
-}
-
-@Composable
 fun SettingsListItem(
     modifier: Modifier = Modifier,
     title: String,
@@ -43,7 +28,8 @@ fun SettingsListItem(
     description: String,
     hasSwitch: Boolean = false,
     onCheckedChange: (Boolean) -> Unit = {},
-    isChecked: Boolean = false
+    isChecked: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
     val textStyle = MaterialTheme.typography.titleSmall.copy(
@@ -51,7 +37,7 @@ fun SettingsListItem(
     )
 
     ListItem(
-        modifier = modifier,
+        modifier = if(hasSwitch) modifier else modifier.clickable { onClick.invoke() },
         headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
@@ -81,7 +67,8 @@ fun SettingsListItem(
     description: String,
     hasSwitch: Boolean = false,
     onCheckedChange: (Boolean) -> Unit = {},
-    isChecked: Boolean = false
+    isChecked: Boolean = false,
+    onClick: () -> Unit = {}
 ) {
     val textColor = MaterialTheme.colorScheme.onSurface
 
@@ -90,7 +77,7 @@ fun SettingsListItem(
     )
 
     ListItem(
-        modifier = modifier,
+        modifier = if(hasSwitch) modifier else modifier.clickable { onClick.invoke() },
         headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
@@ -132,14 +119,15 @@ fun SettingsList(
     biometricsIsChecked: Boolean,
     onNotificationSwitchChange: (Boolean) -> Unit,
     onBiometricsSwitchChange: (Boolean) -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onChangeLanguage: () -> Unit
 ) {
     Column(modifier = modifier) {
-        LogoutSettingsListItem(
+        SettingsListItem(
             title = "Logout",
             icon = painterResource(R.drawable.ic_vector_logout),
             description = "Logout from account",
-            onLogout = onLogout
+            onClick = onLogout
         )
         SettingsListItem(
             title = "Change email",
@@ -163,7 +151,8 @@ fun SettingsList(
         SettingsListItem(
             title = "Change language",
             icon = painterResource(R.drawable.ic_vector_language),
-            description = "Change language"
+            description = "Change language",
+            onClick = onChangeLanguage
         )
         SettingsListItem(
             title = "Biometric authentication",

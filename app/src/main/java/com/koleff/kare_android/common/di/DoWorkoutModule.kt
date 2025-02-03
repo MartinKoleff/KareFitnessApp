@@ -96,7 +96,7 @@ object DoWorkoutModule {
             startTimerUseCase = StartTimerUseCase(),
             resetTimerUseCase = ResetTimerUseCase(),
             pauseTimerUseCase = PauseTimerUseCase(),
-            resumeTimerUseCase = ResumeTimerUseCase(),
+            resumeTimerUseCase = ResumeTimerUseCase()
         )
     }
 }

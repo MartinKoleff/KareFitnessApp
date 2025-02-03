@@ -23,6 +23,9 @@ interface Preferences {
     fun getTokens(): Tokens?
     fun deleteTokens()
     fun updateTokens(tokens: Tokens)
+    fun getHasOnboarded(): Boolean
+    fun saveHasOnboarded(hasOnboarded: Boolean)
+    fun deleteHasOnboarded()
 
     companion object {
         const val DASHBOARD_MUSCLE_GROUP_LIST = "dashboard_muscle_group_list"
@@ -33,5 +36,6 @@ interface Preferences {
         const val FAVORITE_WORKOUTS = "favorite_workouts"
         const val CREDENTIALS = "credentials"
         const val TOKENS = "tokens"
+        const val HAS_ONBOARDED = "has_onboarded"
     }
 }

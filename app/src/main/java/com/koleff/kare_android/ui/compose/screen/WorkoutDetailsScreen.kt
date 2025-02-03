@@ -23,9 +23,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -45,8 +45,8 @@ import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.SelectedExercisesRow
 import com.koleff.kare_android.ui.compose.components.StartWorkoutHeader
 import com.koleff.kare_android.ui.compose.components.StartWorkoutToolbar
-import com.koleff.kare_android.ui.compose.components.SubmitExercisesRow
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.rememberMutableStateListOf
 import com.koleff.kare_android.ui.compose.dialogs.DeleteExerciseDialog
 import com.koleff.kare_android.ui.compose.dialogs.DeleteMultipleExercisesDialog
 import com.koleff.kare_android.ui.compose.dialogs.EditWorkoutDialog
@@ -84,7 +84,7 @@ fun WorkoutDetailsScreen(
     var exercises by remember {
         mutableStateOf(selectedWorkout.exercises)
     }
-    var selectedExercise by remember { mutableStateOf<ExerciseDto?>(null) }
+    var selectedExercise by rememberSaveable { mutableStateOf<ExerciseDto?>(null) }
 
     var showAddExerciseBanner by remember {
         mutableStateOf(workoutDetailsState.isSuccessful)
@@ -157,16 +157,14 @@ fun WorkoutDetailsScreen(
         showWorkoutConfigureDialog = false
     }
 
-    var isDeleteMode by remember {
+    var isDeleteMode by rememberSaveable {
         mutableStateOf(false)
     }
     val onDeleteModeEnabled = {
         isDeleteMode = !isDeleteMode
     }
 
-    val selectedExercises = remember {
-        mutableStateListOf<ExerciseDto>()
-    }
+    val selectedExercises = rememberMutableStateListOf<ExerciseDto>()
 
     val onDeleteMultipleExercises: () -> Unit = {  //(List<ExerciseDto>) -> Unit
         workoutDetailsViewModel.onMultipleExercisesUpdateEvent(
@@ -501,6 +499,3 @@ fun WorkoutDetailsScreen(
         }
     }
 }
-
-
-

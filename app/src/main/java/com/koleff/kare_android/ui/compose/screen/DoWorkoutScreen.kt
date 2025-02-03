@@ -12,43 +12,35 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -57,28 +49,20 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.koleff.kare_android.R
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
-import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.DoWorkoutFooter
-import com.koleff.kare_android.ui.compose.components.ExerciseDataSheet
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheetModal2
-import com.koleff.kare_android.ui.compose.components.ExerciseTimer
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
 import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
-import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
-import kotlin.random.Random
 
 //TODO: show paused icon on pause timer...
 //TODO: show resume icon on resume timer... with 3 seconds countdown?
@@ -89,6 +73,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
     val state by doWorkoutViewModel.state.collectAsState()
     val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
+    val playerState by doWorkoutViewModel.playerState.collectAsState()
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -148,6 +133,14 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
     }
 
+
+    var showPlayerOverlay by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playerState) {
+        showPlayerOverlay = playerState.isLoading
+    }
+
     //Error dialog
     if (showErrorDialog) {
         error?.let {
@@ -166,7 +159,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
         )
     }
 
-    if(showExitWorkoutDialog){
+    if (showExitWorkoutDialog) {
         ExitWorkoutDialog(
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
@@ -191,9 +184,17 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 .fillMaxSize()
                 .alpha(0.15f)
         }
-    } else Modifier.fillMaxSize().clickable{
-        doWorkoutViewModel.onScreenClick() //Pause/Resume click listener
-    }
+    } else Modifier
+        .fillMaxSize()
+        .clickable {
+            doWorkoutViewModel
+                .onScreenClick()
+                .also {
+                    isPaused = !isPaused
+
+                    doWorkoutViewModel.showPlayerOverlay()
+                } //Pause/Resume click listener
+        }
 
     //Loading screen
     if (showLoadingDialog) {
@@ -265,6 +266,22 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                         start = exerciseDataSheetPaddingValues.calculateStartPadding(LayoutDirection.Ltr),
                         end = exerciseDataSheetPaddingValues.calculateEndPadding(LayoutDirection.Ltr)
                     ) //sheetPeekHeight = 88.dp //exerciseDataSheetPaddingValues
+                )
+            }
+        }
+
+        if (showPlayerOverlay) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    modifier = Modifier.size(75.dp),
+                    painter = painterResource(
+                        if (isPaused) R.drawable.ic_pause else R.drawable.ic_resume
+                    ),
+                    contentDescription = "Pause/Resume",
+                    contentScale = ContentScale.Crop
                 )
             }
         }
