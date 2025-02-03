@@ -47,8 +47,6 @@ import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
 import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.PauseTimerUseCase
-import com.koleff.kare_android.domain.usecases.ResumeTimerUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
@@ -197,19 +195,11 @@ class DoWorkoutUseCasesUnitTest {
                 getFavoriteWorkoutsUseCase = GetFavoriteWorkoutsUseCase(workoutRepository),
                 createNewWorkoutUseCase = CreateNewWorkoutUseCase(workoutRepository),
                 createCustomWorkoutUseCase = CreateCustomWorkoutUseCase(workoutRepository),
-                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(
-                    workoutRepository
-                ),
+                createCustomWorkoutDetailsUseCase = CreateCustomWorkoutDetailsUseCase(workoutRepository),
                 getWorkoutConfigurationUseCase = GetWorkoutConfigurationUseCase(workoutRepository),
-                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(
-                    workoutRepository
-                ),
-                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(
-                    workoutRepository
-                ),
-                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(
-                    workoutRepository
-                )
+                createWorkoutConfigurationUseCase = CreateWorkoutConfigurationUseCase(workoutRepository),
+                updateWorkoutConfigurationUseCase = UpdateWorkoutConfigurationUseCase(workoutRepository),
+                deleteWorkoutConfigurationUseCase = DeleteWorkoutConfigurationUseCase(workoutRepository)
             )
 
             //Do workout
@@ -223,9 +213,7 @@ class DoWorkoutUseCasesUnitTest {
                 addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
                 deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
                 startTimerUseCase = StartTimerUseCase(),
-                resetTimerUseCase = ResetTimerUseCase(),
-                pauseTimerUseCase = PauseTimerUseCase(),
-                resumeTimerUseCase = ResumeTimerUseCase()
+                resetTimerUseCase = ResetTimerUseCase()
             )
 
             timer = TimerUtilFake()
@@ -425,7 +413,7 @@ class DoWorkoutUseCasesUnitTest {
             val setsAfterRemove2 = removeSetState2[0].exercise.sets
 
             logger.i(TAG, "Assert exercise set was deleted.")
-            assertTrue { setsAfterRemove2.size + 1 == setsAfterRemove.size }
+            assertTrue { setsAfterRemove2.size + 1 == setsAfterRemove.size}
 
             logger.i(TAG, "Assert second exercise set was deleted.")
             assertTrue { !setsAfterRemove2.contains(setsAfterAdd[1]) }
@@ -444,10 +432,7 @@ class DoWorkoutUseCasesUnitTest {
             logger.i(TAG, "Add new exercise set after delete -> isSuccessful state raised.")
             assertTrue { addNewSetState2[0].isSuccessful }
 
-            logger.i(
-                TAG,
-                "Assert just 1 new exercise set was added and the deleted one is not added."
-            )
+            logger.i(TAG, "Assert just 1 new exercise set was added and the deleted one is not added.")
             assertTrue { addNewSetState2[0].exercise.sets.size == setsAfterRemove2.size + 1 }
 
             //To update the DB -> use submitExercise...
@@ -532,78 +517,6 @@ class DoWorkoutUseCasesUnitTest {
             logger.i(TAG, "Assert reset time is as starting time. Reset time: $resetTime.")
             assertTrue { resetTime == defaultTime }
         }
-
-    @RepeatedTest(3)
-    fun `pause timer using PauseTimerUseCase test and resume timer using ResumeTimerUseCase test`() = runTest {
-
-        /**
-         * Pause timer test
-         */
-        val defaultTime = ExerciseTime(0, 1, 0)
-
-        // Start the timer first
-        val startTimerState = doWorkoutUseCases.startTimerUseCase(timer, defaultTime)
-            .take(3).toList()
-
-        logger.i(TAG, "Assert timer started and provided at least 3 updates.")
-        assertTrue { startTimerState.size == 3 }
-        assertTrue { startTimerState.all { it is ResultWrapper.Success } }
-
-        val timesBeforePause = listOf(
-            (startTimerState[0] as ResultWrapper.Success).data.time,
-            (startTimerState[1] as ResultWrapper.Success).data.time,
-            (startTimerState[2] as ResultWrapper.Success).data.time
-        )
-
-        logger.i(TAG, "Times before pause: $timesBeforePause")
-
-        // Pause the timer
-        val pauseTimerState = doWorkoutUseCases.pauseTimerUseCase(timer)
-            .toList()
-
-        logger.i(TAG, "Assert timer paused successfully.")
-        assertTrue { pauseTimerState[0] is ResultWrapper.Success }
-
-        /**
-         * Resume timer test
-         */
-        val resumeTimerState = doWorkoutUseCases.resumeTimerUseCase(timer, timesBeforePause.last())
-            .take(3).toList()
-
-        logger.i(TAG, "Assert timer resumed and provided at least 3 updates.")
-        assertTrue { resumeTimerState.size == 3 }
-        assertTrue { resumeTimerState.all { it is ResultWrapper.Success } }
-
-        val timesAfterResume = listOf(
-            (resumeTimerState[0] as ResultWrapper.Success).data.time,
-            (resumeTimerState[1] as ResultWrapper.Success).data.time,
-            (resumeTimerState[2] as ResultWrapper.Success).data.time
-        )
-
-        logger.i(
-            TAG,
-            "Assert timer resumes from the correct time and updates correctly.\nTimes after resume: $timesAfterResume."
-        )
-        assertTrue {
-            timesAfterResume[0] == ExerciseTime(0, 0, 57) &&
-                    timesAfterResume[1] == ExerciseTime(0, 0, 56) &&
-                    timesAfterResume[2] == ExerciseTime(0, 0, 55)
-        }
-
-        /**
-         * Reset timer test
-         */
-        val resetTimerState = doWorkoutUseCases.resetTimerUseCase(timer, defaultTime)
-            .toList()
-
-        logger.i(TAG, "Assert reset state is successful.")
-        assertTrue { resetTimerState[0] is ResultWrapper.Success }
-
-        val resetTime = (resetTimerState[0] as ResultWrapper.Success).data.time
-        logger.i(TAG, "Assert reset time is as starting time. Reset time: $resetTime.")
-        assertTrue { resetTime == defaultTime }
-    }
-
 
     @RepeatedTest(5)
     @DisplayName("validate that do workout is set up correctly")

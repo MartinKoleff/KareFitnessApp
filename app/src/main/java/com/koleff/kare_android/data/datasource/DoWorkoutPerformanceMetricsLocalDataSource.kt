@@ -10,7 +10,6 @@ import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
-import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsListWrapper
 import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
@@ -23,8 +22,7 @@ import java.util.Date
 
 class DoWorkoutPerformanceMetricsLocalDataSource(
     private val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
-    private val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
-    private val workoutDao: WorkoutDao
+    private val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao
 ) : DoWorkoutPerformanceMetricsDataSource {
     override suspend fun saveDoWorkoutPerformanceMetrics(performanceMetrics: DoWorkoutPerformanceMetricsDto): Flow<ResultWrapper<DoWorkoutPerformanceMetricsWrapper>> =
         flow {
@@ -32,7 +30,6 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
             delay(Constants.fakeDelay)
 
             val id = doWorkoutPerformanceMetricsDao.insertWorkoutPerformanceMetrics(performanceMetrics.toEntity()).toInt()
-            workoutDao.insertWorkout(performanceMetrics.workout.toEntity()) //With new relations its no longer needed...
 
             val result = DoWorkoutPerformanceMetricsWrapper(
                 DoWorkoutPerformanceMetricsResponse(

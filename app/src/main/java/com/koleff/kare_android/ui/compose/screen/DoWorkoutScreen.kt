@@ -8,7 +8,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -79,9 +78,6 @@ import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
 import kotlin.random.Random
-
-//TODO: show paused icon on pause timer...
-//TODO: show resume icon on resume timer... with 3 seconds countdown?
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -161,6 +157,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
                 doWorkoutViewModel.navigateToDashboard()
+
                 showWorkoutCompletedDialog = false
             }
         )
@@ -191,9 +188,7 @@ fun DoWorkoutScreen(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) {
                 .fillMaxSize()
                 .alpha(0.15f)
         }
-    } else Modifier.fillMaxSize().clickable{
-        doWorkoutViewModel.onScreenClick() //Pause/Resume click listener
-    }
+    } else Modifier.fillMaxSize()
 
     //Loading screen
     if (showLoadingDialog) {

@@ -1,7 +1,6 @@
 package com.koleff.kare_android.data.model.dto
 
 import com.koleff.kare_android.data.KareEntity
-import com.koleff.kare_android.data.WorkoutDetailsExtended
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.squareup.moshi.Json
 
@@ -20,7 +19,7 @@ data class WorkoutDetailsDto(
     val isFavorite: Boolean = false,
     @field:Json(name = "configuration")
     val configuration: WorkoutConfigurationDto = WorkoutConfigurationDto()
-): KareEntity<WorkoutDetails>, WorkoutDetailsExtended {
+): KareEntity<WorkoutDetails> {
     override fun toEntity(): WorkoutDetails{
         return WorkoutDetails(
             workoutDetailsId = workoutId,
@@ -28,17 +27,6 @@ data class WorkoutDetailsDto(
             description = description,
             muscleGroup = muscleGroup,
             isFavorite = isFavorite
-        )
-    }
-
-    override fun toWorkout(): WorkoutDto {
-        return WorkoutDto(
-            workoutId = workoutId,
-            name = name,
-            muscleGroup = muscleGroup,
-            isFavorite = isFavorite,
-            totalExercises = exercises.size,
-            snapshot = "snapshot ${workoutId}.png"
         )
     }
 }

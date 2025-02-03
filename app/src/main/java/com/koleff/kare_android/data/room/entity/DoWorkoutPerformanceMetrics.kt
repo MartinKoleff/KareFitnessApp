@@ -15,4 +15,13 @@ data class DoWorkoutPerformanceMetrics (
     val id: Int,
     val workoutId: Int,
     val date: Date  //to record the exact time the workout was completed
-)
+): KareDtoExtended<DoWorkoutPerformanceMetricsDto, List<DoWorkoutExerciseSetDto>> {
+    override fun toDto(doWorkoutExerciseSets: List<DoWorkoutExerciseSetDto>): DoWorkoutPerformanceMetricsDto {
+        return DoWorkoutPerformanceMetricsDto(
+            id = if(id == 0) 0 else id,
+            workoutId = workoutId,
+            date = date,
+            doWorkoutExerciseSets = doWorkoutExerciseSets
+        )
+    }
+}

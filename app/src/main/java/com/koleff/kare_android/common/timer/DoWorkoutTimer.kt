@@ -9,12 +9,9 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 interface DoWorkoutTimer {
-
     suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit)
-
     fun pauseTimer()
-
     suspend fun resumeTimer(updateTime: (ExerciseTime) -> Unit)
-
     fun resetTimer()
+
 }
