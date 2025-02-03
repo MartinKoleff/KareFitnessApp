@@ -14,12 +14,12 @@ data class DoWorkoutPerformanceMetricsDto(
     val date: Date = Date(),  //to record the exact time the workout was completed
     @field:Json(name = "do_workout_exercise_sets")
     val doWorkoutExerciseSets: List<DoWorkoutExerciseSetDto> = emptyList()
-): KareEntity<DoWorkoutPerformanceMetrics> {
+) : KareEntity<DoWorkoutPerformanceMetrics> {
     override fun toEntity(): DoWorkoutPerformanceMetrics {
         return DoWorkoutPerformanceMetrics(
             id = id,
             workoutId = workout.workoutId,
             date = date
-	)
-	}
+        )
+    }
 }

@@ -85,7 +85,7 @@ fun AppNavigation(
                         }
                     }
 
-                    NavigationEvent.NavigateBack -> {
+                    is NavigationEvent.NavigateBack -> {
                         if (navController.currentBackStack.value.size == 2) return@collectLatest //Don't pop up starting location
                         navController.popBackStack()
                     }
@@ -159,7 +159,9 @@ private fun NavGraphBuilder.addDestinations() {
         ChangeLanguageScreen()
     }
     composable(Destination.WorkoutHistory.ROUTE) { backStackEntry ->
-        WorkoutHistoryScreen()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WorkoutHistoryScreen()
+        }
     }
 }
 

@@ -161,6 +161,7 @@ sealed interface Destination {
             get() = "onboarding_form"
 
         const val ROUTE = "onboarding_form"
+    }
 
     //Workout history (done workouts) screen
     data object WorkoutHistory : Destination {
