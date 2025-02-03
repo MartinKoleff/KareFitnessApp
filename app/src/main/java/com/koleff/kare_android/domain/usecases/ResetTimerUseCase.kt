@@ -10,10 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ResetTimerUseCase() {
-    operator fun invoke(
-        timer: DoWorkoutTimer,
-        defaultTime: ExerciseTime
-    ): Flow<ResultWrapper<TimerWrapper>> =
+    suspend operator fun invoke(timer: DoWorkoutTimer, defaultTime: ExerciseTime): Flow<ResultWrapper<TimerWrapper>> =
         flow {
             val resetTimerResult =
                 TimerWrapper(
@@ -28,4 +25,3 @@ class ResetTimerUseCase() {
             }
         }
 }
- 

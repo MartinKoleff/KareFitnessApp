@@ -3,7 +3,7 @@ package com.koleff.kare_android.ui.state
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
-data class WorkoutPerformanceMetricsListState (
+open class WorkoutPerformanceMetricsListState (
     val doWorkoutPerformanceMetricsList: List<DoWorkoutPerformanceMetricsDto> = emptyList(),
     override val isSuccessful: Boolean = false,
     override val isLoading: Boolean = false,

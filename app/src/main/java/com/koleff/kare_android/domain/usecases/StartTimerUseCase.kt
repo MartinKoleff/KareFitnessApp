@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 class StartTimerUseCase() {
-    operator fun invoke(
+    suspend operator fun invoke(
         timer: DoWorkoutTimer,
         time: ExerciseTime
     ): Flow<ResultWrapper<TimerWrapper>> = flow {
@@ -32,6 +32,7 @@ class StartTimerUseCase() {
         channel.receiveAsFlow().collect { timeUpdate ->
             emit(timeUpdate)
         }
+
+//        channel.close()
     }
 }
-
