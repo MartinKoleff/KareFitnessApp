@@ -41,9 +41,13 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val splashScreenState = splashScreenViewModel.state.collectAsState()
-
+            val hasOnboardedState = splashScreenViewModel.hasOnboardedState
             KareTheme {
-                AppNavigation(navigationNotifier, hasSignedIn = splashScreenState.value.hasSignedIn)
+                AppNavigation(
+                    navigationNotifier,
+                    hasSignedIn = splashScreenState.value.hasSignedIn,
+                    hasOnboarded = hasOnboardedState
+                )
             }
         }
 

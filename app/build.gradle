@@ -150,6 +150,10 @@ dependencies {
     //Pull to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
 
+    //Pager
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation "com.google.accompanist:accompanist-pager:0.12.0" //This dependency is used for Horizontal Pager.
+
     //Dagger Hilt
     implementation "com.google.dagger:hilt-android:$dagger_hilt_version"
     kapt "com.google.dagger:hilt-compiler:$dagger_hilt_version"

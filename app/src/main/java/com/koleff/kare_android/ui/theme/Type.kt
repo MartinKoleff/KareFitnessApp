@@ -29,6 +29,9 @@ val displayFontFamily = FontFamily(
     )
 )
 
+val Poppins = FontFamily(Font(R.font.poppins))
+val ReemKufi = FontFamily(Font(R.font.reemkufi))
+
 val Typography = Typography(
     // Display Large - Purple smile 57/64 . -0.25px
     displayLarge = TextStyle(

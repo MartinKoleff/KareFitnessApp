@@ -33,6 +33,8 @@ class SplashScreenViewModel @Inject constructor(
     private var _loginState: MutableStateFlow<LoginState> = MutableStateFlow(LoginState())
     val loginState: StateFlow<LoginState> = _loginState
 
+    val hasOnboardedState: Boolean = hasOnboarded()
+
     init {
         getCredentials()
     }
@@ -87,5 +89,9 @@ class SplashScreenViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun hasOnboarded(): Boolean{
+        return preferences.getHasOnboarded()
     }
 }
