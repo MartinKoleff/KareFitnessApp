@@ -143,9 +143,7 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
                     exerciseDao.getExerciseWithSets(
                         exerciseId = exerciseId,
                         workoutId = workoutId
-                    )
-                        .toDto()
-                        .copy(sets = currentSets)
+                    ).toDto().copy(sets = currentSets)
 
                 val updatedSets = exerciseWithSets.sets.toMutableList()
                 updatedSets.removeAll { it.setId == setId }
@@ -157,6 +155,40 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
                     updatedSets[index] =
                         updatedSet //Update only the list. To update the DB use submitExercise.
                 }
+
+                val result = ExerciseWrapper(
+                    ExerciseResponse(
+                        exercise = exerciseWithSets.copy(sets = updatedSets)
+                    )
+                )
+
+                emit(ResultWrapper.Success(result))
+            } catch (e: NoSuchElementException) {
+                emit(
+                    ResultWrapper.ApiError(
+                        error = KareError.EXERCISE_NOT_FOUND
+                    )
+                )
+            }
+        }
+
+    override suspend fun deleteLatestExerciseSet(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ResultWrapper<ExerciseWrapper>> =
+        flow {
+
+            //Update exercise
+            try {
+                val exerciseWithSets =
+                    exerciseDao.getExerciseWithSets(
+                        exerciseId = exerciseId,
+                        workoutId = workoutId
+                    ).toDto().copy(sets = currentSets)
+
+                val updatedSets = exerciseWithSets.sets.toMutableList()
+                updatedSets.removeAt(updatedSets.lastIndex)
 
                 val result = ExerciseWrapper(
                     ExerciseResponse(

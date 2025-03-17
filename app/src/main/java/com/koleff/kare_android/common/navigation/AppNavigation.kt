@@ -17,6 +17,7 @@ import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
+import com.koleff.kare_android.ui.compose.screen.ExerciseConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreenV2
 import com.koleff.kare_android.ui.compose.screen.LoginScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
@@ -132,7 +133,7 @@ private fun NavGraphBuilder.addDestinations() {
         ExerciseDetailsScreenV2()
     }
     composable(Destination.ExerciseDetailsConfigurator.ROUTE) { backStackEntry ->
-        ExerciseDetailsConfiguratorScreen()
+        ExerciseConfiguratorScreen()
     }
     composable(Destination.Settings.ROUTE) {
         SettingsScreen()
