@@ -307,7 +307,7 @@ fun HorizontalLineWithText(
     )
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant //onSurface
-    val labelTextColor = LocalExtendedColors.current.label
+    val labelTextColor = LocalExtendedColors.current.title
     val labelTextStyle = MaterialTheme.typography.titleMedium.copy(
         color = labelTextColor
     )
