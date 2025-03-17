@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 @Composable
 fun EditWorkoutDialog(
@@ -35,12 +36,12 @@ fun EditWorkoutDialog(
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
         color = titleTextColor
     )
 
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val textColor = LocalExtendedColors.current.title
     val textStyle = MaterialTheme.typography.titleMedium.copy(
         color = textColor
     )

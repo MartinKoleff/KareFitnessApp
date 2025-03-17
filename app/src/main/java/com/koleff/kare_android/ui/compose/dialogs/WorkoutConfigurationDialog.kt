@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 @Composable
 fun WorkoutConfigurationDialog(
@@ -29,7 +30,7 @@ fun WorkoutConfigurationDialog(
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
         color = titleTextColor
     )
@@ -38,7 +39,7 @@ fun WorkoutConfigurationDialog(
         color = titleTextColor
     )
 
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val textColor = LocalExtendedColors.current.title
     val textStyle = MaterialTheme.typography.bodyLarge.copy(
         color = textColor
     )
