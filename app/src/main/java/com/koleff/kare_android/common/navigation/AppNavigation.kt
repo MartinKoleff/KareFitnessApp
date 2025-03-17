@@ -137,7 +137,7 @@ private fun NavGraphBuilder.addDestinations() {
         SettingsScreen()
     }
     composable(Destination.SearchWorkoutsScreen.ROUTE) { backStackEntry ->
-        SearchWorkoutsScreen()
+        SearchWorkoutsScreenV2()
     }
     composable(Destination.SearchExercisesScreen.ROUTE) { backStackEntry ->
         SearchExercisesScreenV2()
