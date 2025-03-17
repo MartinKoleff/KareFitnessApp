@@ -9,7 +9,6 @@ import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
-import com.koleff.kare_android.do_workout.DoWorkoutUseCasesUnitTest
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.usecases.AddExerciseUseCase
@@ -24,14 +23,14 @@ import com.koleff.kare_android.domain.usecases.DeleteExerciseUseCase
 import com.koleff.kare_android.domain.usecases.DeleteMultipleExercisesUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.DeleteWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.UnfavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
+import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.FindDuplicateExercisesUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetAllWorkoutsUseCase
-import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetCatalogExercisesUseCase
+import com.koleff.kare_android.domain.usecases.GetExerciseDetailsUseCase
 import com.koleff.kare_android.domain.usecases.GetExerciseUseCase
 import com.koleff.kare_android.domain.usecases.GetFavoriteWorkoutsUseCase
 import com.koleff.kare_android.domain.usecases.GetWorkoutConfigurationUseCase
@@ -40,9 +39,9 @@ import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
-import com.koleff.kare_android.domain.usecases.FavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.SubmitExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SubmitMultipleExercisesUseCase
+import com.koleff.kare_android.domain.usecases.UnfavoriteWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutConfigurationUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
@@ -50,18 +49,16 @@ import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.data.ExerciseDaoFakeV2
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
-import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
+import com.koleff.kare_android.ui.event.OnFilterExerciseEvent
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
 import com.koleff.kare_android.utils.TestLogger
 import com.koleff.kare_android.workout.WorkoutFakeDataSource
-import com.koleff.kare_android.workout.WorkoutUseCasesUnitTest
 import com.koleff.kare_android.workout.data.CompositeExerciseSetChangeListener
 import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDaoFakeV2
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFakeV2
 import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -548,7 +545,7 @@ class ExerciseUseCasesUnitTest {
         if (supportedMuscleGroups.contains(muscleGroup) || muscleGroup == MuscleGroup.ALL) {
 
             //Barbell
-            val event = OnFilterExercisesEvent.BarbellFilter(exercises)
+            val event = OnFilterExerciseEvent.BarbellFilter(exercises)
             val onFilterEventState = exerciseUseCases.onFilterExercisesUseCase(event).toList()
 
             logger.i(TAG, "On barbell filter exercise -> isLoading state raised.")
@@ -566,7 +563,7 @@ class ExerciseUseCasesUnitTest {
             }
 
             //Calisthenics
-            val event2 = OnFilterExercisesEvent.CalisthenicsFilter(exercises)
+            val event2 = OnFilterExerciseEvent.CalisthenicsFilter(exercises)
             val onFilterEventState2 = exerciseUseCases.onFilterExercisesUseCase(event2).toList()
 
             logger.i(TAG, "On calisthenics filter exercise -> isLoading state raised.")
@@ -585,7 +582,7 @@ class ExerciseUseCasesUnitTest {
             }
 
             //Dumbbell
-            val event3 = OnFilterExercisesEvent.DumbbellFilter(exercises)
+            val event3 = OnFilterExerciseEvent.DumbbellFilter(exercises)
             val onFilterEventState3 = exerciseUseCases.onFilterExercisesUseCase(event3).toList()
 
             logger.i(TAG, "On dumbbell filter exercise -> isLoading state raised.")
@@ -603,7 +600,7 @@ class ExerciseUseCasesUnitTest {
             }
 
             //Machine
-            val event4 = OnFilterExercisesEvent.MachineFilter(exercises)
+            val event4 = OnFilterExerciseEvent.MachineFilter(exercises)
             val onFilterEventState4 = exerciseUseCases.onFilterExercisesUseCase(event4).toList()
 
             logger.i(TAG, "On machine filter exercise -> isLoading state raised.")
@@ -621,7 +618,7 @@ class ExerciseUseCasesUnitTest {
             }
 
             //No filter -> all exercises
-            val event5 = OnFilterExercisesEvent.NoFilter(exercises)
+            val event5 = OnFilterExerciseEvent.NoFilter(exercises)
             val onFilterEventState5 = exerciseUseCases.onFilterExercisesUseCase(event5).toList()
 
             logger.i(TAG, "On no filter exercise -> isLoading state raised.")
