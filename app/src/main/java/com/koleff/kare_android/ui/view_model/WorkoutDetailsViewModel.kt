@@ -148,12 +148,13 @@ class WorkoutDetailsViewModel @Inject constructor(
                     }
                 }
             }
+
             else -> {}
         }
     }
 
     //Navigation
-    private fun navigateToSearchExercises(workoutId: Int) {
+    fun navigateToSearchExercises(workoutId: Int) {
         super.onNavigationEvent(
             NavigationEvent.NavigateTo(
                 Destination.SearchExercisesScreen(workoutId)
@@ -202,11 +203,11 @@ class WorkoutDetailsViewModel @Inject constructor(
             _updateWorkoutConfigurationState.value = WorkoutConfigurationState()
         }
 
-        if(favoriteWorkoutState.value.isError){
+        if (favoriteWorkoutState.value.isError) {
             _favoriteWorkoutState.value = BaseState()
         }
 
-        if(unfavoriteWorkoutState.value.isError){
+        if (unfavoriteWorkoutState.value.isError) {
             _unfavoriteWorkoutState.value = BaseState()
         }
     }
@@ -316,7 +317,7 @@ class WorkoutDetailsViewModel @Inject constructor(
             workoutUseCases.favoriteWorkoutUseCase(workoutId).collect { favoriteWorkoutState ->
                 _favoriteWorkoutState.value = favoriteWorkoutState
 
-                if(favoriteWorkoutState.isSuccessful){
+                if (favoriteWorkoutState.isSuccessful) {
                     val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
                         isFavorite = true
                     )
@@ -336,7 +337,7 @@ class WorkoutDetailsViewModel @Inject constructor(
             workoutUseCases.unfavoriteWorkoutUseCase(workoutId).collect { unfavoriteWorkoutState ->
                 _unfavoriteWorkoutState.value = unfavoriteWorkoutState
 
-                if(unfavoriteWorkoutState.isSuccessful){
+                if (unfavoriteWorkoutState.isSuccessful) {
                     val updatedWorkoutDetails = _getWorkoutDetailsState.value.workoutDetails.copy(
                         isFavorite = false
                     )

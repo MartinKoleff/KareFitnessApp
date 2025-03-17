@@ -62,7 +62,7 @@
 //
 //@OptIn(ExperimentalMaterialApi::class)
 //@Composable
-//fun WorkoutDetailsScreen(
+//fun WorkoutDetailsScreenV2(
 //    workoutDetailsViewModel: WorkoutDetailsViewModel = hiltViewModel()
 //) {
 //    val workoutDetailsState by workoutDetailsViewModel.getWorkoutDetailsState.collectAsState()

@@ -24,8 +24,8 @@ import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreenV2
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreenV2
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
-import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
-import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreenV3
+import com.koleff.kare_android.ui.compose.screen.WorkoutsScreenV2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.catch
@@ -119,13 +119,13 @@ private fun NavGraphBuilder.addDestinations() {
         DashboardScreen()
     }
     composable(Destination.Workouts.ROUTE) {
-        WorkoutsScreen()
+        WorkoutsScreenV2()
     }
     composable(Destination.MuscleGroupExercisesList.ROUTE) { backStackEntry ->
         MuscleGroupScreen()
     }
     composable(Destination.WorkoutDetails.ROUTE) { backStackEntry ->
-        WorkoutDetailsScreen()
+        WorkoutDetailsScreenV3()
     }
     composable(Destination.ExerciseDetails.ROUTE) { backStackEntry ->
         ExerciseDetailsScreen()
