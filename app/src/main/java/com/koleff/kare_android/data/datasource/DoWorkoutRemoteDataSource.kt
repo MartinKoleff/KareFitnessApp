@@ -32,7 +32,7 @@ class DoWorkoutRemoteDataSource @Inject constructor(
         })
     }
 
-    override suspend fun updateExerciseSetsAfterTimer(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {
+    override suspend fun skipNextSet(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {
         val body = UpdateExerciseSetsRequest(currentDoWorkoutData)
 
         return apiAuthorizationCallWrapper.executeApiCall(dispatcher, {
@@ -40,5 +40,9 @@ class DoWorkoutRemoteDataSource @Inject constructor(
                 doWorkoutApi.updateExerciseSetsAfterTimer(body)
             )
         })
+    }
+
+    override suspend fun skipNextExercise(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {
+        TODO("Not yet implemented")
     }
 }

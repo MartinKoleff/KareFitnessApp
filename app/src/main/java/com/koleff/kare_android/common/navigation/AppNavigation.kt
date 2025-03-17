@@ -12,11 +12,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
-import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreen
-import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
-import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
+import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreenV2
 import com.koleff.kare_android.ui.compose.screen.ExerciseConfiguratorScreen
 import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreenV2
 import com.koleff.kare_android.ui.compose.screen.LoginScreen
@@ -146,7 +143,7 @@ private fun NavGraphBuilder.addDestinations() {
     }
     composable(Destination.DoWorkoutScreen.ROUTE) { backStackEntry ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DoWorkoutScreen()
+            DoWorkoutScreenV2()
         }
     }
 }
