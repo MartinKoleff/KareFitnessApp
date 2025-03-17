@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 
 @Composable
@@ -40,7 +41,7 @@ fun ExerciseDetailsConfiguratorToolbar(
     onSubmitExercise: () -> Unit,
     onNavigateBackAction: () -> Unit
 ) {
-    val tintColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = LocalExtendedColors.current.title
     val circleColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
     val submitButtonTint = Color.Green

@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 
 @Composable
@@ -27,7 +28,7 @@ fun ExerciseDetailsBottomNavigationBar(
     }
 
     val backgroundColor = MaterialTheme.colorScheme.tertiary
-    val tintColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = LocalExtendedColors.current.title
 
     BottomAppBar(
         containerColor = backgroundColor,

@@ -21,7 +21,6 @@ fun ExerciseDetailsConfiguratorScaffold(
 ) {
     val configuration = LocalConfiguration.current
     val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
