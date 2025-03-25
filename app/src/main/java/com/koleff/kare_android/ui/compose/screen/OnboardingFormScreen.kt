@@ -32,6 +32,7 @@ import kotlin.math.roundToInt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -53,10 +54,11 @@ import com.koleff.kare_android.ui.compose.components.navigation_components.Navig
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.state.BaseState
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 import com.koleff.kare_android.ui.view_model.OnboardingFormViewModel
 
 @Composable
-fun SliderAdvancedExample(
+fun SliderV2(
     start: Float,
     end: Float,
     steps: Int = 1,
@@ -64,7 +66,13 @@ fun SliderAdvancedExample(
     onValueChange: (Float) -> Unit
 ) {
     var sliderPosition by remember { mutableFloatStateOf(initialValue) }
-    Column(modifier = Modifier.padding(horizontal = 16.dp)) {
+
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainer
+    Column(
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .background(backgroundColor)
+    ) {
         Slider(
             value = sliderPosition,
             onValueChange = {
@@ -72,9 +80,9 @@ fun SliderAdvancedExample(
                 onValueChange(it)
             },
             colors = SliderDefaults.colors(
-                thumbColor = MaterialTheme.colorScheme.primary,
+                thumbColor = androidx.compose.ui.graphics.Color.Red,
                 activeTrackColor = androidx.compose.ui.graphics.Color.Green,
-                inactiveTrackColor = androidx.compose.ui.graphics.Color.Cyan //Light Green...
+                inactiveTrackColor = androidx.compose.ui.graphics.Color.Gray
             ),
             steps = steps - 1,
             valueRange = start..end
@@ -89,6 +97,8 @@ fun SliderLines(
         lineColor = MaterialTheme.colorScheme.outline
     )
 ) {
+
+    val isDarkTheme = isSystemInDarkTheme()
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -126,7 +136,7 @@ fun SliderLines(
                         x,
                         lineLength + 30f, // Adjust label position
                         Paint().apply {
-                            color = Color.BLACK
+                            color = if (isDarkTheme) Color.WHITE else Color.BLACK
                             textSize = 28f
                             textAlign = android.graphics.Paint.Align.CENTER
                         }
@@ -149,6 +159,11 @@ fun SliderWithLines(
     onValueChange: (Float) -> Unit
 ) {
     var sliderValue by remember { mutableFloatStateOf(onboardingSliderStyle.initialValue.toFloat()) }
+
+    val textColor = LocalExtendedColors.current.title
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -157,15 +172,21 @@ fun SliderWithLines(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(sliderTitle)
-            Text(sliderValue.toInt().toString() + " " + sliderMetrics)
+            Text(
+                text = sliderTitle,
+                style = textStyle
+            )
+            Text(
+                text = sliderValue.toInt().toString() + " " + sliderMetrics,
+                style = textStyle
+            )
         }
 
-        SliderAdvancedExample(
+        SliderV2(
             start = onboardingSliderStyle.startBound.toFloat(),
             end = onboardingSliderStyle.endBound.toFloat(),
             steps = if (hasSteps) onboardingSliderStyle.totalLines / onboardingSliderStyle.interval else 1,
@@ -226,7 +247,13 @@ fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hilt
         }
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainer
+    val cornerSize = 16.dp
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
 
         if (showLoadingDialog) {
             LoadingDialog(
@@ -242,6 +269,7 @@ fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hilt
                 OnboardingToolbar(
                     "User metrics",
                     "Please fill in the following information.",
+                    showBackButton = false
                 ) {
                     onboardingFormViewModel.onNavigateBack()
                 }
@@ -253,53 +281,59 @@ fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hilt
 
                 Spacer(modifier = Modifier.size(32.dp))
 
-                SliderWithLines(
-                    sliderTitle = "Height",
-                    sliderMetrics = "CM",
-                    onboardingSliderStyle = OnboardingSliderStyle(
-                        lineColor = MaterialTheme.colorScheme.outline,
-                        initialValue = height,
-                        startBound = 140,
-                        endBound = 210,
-                        interval = 5
-                    ),
-                    hasSteps = true,
-                    onValueChange = {
-                        height = it.toInt()
-                    }
-                )
+                Column(modifier = Modifier
+                    .clip(RoundedCornerShape(cornerSize))
+                    .background(
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(cornerSize)
+                    )
+                ) {
+                    SliderWithLines(
+                        sliderTitle = "Height",
+                        sliderMetrics = "CM",
+                        onboardingSliderStyle = OnboardingSliderStyle(
+                            lineColor = MaterialTheme.colorScheme.outline,
+                            initialValue = height,
+                            startBound = 140,
+                            endBound = 210,
+                            interval = 5
+                        ),
+                        hasSteps = true,
+                        onValueChange = {
+                            height = it.toInt()
+                        }
+                    )
 
-                SliderWithLines(
-                    sliderTitle = "Age",
-                    sliderMetrics = "Years",
-                    onboardingSliderStyle = OnboardingSliderStyle(
-                        lineColor = MaterialTheme.colorScheme.outline,
-                        initialValue = age,
-                        startBound = 10,
-                        endBound = 100,
-                        interval = 5
-                    ),
-                    hasSteps = false,
-                    onValueChange = {
-                        age = it.toInt()
-                    }
-                )
+                    SliderWithLines(
+                        sliderTitle = "Age",
+                        sliderMetrics = "Years",
+                        onboardingSliderStyle = OnboardingSliderStyle(
+                            initialValue = age,
+                            startBound = 10,
+                            endBound = 100,
+                            interval = 5
+                        ),
+                        hasSteps = false,
+                        onValueChange = {
+                            age = it.toInt()
+                        }
+                    )
 
-                SliderWithLines(
-                    sliderTitle = "Weight",
-                    sliderMetrics = "KG",
-                    onboardingSliderStyle = OnboardingSliderStyle(
-                        lineColor = MaterialTheme.colorScheme.outline,
-                        initialValue = weight,
-                        startBound = 35,
-                        endBound = 200,
-                        interval = 15
-                    ),
-                    hasSteps = false,
-                    onValueChange = {
-                        weight = it.toInt()
-                    }
-                )
+                    SliderWithLines(
+                        sliderTitle = "Weight",
+                        sliderMetrics = "KG",
+                        onboardingSliderStyle = OnboardingSliderStyle(
+                            initialValue = weight,
+                            startBound = 35,
+                            endBound = 200,
+                            interval = 15
+                        ),
+                        hasSteps = false,
+                        onValueChange = {
+                            weight = it.toInt()
+                        }
+                    )
+                }
             }
 
             //Footer
@@ -326,9 +360,11 @@ private fun OnboardingFormScreenPreview() {
 fun OnboardingToolbar(
     title: String,
     subtitle: String,
-    onBack: () -> Unit
+    showBackButton: Boolean = false,
+    onBack: () -> Unit = {}
 ) {
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextColor = LocalExtendedColors.current.title
+    val tintColor = titleTextColor
 
     val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
         color = titleTextColor
@@ -361,16 +397,17 @@ fun OnboardingToolbar(
             .height(100.dp),
         contentAlignment = Alignment.Center
     ) {
-        val tintColor = MaterialTheme.colorScheme.onSurface
-        NavigationItem(
-            modifier = Modifier
-                .fillMaxHeight()
-                .align(Alignment.CenterStart),
-            icon = Icons.AutoMirrored.Filled.ArrowBackIos,
-            label = "Go back",
-            tint = tintColor,
-            onNavigateAction = onBack
-        )
+        if(showBackButton) {
+            NavigationItem(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .align(Alignment.CenterStart),
+                icon = Icons.AutoMirrored.Filled.ArrowBackIos,
+                label = "Go back",
+                tint = tintColor,
+                onNavigateAction = onBack
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -428,9 +465,9 @@ fun OnboardingButton(
         horizontal = 32.dp,
         vertical = 8.dp
     )
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val textColor = LocalExtendedColors.current.title
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
-    val backgroundColor = MaterialTheme.colorScheme.primaryContainer
+    val backgroundColor = MaterialTheme.colorScheme.tertiary
 
     val buttonTextStyle = MaterialTheme.typography.titleLarge.copy(
         color = textColor
@@ -473,11 +510,17 @@ fun GenderSelectionBox(
     isSelected: Boolean,
     onClick: (Gender) -> Unit
 ) {
+    val textColor = LocalExtendedColors.current.title
+    val textStyle = MaterialTheme.typography.titleMedium.copy(
+        color = textColor
+    )
+    val backgroundColor = MaterialTheme.colorScheme.surfaceContainer
+    val cornerSize = 16.dp
     Box(
         modifier = Modifier
+            .padding(all = 8.dp)
             .fillMaxWidth()
             .height(75.dp)
-            .padding(vertical = 8.dp, horizontal = 8.dp)
 //            .background(
 //                color = if (isSelected) androidx.compose.ui.graphics.Color(0xFFE8F5E9) else androidx.compose.ui.graphics.Color(
 //                    0xFFF5F5F5
@@ -485,23 +528,18 @@ fun GenderSelectionBox(
 //                shape = RoundedCornerShape(16.dp)
 //            )
             .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(16.dp)
+                color = backgroundColor,
+                shape = RoundedCornerShape(cornerSize)
             )
             .clickable { onClick(gender) }
-            .padding(vertical = 12.dp, horizontal = 16.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = gender.text,
-                style = TextStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = androidx.compose.ui.graphics.Color.Black
-                ),
+                style = textStyle,
                 modifier = Modifier.weight(1f)
             )
             Icon(
