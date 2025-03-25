@@ -10,5 +10,5 @@ interface OnboardingRepository {
 
     suspend fun getOnboardingData(id: Long): Flow<ResultWrapper<OnboardingWrapper>>
 
-    suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<OnboardingWrapper>>
 }

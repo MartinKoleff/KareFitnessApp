@@ -17,6 +17,6 @@ interface OnboardingApi {
     @GET("api/v1/onboarding/saveonboardingdata")
     suspend fun saveOnboardingData(
         @Body body: SaveOnboardingDataRequest
-    ): BaseResponse
+    ): OnboardingResponse
 
 }
