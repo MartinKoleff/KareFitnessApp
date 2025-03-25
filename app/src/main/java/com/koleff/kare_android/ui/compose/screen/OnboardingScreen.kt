@@ -23,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,11 +48,13 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.style.OnboardingDataUI
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 import com.koleff.kare_android.ui.theme.Poppins
 import com.koleff.kare_android.ui.view_model.OnboardingViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @DelicateCoroutinesApi
 @ExperimentalPagerApi
@@ -61,9 +66,34 @@ fun OnBoardingPager(
     onNavigateToFormsScreen: () -> Unit,
     onSkipAction: () -> Unit
 ) {
+    val titleTextColor = LocalExtendedColors.current.title
+    val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
+        color = titleTextColor,
+        fontFamily = Poppins,
+        fontWeight = FontWeight.ExtraBold
+    )
+
+    val descriptionTextColor = LocalExtendedColors.current.subtitle
+    val descriptionTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = descriptionTextColor,
+        fontFamily = Poppins,
+        fontWeight = FontWeight.ExtraLight,
+    )
+    val labelTextColor = LocalExtendedColors.current.label
+    val labelTextStyle = MaterialTheme.typography.labelLarge.copy(
+        color = labelTextColor,
+        fontFamily = Poppins,
+        fontWeight = FontWeight.SemiBold
+    )
+
+    val buttonTextColor = LocalExtendedColors.current.title
+    val buttonTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = buttonTextColor,
+        fontFamily = Poppins,
+        fontWeight = FontWeight.Bold
+    )
 
     Box(modifier = modifier) {
-
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             HorizontalPager(state = pagerState) { page ->
                 Column(
@@ -77,6 +107,7 @@ fun OnBoardingPager(
                     Image(
                         painter = painterResource(id = item[page].image),
                         contentDescription = item[page].title,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
                     )
@@ -90,12 +121,12 @@ fun OnBoardingPager(
                     .fillMaxWidth()
                     .height(340.dp),
                 colors = CardDefaults.cardColors(
-                    containerColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
                 elevation = CardDefaults.cardElevation(
                     defaultElevation = 10.dp
                 ),
-                shape = RoundedCornerShape(topStart = 80.dp)
+                shape = RoundedCornerShape(topStart = 40.dp)
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
@@ -105,25 +136,19 @@ fun OnBoardingPager(
                         text = item[pagerState.currentPage].title,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(top = 20.dp, end = 30.dp),
+                            .padding(top = 20.dp),
 //                            color = Color(0xFF292D32),
-                        color = item[pagerState.currentPage].mainColor,
-                        fontFamily = Poppins,
-                        textAlign = TextAlign.Right,
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.ExtraBold
+                        color = titleTextColor,
+                        textAlign = TextAlign.Center,
+                        style = titleTextStyle
                     )
 
                     Text(
                         text = item[pagerState.currentPage].desc,
                         modifier = Modifier.padding(top = 20.dp, start = 40.dp, end = 20.dp),
-                        color = Color.Gray,
-                        fontFamily = Poppins,
-                        fontSize = 17.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.ExtraLight
+                        style = descriptionTextStyle,
+                        textAlign = TextAlign.Center
                     )
-
                 }
             }
 
@@ -151,11 +176,8 @@ fun OnBoardingPager(
                         }) {
                             Text(
                                 text = "Previous",
-                                color = Color(0xFF292D32),
-                                fontFamily = Poppins,
-                                textAlign = TextAlign.Left,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
+                                style = labelTextStyle,
+                                textAlign = TextAlign.Left
                             )
                         }
                     } else if (pagerState.currentPage == 0) {
@@ -166,11 +188,8 @@ fun OnBoardingPager(
                         }) {
                             Text(
                                 text = "Skip Now",
-                                color = Color(0xFF292D32),
-                                fontFamily = Poppins,
-                                textAlign = TextAlign.Right,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.SemiBold
+                                style = labelTextStyle,
+                                textAlign = TextAlign.Right
                             )
                         }
                     }
@@ -221,8 +240,7 @@ fun OnBoardingPager(
                         ) {
                             Text(
                                 text = "Get Started",
-                                color = Color.White,
-                                fontSize = 16.sp
+                                style = buttonTextStyle
                             )
                         }
                     }
@@ -295,31 +313,31 @@ fun OnboardingScreen(
 
     items.add(
         OnboardingDataUI(
-            R.drawable.fruit,
+            R.drawable.motivation_4,
             "Track Your Progress",
             "Monitor your fitness journey with detailed stats. Keep track of your workouts, progress, and milestones all in one place.",
-            backgroundColor = Color(0xFF0189C5),
-            mainColor = Color(0xFF64B5F6)
+            backgroundColor = Color(0xFFE4AF19),
+            mainColor = MaterialTheme.colorScheme.primary
         )
     )
 
     items.add(
         OnboardingDataUI(
-            R.drawable.food,
+            R.drawable.motivation_5,
             "Personalized Workouts",
             "Enjoy tailored workouts that fit your goals and lifestyle. Create routines and get step-by-step guidance for every exercise.",
             backgroundColor = Color(0xFFE4AF19),
-            mainColor = Color(0xFFFFE082)
+            mainColor = MaterialTheme.colorScheme.primary
         )
     )
 
     items.add(
         OnboardingDataUI(
-            R.drawable.cooking,
+            R.drawable.motivation_1,
             "Achieve Your Goals",
             "Set your fitness goals and crush them. Whether it's building strength, losing weight, or staying active, we've got you covered!",
-            backgroundColor = Color(0xFF96E172),
-            mainColor = Color(0xFF81C784)
+            backgroundColor = Color(0xFFE4AF19),
+            mainColor = MaterialTheme.colorScheme.primary
         )
     )
 
