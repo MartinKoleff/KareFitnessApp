@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.datasource
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.MuscleGroupMaxWeight
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.MuscleGroupResponse
@@ -11,13 +12,8 @@ import com.koleff.kare_android.data.model.response.TotalTimesCompletedResponse
 import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
 import com.koleff.kare_android.data.model.response.WorkoutResponse
 import com.koleff.kare_android.data.model.response.WorkoutStreakResponse
-import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
-import com.koleff.kare_android.data.room.dao.ExerciseDao
-import com.koleff.kare_android.data.room.dao.ExerciseSetDao
-import com.koleff.kare_android.data.room.dao.OnboardingDao
 import com.koleff.kare_android.data.room.dao.StatisticsDao
-import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
 import com.koleff.kare_android.domain.wrapper.MuscleGroupWrapper
@@ -34,12 +30,7 @@ import java.util.Date
 
 class GeneralStatisticsLocalDataSource(
     val statisticsDao: StatisticsDao,
-    val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
-    val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
-    val onboardingDao: OnboardingDao,
-    val exerciseDao: ExerciseDao,
-    val workoutDao: WorkoutDao,
-    val exerciseSetDao: ExerciseSetDao
+    val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao
 ) : GeneralStatisticsDataSource {
 
     //All completed workouts (can have the same workout completed multiple times on different dates)
@@ -196,7 +187,7 @@ class GeneralStatisticsLocalDataSource(
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val strongestMuscleGroup = statisticsDao.getMaxWeightPerMuscleGroup() ?: Pair(MuscleGroup.NONE, 0.0f)
+        val strongestMuscleGroup = statisticsDao.getMaxWeightPerMuscleGroup() ?: MuscleGroupMaxWeight(MuscleGroup.NONE, 0.0f)
         val result = StrongestMuscleGroupWrapper(
             StrongestMuscleGroupResponse(
                 data = strongestMuscleGroup

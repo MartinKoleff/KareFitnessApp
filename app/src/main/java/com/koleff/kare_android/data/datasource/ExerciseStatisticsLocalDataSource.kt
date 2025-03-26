@@ -5,30 +5,18 @@ import com.koleff.kare_android.data.model.response.ExercisePRResponse
 import com.koleff.kare_android.data.model.response.TotalRepsResponse
 import com.koleff.kare_android.data.model.response.TotalSetsResponse
 import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
-import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
-import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
-import com.koleff.kare_android.data.room.dao.ExerciseDao
-import com.koleff.kare_android.data.room.dao.ExerciseSetDao
-import com.koleff.kare_android.data.room.dao.OnboardingDao
 import com.koleff.kare_android.data.room.dao.StatisticsDao
-import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.domain.wrapper.ExercisePRWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper
 import com.koleff.kare_android.domain.wrapper.TotalSetsWrapper
 import com.koleff.kare_android.domain.wrapper.TotalWeightLiftedWrapper
-import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class ExerciseStatisticsLocalDataSource(
-    val statisticsDao: StatisticsDao,
-    val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
-    val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
-    val onboardingDao: OnboardingDao,
-    val exerciseDao: ExerciseDao,
-    val workoutDao: WorkoutDao,
-    val exerciseSetDao: ExerciseSetDao
+    val statisticsDao: StatisticsDao
 ) : ExerciseStatisticsDataSource {
 
     //Get exercise best PR
