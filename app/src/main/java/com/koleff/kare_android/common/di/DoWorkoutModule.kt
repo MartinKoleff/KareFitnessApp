@@ -17,8 +17,9 @@ import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
 import com.koleff.kare_android.domain.usecases.PauseTimerUseCase
 import com.koleff.kare_android.domain.usecases.ResumeTimerUseCase
+import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
+import com.koleff.kare_android.domain.usecases.SkipNextSetUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
-import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -88,15 +89,14 @@ object DoWorkoutModule {
     ): DoWorkoutUseCases {
         return DoWorkoutUseCases(
             doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
-            updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
-                doWorkoutRepository
-            ),
             addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             startTimerUseCase = StartTimerUseCase(),
             resetTimerUseCase = ResetTimerUseCase(),
             pauseTimerUseCase = PauseTimerUseCase(),
-            resumeTimerUseCase = ResumeTimerUseCase()
+            resumeTimerUseCase = ResumeTimerUseCase(),
+            skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
+            skipNextSetUseCase = SkipNextSetUseCase(doWorkoutRepository)
         )
     }
 }

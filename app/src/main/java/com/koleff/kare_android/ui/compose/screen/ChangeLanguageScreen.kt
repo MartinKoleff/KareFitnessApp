@@ -72,6 +72,8 @@ fun ChangeLanguageScreen(
     var showErrorDialog by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<KareError?>(null) }
 
+    var searchText by remember { mutableStateOf("") }
+
     val context = LocalContext.current
 
     LaunchedEffect(state) {
@@ -126,11 +128,15 @@ fun ChangeLanguageScreen(
             ) {
                 item {
                     SearchBar(
+                        searchText = searchText,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
                         onSearch = { text ->
                             languageViewModel.onTextChange(text)
+                        },
+                        onSearchTextChange = {
+                            searchText = it
                         },
                         onToggleSearch = {
                             languageViewModel.onToggleSearch()
