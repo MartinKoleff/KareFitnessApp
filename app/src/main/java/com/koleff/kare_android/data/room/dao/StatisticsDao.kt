@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
+import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 import com.koleff.kare_android.data.room.entity.Workout
 
 @Dao
@@ -51,7 +52,7 @@ interface StatisticsDao {
     suspend fun getTotalExercisesCount(): Int?
 
     @Query("SELECT * FROM do_workout_exercise_set GROUP BY exerciseId ORDER BY COUNT(exerciseId) DESC LIMIT 1.")
-    suspend fun getMostPerformedExercise(): Exercise?
+    suspend fun getMostPerformedExercise(): ExerciseWithSets?
 
     @Query("SELECT * FROM do_workout_exercise_set JOIN workout_table w ON do_workout_exercise_set.workoutId = w.workoutId GROUP BY w.muscleGroup ORDER BY COUNT(w.muscleGroup) DESC LIMIT 1")
     suspend fun getFavoriteMuscleGroup(): MuscleGroup?
