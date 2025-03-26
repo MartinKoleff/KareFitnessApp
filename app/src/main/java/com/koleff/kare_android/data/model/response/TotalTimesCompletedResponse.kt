@@ -3,7 +3,7 @@ package com.koleff.kare_android.data.model.response
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.squareup.moshi.Json
 
-data class GetExerciseTotalRepsResponse(
+data class TotalTimesCompletedResponse(
     @Json(name = "data")
-    val totalReps: Int
+    val totalTimesCompleted: Int
 ) : BaseResponse()

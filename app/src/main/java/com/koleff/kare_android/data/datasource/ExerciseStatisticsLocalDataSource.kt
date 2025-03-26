@@ -2,9 +2,9 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.response.GetExercisePRResponse
-import com.koleff.kare_android.data.model.response.GetExerciseTotalRepsResponse
-import com.koleff.kare_android.data.model.response.GetExerciseTotalSetsResponse
-import com.koleff.kare_android.data.model.response.GetExerciseTotalWeightResponse
+import com.koleff.kare_android.data.model.response.TotalRepsResponse
+import com.koleff.kare_android.data.model.response.TotalSetsResponse
+import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.dao.ExerciseDao
@@ -13,9 +13,9 @@ import com.koleff.kare_android.data.room.dao.OnboardingDao
 import com.koleff.kare_android.data.room.dao.StatisticsDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.domain.wrapper.ExercisePRWrapper
-import com.koleff.kare_android.domain.wrapper.ExerciseTotalRepsWrapper
-import com.koleff.kare_android.domain.wrapper.ExerciseTotalSetsWrapper
-import com.koleff.kare_android.domain.wrapper.ExerciseTotalWeightWrapper
+import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper
+import com.koleff.kare_android.domain.wrapper.TotalSetsWrapper
+import com.koleff.kare_android.domain.wrapper.TotalWeightLiftedWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -47,14 +47,14 @@ class ExerciseStatisticsLocalDataSource(
     }
 
     //Total reps performed for exercise
-    override suspend fun getTotalRepsPerformed(exerciseId: Int): Flow<ResultWrapper<ExerciseTotalRepsWrapper>> =
+    override suspend fun getTotalRepsPerformed(exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val repsPerformed = statisticsDao.getTotalRepsPerformedForExercise(exerciseId) ?: 0
-            val result = ExerciseTotalRepsWrapper(
-                GetExerciseTotalRepsResponse(
+            val result = TotalRepsWrapper(
+                TotalRepsResponse(
                     totalReps = repsPerformed
                 )
             )
@@ -63,14 +63,14 @@ class ExerciseStatisticsLocalDataSource(
         }
 
     //Total sets performed for exercise
-    override suspend fun getTotalSetsPerformed(exerciseId: Int): Flow<ResultWrapper<ExerciseTotalSetsWrapper>> =
+    override suspend fun getTotalSetsPerformed(exerciseId: Int): Flow<ResultWrapper<TotalSetsWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val setsPerformed = statisticsDao.getTotalSetsPerformedForExercise(exerciseId) ?: 0
-            val result = ExerciseTotalSetsWrapper(
-                GetExerciseTotalSetsResponse(
+            val result = TotalSetsWrapper(
+                TotalSetsResponse(
                     totalSets = setsPerformed
                 )
             )
@@ -79,14 +79,14 @@ class ExerciseStatisticsLocalDataSource(
         }
 
     //Total weight lifted for exercise
-    override suspend fun getTotalWeightLifted(exerciseId: Int): Flow<ResultWrapper<ExerciseTotalWeightWrapper>> =
+    override suspend fun getTotalWeightLifted(exerciseId: Int): Flow<ResultWrapper<TotalWeightLiftedWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
             val totalWeight = statisticsDao.getTotalWeightLiftedForExercise(exerciseId) ?: 0.0f
-            val result = ExerciseTotalWeightWrapper(
-                GetExerciseTotalWeightResponse(
+            val result = TotalWeightLiftedWrapper(
+                TotalWeightLiftedResponse(
                     totalWeight = totalWeight
                 )
             )
