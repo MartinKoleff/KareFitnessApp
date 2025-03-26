@@ -22,7 +22,44 @@ class DeleteExerciseSetUseCase(private val exerciseRepository: ExerciseRepositor
         currentSets: List<ExerciseSetDto>
     ): Flow<ExerciseState> =
         setId?.let {
-            exerciseRepository.deleteExerciseSet(exerciseId, workoutId, setId, currentSets).map { apiResult ->
+            exerciseRepository.deleteExerciseSet(exerciseId, workoutId, setId, currentSets)
+                .map { apiResult ->
+                    when (apiResult) {
+                        is ResultWrapper.ApiError -> ExerciseState(
+                            isError = true,
+                            error = apiResult.error ?: KareError.GENERIC
+                        )
+
+                        is ResultWrapper.Loading -> ExerciseState(isLoading = true)
+                        is ResultWrapper.Success -> {
+                            Log.d(
+                                "DeleteExerciseSetUseCase",
+                                "Exercise set with id $setId successfully deleted!"
+                            )
+
+                            ExerciseState(
+                                isSuccessful = true,
+                                exercise = apiResult.data.exercise
+                            )
+                        }
+                    }
+                }
+        } ?: run {
+            flowOf(
+                ExerciseState(
+                    isError = true,
+                    error = KareError.EXERCISE_SET_NOT_FOUND
+                )
+            )
+        }
+
+    suspend operator fun invoke(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ExerciseState> =
+        exerciseRepository.deleteLatestExerciseSet(exerciseId, workoutId, currentSets)
+            .map { apiResult ->
                 when (apiResult) {
                     is ResultWrapper.ApiError -> ExerciseState(
                         isError = true,
@@ -33,7 +70,7 @@ class DeleteExerciseSetUseCase(private val exerciseRepository: ExerciseRepositor
                     is ResultWrapper.Success -> {
                         Log.d(
                             "DeleteExerciseSetUseCase",
-                            "Exercise set with id $setId successfully deleted!"
+                            "Latest exercise set successfully deleted!"
                         )
 
                         ExerciseState(
@@ -43,12 +80,4 @@ class DeleteExerciseSetUseCase(private val exerciseRepository: ExerciseRepositor
                     }
                 }
             }
-        } ?: run {
-            flowOf(
-                ExerciseState(
-                    isError = true,
-                    error = KareError.EXERCISE_SET_NOT_FOUND
-                )
-            )
-        }
 }

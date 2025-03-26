@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 @Composable
 fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
@@ -34,12 +35,12 @@ fun ErrorDialog(error: KareError, onDismiss: () -> Unit) {
     val buttonColor = MaterialTheme.colorScheme.tertiary
     val onButtonColor = MaterialTheme.colorScheme.onTertiary
 
-    val titleTextColor = MaterialTheme.colorScheme.onSurface
+    val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.headlineMedium.copy(
         color = titleTextColor
     )
 
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val textColor = LocalExtendedColors.current.title
     val textStyle = MaterialTheme.typography.titleMedium.copy(
         color = textColor
     )

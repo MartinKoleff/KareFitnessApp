@@ -7,11 +7,10 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseSet
-import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import com.koleff.kare_android.data.room.entity.ExerciseWithSets
 
 @Dao
@@ -71,6 +70,13 @@ interface ExerciseDao {
         workoutId: Int,
         muscleGroup: MuscleGroup
     ): List<Exercise>
+
+    @Transaction
+    @Query("SELECT * FROM exercise_table WHERE workoutId = :workoutId AND exerciseId = :exerciseId")
+    fun getCatalogExercise(
+        workoutId: Int = Constants.CATALOG_EXERCISE_ID,
+        exerciseId: Int
+    ): Exercise
 
     @Transaction
     @Query("SELECT * FROM exercise_table ORDER BY exerciseId")

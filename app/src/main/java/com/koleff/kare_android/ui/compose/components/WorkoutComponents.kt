@@ -1,5 +1,7 @@
 package com.koleff.kare_android.ui.compose.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
@@ -12,38 +14,37 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
-import androidx.compose.ui.unit.sp
-import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.ui.view_model.ExerciseListViewModel
+import androidx.compose.ui.unit.dp
+import com.koleff.kare_android.ui.event.OnWorkoutScreenSwitchEvent
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MachineFilterSegmentButton(
+fun WorkoutSegmentButton(
     modifier: Modifier = Modifier,
-    selectedOptionIndex: Int = -1,
+    selectedOptionIndex: Int,
     isDisabled: Boolean,
-    onFilterSelected: (MachineType) -> Unit
+    onWorkoutFilter: (OnWorkoutScreenSwitchEvent) -> Unit
 ) {
     val labelColor = MaterialTheme.colorScheme.onSurface
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
-    val labelTextStyle = MaterialTheme.typography.bodySmall.copy(
+    val labelTextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = labelColor
     )
 
     var selectedIndex by remember { mutableStateOf(selectedOptionIndex) }
-    val options = listOf("Dumbbell", "Barbell", "Machine", "Calisthenics")
+    val options = listOf("Saved Workouts", "All Workouts")
+
+    val cornerSize = 6.dp
+
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
-            SegmentedButton(
-                colors = SegmentedButtonDefaults.colors(  //TODO: checkmark color to be green...
+            SegmentedButton( //TODO: checkmark color to be green...
+                colors = SegmentedButtonDefaults.colors(
                     activeContainerColor = buttonColor,
                     disabledActiveContainerColor = buttonColor,
                     activeBorderColor = outlineColor,
@@ -53,44 +54,48 @@ fun MachineFilterSegmentButton(
                     inactiveContentColor = MaterialTheme.colorScheme.onSurface,
                     inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                shape = when (index) {
+                    0 -> RoundedCornerShape(
+                        topStart = cornerSize,
+                        topEnd = 0.dp,
+                        bottomStart = cornerSize,
+                        bottomEnd = 0.dp
+                    )
+                    else -> RoundedCornerShape(
+                        topStart = 0.dp,
+                        topEnd = cornerSize,
+                        bottomStart = 0.dp,
+                        bottomEnd = cornerSize
+                    )
+                },
                 onClick = {
+
+                    //If the same option is selected
                     selectedIndex = if (selectedIndex == index) {
-                        -1 //Deselect filters -> no filter
+                        return@SegmentedButton
                     } else {
                         index
                     }
 
-                    //Filter
+                    //Navigation
                     when (selectedIndex) {
                         0 -> {
-                            onFilterSelected(MachineType.DUMBBELL)
+
+                            //MyWorkout screen
+                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.FavoriteWorkouts)
                         }
 
                         1 -> {
-                            onFilterSelected(MachineType.BARBELL)
-                        }
 
-                        2 -> {
-                            onFilterSelected(MachineType.MACHINE)
-                        }
-
-                        3 -> {
-                            onFilterSelected(MachineType.CALISTHENICS)
-                        }
-
-                        -1 -> { //Disabled filter -> show all
-                            onFilterSelected(MachineType.NONE)
+                            //Workouts Screen
+                            onWorkoutFilter(OnWorkoutScreenSwitchEvent.AllWorkouts)
                         }
                     }
                 },
                 selected = index == selectedIndex,
                 enabled = !isDisabled
             ) {
-                Text(
-                    text = label,
-                    style = labelTextStyle,
-                )
+                Text(text = label, style = labelTextStyle)
             }
         }
     }
@@ -99,12 +104,12 @@ fun MachineFilterSegmentButton(
 @Preview
 @PreviewLightDark
 @Composable
-private fun MachineFilterSegmentEnabledPreview() {
-    MachineFilterSegmentButton(
-        modifier = Modifier,
-        selectedOptionIndex = 1, //Barbell
+private fun WorkoutSegmentButtonEnabledPreview() {
+    WorkoutSegmentButton(
+        modifier = Modifier.fillMaxWidth(),
+        selectedOptionIndex = 1, //Workouts screen
         isDisabled = false,
-        onFilterSelected = {
+        onWorkoutFilter = {
 
         }
     )
@@ -113,40 +118,38 @@ private fun MachineFilterSegmentEnabledPreview() {
 @Preview
 @PreviewLightDark
 @Composable
-private fun MachineFilterSegmentDisabledPreview() {
-    MachineFilterSegmentButton(
-        modifier = Modifier,
-        selectedOptionIndex = 1, //Barbell
+private fun WorkoutSegmentButtonDisabledPreview() {
+    WorkoutSegmentButton(
+        modifier = Modifier.fillMaxWidth(),
+        selectedOptionIndex = 1, //MyWorkout screen
         isDisabled = true,
-        onFilterSelected = {
+        onWorkoutFilter = {
 
         }
     )
 }
 
 @Preview
-@PreviewLightDark
 @Composable
-private fun MachineFilterSegmentEnabled2Preview() {
-    MachineFilterSegmentButton(
-        modifier = Modifier,
-        selectedOptionIndex = 1, //Barbell
+private fun WorkoutSegmentButtonEnabled2Preview() {
+    WorkoutSegmentButton(
+        modifier = Modifier.fillMaxWidth(),
+        selectedOptionIndex = 0, //Workouts screen
         isDisabled = false,
-        onFilterSelected = {
+        onWorkoutFilter = {
 
         }
     )
 }
 
 @Preview
-@PreviewLightDark
 @Composable
-private fun MachineFilterSegmentDisabled2Preview() {
-    MachineFilterSegmentButton(
-        modifier = Modifier,
-        selectedOptionIndex = 0, //Dumbbell
+private fun WorkoutSegmentButtonDisabled2Preview() {
+    WorkoutSegmentButton(
+        modifier = Modifier.fillMaxWidth(),
+        selectedOptionIndex = 0, //MyWorkout screen
         isDisabled = true,
-        onFilterSelected = {
+        onWorkoutFilter = {
 
         }
     )

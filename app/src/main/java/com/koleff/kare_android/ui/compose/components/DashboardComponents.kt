@@ -1,14 +1,11 @@
 package com.koleff.kare_android.ui.compose.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,13 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 @Composable
 fun MuscleGroupImageCard(
@@ -46,7 +41,7 @@ fun MuscleGroupImageCard(
     onClick: () -> Unit
 ) {
     val tintColor = MaterialTheme.colorScheme.scrim
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val textColor = LocalExtendedColors.current.title
     val backgroundColor = MaterialTheme.colorScheme.tertiary
 
     val textStyle = MaterialTheme.typography.titleMedium.copy(

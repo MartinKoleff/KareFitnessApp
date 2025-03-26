@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 @Composable
 fun BottomNavigationBar(
@@ -22,7 +23,7 @@ fun BottomNavigationBar(
     onNavigateToWorkouts: () -> Unit,
 ) {
     val backgroundColor = MaterialTheme.colorScheme.primary
-    val tintColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = LocalExtendedColors.current.title
 
     BottomAppBar(
         modifier = Modifier.background(backgroundColor),

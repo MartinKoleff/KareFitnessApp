@@ -20,67 +20,42 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
+import android.net.Uri
+import androidx.annotation.OptIn
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.AspectRatioFrameLayout
+import androidx.media3.ui.PlayerView
 import com.koleff.kare_android.R
 
 @Composable
-fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
+fun WelcomeFooter(showLogo: Boolean = false, onLogin: () -> Unit, onRegister: () -> Unit) {
     val configuration = LocalConfiguration.current
 
     val screenHeight = configuration.screenHeightDp.dp
-    val screenWidth = configuration.screenWidthDp.dp
 
     val sizeModifier = Modifier
         .fillMaxWidth()
         .height(screenHeight / 2)
 
-    //Background
-    Box(modifier = sizeModifier) {
-
-        //Texture background
-        Image(
-            painter = painterResource(id = R.drawable.background_metal_texture_2),
-            contentDescription = "Metal texture background",
-            modifier = Modifier
-                .alpha(0.75f)
-                .drawWithContent {
-
-                    val colors = listOf(
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Transparent,
-                        Color.Gray,
-                        Color.Gray,
-                        Color.Gray
-                    )
-                    drawContent()
-                    drawRect(
-                        brush = Brush.verticalGradient(colors),
-                        blendMode = BlendMode.DstIn
-                    )
-                },
-            contentScale = ContentScale.Crop
-        )
-    }
-
     val buttonPadding = PaddingValues(
         start = 16.dp,
         end = 16.dp,
-        top =  8.dp,
+        top = 8.dp,
         bottom = 24.dp
     )
 
@@ -92,13 +67,15 @@ fun WelcomeFooter(onLogin: () -> Unit, onRegister: () -> Unit) {
     ) {
 
         //Logo
-        Image(
-            modifier = Modifier
-                .size(175.dp),
-            painter = painterResource(R.drawable.logo),
-            contentDescription = "Logo image",
-            contentScale = ContentScale.Crop
-        )
+        if (showLogo) {
+            Image(
+                modifier = Modifier
+                    .size(175.dp),
+                painter = painterResource(R.drawable.logo),
+                contentDescription = "Logo image",
+                contentScale = ContentScale.Crop
+            )
+        }
 
         //Buttons
         Column(
@@ -180,6 +157,22 @@ fun LoginButton(modifier: Modifier = Modifier, onLogin: () -> Unit) {
     )
 }
 
+@Preview
+@Composable
+private fun LoginButtonPreview() {
+    LoginButton {
+
+    }
+}
+
+@Preview
+@Composable
+private fun RegisterButtonPreview() {
+    RegisterButton {
+
+    }
+}
+
 @Composable
 fun WideRoundButton(
     modifier: Modifier = Modifier,
@@ -188,8 +181,8 @@ fun WideRoundButton(
 ) {
     val cornerSize = 24.dp
 
-    val buttonColor = MaterialTheme.colorScheme.tertiary
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val buttonColor = MaterialTheme.colorScheme.primary
+    val textColor = LocalExtendedColors.current.title
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
     val textStyle = MaterialTheme.typography.headlineSmall.copy(
@@ -200,6 +193,7 @@ fun WideRoundButton(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
+//            .padding(horizontal = 64.dp)
             .clip(RoundedCornerShape(cornerSize))
             .border(
                 border = BorderStroke(2.dp, color = outlineColor),
@@ -212,14 +206,6 @@ fun WideRoundButton(
             .clickable(onClick = callback),
         contentAlignment = Alignment.Center
     ) {
-
-        //Texture background
-        Image(
-            painter = painterResource(id = R.drawable.background_metal_texture_3),
-            contentDescription = "Metal texture background",
-            modifier = Modifier.alpha(0.65f),
-            contentScale = ContentScale.Crop
-        )
 
         //Login text
         Text(
@@ -234,12 +220,64 @@ fun WideRoundButton(
     }
 }
 
+@Preview
+@Composable
+private fun WideRoundButtonPreview() {
+    WideRoundButton(text = "Button") {
 
-@Preview()
+    }
+}
+
+
+@Preview
 @Composable
 fun WelcomeFooterPreview() {
     WelcomeFooter(
+        showLogo = true,
         onLogin = {},
         onRegister = {}
     )
+}
+
+@OptIn(UnstableApi::class)
+@Composable
+fun WelcomeVideoPlayer() {
+    val context = LocalContext.current
+    val videoUri = "android.resource://${context.packageName}/${R.raw.login_video_no_watermark}"
+    val exoPlayer = remember {
+
+        //Prepare the player with the source.
+        ExoPlayer.Builder(context).build().apply {
+            val mediaItem = MediaItem.fromUri(Uri.parse(videoUri))
+            setMediaItem(mediaItem)
+            prepare()
+            playWhenReady = true //Start playing as soon as the player is ready
+            repeatMode = ExoPlayer.REPEAT_MODE_ONE //Loop the video
+        }
+    }
+
+    //Clear the exo player on dispose
+    DisposableEffect(exoPlayer) {
+        onDispose {
+            exoPlayer.release()
+        }
+    }
+
+    //Video player UI
+    AndroidView(
+        modifier = Modifier.fillMaxSize(),
+        factory = { ctx ->
+            PlayerView(ctx).apply {
+                player = exoPlayer
+                useController = false //Hide player controls for background playback
+                resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+            }
+        }
+    )
+}
+
+@Preview
+@Composable
+private fun WelcomeVideoPlayerPreview() {
+    WelcomeVideoPlayer()
 }

@@ -26,7 +26,7 @@ class ExerciseDetailsViewModel @Inject constructor(
     private val navigationController: NavigationController,
     private val savedStateHandle: SavedStateHandle,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : BaseViewModel(navigationController) {
+) : BaseViewModel(navigationController), MainScreenNavigation {
 
     private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
     private val initialMuscleGroupId: Int =
@@ -88,5 +88,21 @@ class ExerciseDetailsViewModel @Inject constructor(
         if (state.value.isError) {
             _state.value = ExerciseDetailsState()
         }
+    }
+
+    override fun onNavigateToDashboard() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+
+    override fun onNavigateToWorkouts() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+
+    override fun onNavigateToSettings() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+
+    override fun onNavigateBack() {
+        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }
