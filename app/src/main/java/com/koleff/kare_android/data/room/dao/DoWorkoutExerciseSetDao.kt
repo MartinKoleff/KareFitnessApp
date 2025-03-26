@@ -11,6 +11,7 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import java.util.UUID
 
 typealias DoWorkoutExerciseSetId = Int
+
 @Dao
 interface DoWorkoutExerciseSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
