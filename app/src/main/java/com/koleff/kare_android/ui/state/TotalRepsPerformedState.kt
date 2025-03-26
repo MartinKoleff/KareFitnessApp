@@ -1,10 +1,9 @@
 package com.koleff.kare_android.ui.state
 
-import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 
-data class ExerciseTotalWeightLiftedState (
-    val totalWeight: Float = 0.0f,
+data class TotalRepsPerformedState (
+    val totalReps: Int = 0,
     override val isSuccessful: Boolean = false,
     override val isLoading: Boolean = false,
     override val isError: Boolean = false,

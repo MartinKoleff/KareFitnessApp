@@ -1,15 +1,18 @@
 package com.koleff.kare_android.domain.usecases.statistics
 
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.domain.repository.ExerciseStatisticsRepository
+import com.koleff.kare_android.domain.repository.WorkoutStatisticsRepository
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.ui.state.TotalRepsPerformedState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class GetExerciseTotalRepsPerformedUseCase(private val exerciseStatisticsRepository: ExerciseStatisticsRepository) {
-    suspend operator fun invoke(exerciseId: Int): Flow<TotalRepsPerformedState> =
-        exerciseStatisticsRepository.getTotalRepsPerformed(exerciseId).map { apiResult ->
+class GetWorkoutTotalRepsPerformedUseCase(private val workoutStatisticsRepository: WorkoutStatisticsRepository) {
+    suspend operator fun invoke(workoutId: Int, exerciseId: Int): Flow<TotalRepsPerformedState> =
+        workoutStatisticsRepository.getTotalRepsPerformed(
+            workoutId = workoutId,
+            exerciseId = exerciseId
+        ).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {
                     TotalRepsPerformedState(
