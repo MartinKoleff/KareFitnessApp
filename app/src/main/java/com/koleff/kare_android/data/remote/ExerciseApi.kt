@@ -4,20 +4,18 @@ import com.koleff.kare_android.data.model.request.AddNewExerciseSetRequest
 import com.koleff.kare_android.data.model.request.DeleteExerciseSetRequest
 import com.koleff.kare_android.data.model.request.FetchExerciseRequest
 import com.koleff.kare_android.data.model.request.FetchExercisesByMuscleGroupRequest
-import com.koleff.kare_android.data.model.request.FetchExercisesByWorkoutIdRequest
 import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.ExerciseListResponse
 import com.koleff.kare_android.data.model.response.ExerciseResponse
-import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Path
 
 interface ExerciseApi {
 
     @GET("api/v1/exercise/getcatalogexercises/all/{muscle_group_id}") //TODO: update endpoint...
     suspend fun getCatalogExercises(
         @Body body: FetchExercisesByMuscleGroupRequest
-    ): GetExercisesResponse
+    ): ExerciseListResponse
 
     @GET("api/v1/exercise/getcatalogexercise/{exercise_id}") //TODO: update endpoint...
     suspend fun getCatalogExercise(

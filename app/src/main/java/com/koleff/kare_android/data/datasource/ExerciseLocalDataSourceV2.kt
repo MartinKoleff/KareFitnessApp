@@ -1,22 +1,20 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
+import com.koleff.kare_android.data.model.response.ExerciseListResponse
 import com.koleff.kare_android.data.model.response.ExerciseResponse
-import com.koleff.kare_android.data.model.response.GetExercisesResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
-import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
-import com.koleff.kare_android.domain.wrapper.ExerciseListWrapper
-import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.entity.ExerciseSet
-import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
+import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.ExerciseListWrapper
+import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -95,7 +93,7 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
             }
 
             val result = ExerciseListWrapper(
-                GetExercisesResponse(
+                ExerciseListResponse(
                     data.map {
                         it.toDto(
                             sets = emptyList()

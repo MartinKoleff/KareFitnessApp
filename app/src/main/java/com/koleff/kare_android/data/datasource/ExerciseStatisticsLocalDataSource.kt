@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.data.model.response.GetExercisePRResponse
+import com.koleff.kare_android.data.model.response.ExercisePRResponse
 import com.koleff.kare_android.data.model.response.TotalRepsResponse
 import com.koleff.kare_android.data.model.response.TotalSetsResponse
 import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
@@ -38,7 +38,7 @@ class ExerciseStatisticsLocalDataSource(
 
         val bestPR = statisticsDao.getBestPR(exerciseId) ?: 0.0f
         val result = ExercisePRWrapper(
-            GetExercisePRResponse(
+            ExercisePRResponse(
                 pr = bestPR
             )
         )

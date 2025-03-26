@@ -1,9 +1,9 @@
 package com.koleff.kare_android.domain.wrapper
 
-import com.koleff.kare_android.data.model.response.GetExercisePRResponse
+import com.koleff.kare_android.data.model.response.ExercisePRResponse
 
 
-class ExercisePRWrapper(getExercisePRResponse: GetExercisePRResponse):
-    ServerResponseData(getExercisePRResponse) {
-    val pr = getExercisePRResponse.pr
+class ExercisePRWrapper(exercisePRResponse: ExercisePRResponse):
+    ServerResponseData(exercisePRResponse) {
+    val pr = exercisePRResponse.pr
 }
