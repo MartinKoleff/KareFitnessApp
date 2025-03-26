@@ -32,16 +32,6 @@ class OnboardingFormViewModel @Inject constructor(
     val saveOnboardingDataState: StateFlow<BaseState>
         get() = _saveOnboardingDataState
 
-    fun onNavigateBack() {
-        super.onNavigationEvent(NavigationEvent.NavigateBack)
-    }
-
-    override fun clearError() {
-        if (saveOnboardingDataState.value.isError) {
-            _saveOnboardingDataState.value = BaseState()
-        }
-    }
-
     fun completeOnboarding(
         gender: Gender,
         height: Int,
@@ -68,6 +58,13 @@ class OnboardingFormViewModel @Inject constructor(
         }
     }
 
+    override fun clearError() {
+        if (saveOnboardingDataState.value.isError) {
+            _saveOnboardingDataState.value = BaseState()
+        }
+    }
+
+    //Navigation
     private fun navigateToWelcomeScreen() {
         super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Welcome))
     }

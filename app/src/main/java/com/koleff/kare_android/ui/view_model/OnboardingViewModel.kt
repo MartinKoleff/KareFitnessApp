@@ -17,13 +17,8 @@ class OnboardingViewModel @Inject constructor(
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : BaseViewModel(navigationController = navigationController) { //, OnboardingScreenNavigation
 
-
-    fun onNavigateBack() {
-        super.onNavigationEvent(NavigationEvent.NavigateBack)
-    }
-
     override fun clearError() {
-
+        return
     }
 
     fun skip() {

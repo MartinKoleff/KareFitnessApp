@@ -41,16 +41,6 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    override fun clearError() {
-        if (state.value.isError) {
-            _state.value = LoginState()
-        }
-    }
-
-    fun navigateToDashboard() {
-        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
-    }
-
     fun saveCredentials() = with(state.value.data) {
         preferences.saveCredentials(user)
 
@@ -65,7 +55,18 @@ class LoginViewModel @Inject constructor(
         preferences.saveTokens(tokens)
     }
 
+    override fun clearError() {
+        if (state.value.isError) {
+            _state.value = LoginState()
+        }
+    }
+
+    //Navigation
     fun navigateToWelcome() {
         onNavigationEvent(NavigationEvent.NavigateBack)
+    }
+
+    fun navigateToDashboard() {
+        onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
     }
 }
