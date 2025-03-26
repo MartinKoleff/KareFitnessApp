@@ -22,8 +22,8 @@ class GeneralStatisticsRepositoryImpl(private val generalStatisticsDataSource: G
         return generalStatisticsDataSource.getDistinctWorkoutsCompleted()
     }
 
-    override suspend fun calculateWorkoutStreak(): Flow<ResultWrapper<WorkoutStreakWrapper>> {
-        return generalStatisticsDataSource.calculateWorkoutStreak()
+    override suspend fun getWorkoutStreak(): Flow<ResultWrapper<WorkoutStreakWrapper>> {
+        return generalStatisticsDataSource.getWorkoutStreak()
     }
 
     override suspend fun getMostFrequentWorkout(): Flow<ResultWrapper<WorkoutWrapper>> {

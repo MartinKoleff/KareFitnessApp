@@ -16,7 +16,7 @@ interface GeneralStatisticsRepository {
 
     suspend fun getDistinctWorkoutsCompleted(): Flow<ResultWrapper<TotalTimesCompletedWrapper>>
 
-    suspend fun calculateWorkoutStreak(): Flow<ResultWrapper<WorkoutStreakWrapper>>
+    suspend fun getWorkoutStreak(): Flow<ResultWrapper<WorkoutStreakWrapper>>
 
     suspend fun getMostFrequentWorkout(): Flow<ResultWrapper<WorkoutWrapper>>
 

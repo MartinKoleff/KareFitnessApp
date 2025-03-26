@@ -77,7 +77,7 @@ class GeneralStatisticsLocalDataSource(
         }
 
     //Workout streak (consecutive days of training)
-    override suspend fun calculateWorkoutStreak(): Flow<ResultWrapper<WorkoutStreakWrapper>> =
+    override suspend fun getWorkoutStreak(): Flow<ResultWrapper<WorkoutStreakWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
