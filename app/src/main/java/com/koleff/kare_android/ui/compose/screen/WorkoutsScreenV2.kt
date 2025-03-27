@@ -32,6 +32,7 @@ import com.koleff.kare_android.ui.compose.components.SearchBar
 import com.koleff.kare_android.ui.compose.components.WorkoutBannerV2
 import com.koleff.kare_android.ui.compose.components.WorkoutSegmentButton
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
+import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.WorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.state.BaseState
 import com.koleff.kare_android.ui.view_model.WorkoutViewModelV2
@@ -41,12 +42,13 @@ import com.koleff.kare_android.ui.view_model.WorkoutViewModelV2
 fun WorkoutsScreenV2(
     workoutsViewModel: WorkoutViewModelV2 = hiltViewModel(),
 ) {
-    MainScreenScaffold(
+    WorkoutScaffold(
         "Workouts",
         onNavigateToDashboard = { workoutsViewModel.onNavigateToDashboard() },
         onNavigateToWorkouts = { workoutsViewModel.onNavigateToWorkouts() },
         onNavigateBackAction = { workoutsViewModel.onNavigateBack() },
-        onNavigateToSettings = { workoutsViewModel.onNavigateToSettings() }
+        onNavigateToSettings = { workoutsViewModel.onNavigateToSettings() },
+        onWorkoutHistoryAction = {workoutsViewModel.onNavigateToWorkoutHistory()}
     ) { innerPadding ->
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current

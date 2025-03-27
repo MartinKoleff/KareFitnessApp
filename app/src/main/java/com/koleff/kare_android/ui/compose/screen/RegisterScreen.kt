@@ -157,7 +157,8 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
                 )
 
                 //User text box
-                CustomTextField(label = "Username",
+                CustomTextField(
+                    label = "Username",
                     iconResourceId = R.drawable.ic_user_3,
                     focusRequester = usernameFocusRequester,
                     keyboardOptions = KeyboardOptions.Default.copy(
