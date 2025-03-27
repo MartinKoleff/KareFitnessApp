@@ -14,7 +14,9 @@ import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
+import com.koleff.kare_android.domain.usecases.PauseTimerUseCase
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
+import com.koleff.kare_android.domain.usecases.ResumeTimerUseCase
 import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
 import com.koleff.kare_android.domain.usecases.SkipNextSetUseCase
@@ -92,7 +94,9 @@ object DoWorkoutModule {
             addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             startTimerUseCase = StartTimerUseCase(),
-            resetTimerUseCase = ResetTimerUseCase()
+            resetTimerUseCase = ResetTimerUseCase(),
+            pauseTimerUseCase = PauseTimerUseCase(),
+            resumeTimerUseCase = ResumeTimerUseCase()
         )
     }
 }

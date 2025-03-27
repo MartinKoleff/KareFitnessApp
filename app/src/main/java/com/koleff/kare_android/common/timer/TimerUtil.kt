@@ -8,9 +8,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
-open class TimerUtil(private var totalTime: Int = 0): DoWorkoutTimer {
+open class TimerUtil(private var totalTime: Int = 0) : DoWorkoutTimer {
     private var job: Job? = null
     private val timerScope = CoroutineScope(Dispatchers.Main)
+    private var isRunning: Boolean = false
 
     override suspend fun startTimer(totalSeconds: Int, updateTime: (ExerciseTime) -> Unit) {
         totalTime = totalSeconds
@@ -18,6 +19,8 @@ open class TimerUtil(private var totalTime: Int = 0): DoWorkoutTimer {
         job?.cancel()  //Cancel any existing job to ensure no duplicate timers are running
         job = timerScope.launch {
             while (isActive && totalTime >= 0) {
+                isRunning = true
+
                 val hours = totalTime / 3600
                 val minutes = (totalTime % 3600) / 60
                 val seconds = totalTime % 60
@@ -30,16 +33,22 @@ open class TimerUtil(private var totalTime: Int = 0): DoWorkoutTimer {
     }
 
     override fun pauseTimer() {
-        job?.cancel()
+        if (isRunning) {
+            job?.cancel()
+            isRunning = false
+        }
     }
 
     override suspend fun resumeTimer(updateTime: (ExerciseTime) -> Unit) {
-        startTimer(totalTime, updateTime)
+        if (!isRunning && totalTime > 0) {
+            startTimer(totalTime, updateTime)
+        }
     }
 
     override fun resetTimer() {
         totalTime = 0
         job?.cancel()
+        isRunning = false
     }
 
 
@@ -69,5 +78,9 @@ open class TimerUtil(private var totalTime: Int = 0): DoWorkoutTimer {
                 else -> markedLines
             }
         }
+    }
+
+    fun isRunning(): Boolean {
+        return isRunning
     }
 }

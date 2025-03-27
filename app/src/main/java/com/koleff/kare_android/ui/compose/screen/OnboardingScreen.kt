@@ -241,6 +241,7 @@ fun OnBoardingPager(
                             Text(
                                 text = "Get Started",
                                 style = buttonTextStyle
+
                             )
                         }
                     }

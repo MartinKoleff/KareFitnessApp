@@ -97,8 +97,8 @@ fun SliderLines(
         lineColor = MaterialTheme.colorScheme.outline
     )
 ) {
-
     val isDarkTheme = isSystemInDarkTheme()
+
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -254,7 +254,6 @@ fun OnboardingFormScreen(onboardingFormViewModel: OnboardingFormViewModel = hilt
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface)
     ) {
-
         if (showLoadingDialog) {
             LoadingDialog(
                 modifier = Modifier,

@@ -3,6 +3,8 @@ package com.koleff.kare_android.ui.compose.dialogs
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -16,6 +18,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -31,6 +38,15 @@ fun EditWorkoutDialog(
     onDismiss: () -> Unit,
     onConfirm: (String) -> Unit
 ) {
+
+    //Keyboard
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val onKeyboardDismiss = {
+        keyboardController?.hide()
+        focusManager.clearFocus()
+    }
+
     var text by remember { mutableStateOf(currentName) }
 
     val buttonColor = MaterialTheme.colorScheme.tertiary
@@ -46,6 +62,11 @@ fun EditWorkoutDialog(
         color = textColor
     )
 
+    val onClick = {
+        onKeyboardDismiss()
+        onDismiss()
+        onConfirm(text)
+    }
     AlertDialog(
         title = {
             Box(
@@ -65,17 +86,23 @@ fun EditWorkoutDialog(
         },
         text = {
             TextField(
+                modifier = Modifier.focusRequester(FocusRequester()),
                 value = text,
                 onValueChange = { text = it },
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Send
+                ),
+                keyboardActions = KeyboardActions(
+                    onSend = {
+                        onClick()
+                    }
+                )
             )
         },
         confirmButton = {
             Button(
-                onClick = {
-                    onConfirm(text)
-                    onDismiss()
-                },
+                onClick = onClick,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor,
                     contentColor = textColor
@@ -92,7 +119,10 @@ fun EditWorkoutDialog(
         },
         dismissButton = {
             Button(
-                onClick = { onDismiss() },
+                onClick = {
+                    onDismiss()
+                    onKeyboardDismiss()
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = buttonColor,
                     contentColor = onButtonColor
@@ -107,7 +137,10 @@ fun EditWorkoutDialog(
                 )
             }
         },
-        onDismissRequest = { onDismiss() },
+        onDismissRequest = {
+            onDismiss()
+            onKeyboardDismiss()
+        },
         properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true)
     )
 }

@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 class NavigationControllerImpl: NavigationController, NavigationNotifier {
 
-    private val _navigationEvents = MutableSharedFlow<NavigationEvent>(replay = 1)
+    private val _navigationEvents = MutableSharedFlow<NavigationEvent>(replay = 0)
     override val navigationEvents: Flow<NavigationEvent> = _navigationEvents.asSharedFlow()
 
     override suspend fun navigateTo(destination: Destination) {

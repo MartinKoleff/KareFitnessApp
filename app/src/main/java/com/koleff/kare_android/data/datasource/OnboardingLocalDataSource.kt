@@ -21,6 +21,7 @@ class OnboardingLocalDataSource @Inject constructor(
 ) : OnboardingDataSource {
 
     override suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<OnboardingWrapper>> =
+
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)

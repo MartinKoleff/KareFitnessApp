@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
@@ -36,6 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
@@ -137,6 +141,10 @@ private fun AuthorizationTitleAndSubtitlePreview() {
 fun CustomTextField(
     label: String,
     iconResourceId: Int,
+    focusRequester: FocusRequester = FocusRequester(),
+    onFocusChanged: (Boolean) -> Unit = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
     onValueChange: (String) -> Unit
 ) {
     var text by rememberSaveable {
@@ -174,7 +182,9 @@ fun CustomTextField(
             .border(
                 border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
-            ),
+            )
+            .focusRequester(focusRequester)
+            .onFocusChanged { onFocusChanged(it.isFocused) },
         singleLine = true,
         placeholder = {
             Text(text = label, style = labelTextStyle)
@@ -196,7 +206,9 @@ fun CustomTextField(
 //                painter = painterResource(iconResourceId),
 //                contentDescription = "Text box icon"
 //            )
-        }
+        },
+        keyboardOptions = keyboardOptions,
+        keyboardActions = keyboardActions
     )
 }
 
@@ -213,6 +225,10 @@ fun CustomTextFieldPreview() {
 @Composable
 fun PasswordTextField(
     label: String = "Password",
+    focusRequester: FocusRequester = FocusRequester(),
+    onFocusChanged: (Boolean) -> Unit = {},
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     onValueChange: (String) -> Unit,
 ) {
     var password by rememberSaveable {
@@ -250,7 +266,9 @@ fun PasswordTextField(
             .border(
                 border = BorderStroke(2.dp, color = outlineColor),
                 shape = RoundedCornerShape(cornerSize)
-            ),
+            )
+            .focusRequester(focusRequester)
+            .onFocusChanged { onFocusChanged(it.isFocused) },
         label = {
             Text(text = label, style = labelTextStyle)
         },
@@ -272,7 +290,8 @@ fun PasswordTextField(
             )
         },
         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        keyboardOptions = keyboardOptions.copy(keyboardType = KeyboardType.Password),
+        keyboardActions = keyboardActions,
         trailingIcon = {
             val image = if (passwordVisible)
                 Icons.Filled.Visibility

@@ -57,6 +57,11 @@ android {
 //        }
     }
 
+    //Per-app language support
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildTypes {
         release {
             minifyEnabled true

@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.ui.compose.screen.ChangeLanguageScreen
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
 import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreenV2
 import com.koleff.kare_android.ui.compose.screen.ExerciseConfiguratorScreen
@@ -25,6 +26,7 @@ import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreenV2
 import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreenV2
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutHistoryScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreenV3
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreenV2
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +49,7 @@ fun AppNavigation(
     val navController = rememberNavController()
 
     //Navigation observer
-    LaunchedEffect(Unit) {
+    LaunchedEffect(navController) {
         Log.d("AppNavigation", "Successfully registered navigation events observer!")
 
         navigationNotifier.navigationEvents
@@ -83,7 +85,7 @@ fun AppNavigation(
                         }
                     }
 
-                    NavigationEvent.NavigateBack -> {
+                    is NavigationEvent.NavigateBack -> {
                         if (navController.currentBackStack.value.size == 2) return@collectLatest //Don't pop up starting location
                         navController.popBackStack()
                     }
@@ -151,6 +153,14 @@ private fun NavGraphBuilder.addDestinations() {
     composable(Destination.DoWorkoutScreen.ROUTE) { backStackEntry ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             DoWorkoutScreenV2()
+        }
+    }
+    composable(Destination.ChangeLanguage.ROUTE) { backStackEntry ->
+        ChangeLanguageScreen()
+    }
+    composable(Destination.WorkoutHistory.ROUTE) { backStackEntry ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            WorkoutHistoryScreen()
         }
     }
 }

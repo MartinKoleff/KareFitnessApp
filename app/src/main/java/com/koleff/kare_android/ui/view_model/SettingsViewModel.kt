@@ -29,14 +29,14 @@ class SettingsViewModel @Inject constructor(
     val logoutState: StateFlow<BaseState>
         get() = _logoutState
 
-    fun logout(){
+    fun logout() {
         val user = preferences.getCredentials() as UserDto
 
         viewModelScope.launch(dispatcher) {
-            authenticationUseCases.logoutUseCase(user).collect{ logoutState ->
+            authenticationUseCases.logoutUseCase(user).collect { logoutState ->
                 _logoutState.value = logoutState
 
-                if(logoutState.isSuccessful){
+                if (logoutState.isSuccessful) {
 
                     //Navigate to Welcome Screen
                     preferences.deleteCredentials()
@@ -54,8 +54,16 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
+    fun navigateToChangeLanguageScreen() {
+        super.onNavigationEvent(
+            NavigationEvent.NavigateTo(
+                destination = Destination.ChangeLanguage
+            )
+        )
+    }
+
     override fun clearError() {
-        if(logoutState.value.isError){
+        if (logoutState.value.isError) {
             _logoutState.value = BaseState()
         }
     }
@@ -72,7 +80,7 @@ class SettingsViewModel @Inject constructor(
         super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
     }
 
-    override fun onNavigateBack()  {
+    override fun onNavigateBack() {
         super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

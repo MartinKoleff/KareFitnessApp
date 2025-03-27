@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.state
 
+import android.util.Log
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -7,12 +8,16 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HasUpdated @Inject constructor(){
-    private val _hasUpdated = MutableStateFlow(false)
-    val hasUpdated: StateFlow<Boolean>
-        get() = _hasUpdated.asStateFlow()
+class HasUpdated @Inject constructor() {
+    private var hasUpdated: Boolean = false
+
+    fun getUpdateStatus(): Boolean {
+        Log.d("HasUpdated", "hasUpdated: $hasUpdated")
+        return hasUpdated
+    }
 
     fun notifyUpdate(newUpdate: Boolean) {
-        _hasUpdated.value = newUpdate
+        Log.d("HasUpdated", "hasUpdated set to $newUpdate")
+        hasUpdated = newUpdate
     }
 }

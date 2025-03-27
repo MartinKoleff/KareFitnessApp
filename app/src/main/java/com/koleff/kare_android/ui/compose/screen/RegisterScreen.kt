@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,9 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,17 +36,26 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.AuthenticationButton
 import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
 import com.koleff.kare_android.ui.compose.components.CustomTextField
-import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.PasswordTextField
 import com.koleff.kare_android.ui.compose.components.SignInFooter
 import com.koleff.kare_android.ui.compose.components.SignInHypertext
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
+import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
 import com.koleff.kare_android.ui.compose.dialogs.SuccessDialog
 import com.koleff.kare_android.ui.view_model.RegisterViewModel
 
 @Composable
 fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    //Keyboard
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val usernameFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
+    val emailFocusRequester = remember { FocusRequester() }
 
     //State and callbacks
     val registerState by registerViewModel.state.collectAsState()
@@ -78,6 +92,8 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         registerViewModel.clearState() //Clear showSuccessDialog...
     }
 
+    val onGoogleSign = {}
+
     var username by remember {
         mutableStateOf("")
     }
@@ -102,11 +118,6 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         )
     }
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
-
-    val onGoogleSign: () -> Unit = {} //TODO: wire with OAuth2...
-
     AuthenticationScaffold(
         screenTitle = "",
         onNavigateBackAction = {
@@ -116,7 +127,9 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
 
         //Loading screen
         if (showLoadingDialog) {
-            LoadingWheel(innerPadding = PaddingValues(top = 72.dp))
+            LoadingDialog {
+                showLoadingDialog = false
+            } //innerPadding = PaddingValues(top = 72.dp)
         }
 
         //Screen
@@ -144,17 +157,52 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
                 )
 
                 //User text box
-                CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
+                CustomTextField(
+                    label = "Username",
+                    iconResourceId = R.drawable.ic_user_3,
+                    focusRequester = usernameFocusRequester,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            passwordFocusRequester.requestFocus()
+                        }
+                    )
+                ) {
                     username = it
                 }
 
                 //Password text box
-                PasswordTextField(label = "Password") {
+                PasswordTextField(
+                    label = "Password",
+                    focusRequester = passwordFocusRequester,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            emailFocusRequester.requestFocus()
+                        }
+                    )
+                ) {
                     password = it
                 }
 
                 //Email text box
-                CustomTextField(label = "Email", iconResourceId = R.drawable.ic_email) {
+                CustomTextField(
+                    label = "Email",
+                    iconResourceId = R.drawable.ic_email,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        }
+                    )
+                ) {
                     email = it
                 }
 

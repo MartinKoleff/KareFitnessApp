@@ -1,14 +1,18 @@
 package com.koleff.kare_android.do_workout_performance_metrics.data
 
+import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceWithSets
+import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.utils.FakeDao
 import java.util.Date
+import com.koleff.kare_android.workout.data.WorkoutDaoFakeV2
 
 class DoWorkoutPerformanceMetricsDaoFake(
-    private val doWorkoutExerciseSetDaoFake: DoWorkoutExerciseSetDaoFake
+    private val doWorkoutExerciseSetDaoFake: DoWorkoutExerciseSetDaoFake,
+    private val workoutDaoFake: WorkoutDaoFakeV2
 ) : DoWorkoutPerformanceMetricsDao, FakeDao {
 
     private val workoutPerformanceMetricsDB = mutableListOf<DoWorkoutPerformanceWithSets>()
@@ -18,7 +22,8 @@ class DoWorkoutPerformanceMetricsDaoFake(
 
         val newEntry = DoWorkoutPerformanceWithSets(
             performanceMetrics = updatedPerformanceMetrics,
-            exerciseSets = emptyList()
+            exerciseSets = emptyList(),
+            workout = WorkoutDto().toEntity() //TODO: wire...
         )
         workoutPerformanceMetricsDB.add(newEntry)
         return workoutPerformanceMetricsDB.size.toLong()  //Mimics auto-generate by returning the size as ID
@@ -42,11 +47,19 @@ class DoWorkoutPerformanceMetricsDaoFake(
     override suspend fun getWorkoutPerformanceMetricsById(id: Int): DoWorkoutPerformanceWithSets? {
         val dbEntry = workoutPerformanceMetricsDB.find { it.performanceMetrics.id == id }
         val sets = dbEntry?.let { getExerciseSets(it.performanceMetrics.id) }
-        return dbEntry?.copy(exerciseSets = sets ?: emptyList())
+        val workout = dbEntry?.let { getWorkout(it.performanceMetrics.workoutId)}
+        return dbEntry?.copy(
+            exerciseSets = sets ?: emptyList(),
+            workout = workout ?: WorkoutDto().toEntity()
+        )
     }
 
     private suspend fun getExerciseSets(doWorkoutPerformanceMetricsId: Int): List<DoWorkoutExerciseSet> {
         return doWorkoutExerciseSetDaoFake.findSetByPerformanceMetricsId(doWorkoutPerformanceMetricsId)
+    }
+
+    private fun getWorkout(workoutId: Int): Workout {
+        return workoutDaoFake.getWorkoutById(workoutId)
     }
 
     override suspend fun getAllWorkoutPerformanceMetricsById(
@@ -73,8 +86,11 @@ class DoWorkoutPerformanceMetricsDaoFake(
         }
     }
 
+    //TODO: wire workout somehow...
     override suspend fun getAllWorkoutPerformanceMetricsByWorkoutId(workoutId: Int): List<DoWorkoutPerformanceWithSets> {
-        return workoutPerformanceMetricsDB.filter { it.performanceMetrics.workoutId == workoutId }
+        return workoutPerformanceMetricsDB.filter {
+            it.performanceMetrics.workoutId == workoutId
+        }
     }
 
     override suspend fun getAllWorkoutPerformanceMetrics(): List<DoWorkoutPerformanceWithSets> {

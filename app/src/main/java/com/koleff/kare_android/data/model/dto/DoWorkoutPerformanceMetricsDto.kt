@@ -8,17 +8,17 @@ import java.util.Date
 data class DoWorkoutPerformanceMetricsDto(
     @field:Json(name = "id")
     val id: Int = 0,
-    @field:Json(name = "workout_id")
-    val workoutId: Int = -1,
+    @field:Json(name = "workout")
+    val workout: WorkoutDto = WorkoutDto(),
     @field:Json(name = "date")
     val date: Date = Date(),  //to record the exact time the workout was completed
     @field:Json(name = "do_workout_exercise_sets")
     val doWorkoutExerciseSets: List<DoWorkoutExerciseSetDto> = emptyList()
-): KareEntity<DoWorkoutPerformanceMetrics> {
+) : KareEntity<DoWorkoutPerformanceMetrics> {
     override fun toEntity(): DoWorkoutPerformanceMetrics {
         return DoWorkoutPerformanceMetrics(
             id = id,
-            workoutId = workoutId,
+            workoutId = workout.workoutId,
             date = date
         )
     }

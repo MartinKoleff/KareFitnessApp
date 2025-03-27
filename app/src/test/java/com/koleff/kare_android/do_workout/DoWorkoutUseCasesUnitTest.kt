@@ -45,7 +45,9 @@ import com.koleff.kare_android.domain.usecases.GetWorkoutsDetailsUseCase
 import com.koleff.kare_android.domain.usecases.OnFilterExercisesUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchExerciseUseCase
 import com.koleff.kare_android.domain.usecases.OnSearchWorkoutUseCase
+import com.koleff.kare_android.domain.usecases.PauseTimerUseCase
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
+import com.koleff.kare_android.domain.usecases.ResumeTimerUseCase
 import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.SkipNextSetUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
@@ -213,7 +215,9 @@ class DoWorkoutUseCasesUnitTest {
                 addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
                 deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
                 startTimerUseCase = StartTimerUseCase(),
-                resetTimerUseCase = ResetTimerUseCase()
+                resetTimerUseCase = ResetTimerUseCase(),
+                pauseTimerUseCase = PauseTimerUseCase(),
+                resumeTimerUseCase = ResumeTimerUseCase()
             )
 
             timer = TimerUtilFake()

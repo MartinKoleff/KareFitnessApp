@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -19,9 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,8 +48,12 @@ import com.koleff.kare_android.ui.view_model.LoginViewModel
 fun LoginScreen(
     loginViewModel: LoginViewModel = hiltViewModel()
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
+
+    //Keyboard
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val usernameFocusRequester = remember { FocusRequester() }
+    val passwordFocusRequester = remember { FocusRequester() }
 
     //State and callbacks
     val loginState by loginViewModel.state.collectAsState()
@@ -139,12 +147,34 @@ fun LoginScreen(
             )
 
             //User text box
-            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3) {
+            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3,
+                focusRequester = usernameFocusRequester,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        passwordFocusRequester.requestFocus()
+                    }
+                )
+            ) {
                 username = it
             }
 
             //Password text box
-            PasswordTextField(label = "Password") {
+            PasswordTextField(
+                label = "Password",
+                focusRequester = passwordFocusRequester,
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                ),
+            ) {
                 password = it
             }
 

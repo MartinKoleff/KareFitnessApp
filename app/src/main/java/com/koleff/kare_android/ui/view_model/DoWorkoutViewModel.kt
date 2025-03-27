@@ -3,17 +3,16 @@ package com.koleff.kare_android.ui.view_model
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
+import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
-import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
@@ -29,7 +28,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 import java.util.Date
 import javax.inject.Inject
 
@@ -80,6 +78,10 @@ class DoWorkoutViewModel @Inject constructor(
     val saveDoWorkoutPerformanceMetricsState: StateFlow<DoWorkoutPerformanceMetricsState>
         get() = _saveDoWorkoutPerformanceMetricsState
 
+    private val _playerState: MutableStateFlow<BaseState> = MutableStateFlow(BaseState())
+    val playerState: StateFlow<BaseState>
+        get() = _playerState
+
     override fun clearError() {
         if (state.value.isError) {
             _state.value = DoWorkoutState()
@@ -100,6 +102,8 @@ class DoWorkoutViewModel @Inject constructor(
                 Log.d("DoWorkoutViewModel", "----------------Timers------------------")
                 Log.d("DoWorkoutViewModel", "Countdown time: ${countdownTimerState.value.time}")
                 Log.d("DoWorkoutViewModel", "Workout time: ${workoutTimerState.value.time}")
+                Log.d("DoWorkoutViewModel", "Workout timer is running: ${workoutTimer.isRunning()}")
+                Log.d("DoWorkoutViewModel", "Countdown timer is running: ${countdownTimer.isRunning()}")
                 delay(1000)
             }
         }
@@ -146,7 +150,7 @@ class DoWorkoutViewModel @Inject constructor(
 
         val performanceMetrics = DoWorkoutPerformanceMetricsDto(
             id = 0, //Auto-generate
-            workoutId = workout.workoutId,
+            workout = workout.toWorkout(),
             date = Date(), //Current date of starting the workout
             doWorkoutExerciseSets = emptyList() //Will be filled as the workout continues...
         )
@@ -260,10 +264,6 @@ class DoWorkoutViewModel @Inject constructor(
         isCountdownScreen = true
     }
 
-    private fun showWorkoutCompletedScreen() {
-        TODO("Not yet implemented")
-    }
-
     private fun startCountdownTimer() = with(state.value.doWorkoutData) {
 
         //Show next exercise countdown screen
@@ -369,6 +369,75 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
+
+     fun resumeWorkoutTimer() = with(state.value.doWorkoutData) {
+        viewModelScope.launch(dispatcher) {
+
+            //Start workout timer
+            doWorkoutUseCases.resumeTimerUseCase(
+                timer = workoutTimer,
+                time = defaultExerciseTime
+            ).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        _workoutTimerState.value =
+                            _workoutTimerState.value.copy(time = result.data.time)
+
+                        //Hide next exercise countdown screen
+                        if (isCountdownScreen) {
+                            hideNextExerciseCountdownScreen()
+                        }
+
+                        //Timer has finished
+                        if (workoutTimerState.value.time.hasFinished()) {
+                            Log.d(
+                                "DoWorkoutViewModel",
+                                "Exercise timer finished! Starting countdown timer for next exercise."
+                            )
+                            selectNextExercise()
+                        }
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+
+
+    fun pauseWorkoutTimer() {
+        viewModelScope.launch(dispatcher) {
+
+            //Start workout timer
+            doWorkoutUseCases.pauseTimerUseCase(
+                timer = workoutTimer
+            ).collect { result ->
+                when (result) {
+                    is ResultWrapper.Success -> {
+                        Log.d(
+                            "DoWorkoutViewModel",
+                            "Workout timer has paused."
+                        )
+                    }
+
+                    else -> {}
+                }
+            }
+        }
+    }
+
+    fun onScreenClick(){
+        if(workoutTimer.isRunning()){
+            Log.d("DoWorkoutScreen", "Workout timer paused...")
+            pauseWorkoutTimer()
+        }else{
+            Log.d("DoWorkoutScreen", "Workout timer resumed...")
+            resumeWorkoutTimer()
+
+        }
+    }
+
     //Every exercise change -> add current do workout performance metrics to list
     //On workout finish -> save
     //On workout exited -> delete
@@ -460,5 +529,14 @@ class DoWorkoutViewModel @Inject constructor(
     //Used when workout is completed
     fun navigateToDashboard() {
         onNavigationEvent(NavigationEvent.ClearBackstackAndNavigateTo(Destination.Dashboard))
+    }
+
+    //Show player icon for a second
+    fun showPlayerOverlay() {
+        viewModelScope.launch {
+            _playerState.value = BaseState(isLoading = true)
+            delay(1000)
+            _playerState.value = BaseState(isLoading = false, isSuccessful = true)
+        }
     }
 }

@@ -34,10 +34,12 @@ class WorkoutViewModel @Inject constructor(
     private val workoutUseCases: WorkoutUseCases,
     private val preferences: Preferences,
     private val navigationController: NavigationController,
-    private val savedStateHandle: SavedStateHandle,
-    val hasUpdated: HasUpdated,
+    private val hasUpdated: HasUpdated,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : BaseViewModel(navigationController = navigationController), MainScreenNavigation {
+
+    val hasUpdatedState
+        get() = hasUpdated.getUpdateStatus()
 
     private var _state: MutableStateFlow<WorkoutListState> = MutableStateFlow(WorkoutListState())
     val state: StateFlow<WorkoutListState>
@@ -448,6 +450,10 @@ class WorkoutViewModel @Inject constructor(
 
     override fun onNavigateBack() {
         super.onNavigationEvent(NavigationEvent.NavigateBack)
+    }
+
+    fun navigateToWorkoutHistory() {
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.WorkoutHistory))
     }
 }
 
