@@ -13,7 +13,7 @@ class OnboardingRepositoryImpl(private val onboardingDataSource: OnboardingDataS
         return onboardingDataSource.getOnboardingData(id)
     }
 
-    override suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<OnboardingWrapper>> {
        return onboardingDataSource.saveOnboardingData(onboardingData)
     }
 }

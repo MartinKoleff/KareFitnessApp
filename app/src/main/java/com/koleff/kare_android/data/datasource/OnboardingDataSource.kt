@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface OnboardingDataSource {
 
-    suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<ServerResponseData>>
+    suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<OnboardingWrapper>>
 
     suspend fun getOnboardingData(id: Long): Flow<ResultWrapper<OnboardingWrapper>>
 }

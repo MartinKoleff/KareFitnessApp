@@ -19,12 +19,12 @@ class OnboardingRemoteDataSource @Inject constructor(
     @IoDispatcher private val dispatcher: CoroutineDispatcher
 ) : OnboardingDataSource {
 
-    override suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<ServerResponseData>> {
+    override suspend fun saveOnboardingData(onboardingData: OnboardingDataDto): Flow<ResultWrapper<OnboardingWrapper>> {
         val body = SaveOnboardingDataRequest(onboardingData)
 
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher,
-            { ServerResponseData(onboardingApi.saveOnboardingData(body)) }
+            { OnboardingWrapper(onboardingApi.saveOnboardingData(body)) }
         )
     }
 
