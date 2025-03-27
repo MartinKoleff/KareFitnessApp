@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,8 +36,8 @@ fun Toolbar(
     onNavigateToAction: () -> Unit
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
-    val tintColor = MaterialTheme.colorScheme.onSurface
-    val textColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = LocalExtendedColors.current.title
+    val textColor = LocalExtendedColors.current.title
 
     val textStyle = MaterialTheme.typography.titleLarge.copy(
         color = textColor

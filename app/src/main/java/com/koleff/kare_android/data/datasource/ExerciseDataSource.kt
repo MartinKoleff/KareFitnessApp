@@ -32,4 +32,10 @@ interface ExerciseDataSource {
         setId: UUID,
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>>
+
+    suspend fun deleteLatestExerciseSet(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ResultWrapper<ExerciseWrapper>>
 }

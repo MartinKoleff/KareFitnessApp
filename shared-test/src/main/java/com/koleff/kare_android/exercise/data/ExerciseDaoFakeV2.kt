@@ -104,6 +104,10 @@ class ExerciseDaoFakeV2(
             .sortedBy { it.exerciseId }
     }
 
+    override fun getCatalogExercise(workoutId: Int, exerciseId: Int): Exercise {
+        TODO("Not yet implemented")
+    }
+
     override fun getExercisesOrderedById(): List<Exercise> {
         return exerciseWithSetDB
             .map { it.exercise }

@@ -596,6 +596,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
+
             val updatedExercise = exercise.copy(workoutId = workoutId)
 
             //Validation
@@ -640,6 +641,17 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
 
             emit(ResultWrapper.Success(result))
         }
+
+    override suspend fun addExercise(
+        workoutId: Int,
+        exerciseId: Int
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        val catalogExercise = exerciseDao.getCatalogExercise(exerciseId = exerciseId)
+            .copy(workoutId = workoutId)
+            .toDto(sets = emptyList())
+
+        return addExercise(workoutId, catalogExercise)
+    }
 
     override suspend fun addMultipleExercises(
         workoutId: Int,

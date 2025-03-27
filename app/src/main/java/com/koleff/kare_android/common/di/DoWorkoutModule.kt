@@ -15,10 +15,9 @@ import com.koleff.kare_android.domain.usecases.DeleteExerciseSetUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutInitialSetupUseCase
 import com.koleff.kare_android.domain.usecases.DoWorkoutUseCases
 import com.koleff.kare_android.domain.usecases.ResetTimerUseCase
-import com.koleff.kare_android.domain.usecases.PauseTimerUseCase
-import com.koleff.kare_android.domain.usecases.ResumeTimerUseCase
+import com.koleff.kare_android.domain.usecases.SkipNextExerciseUseCase
 import com.koleff.kare_android.domain.usecases.StartTimerUseCase
-import com.koleff.kare_android.domain.usecases.UpdateExerciseSetsAfterTimerUseCase
+import com.koleff.kare_android.domain.usecases.SkipNextSetUseCase
 import com.squareup.moshi.Moshi
 import dagger.Module
 import dagger.Provides
@@ -59,7 +58,7 @@ object DoWorkoutModule {
         doWorkoutApi: DoWorkoutApi,
         apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
     ): DoWorkoutDataSource {
-        return if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
+        return  if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
         else DoWorkoutRemoteDataSource(
             doWorkoutApi = doWorkoutApi,
             apiAuthorizationCallWrapper = apiAuthorizationCallWrapper
@@ -88,15 +87,12 @@ object DoWorkoutModule {
     ): DoWorkoutUseCases {
         return DoWorkoutUseCases(
             doWorkoutInitialSetupUseCase = DoWorkoutInitialSetupUseCase(doWorkoutRepository),
-            updateExerciseSetsAfterTimerUseCase = UpdateExerciseSetsAfterTimerUseCase(
-                doWorkoutRepository
-            ),
+            skipNextSetUseCase = SkipNextSetUseCase(doWorkoutRepository),
+            skipNextExerciseUseCase = SkipNextExerciseUseCase(doWorkoutRepository),
             addNewExerciseSetUseCase = AddNewExerciseSetUseCase(exerciseRepository),
             deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
             startTimerUseCase = StartTimerUseCase(),
-            resetTimerUseCase = ResetTimerUseCase(),
-            pauseTimerUseCase = PauseTimerUseCase(),
-            resumeTimerUseCase = ResumeTimerUseCase()
+            resetTimerUseCase = ResetTimerUseCase()
         )
     }
 }

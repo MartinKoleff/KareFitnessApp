@@ -10,6 +10,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
+import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
@@ -171,7 +172,7 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
-    private fun selectNextExercise() {
+    private fun selectNextSet() {
         Log.d("DoWorkoutViewModel", "Select next exercise requested.")
 
         //Workout completed
@@ -194,9 +195,43 @@ class DoWorkoutViewModel @Inject constructor(
 
 
     //If called from the button update current set and next set directly...
+    fun skipNextSet() {
+        viewModelScope.launch(dispatcher) {
+            doWorkoutUseCases.skipNextSetUseCase(_state.value.doWorkoutData)
+                .collect { result ->
+                    _state.value = result
+
+                    if (result.isSuccessful) {
+                        selectNextSet()
+                    }
+                }
+        }
+    }
+
+    private fun selectNextExercise() {
+        Log.d("DoWorkoutViewModel", "Select next exercise requested.")
+
+        //Workout completed
+        if (_state.value.doWorkoutData.isWorkoutCompleted || _state.value.doWorkoutData.nextExercise == ExerciseDto()) { //No next exercise...
+            val updatedData = _state.value.doWorkoutData.copy(isWorkoutCompleted = true)
+            _state.value = _state.value.copy(doWorkoutData = updatedData)
+            hideNextExerciseCountdownScreen()
+
+            //Save do workout performance metrics
+            saveDoWorkoutExerciseSets()
+
+            //Stop timers...
+            workoutTimer.resetTimer()
+            countdownTimer.resetTimer()
+        } else {
+            showNextExerciseCountdownScreen()
+            startCountdownTimer()
+        }
+    }
+
     fun skipNextExercise() {
         viewModelScope.launch(dispatcher) {
-            doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(_state.value.doWorkoutData)
+            doWorkoutUseCases.skipNextExerciseUseCase(_state.value.doWorkoutData)
                 .collect { result ->
                     _state.value = result
 
@@ -209,7 +244,7 @@ class DoWorkoutViewModel @Inject constructor(
 
     private fun updateExerciseSetsAfterTimer() {
         viewModelScope.launch(dispatcher) {
-            doWorkoutUseCases.updateExerciseSetsAfterTimerUseCase(_state.value.doWorkoutData)
+            doWorkoutUseCases.skipNextSetUseCase(_state.value.doWorkoutData)
                 .collect { result ->
                     _state.value = result
                 }
@@ -467,18 +502,22 @@ class DoWorkoutViewModel @Inject constructor(
     fun exitWorkout() {
 
         //Delete create workout
-        val performanceMetrics = saveDoWorkoutPerformanceMetricsState.value.doWorkoutPerformanceMetrics
+        val performanceMetrics =
+            saveDoWorkoutPerformanceMetricsState.value.doWorkoutPerformanceMetrics
         viewModelScope.launch(dispatcher) {
             doWorkoutPerformanceMetricsUseCases.deleteDoWorkoutPerformanceMetricsUseCase(
                 performanceMetrics.id
-            ).collect{ result ->
+            ).collect { result ->
 
-                if(result.isSuccessful){
-                    Log.d("DoWorkoutViewModel", "DoWorkoutPerformanceMetrics with id ${performanceMetrics.id} was deleted successfully!")
+                if (result.isSuccessful) {
+                    Log.d(
+                        "DoWorkoutViewModel",
+                        "DoWorkoutPerformanceMetrics with id ${performanceMetrics.id} was deleted successfully!"
+                    )
 
                     //Navigate back
                     navigateToDashboard()
-                }else if(result.isError){
+                } else if (result.isError) {
 
                     //Navigate back
                     navigateToDashboard()

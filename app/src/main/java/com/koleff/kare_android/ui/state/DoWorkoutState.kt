@@ -40,22 +40,20 @@ data class DoWorkoutData(
 
     val nextSet: ExerciseSetDto
         get() = if (currentSetNumber == currentExercise.sets.size && nextSetNumber <= currentSetNumber)
-            nextExercise.sets.getOrNull(nextSetNumber - 1) ?: ExerciseSetDto(
-                number = -1,
-                workoutId = currentExercise.workoutId,
-                exerciseId = currentExercise.exerciseId,
-                reps = -1,
-                weight = -1f
-            )
+            nextExercise.sets.getOrNull(nextSetNumber - 1) ?: defaultSet
         else
-            currentExercise.sets.getOrNull(nextSetNumber - 1) ?: ExerciseSetDto(
-                number = -1,
-                workoutId = currentExercise.workoutId,
-                exerciseId = currentExercise.exerciseId,
-                reps = -1,
-                weight = -1f
-            )
+            currentExercise.sets.getOrNull(nextSetNumber - 1) ?: defaultSet
 
     val isNextExercise: Boolean //Used for UI only...
         get() = currentSetNumber == currentExercise.sets.size
+
+    val totalSets: Int = if(isNextExercise) nextExercise.sets.size else currentExercise.sets.size
+
+    private val defaultSet =  ExerciseSetDto(
+        number = -1,
+        workoutId = currentExercise.workoutId,
+        exerciseId = currentExercise.exerciseId,
+        reps = -1,
+        weight = -1f
+    )
 }

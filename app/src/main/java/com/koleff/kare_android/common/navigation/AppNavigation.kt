@@ -14,21 +14,21 @@ import androidx.navigation.compose.rememberNavController
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.ui.compose.screen.ChangeLanguageScreen
 import com.koleff.kare_android.ui.compose.screen.DashboardScreen
-import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreen
-import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsConfiguratorScreen
-import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreen
+import com.koleff.kare_android.ui.compose.screen.DoWorkoutScreenV2
+import com.koleff.kare_android.ui.compose.screen.ExerciseConfiguratorScreen
+import com.koleff.kare_android.ui.compose.screen.ExerciseDetailsScreenV2
 import com.koleff.kare_android.ui.compose.screen.LoginScreen
 import com.koleff.kare_android.ui.compose.screen.MuscleGroupScreen
 import com.koleff.kare_android.ui.compose.screen.OnboardingFormScreen
 import com.koleff.kare_android.ui.compose.screen.OnboardingScreen
 import com.koleff.kare_android.ui.compose.screen.RegisterScreen
-import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreen
-import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreen
+import com.koleff.kare_android.ui.compose.screen.SearchExercisesScreenV2
+import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreenV2
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutHistoryScreen
-import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreen
-import com.koleff.kare_android.ui.compose.screen.WorkoutsScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreenV3
+import com.koleff.kare_android.ui.compose.screen.WorkoutsScreenV2
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.catch
@@ -127,32 +127,32 @@ private fun NavGraphBuilder.addDestinations() {
         DashboardScreen()
     }
     composable(Destination.Workouts.ROUTE) {
-        WorkoutsScreen()
+        WorkoutsScreenV2()
     }
     composable(Destination.MuscleGroupExercisesList.ROUTE) { backStackEntry ->
         MuscleGroupScreen()
     }
     composable(Destination.WorkoutDetails.ROUTE) { backStackEntry ->
-        WorkoutDetailsScreen()
+        WorkoutDetailsScreenV3()
     }
     composable(Destination.ExerciseDetails.ROUTE) { backStackEntry ->
-        ExerciseDetailsScreen()
+        ExerciseDetailsScreenV2()
     }
     composable(Destination.ExerciseDetailsConfigurator.ROUTE) { backStackEntry ->
-        ExerciseDetailsConfiguratorScreen()
+        ExerciseConfiguratorScreen()
     }
     composable(Destination.Settings.ROUTE) {
         SettingsScreen()
     }
     composable(Destination.SearchWorkoutsScreen.ROUTE) { backStackEntry ->
-        SearchWorkoutsScreen()
+        SearchWorkoutsScreenV2()
     }
     composable(Destination.SearchExercisesScreen.ROUTE) { backStackEntry ->
-        SearchExercisesScreen()
+        SearchExercisesScreenV2()
     }
     composable(Destination.DoWorkoutScreen.ROUTE) { backStackEntry ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            DoWorkoutScreen()
+            DoWorkoutScreenV2()
         }
     }
     composable(Destination.ChangeLanguage.ROUTE) { backStackEntry ->

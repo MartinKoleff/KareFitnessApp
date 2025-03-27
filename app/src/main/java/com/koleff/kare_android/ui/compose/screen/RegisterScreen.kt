@@ -3,9 +3,12 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -34,6 +37,8 @@ import com.koleff.kare_android.ui.compose.components.AuthenticationButton
 import com.koleff.kare_android.ui.compose.components.AuthorizationTitleAndSubtitle
 import com.koleff.kare_android.ui.compose.components.CustomTextField
 import com.koleff.kare_android.ui.compose.components.PasswordTextField
+import com.koleff.kare_android.ui.compose.components.SignInFooter
+import com.koleff.kare_android.ui.compose.components.SignInHypertext
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.AuthenticationScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.LoadingDialog
@@ -87,6 +92,8 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         registerViewModel.clearState() //Clear showSuccessDialog...
     }
 
+    val onGoogleSign = {}
+
     var username by remember {
         mutableStateOf("")
     }
@@ -126,7 +133,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
         }
 
         //Screen
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
@@ -143,83 +150,88 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            AuthorizationTitleAndSubtitle(
-                title = "Welcome to Kare!",
-                subtitle = "Create an account so you can become part of the family!"
-            )
+            item {
+                AuthorizationTitleAndSubtitle(
+                    title = "Sign up",
+                    subtitle = "Create your account"
+                )
 
-            LazyColumn {
-                item {
-                    //User text box
-                    CustomTextField(
-                        label = "Username",
-                        iconResourceId = R.drawable.ic_user_3,
-                        focusRequester = usernameFocusRequester,
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                passwordFocusRequester.requestFocus()
-                            }
-                        ),
-                        onValueChange = {
-                            username = it
+                //User text box
+                CustomTextField(label = "Username",
+                    iconResourceId = R.drawable.ic_user_3,
+                    focusRequester = usernameFocusRequester,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            passwordFocusRequester.requestFocus()
                         }
                     )
+                ) {
+                    username = it
                 }
 
-                item {
-                    //Password text box
-                    PasswordTextField(
-                        label = "Password",
-                        focusRequester = passwordFocusRequester,
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Next
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onNext = {
-                                emailFocusRequester.requestFocus()
-                            }
-                        ),
-                        onValueChange = {
-                            password = it
+                //Password text box
+                PasswordTextField(
+                    label = "Password",
+                    focusRequester = passwordFocusRequester,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Next
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onNext = {
+                            emailFocusRequester.requestFocus()
                         }
                     )
+                ) {
+                    password = it
                 }
 
-                item {
-
-                    //User text box
-                    CustomTextField(
-                        label = "Email",
-                        iconResourceId = R.drawable.ic_email,
-                        keyboardOptions = KeyboardOptions.Default.copy(
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                                focusManager.clearFocus()
-                            }
-                        ),
-                        onValueChange = {
-                            email = it
+                //Email text box
+                CustomTextField(
+                    label = "Email",
+                    iconResourceId = R.drawable.ic_email,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
                         }
                     )
+                ) {
+                    email = it
                 }
 
-                item {
-                    AuthenticationButton(
-                        text = "Sign up",
-                        onAction = onSignUp,
-                        credentials =
-                        Credentials(
-                            username = username,
-                            password = password,
-                            email = email
-                        )
+                AuthenticationButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            PaddingValues(
+                                start = 32.dp,
+                                end = 32.dp,
+                                top = 12.dp,
+                                bottom = 8.dp
+                            )
+                        ),
+                    text = "Sign up",
+                    onAction = onSignUp,
+                    credentials =
+                    Credentials(
+                        username = username,
+                        password = password,
+                        email = email
                     )
+                )
+
+                SignInFooter(onGoogleSign = onGoogleSign)
+                Spacer(modifier = Modifier.size(8.dp))
+
+                //Footer
+                SignInHypertext {
+                    registerViewModel.navigateToLogin()
                 }
             }
         }

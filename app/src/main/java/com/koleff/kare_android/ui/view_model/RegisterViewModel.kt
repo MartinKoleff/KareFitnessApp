@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.di.IoDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.domain.usecases.AuthenticationUseCases
@@ -48,7 +49,17 @@ class RegisterViewModel @Inject constructor(
         _state.value = BaseState()
     }
 
-    fun navigateToWelcome(){
+    fun navigateToWelcome() {
         onNavigationEvent(NavigationEvent.NavigateBack)
+    }
+
+    fun navigateToLogin() {
+        onNavigationEvent(
+            NavigationEvent.PopUpToAndNavigateTo(
+                popUpToRoute = Destination.Register.route,
+                destinationRoute = Destination.Login.route,
+                inclusive = false
+            )
+        )
     }
 }

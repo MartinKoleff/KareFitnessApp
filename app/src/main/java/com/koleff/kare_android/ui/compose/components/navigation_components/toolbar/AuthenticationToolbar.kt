@@ -1,6 +1,5 @@
 package com.koleff.kare_android.ui.compose.components.navigation_components.toolbar
 
-import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -19,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -30,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.compose.components.navigation_components.NavigationItem
 import com.koleff.kare_android.ui.compose.shapes.RoundedToolbarShape
-import com.koleff.kare_android.ui.theme.LocalExtendedColorScheme
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 
 @Composable
@@ -39,10 +37,7 @@ fun AuthenticationToolbar(
     imageId: Int = R.drawable.background_muscle_default,
     onNavigateBackAction: () -> Unit
 ) {
-    val configuration = LocalConfiguration.current
-
-    val backgroundColor = LocalExtendedColorScheme.current.detailsToolbarColor
-    val tintColor = MaterialTheme.colorScheme.onSurface
+    val tintColor = LocalExtendedColors.current.title
     val circleColor = MaterialTheme.colorScheme.surface
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
