@@ -58,6 +58,10 @@ import android.graphics.Paint.Style
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Fill
@@ -67,6 +71,9 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -821,6 +828,13 @@ fun ExerciseDataSheetRow(
     set: ExerciseSetDto,
     onSetChange: (ExerciseSetProgressDto) -> Unit
 ) {
+
+    //Keyboard
+    val repsFocusRequester = remember { FocusRequester() }
+    val weightFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val textColor = LocalExtendedColors.current.label
     val textStyle = MaterialTheme.typography.titleMedium.copy(
         color = textColor
@@ -872,26 +886,45 @@ fun ExerciseDataSheetRow(
             ExerciseDataSheetTextField(
                 modifier = Modifier
                     .padding(4.dp)
-                    .weight(1.5f),
+                    .weight(1.5f)
+                    .focusRequester(repsFocusRequester),
                 text = reps,
                 onValueChange = {
                     reps = it
 
                     //Calls launched effect...
-                }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                    imeAction = ImeAction.Next
+                ),
+                keyboardActions = KeyboardActions(
+                    onNext = {
+                        weightFocusRequester.requestFocus()
+                    }
+                )
             )
 
             //Weight
             ExerciseDataSheetTextField(
                 modifier = Modifier
                     .padding(4.dp)
-                    .weight(1.5f),
+                    .weight(1.5f)
+                    .focusRequester(weightFocusRequester),
                 text = weight,
                 onValueChange = {
                     weight = it
 
                     //Calls launched effect...
-                }
+                },
+                keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                        ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    }
+                )
             )
 
             //Checkbox
@@ -917,7 +950,9 @@ fun ExerciseDataSheetRow(
 fun ExerciseDataSheetTextField(
     modifier: Modifier = Modifier,
     text: String,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default
 ) {
     val cornerSize = 16.dp
     val textColor = LocalExtendedColors.current.label
@@ -941,7 +976,9 @@ fun ExerciseDataSheetTextField(
             ),
         value = text,
         textStyle = textStyle,
-        onValueChange = onValueChange
+        onValueChange = onValueChange,
+        keyboardActions = keyboardActions,
+        keyboardOptions = keyboardOptions
     )
 }
 
