@@ -55,7 +55,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 //import android.graphics.Paint
 import android.graphics.Paint.Style
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.focus.FocusRequester
@@ -66,7 +68,9 @@ import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -278,9 +282,9 @@ private fun DescriptionBox2Preview() {
 }
 
 @Composable
-fun PauseButton(onClick: () -> Unit) {
+fun PauseButton(onClick: () -> Unit, isPause: Boolean) {
     WorkoutConfigurationOption(
-        R.drawable.pause,
+        if (isPause) R.drawable.ic_resume else R.drawable.pause,
         onClick
     )
 }
@@ -289,7 +293,8 @@ fun PauseButton(onClick: () -> Unit) {
 @Composable
 private fun PauseButtonPreview() {
     PauseButton(
-        onClick = {}
+        onClick = {},
+        isPause = Random.nextBoolean()
     )
 }
 
@@ -316,7 +321,7 @@ private fun PagerIndicatorWithButtonsPreview() {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        PauseButton(onClick = {})
+        PauseButton(onClick = {}, isPause = Random.nextBoolean())
         PagerIndicator(currentPage = 0, totalPages = 4)
         SkipButton(onClick = {})
     }
@@ -343,10 +348,14 @@ fun NextExerciseInfoScreen(
     weight: Float,
     totalSets: Int,
     onPause: () -> Unit,
+    onResume: () -> Unit,
     onSkipSet: () -> Unit,
     isWorkoutComplete: Boolean = false,
     countdownTime: ExerciseTime,
 ) {
+    var isPause by remember {
+        mutableStateOf(false)
+    }
 
     //TODO: add vertical video player
     val alpha = 0.3f
@@ -409,11 +418,21 @@ fun NextExerciseInfoScreen(
                     .padding(top = 16.dp, bottom = 64.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                PauseButton(onClick = onPause)
+                PauseButton(
+                    onClick = {
+                        isPause = !isPause
+
+                        if(isPause) onPause() else onResume()
+                    }, isPause = isPause
+                )
 
                 Log.d("NextExerciseInfoScreen", "Current set: $set | Total sets: $totalSets")
                 PagerIndicator(currentPage = set, totalPages = totalSets)
-                SkipButton(onClick = onSkipSet)
+                SkipButton(onClick = {
+                    isPause = false
+
+                    onSkipSet()
+                })
             }
 
             //Exercise data sheet margin
@@ -434,6 +453,7 @@ fun NextExerciseInfoScreenPreview() {
         weight = 225.0f,
         totalSets = 4,
         onPause = {},
+        onResume = {},
         onSkipSet = {},
         isWorkoutComplete = false,
         countdownTime = countdownTime,
@@ -1004,7 +1024,8 @@ fun ExerciseTimerV2(
     exerciseTimerStyle: ExerciseTimerStyle = ExerciseTimerStyle()
 ) {
     val strokeWidth = 10f
-    val textColor = if(isSystemInDarkTheme())android.graphics.Color.WHITE else android.graphics.Color.BLACK
+    val textColor =
+        if (isSystemInDarkTheme()) android.graphics.Color.WHITE else android.graphics.Color.BLACK
     val lineColor = exerciseTimerStyle.lineColor
 
     Canvas(modifier = modifier) {
@@ -1349,4 +1370,21 @@ fun DoWorkoutFooterPreview() {
         timeLeft = timeLeft,
         currentSet = currentSet
     )
+}
+
+@Composable
+fun PauseScreenOverlay(isPaused: Boolean) {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier.size(75.dp),
+            painter = painterResource(
+                if (isPaused) R.drawable.ic_pause else R.drawable.ic_resume
+            ),
+            contentDescription = "Pause/Resume",
+            contentScale = ContentScale.Crop
+        )
+    }
 }
