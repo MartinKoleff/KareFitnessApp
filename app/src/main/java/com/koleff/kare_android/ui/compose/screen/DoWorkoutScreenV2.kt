@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.compose.screen
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,6 +25,7 @@ import com.koleff.kare_android.ui.compose.components.DoWorkoutFooter
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheetModal2
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.NextExerciseInfoScreen
+import com.koleff.kare_android.ui.compose.components.PauseScreenOverlay
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
@@ -36,6 +38,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
     val state by doWorkoutViewModel.state.collectAsState()
     val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
+    val playerState by doWorkoutViewModel.playerState.collectAsState()
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -95,6 +98,14 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
     }
 
+    var showPlayerOverlay by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playerState) {
+        showPlayerOverlay = playerState.isLoading
+    }
+
+
     //Error dialog
     if (showErrorDialog) {
         error?.let {
@@ -114,7 +125,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
         )
     }
 
-    if(showExitWorkoutDialog){
+    if (showExitWorkoutDialog) {
         ExitWorkoutDialog(
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
@@ -139,7 +150,21 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                 .fillMaxSize()
                 .alpha(0.15f)
         }
-    } else Modifier.fillMaxSize()
+    } else {
+        Modifier
+            .fillMaxSize()
+            .clickable {
+                if (!showNextExerciseCountdown) {
+                    doWorkoutViewModel
+                        .onScreenClick()
+                        .also {
+                            isPaused = !isPaused
+
+                            doWorkoutViewModel.showPlayerOverlay()
+                        } //Pause/Resume click listener
+                }
+            }
+    }
 
     //Loading screen
     if (showLoadingDialog) {
@@ -207,8 +232,11 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                     onSkipSet = {
                         doWorkoutViewModel.skipNextSet()
                     },
-                    onPause = {}, //TODO: merge with dev and add pause logic...
+                    onPause = { doWorkoutViewModel.pauseTimer(false) },
+                    onResume = { doWorkoutViewModel.resumeCountdownTimer() },
                 )
+            } else if (showPlayerOverlay) {
+                PauseScreenOverlay(isPaused)
             }
         }
     }
