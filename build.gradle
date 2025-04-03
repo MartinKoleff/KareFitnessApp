@@ -115,7 +115,7 @@ buildscript {
     ext.junit_jupiter_platform_version = "1.10.2"
 
     // region http://robolectric.org/getting-started/
-    ext.robolectric_junit_version = "4.13.2"
+    ext.junit4_version = "4.13.2"
 
     //https://developer.android.com/jetpack/androidx/releases/test
     ext.test_core_version = "1.5.0"

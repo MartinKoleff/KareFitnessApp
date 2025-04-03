@@ -31,6 +31,9 @@ android {
 }
 
 dependencies {
+
+    //JUnit 4
+    implementation "junit:junit:$junit4_version"
     compileOnly(project(":app"))
 
     //AndroidX
