@@ -11,6 +11,8 @@ interface ExerciseStatisticsRepository {
 
     suspend fun getPR(exerciseId: Int): Flow<ResultWrapper<ExercisePRWrapper>>
 
+    suspend fun get1RepMax(exerciseId: Int): Flow<ResultWrapper<ExercisePRWrapper>>
+
     suspend fun getTotalRepsPerformed(exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>>
 
     suspend fun getTotalSetsPerformed(exerciseId: Int): Flow<ResultWrapper<TotalSetsWrapper>>
