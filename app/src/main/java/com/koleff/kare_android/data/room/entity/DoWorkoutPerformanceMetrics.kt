@@ -1,14 +1,20 @@
 package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.koleff.kare_android.data.KareDtoExtended
-import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
-import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
-import java.util.*
+import java.util.Date
 
 @Entity(
     tableName = "do_workout_performance_metrics",
+    foreignKeys = [
+        ForeignKey(
+            entity = Workout::class,
+            parentColumns = ["workoutId"],
+            childColumns = ["workoutId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ]
 )
 data class DoWorkoutPerformanceMetrics (
     @PrimaryKey(autoGenerate = true)

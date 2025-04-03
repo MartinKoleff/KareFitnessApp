@@ -3,6 +3,7 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
+import androidx.room.Index
 import com.koleff.kare_android.data.KareDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
@@ -10,6 +11,10 @@ import java.util.*
 
 @Entity(
     tableName = "do_workout_exercise_set",
+    indices = [
+        Index(value = ["workoutPerformanceMetricsId"]),
+        Index(value = ["templateSetId"])
+    ],
     foreignKeys = [
         ForeignKey(
             entity = DoWorkoutPerformanceMetrics::class,
@@ -37,7 +42,7 @@ data class DoWorkoutExerciseSet(
     val isDone: Boolean,
     val time: ExerciseTime?,
     val date: Date  //to record the exact time the workout was completed
-): KareDto<DoWorkoutExerciseSetDto> {
+) : KareDto<DoWorkoutExerciseSetDto> {
     override fun toDto(): DoWorkoutExerciseSetDto {
         return DoWorkoutExerciseSetDto(
             instanceId = instanceId,
