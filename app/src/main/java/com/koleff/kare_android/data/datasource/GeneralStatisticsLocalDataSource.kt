@@ -12,7 +12,9 @@ import com.koleff.kare_android.data.model.response.TotalTimesCompletedResponse
 import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
 import com.koleff.kare_android.data.model.response.WorkoutResponse
 import com.koleff.kare_android.data.model.response.WorkoutStreakResponse
+import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
+import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.StatisticsDao
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
@@ -27,10 +29,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.util.Date
+import java.util.logging.Logger
 
 class GeneralStatisticsLocalDataSource(
     val statisticsDao: StatisticsDao,
-    val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao
+    val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
+    val doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
+    val exerciseDao: ExerciseDao
 ) : GeneralStatisticsDataSource {
 
     //All completed workouts (can have the same workout completed multiple times on different dates)
@@ -81,8 +86,6 @@ class GeneralStatisticsLocalDataSource(
             for (i in 1 until sortedDates.size) {
                 if (isConsecutiveDay(sortedDates[i - 1], sortedDates[i])) {
                     streak++
-                } else {
-                    break
                 }
             }
 
@@ -105,6 +108,7 @@ class GeneralStatisticsLocalDataSource(
         delay(Constants.fakeDelay)
 
         val workouts = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics()
+            .sortedByDescending { it.performanceMetrics.date }
             .distinctBy { it.workout.workoutId }
             .map { it.workout }
             .map(Workout::toDto)
@@ -120,33 +124,30 @@ class GeneralStatisticsLocalDataSource(
         emit(ResultWrapper.Success(result))
     }
 
-    //TODO: test...
-    private suspend fun getMostFrequentWorkout2(): Flow<ResultWrapper<WorkoutWrapper>> = flow {
-        emit(ResultWrapper.Loading())
-        delay(Constants.fakeDelay)
-
-        val mostFrequentWorkout = statisticsDao.getFavoriteWorkout()?.toDto()
-
-        val result = WorkoutWrapper(
-            WorkoutResponse(
-                workout = mostFrequentWorkout ?: WorkoutDto()
-            )
-        )
-        emit(ResultWrapper.Success(result))
-    }
-
-    //Most trained muscle group for all workouts
+    //Most common muscle group for all workouts
     override suspend fun getMostTrainedMuscleGroup(): Flow<ResultWrapper<MuscleGroupWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val mostTrainedMuscleGroup = statisticsDao.getFavoriteMuscleGroup() ?: MuscleGroup.NONE
+            val allExerciseSets = doWorkoutExerciseSetDao.getAllSets()
+            val catalogExercises =
+                exerciseDao.getAllCatalogExercises(workoutId = Constants.CATALOG_EXERCISE_ID)
+
+            val exerciseIdToMuscleGroup =
+                catalogExercises.associateBy({ it.exerciseId }, { it.muscleGroup })
+
+            val exerciseCount = allExerciseSets.groupingBy { it.exerciseId }.eachCount()
+
+            val mostTrainedExerciseId = exerciseCount.maxByOrNull { it.value }?.key
+
+            val mostTrainedMuscleGroup =
+                mostTrainedExerciseId?.let { exerciseIdToMuscleGroup[it] } ?: MuscleGroup.NONE
+
             val result = MuscleGroupWrapper(
-                MuscleGroupResponse(
-                    muscleGroup = mostTrainedMuscleGroup
-                )
+                MuscleGroupResponse(muscleGroup = mostTrainedMuscleGroup)
             )
+
             emit(ResultWrapper.Success(result))
         }
 
@@ -155,13 +156,26 @@ class GeneralStatisticsLocalDataSource(
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val mostTrainedExercise = statisticsDao.getMostPerformedExercise()
-        val mostTrainedExerciseWithSets = mostTrainedExercise?.toDto()
+        val allExerciseSets = doWorkoutExerciseSetDao.getAllSets()
 
-        //transform to exercise with sets
+        val catalogExercises =
+            exerciseDao.getAllCatalogExercises(workoutId = Constants.CATALOG_EXERCISE_ID)
+
+        val exerciseIdCount = mutableMapOf<Int, Int>()
+        for (exerciseSet in allExerciseSets) {
+            exerciseIdCount[exerciseSet.exerciseId] =
+                exerciseIdCount.getOrDefault(exerciseSet.exerciseId, 0) + 1
+        }
+
+        val mostTrainedExerciseId = exerciseIdCount.maxByOrNull { it.value }?.key
+
+        val mostTrainedExercise = mostTrainedExerciseId?.let { exerciseId ->
+            catalogExercises.find { it.exerciseId == exerciseId }
+        }
+
         val result = ExerciseWrapper(
             ExerciseResponse(
-                exercise = mostTrainedExerciseWithSets ?: ExerciseDto()
+                exercise = mostTrainedExercise?.toDto(emptyList()) ?: ExerciseDto()
             )
         )
 
@@ -169,30 +183,95 @@ class GeneralStatisticsLocalDataSource(
     }
 
     //Total weight lifted for all workouts
-    override suspend fun getTotalWeightLifted(): Flow<ResultWrapper<TotalWeightLiftedWrapper>> = flow {
-        emit(ResultWrapper.Loading())
-        delay(Constants.fakeDelay)
+    override suspend fun getTotalWeightLifted(): Flow<ResultWrapper<TotalWeightLiftedWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
 
-        val totalWeightLifted = statisticsDao.getTotalWeightLifted() ?: 0.0f
-        val result = TotalWeightLiftedWrapper(
-            TotalWeightLiftedResponse(
-                totalWeight = totalWeightLifted
+            val totalWeightLifted = statisticsDao.getTotalWeightLifted() ?: 0.0f
+            val result = TotalWeightLiftedWrapper(
+                TotalWeightLiftedResponse(
+                    totalWeight = totalWeightLifted
+                )
             )
-        )
-        emit(ResultWrapper.Success(result))
-    }
+            emit(ResultWrapper.Success(result))
+        }
 
     //Strongest muscle group with its total weight lifted for all workouts
-    override suspend fun getStrongestMuscleGroup(): Flow<ResultWrapper<StrongestMuscleGroupWrapper>> = flow {
-        emit(ResultWrapper.Loading())
-        delay(Constants.fakeDelay)
+    override suspend fun getStrongestMuscleGroup(): Flow<ResultWrapper<StrongestMuscleGroupWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
 
-        val strongestMuscleGroup = statisticsDao.getMaxWeightPerMuscleGroup() ?: MuscleGroupMaxWeight(MuscleGroup.NONE, 0.0f)
-        val result = StrongestMuscleGroupWrapper(
-            StrongestMuscleGroupResponse(
-                data = strongestMuscleGroup
+            val allExerciseSets =
+                doWorkoutExerciseSetDao.getAllSets()
+
+            val catalogExercises =
+                exerciseDao.getAllCatalogExercises(workoutId = Constants.CATALOG_EXERCISE_ID)
+            val exerciseIdToMuscleGroup =
+                catalogExercises.associateBy({ it.exerciseId }, { it.muscleGroup })
+
+            val maxWeightLifted = mutableMapOf<MuscleGroup, Float>()
+            for (exerciseSet in allExerciseSets) {
+                val muscleGroup =
+                    exerciseIdToMuscleGroup[exerciseSet.exerciseId] ?: continue  //Skip if not found
+
+                maxWeightLifted[muscleGroup] = maxOf(
+                    maxWeightLifted.getOrDefault(muscleGroup, 0f),
+                    exerciseSet.weight ?: 0.0f
+                )
+                Logger.getLogger("GeneralStatisticsLocalDataSource")
+                    .info("maxWeightLifted: $maxWeightLifted, muscleGroup: $muscleGroup")
+            }
+
+            val strongestMuscleGroup =
+                maxWeightLifted.maxByOrNull { it.value }?.key ?: MuscleGroup.NONE
+            Logger.getLogger("GeneralStatisticsLocalDataSource")
+                .info("strongestMuscleGroup: $strongestMuscleGroup")
+
+            val result = StrongestMuscleGroupWrapper(
+                StrongestMuscleGroupResponse(
+                    data = MuscleGroupMaxWeight(
+                        muscleGroup = strongestMuscleGroup,
+                        maxWeight = maxWeightLifted[strongestMuscleGroup] ?: 0f
+                    )
+                )
             )
-        )
-        emit(ResultWrapper.Success(result))
-    }
+            emit(ResultWrapper.Success(result))
+        }
+
+    //Strongest muscle group with its total weight lifted for all workouts
+    override suspend fun getMuscleGroupTotalWeightLifted(selectedMuscleGroup: MuscleGroup): Flow<ResultWrapper<StrongestMuscleGroupWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val allExerciseSets =
+                doWorkoutExerciseSetDao.getAllSets()
+
+            val catalogExercises =
+                exerciseDao.getAllCatalogExercises(workoutId = Constants.CATALOG_EXERCISE_ID)
+            val exerciseIdToMuscleGroup =
+                catalogExercises.associateBy({ it.exerciseId }, { it.muscleGroup })
+
+            val totalWeightLifted = mutableMapOf<MuscleGroup, Float>()
+            for (exerciseSet in allExerciseSets) {
+                val muscleGroup =
+                    exerciseIdToMuscleGroup[exerciseSet.exerciseId] ?: continue  //Skip if not found
+                val weightLifted = (exerciseSet.weight ?: 0f) * exerciseSet.reps.toFloat()
+
+                totalWeightLifted[muscleGroup] =
+                    totalWeightLifted.getOrDefault(muscleGroup, 0f) + weightLifted
+            }
+
+            val result = StrongestMuscleGroupWrapper(
+                StrongestMuscleGroupResponse(
+                    data = MuscleGroupMaxWeight(
+                        muscleGroup = selectedMuscleGroup,
+                        maxWeight = totalWeightLifted[selectedMuscleGroup] ?: 0f
+                    )
+                )
+            )
+            emit(ResultWrapper.Success(result))
+        }
 }

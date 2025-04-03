@@ -1,5 +1,6 @@
 package com.koleff.kare_android.domain.repository
 
+import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
 import com.koleff.kare_android.domain.wrapper.MuscleGroupWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
@@ -27,4 +28,6 @@ interface GeneralStatisticsRepository {
     suspend fun getTotalWeightLifted(): Flow<ResultWrapper<TotalWeightLiftedWrapper>>
 
     suspend fun getStrongestMuscleGroup(): Flow<ResultWrapper<StrongestMuscleGroupWrapper>>
+
+    suspend fun getMuscleGroupTotalWeightLifted(selectedMuscleGroup: MuscleGroup): Flow<ResultWrapper<StrongestMuscleGroupWrapper>>
 }
