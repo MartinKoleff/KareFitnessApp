@@ -9,7 +9,9 @@ import com.koleff.kare_android.data.datasource.WorkoutStatisticsLocalDataSource
 import com.koleff.kare_android.data.repository.ExerciseStatisticsRepositoryImpl
 import com.koleff.kare_android.data.repository.GeneralStatisticsRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutStatisticsRepositoryImpl
+import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
+import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.StatisticsDao
 import com.koleff.kare_android.domain.repository.ExerciseStatisticsRepository
 import com.koleff.kare_android.domain.repository.GeneralStatisticsRepository
@@ -17,6 +19,7 @@ import com.koleff.kare_android.domain.repository.WorkoutStatisticsRepository
 import com.koleff.kare_android.domain.usecases.statistics.ExerciseStatisticsUseCases
 import com.koleff.kare_android.domain.usecases.statistics.GeneralStatisticsUseCases
 import com.koleff.kare_android.domain.usecases.statistics.GetDistinctWorkoutsCompletedUseCase
+import com.koleff.kare_android.domain.usecases.statistics.GetExercise1RepMaxUseCase
 import com.koleff.kare_android.domain.usecases.statistics.GetExercisePRUseCase
 import com.koleff.kare_android.domain.usecases.statistics.GetExerciseTotalRepsPerformedUseCase
 import com.koleff.kare_android.domain.usecases.statistics.GetExerciseTotalSetsPerformedUseCase
@@ -57,11 +60,15 @@ object StatisticsModule {
     @Singleton
     fun provideGeneralStatisticsDataSource(
         statisticsDao: StatisticsDao,
-        doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao
+        doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
+        doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
+        exerciseDao: ExerciseDao,
     ): GeneralStatisticsDataSource {
         return GeneralStatisticsLocalDataSource(
             statisticsDao = statisticsDao,
-            doWorkoutPerformanceMetricsDao = doWorkoutPerformanceMetricsDao
+            doWorkoutPerformanceMetricsDao = doWorkoutPerformanceMetricsDao,
+            doWorkoutExerciseSetDao = doWorkoutExerciseSetDao,
+            exerciseDao = exerciseDao
         )
 
         //TODO: add remote data source...
@@ -169,6 +176,7 @@ object StatisticsModule {
     ): ExerciseStatisticsUseCases {
         return ExerciseStatisticsUseCases(
             getExercisePRUseCase = GetExercisePRUseCase(exerciseStatisticsRepository),
+            getExercise1RepMaxUseCase = GetExercise1RepMaxUseCase(exerciseStatisticsRepository),
             getExerciseTotalRepsPerformedUseCase = GetExerciseTotalRepsPerformedUseCase(
                 exerciseStatisticsRepository
             ),
