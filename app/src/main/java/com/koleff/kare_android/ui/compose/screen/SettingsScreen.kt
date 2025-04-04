@@ -159,6 +159,9 @@ fun SettingsScreen(
                 },
                 onChangeLanguage = {
                     settingsViewModel.navigateToChangeLanguageScreen()
+                },
+                onNavigateToStatistics = {
+                    settingsViewModel.onNavigateToStatistics()
                 }
             )
         }

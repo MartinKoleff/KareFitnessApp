@@ -62,6 +62,14 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
+    fun onNavigateToStatistics() {
+        super.onNavigationEvent(
+            NavigationEvent.ClearBackstackAndNavigateTo(
+                destination = Destination.Statistics
+            )
+        )
+    }
+
     override fun clearError() {
         if (logoutState.value.isError) {
             _logoutState.value = BaseState()
