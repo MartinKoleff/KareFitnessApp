@@ -5,6 +5,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.MuscleGroupMaxWeight
 import com.koleff.kare_android.data.model.dto.WorkoutDto
+import com.koleff.kare_android.data.model.dto.WorkoutTotalTimesCompleted
 import com.koleff.kare_android.data.model.response.ExerciseResponse
 import com.koleff.kare_android.data.model.response.MuscleGroupResponse
 import com.koleff.kare_android.data.model.response.StrongestMuscleGroupResponse
@@ -46,9 +47,15 @@ class GeneralStatisticsLocalDataSource(
 
             val workoutsCompleted =
                 doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics().size
+
+            val datesOfCompletion = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics().map { it.performanceMetrics.date }
+
             val result = TotalTimesCompletedWrapper(
                 TotalTimesCompletedResponse(
-                    totalTimesCompleted = workoutsCompleted
+                    WorkoutTotalTimesCompleted(
+                        totalTimesCompleted = workoutsCompleted,
+                        datesOfCompletion = datesOfCompletion
+                    )
                 )
             )
             emit(ResultWrapper.Success(result))
@@ -64,9 +71,14 @@ class GeneralStatisticsLocalDataSource(
                 .distinctBy { it.workout.workoutId }
                 .size
 
+            val datesOfCompletion = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics().map { it.performanceMetrics.date }
+
             val result = TotalTimesCompletedWrapper(
                 TotalTimesCompletedResponse(
-                    totalTimesCompleted = workoutsCompleted
+                    WorkoutTotalTimesCompleted(
+                        totalTimesCompleted = workoutsCompleted,
+                        datesOfCompletion = datesOfCompletion
+                    )
                 )
             )
             emit(ResultWrapper.Success(result))

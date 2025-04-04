@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.model.dto.WorkoutTotalTimesCompleted
 import com.koleff.kare_android.data.model.response.TotalRepsResponse
 import com.koleff.kare_android.data.model.response.TotalSetsResponse
 import com.koleff.kare_android.data.model.response.TotalTimesCompletedResponse
@@ -26,9 +27,14 @@ class WorkoutStatisticsLocalDataSource(
             delay(Constants.fakeDelay)
 
             val timesCompleted = statisticsDao.getTotalWorkoutsCompleted(workoutId) ?: 0
+            val datesOfCompletion =
+                statisticsDao.getDatesOfCompletionForWorkout(workoutId) ?: emptyList()
             val result = TotalTimesCompletedWrapper(
                 TotalTimesCompletedResponse(
-                    totalTimesCompleted = timesCompleted
+                    WorkoutTotalTimesCompleted(
+                        totalTimesCompleted = timesCompleted,
+                        datesOfCompletion = datesOfCompletion
+                    )
                 )
             )
 
@@ -50,6 +56,7 @@ class WorkoutStatisticsLocalDataSource(
             emit(ResultWrapper.Success(result))
         }
 
+    //TODO: add per workout?
     //Total reps performed for exercise per workout
     override suspend fun getTotalRepsPerformed(
         workoutId: Int,
@@ -70,6 +77,7 @@ class WorkoutStatisticsLocalDataSource(
         emit(ResultWrapper.Success(result))
     }
 
+    //TODO: add per workout?
     //Total sets performed for exercise per workout
     override suspend fun getTotalSetsPerformed(
         workoutId: Int,

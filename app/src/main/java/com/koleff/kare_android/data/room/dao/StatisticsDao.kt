@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Query
 import com.koleff.kare_android.data.model.dto.WeightProgression
 import com.koleff.kare_android.data.room.entity.Workout
+import java.util.Date
 
 @Dao
 interface StatisticsDao {
@@ -29,6 +30,9 @@ interface StatisticsDao {
     //Workout specific stats
     @Query("SELECT COUNT(*) FROM do_workout_performance_metrics WHERE workoutId = :workoutId")
     suspend fun getTotalWorkoutsCompleted(workoutId: Int): Int?
+
+    @Query("SELECT date FROM do_workout_performance_metrics WHERE workoutId = :workoutId")
+    suspend fun getDatesOfCompletionForWorkout(workoutId: Int): List<Date>?
 
     @Query("SELECT MAX(weight) FROM do_workout_exercise_set WHERE exerciseId = :exerciseId")
     suspend fun getMaxWeightForExercise(exerciseId: Int): Float?
