@@ -14,6 +14,7 @@ import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManagerV2
+import com.koleff.kare_android.data.room.manager.WorkoutPerformanceMetricsDBManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +35,9 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
     @Inject
     lateinit var workoutDBManager: WorkoutDBManagerV2
+
+    @Inject
+    lateinit var workoutPerformanceMetricsDBManager: WorkoutPerformanceMetricsDBManager
 
     @Inject
     lateinit var userDBManager: UserDBManager
@@ -76,6 +80,10 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
                 workoutDBManager.initializeWorkoutTable {
                     preferences.initializeWorkoutTable()
+                }
+
+                workoutPerformanceMetricsDBManager.initializeWorkoutPerformanceMetricsTable {
+                    preferences.initializeWorkoutPerformanceMetricsTable()
                 }
 
                 userDBManager.initializeUserTable {

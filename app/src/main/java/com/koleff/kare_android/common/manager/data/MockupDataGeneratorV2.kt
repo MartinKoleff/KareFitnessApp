@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.manager.data
 
 import com.koleff.kare_android.common.DateManager
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
@@ -355,6 +355,7 @@ object MockupDataGeneratorV2 {
         } else {
             workout
         }
+        val date = DateManager.getRandomDateInCurrentMonth()
 
         val exerciseSets = generateDoWorkoutExerciseSets(
             performanceMetricsId = id,
@@ -367,7 +368,7 @@ object MockupDataGeneratorV2 {
         return DoWorkoutPerformanceMetricsDto(
             id = id, //TODO: Should l be using workoutId as unique identifier?
             workout = selectedWorkout,
-            date = Date(),
+            date = date,
             doWorkoutExerciseSets = exerciseSets
         )
     }
@@ -385,8 +386,9 @@ object MockupDataGeneratorV2 {
                 .map { it.toDto() }
                 .shuffled()
                 .take(numberOfExercises)
+        val date = DateManager.getRandomDateInCurrentMonth()
 
-        return selectedExercises.flatMap { exercise ->
+        val doWorkoutExerciseSets = selectedExercises.flatMap { exercise ->
             exercise.sets.map { exerciseSet ->
                 DoWorkoutExerciseSetDto(
                     instanceId = UUID.randomUUID(),
@@ -398,9 +400,11 @@ object MockupDataGeneratorV2 {
                     weight = (15..100).random().toFloat(),
                     isDone = Random.nextBoolean(),
                     time = null,
-                    date = Date()
+                    date = date
                 )
             }
         }
+
+        return doWorkoutExerciseSets
     }
 }

@@ -13,9 +13,11 @@ interface Preferences {
     fun hasInitializedExerciseTable(): Boolean
     fun hasInitializedWorkoutTable(): Boolean
     fun hasInitializedUserTable(): Boolean
+    fun hasInitializedWorkoutPerformanceMetricsTable(): Boolean
     fun initializeExerciseTable()
     fun initializeWorkoutTable()
     fun initializeUserTable()
+    fun initializeWorkoutPerformanceMetricsTable()
     fun saveCredentials(credentials: Credentials)
     fun getCredentials(): Credentials?
     fun deleteCredentials()
@@ -32,6 +34,7 @@ interface Preferences {
         const val HAS_INITIALIZED_EXERCISE_TABLE = "has_initialized_exercise_table"
         const val HAS_INITIALIZED_WORKOUT_TABLE = "has_initialized_workout_table"
         const val HAS_INITIALIZED_USER_TABLE = "has_initialized_user_table"
+        const val HAS_INITIALIZED_WORKOUT_PERFORMANCE_METRICS_TABLE = "has_initialized_workout_performance_metrics_table"
         const val HAS_TOKENS = "has_tokens"
         const val FAVORITE_WORKOUTS = "favorite_workouts"
         const val CREDENTIALS = "credentials"
