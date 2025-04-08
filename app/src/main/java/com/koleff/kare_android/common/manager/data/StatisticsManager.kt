@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.manager.data
 
 import com.koleff.kare_android.R
 import com.koleff.kare_android.ui.state.ExerciseStatisticsState

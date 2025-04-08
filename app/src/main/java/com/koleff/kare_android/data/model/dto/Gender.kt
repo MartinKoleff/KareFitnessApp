@@ -1,8 +1,5 @@
 package com.koleff.kare_android.data.model.dto
 
-import com.koleff.kare_android.R
-import com.koleff.kare_android.common.ExerciseGenerator
-
 enum class Gender(
     val id: Int,
     val text: String,

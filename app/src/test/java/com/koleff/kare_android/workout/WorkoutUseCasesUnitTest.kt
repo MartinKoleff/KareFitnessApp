@@ -1,9 +1,8 @@
 package com.koleff.kare_android.workout
 
-import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.ExerciseGenerator
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.WorkoutLocalDataSourceV2
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -50,8 +49,6 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeAll

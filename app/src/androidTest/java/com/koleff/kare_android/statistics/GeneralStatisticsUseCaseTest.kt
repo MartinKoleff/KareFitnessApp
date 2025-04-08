@@ -6,7 +6,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.firebase.crashlytics.internal.Logger
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.ExerciseStatisticsDataSource
 import com.koleff.kare_android.data.datasource.ExerciseStatisticsLocalDataSource
 import com.koleff.kare_android.data.datasource.GeneralStatisticsDataSource

@@ -18,10 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.koleff.kare_android.common.StatisticsManager
-import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.common.manager.data.StatisticsManager
 import com.koleff.kare_android.data.model.dto.StatisticScreenType
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.ui.compose.components.ExerciseBannerV2
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
