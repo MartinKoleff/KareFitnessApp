@@ -73,7 +73,8 @@ fun <T> BannerV2(
     machineTypeText: String? = null,
     showSelectOption: Boolean = false,
     onSelect: (Boolean) -> Unit = {},
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    isEnabled: Boolean
 ) {
     val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.titleMedium.copy(
@@ -94,7 +95,7 @@ fun <T> BannerV2(
                 .fillMaxWidth()
                 .height(bannerHeight)
                 .padding(bottom = 6.dp)
-                .clickable {
+                .clickable(enabled = isEnabled) {
                     onClick(data)
 //                    if (showSelectOption) isSelected = !isSelected
                 },
@@ -127,8 +128,8 @@ fun <T> BannerV2(
                     Text(
                         modifier = Modifier
                             .padding(
-                            PaddingValues(6.dp)
-                        ),
+                                PaddingValues(6.dp)
+                            ),
                         text = title,
                         style = titleTextStyle,
                         maxLines = 2,
@@ -377,6 +378,11 @@ private fun TimeEstimationInfoPreview() {
 fun WorkoutBannerV2(
     modifier: Modifier = Modifier,
     workout: WorkoutDto,
+    showTimeAndDateInfo: Boolean = true,
+    showDifficulty: Boolean = true,
+    showMachineType: Boolean = false,
+    showPlayerIcon: Boolean = false,
+    isEnabled: Boolean = true,
     onClick: (WorkoutDto) -> Unit
 ) {
     BannerV2(
@@ -385,9 +391,11 @@ fun WorkoutBannerV2(
         onClick = { onClick(workout) },
         title = workout.name,
         imageResource = MuscleGroup.getImage(workout.muscleGroup),
-        showDifficulty = true,
-        showMachineType = false,
-        showPlayerIcon = false,
+        showTimeAndDateInfo = showTimeAndDateInfo,
+        showDifficulty = showDifficulty,
+        showMachineType = showMachineType,
+        showPlayerIcon = showPlayerIcon,
+        isEnabled = isEnabled
     )
 }
 
@@ -421,6 +429,20 @@ private fun WorkoutBannerV2Preview2() {
     )
 }
 
+@Preview
+@Composable
+private fun WorkoutBannerV2InvalidPreview() {
+    val onClick: (WorkoutDto) -> Unit = {
+
+    }
+    val workout = WorkoutDto()
+    WorkoutBannerV2(
+        modifier = Modifier,
+        workout = workout,
+        onClick = onClick
+    )
+}
+
 @Composable
 fun ExerciseBannerV2(
     modifier: Modifier = Modifier,
@@ -429,7 +451,10 @@ fun ExerciseBannerV2(
     showDifficulty: Boolean,
     onClick: (ExerciseDto) -> Unit,
     onSelect: (ExerciseDto) -> Unit = {},
-    isSelected: Boolean = false
+    isSelected: Boolean = false,
+    showPlayerIcon: Boolean = true,
+    showMachineType: Boolean = true,
+    isEnabled: Boolean = true
 ) {
     BannerV2(
         modifier = modifier,
@@ -438,15 +463,16 @@ fun ExerciseBannerV2(
         data = exercise,
         imageResource = MuscleGroup.getImage(exercise.muscleGroup),
         showDifficulty = showDifficulty,
-        showMachineType = true,
-        showPlayerIcon = true,
+        showMachineType = showMachineType,
+        showPlayerIcon = showPlayerIcon,
         showTimeAndDateInfo = false,
         machineTypeText = exercise.machineType.name,
         showSelectOption = showSelectOption,
         onSelect = {
             onSelect(exercise)
         },
-        isSelected = isSelected
+        isSelected = isSelected,
+        isEnabled = isEnabled
     )
 }
 
@@ -457,7 +483,12 @@ private fun ExerciseBannerV2Preview() {
 
     }
     val exercise = MockupDataGeneratorV2.generateExercise()
-    ExerciseBannerV2(exercise = exercise, onClick = onClick, showDifficulty = false, isSelected = false)
+    ExerciseBannerV2(
+        exercise = exercise,
+        onClick = onClick,
+        showDifficulty = false,
+        isSelected = false
+    )
 }
 
 
@@ -567,6 +598,7 @@ private fun FooterButtonPreview() {
 @Composable
 fun SearchBar(
     searchText: String,
+    hint: String = "",
     modifier: Modifier = Modifier,
     onToggleSearch: () -> Unit,
     onSearchTextChange: (String) -> Unit,
@@ -593,9 +625,7 @@ fun SearchBar(
                 unfocusedIndicatorColor = Color.Transparent,
             ),
             onValueChange = {
-                if ((searchText.isNotEmpty() && it.isEmpty()) ||
-                    (searchText.isEmpty() && it.isNotEmpty())
-                ){
+                if (searchText.isNotEmpty() && it.isEmpty()) {
                     onToggleSearch()
 
                     keyboardController?.hide()
@@ -607,7 +637,7 @@ fun SearchBar(
                 // Trigger search
                 onSearch(it)
             },
-            label = { Text(text = "Search", style = textStyle) },
+            label = { Text(text = hint.ifEmpty { "Search" }, style = textStyle) },
             leadingIcon = {
                 Icon(
                     Icons.Filled.Search,
@@ -637,7 +667,6 @@ fun SearchBar(
 }
 
 @Preview
-@PreviewLightDark
 @Composable
 fun SearchBarPreview() {
     SearchBar(
@@ -680,3 +709,7 @@ fun LoadingWheel(
 private fun LoadingWheelPreview() {
     LoadingWheel()
 }
+
+//TODO: no workout selected banner...
+//TODO: create new workout banner...
+//TODO: add exercise to workout banner...
