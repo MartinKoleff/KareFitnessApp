@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -21,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.koleff.kare_android.R
 
 @Composable
@@ -46,7 +48,8 @@ fun SettingsListItem(
         headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
-                icon,
+                modifier = Modifier.size(20.dp),
+                imageVector = icon,
                 contentDescription = description,
             )
         },
@@ -89,7 +92,8 @@ fun SettingsListItem(
         headlineContent = { Text(text = title, style = textStyle) },
         leadingContent = {
             Icon(
-                icon,
+                modifier = Modifier.size(20.dp),
+                painter = icon,
                 contentDescription = description,
             )
         },
