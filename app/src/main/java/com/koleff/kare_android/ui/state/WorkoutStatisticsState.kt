@@ -7,6 +7,7 @@ data class WorkoutStatisticsState (
     val getWorkoutTotalRepsPerformedState: TotalRepsPerformedState = TotalRepsPerformedState(),
     val getWorkoutTotalSetsPerformedState: TotalSetsPerformedState = TotalSetsPerformedState(),
     val getWorkoutTotalWeightLiftedState: TotalWeightLiftedState = TotalWeightLiftedState(),
+    val getDatesOfCompletionState: DatesOfCompletionState = DatesOfCompletionState(),
     override val isSuccessful: Boolean = false,
     override val isLoading: Boolean = false,
     override val isError: Boolean = false,

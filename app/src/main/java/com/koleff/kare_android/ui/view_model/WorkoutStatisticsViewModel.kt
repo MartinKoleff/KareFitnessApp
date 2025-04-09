@@ -10,6 +10,7 @@ import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.domain.usecases.statistics.StatisticsUseCases
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
+import com.koleff.kare_android.ui.state.DatesOfCompletionState
 import com.koleff.kare_android.ui.state.GeneralStatisticsState
 import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.TotalRepsPerformedState
@@ -73,6 +74,12 @@ class WorkoutStatisticsViewModel @Inject constructor(
         MutableStateFlow(TotalWeightLiftedState())
     val getWorkoutTotalWeightState: StateFlow<TotalWeightLiftedState>
         get() = _getWorkoutTotalWeightState
+
+    private var _getDatesOfCompletionState: MutableStateFlow<DatesOfCompletionState> =
+        MutableStateFlow(DatesOfCompletionState())
+    val getDatesOfCompletionState: StateFlow<DatesOfCompletionState>
+        get() = _getDatesOfCompletionState
+
 
     private var _workoutsState: MutableStateFlow<WorkoutListState> =
         MutableStateFlow(WorkoutListState())
@@ -171,13 +178,15 @@ class WorkoutStatisticsViewModel @Inject constructor(
                 _getWorkoutTotalTimesCompletedState,
                 _getWorkoutTotalRepsState,
                 _getWorkoutTotalSetsState,
-                _getWorkoutTotalWeightState
+                _getWorkoutTotalWeightState,
+                _getDatesOfCompletionState
             ) { values ->
                 val workoutStats = WorkoutStatisticsState(
                     getWorkoutTotalTimesCompletedState = values[0] as TotalTimesCompletedState,
                     getWorkoutTotalRepsPerformedState = values[1] as TotalRepsPerformedState,
                     getWorkoutTotalSetsPerformedState = values[2] as TotalSetsPerformedState,
                     getWorkoutTotalWeightLiftedState = values[3] as TotalWeightLiftedState,
+                    getDatesOfCompletionState = values[4] as DatesOfCompletionState,
                     isLoading = values.any { it.isLoading } || workoutsState.value.isLoading,
                     isError = values.any { it.isError },
                     error = values.firstOrNull { it.error != null }?.error ?: KareError.GENERIC
@@ -216,12 +225,14 @@ class WorkoutStatisticsViewModel @Inject constructor(
             _getWorkoutTotalRepsState.value = TotalRepsPerformedState()
             _getWorkoutTotalSetsState.value = TotalSetsPerformedState()
             _getWorkoutTotalWeightState.value = TotalWeightLiftedState()
+            _getDatesOfCompletionState.value = DatesOfCompletionState()
 
             _state.value = WorkoutStatisticsState(
                 getWorkoutTotalTimesCompletedState = _getWorkoutTotalTimesCompletedState.value,
                 getWorkoutTotalRepsPerformedState = _getWorkoutTotalRepsState.value,
                 getWorkoutTotalSetsPerformedState = _getWorkoutTotalSetsState.value,
-                getWorkoutTotalWeightLiftedState = _getWorkoutTotalWeightState.value
+                getWorkoutTotalWeightLiftedState = _getWorkoutTotalWeightState.value,
+                getDatesOfCompletionState = _getDatesOfCompletionState.value
             )
         }
     }
@@ -230,6 +241,7 @@ class WorkoutStatisticsViewModel @Inject constructor(
         if (selectedWorkout.value == WorkoutDto()) return
         getWorkoutTotalTimesCompleted(workoutId = selectedWorkout.value.workoutId)
         getWorkoutTotalWeightLifted(workoutId = selectedWorkout.value.workoutId)
+        getDatesOfCompletion(workoutId = selectedWorkout.value.workoutId)
 
 //        getWorkoutTotalRepsPerformed(workoutId = selectedWorkout.workoutId)
 //        getWorkoutTotalSetsPerformed(workoutId = selectedWorkout.workoutId)
@@ -284,6 +296,15 @@ class WorkoutStatisticsViewModel @Inject constructor(
         }
     }
 
+    fun getDatesOfCompletion(workoutId: Int){
+        viewModelScope.launch(dispatcher) {
+            statisticsUseCases.workoutStatisticsUseCases.getDatesOfCompletionUseCase(
+                workoutId
+            ).collect { getDatesOfCompletionState ->
+                _getDatesOfCompletionState.value = getDatesOfCompletionState
+            }
+        }
+    }
 
     override fun clearError() {
         if (_getWorkoutTotalTimesCompletedState.value.isError) {
@@ -297,6 +318,9 @@ class WorkoutStatisticsViewModel @Inject constructor(
         }
         if (_getWorkoutTotalWeightState.value.isError) {
             _getWorkoutTotalWeightState.value = TotalWeightLiftedState()
+        }
+        if (_getDatesOfCompletionState.value.isError) {
+            _getDatesOfCompletionState.value = DatesOfCompletionState()
         }
     }
 

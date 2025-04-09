@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.WorkoutStatisticsDataSource
 import com.koleff.kare_android.domain.repository.WorkoutStatisticsRepository
+import com.koleff.kare_android.domain.wrapper.DatesOfCompletionWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper
 import com.koleff.kare_android.domain.wrapper.TotalSetsWrapper
@@ -17,6 +18,10 @@ class WorkoutStatisticsRepositoryImpl(private val workoutStatisticsDataSource: W
 
     override suspend fun getTotalWeightLifted(workoutId: Int): Flow<ResultWrapper<TotalWeightLiftedWrapper>> {
        return workoutStatisticsDataSource.getTotalWeightLifted(workoutId)
+    }
+
+    override suspend fun getDatesOfCompletionForWorkout(workoutId: Int): Flow<ResultWrapper<DatesOfCompletionWrapper>> {
+        return workoutStatisticsDataSource.getDatesOfCompletionForWorkout(workoutId)
     }
 
     override suspend fun getTotalRepsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>> {

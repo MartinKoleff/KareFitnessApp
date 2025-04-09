@@ -2,11 +2,13 @@ package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.WorkoutTotalTimesCompleted
+import com.koleff.kare_android.data.model.response.DatesOfCompletionResponse
 import com.koleff.kare_android.data.model.response.TotalRepsResponse
 import com.koleff.kare_android.data.model.response.TotalSetsResponse
 import com.koleff.kare_android.data.model.response.TotalTimesCompletedResponse
 import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
 import com.koleff.kare_android.data.room.dao.StatisticsDao
+import com.koleff.kare_android.domain.wrapper.DatesOfCompletionWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper
 import com.koleff.kare_android.domain.wrapper.TotalSetsWrapper
@@ -51,6 +53,20 @@ class WorkoutStatisticsLocalDataSource(
             val result = TotalWeightLiftedWrapper(
                 TotalWeightLiftedResponse(
                     totalWeight = weightLifted
+                )
+            )
+            emit(ResultWrapper.Success(result))
+        }
+
+    override suspend fun getDatesOfCompletionForWorkout(workoutId: Int): Flow<ResultWrapper<DatesOfCompletionWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val datesOfCompletion = statisticsDao.getDatesOfCompletionForWorkout(workoutId) ?: emptyList()
+            val result = DatesOfCompletionWrapper(
+                DatesOfCompletionResponse(
+                    dates = datesOfCompletion
                 )
             )
             emit(ResultWrapper.Success(result))

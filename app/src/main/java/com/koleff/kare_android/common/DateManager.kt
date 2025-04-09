@@ -28,4 +28,10 @@ object DateManager {
         }
         return Date()
     }
+
+    fun convertDateToLocalDate(date: Date): LocalDate {
+        return date.toInstant()
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+    }
 }

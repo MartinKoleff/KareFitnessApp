@@ -18,6 +18,7 @@ import com.koleff.kare_android.domain.repository.GeneralStatisticsRepository
 import com.koleff.kare_android.domain.repository.WorkoutStatisticsRepository
 import com.koleff.kare_android.domain.usecases.statistics.ExerciseStatisticsUseCases
 import com.koleff.kare_android.domain.usecases.statistics.GeneralStatisticsUseCases
+import com.koleff.kare_android.domain.usecases.statistics.GetDatesOfCompletionUseCase
 import com.koleff.kare_android.domain.usecases.statistics.GetDistinctWorkoutsCompletedUseCase
 import com.koleff.kare_android.domain.usecases.statistics.GetExercise1RepMaxUseCase
 import com.koleff.kare_android.domain.usecases.statistics.GetExercisePRUseCase
@@ -206,7 +207,8 @@ object StatisticsModule {
             ),
             getWorkoutTotalWeightLiftedUseCase = GetWorkoutTotalWeightLiftedUseCase(
                 workoutStatisticsRepository
-            )
+            ),
+            getDatesOfCompletionUseCase = GetDatesOfCompletionUseCase(workoutStatisticsRepository)
         )
     }
 }

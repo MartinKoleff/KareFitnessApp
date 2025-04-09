@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.firebase.crashlytics.internal.Logger
+import com.koleff.kare_android.common.DateManager
 import com.koleff.kare_android.common.manager.data.StatisticsManager
 import com.koleff.kare_android.data.model.dto.StatisticScreenType
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -65,7 +65,6 @@ fun StatisticsScreen(
         selectedViewModel.onScreenChange()
     }
 
-
     val fetchSelectedScreenStats: (StatisticScreenType) -> List<StatisticsDataUI> =
         { selectedScreen ->
             when (selectedScreen) {
@@ -84,6 +83,8 @@ fun StatisticsScreen(
         }
 
     val selectedStatistics = fetchSelectedScreenStats(selectedScreenState)
+
+    val localDates = workoutStatisticsState.getDatesOfCompletionState.datesOfCompletion.map { DateManager.convertDateToLocalDate(it) }
 
     var showLoadingDialog by remember { mutableStateOf(false) }
     var showErrorDialog by remember { mutableStateOf(false) }
@@ -210,7 +211,7 @@ fun StatisticsScreen(
 
                 item {
                     if (selectedScreenState == StatisticScreenType.WORKOUT) {
-                        WorkoutCalendarCard(workoutDates = emptyList())
+                        WorkoutCalendarCard(workoutDates = localDates)
                     } else if (selectedScreenState == StatisticScreenType.EXERCISE) {
                         // TODO: Add exercise statistics graph here
                     }
