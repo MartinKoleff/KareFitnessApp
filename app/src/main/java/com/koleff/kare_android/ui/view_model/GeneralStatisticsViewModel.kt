@@ -2,6 +2,7 @@ package com.koleff.kare_android.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.internal.Logger
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.domain.usecases.statistics.StatisticsUseCases
@@ -12,9 +13,11 @@ import com.koleff.kare_android.ui.state.StrongestMuscleGroupState
 import com.koleff.kare_android.ui.state.TotalTimesCompletedState
 import com.koleff.kare_android.ui.state.TotalWeightLiftedState
 import com.koleff.kare_android.ui.state.WorkoutState
+import com.koleff.kare_android.ui.state.WorkoutStatisticsState
 import com.koleff.kare_android.ui.state.WorkoutStreakState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +31,7 @@ class GeneralStatisticsViewModel @Inject constructor(
     private val statisticsUseCases: StatisticsUseCases,
     private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : BaseViewModel(navigationController = navigationController){
+) : BaseViewModel(navigationController = navigationController), StatisticsNavigation {
 
     private var _state: MutableStateFlow<GeneralStatisticsState> =
         MutableStateFlow(GeneralStatisticsState())
@@ -104,7 +107,8 @@ class GeneralStatisticsViewModel @Inject constructor(
                     getStrongestMuscleGroupState = values[7] as StrongestMuscleGroupState
                 )
 
-                Logger.getLogger().i("[GeneralStatisticsViewModel] General statistics state changed: $generalStats")
+                Logger.getLogger()
+                    .i("[GeneralStatisticsViewModel] General statistics state changed: $generalStats")
 
                 _state.value = generalStats
             }.stateIn(viewModelScope, SharingStarted.Eagerly, GeneralStatisticsState())
@@ -216,6 +220,35 @@ class GeneralStatisticsViewModel @Inject constructor(
         }
         if (_getStrongestMuscleGroupState.value.isError) {
             _getStrongestMuscleGroupState.value = StrongestMuscleGroupState()
+        }
+    }
+
+    override fun onScreenChange() {}
+
+    private fun resetGeneralStatistics() {
+        viewModelScope.launch(dispatcher) {
+            _state.value = GeneralStatisticsState(isLoading = true)
+            delay(Constants.fakeDelay)
+
+            _getWorkoutsCompletedState.value = TotalTimesCompletedState()
+            _getDistinctWorkoutsCompletedState.value = TotalTimesCompletedState()
+            _getWorkoutStreakState.value = WorkoutStreakState()
+            _getMostFrequentWorkoutState.value = WorkoutState()
+            _getMostTrainedMuscleGroupState.value = MuscleGroupState()
+            _getMostTrainedExerciseState.value = ExerciseState()
+            _getTotalWeightLiftedState.value = TotalWeightLiftedState()
+            _getStrongestMuscleGroupState.value = StrongestMuscleGroupState()
+
+            _state.value = GeneralStatisticsState(
+                getWorkoutsCompletedState = _getWorkoutsCompletedState.value,
+                getDistinctWorkoutsCompletedState = _getDistinctWorkoutsCompletedState.value,
+                getWorkoutStreakUseCase = _getWorkoutStreakState.value,
+                getMostFrequentWorkoutState = _getMostFrequentWorkoutState.value,
+                getMostTrainedMuscleGroupState = _getMostTrainedMuscleGroupState.value,
+                getMostTrainedExerciseState = _getMostTrainedExerciseState.value,
+                getTotalWeightLiftedState = _getTotalWeightLiftedState.value,
+                getStrongestMuscleGroupState = _getStrongestMuscleGroupState.value
+            )
         }
     }
 }

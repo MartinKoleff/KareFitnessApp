@@ -2,11 +2,13 @@ package com.koleff.kare_android.ui.view_model
 
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.internal.Logger
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.preferences.Preferences
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
 import com.koleff.kare_android.domain.usecases.statistics.StatisticsUseCases
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
@@ -18,14 +20,20 @@ import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.ui.state.TotalRepsPerformedState
 import com.koleff.kare_android.ui.state.TotalSetsPerformedState
 import com.koleff.kare_android.ui.state.TotalWeightLiftedState
+import com.koleff.kare_android.ui.state.WorkoutStatisticsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,7 +45,7 @@ class ExerciseStatisticsViewModel @Inject constructor(
     private val preferences: Preferences,
     private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher
-) : BaseViewModel(navigationController = navigationController) {
+) : BaseViewModel(navigationController = navigationController), StatisticsNavigation{
 
     private var _state: MutableStateFlow<ExerciseStatisticsState> =
         MutableStateFlow(ExerciseStatisticsState())
@@ -133,51 +141,65 @@ class ExerciseStatisticsViewModel @Inject constructor(
         onSearchEvent(event)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
     private fun onSearchEvent(event: OnSearchExerciseEvent) {
         Logger.getLogger().i("OnSearchEvent: $event")
         searchJob?.cancel()  //Cancel previous search
 
         viewModelScope.launch(dispatcher) {
-            exerciseUseCases.onSearchExerciseUseCase(event).collect { exerciseState ->
-                _exerciseState.value = exerciseState
+            exerciseUseCases.onSearchExerciseUseCase(event)
+                .debounce(Constants.fakeSmallDelay) //Debounce to avoid rapid search calls
+                .distinctUntilChanged() //Ignore repeated searches
+                .flatMapLatest { exerciseState ->
+                    _exerciseState.value = exerciseState
 
-                val isSearching = _searchState.value.isSearching
-                if (exerciseState.exerciseList.isNotEmpty() && isSearching) {
+                    val isSearching = _searchState.value.isSearching
+                    if (exerciseState.exerciseList.isNotEmpty() && isSearching && exerciseState.isSuccessful) {
 
-                    Logger.getLogger().i("Search exercise state: Search is happening")
-                    _selectedExercise.value = exerciseState.exerciseList.first()
-                } else {
-                    delay(500) //Fixed spam delete flow receiving semi last state later than the reset state.
+                        Logger.getLogger().i("Search exercise state: Search is happening")
+                        _selectedExercise.value = exerciseState.exerciseList.first()
+                    } else if (!exerciseState.isLoading) {
+                        Logger.getLogger()
+                            .i("Search exercise state: Reset exercise and stats state")
+                        _selectedExercise.value = ExerciseDto()
+                        resetExerciseStatistics()
+                    }
 
-                    Logger.getLogger().i("Search exercise state: Reset exercise and stats state")
-                    _selectedExercise.value = ExerciseDto()
-                    resetExerciseStatistics()
-                }
-                Logger.getLogger().i("Search exercise state: ${exerciseState.exerciseList}")
-            }
+                    Logger.getLogger().i("Search exercise state: ${exerciseState.exerciseList}")
+                    _exerciseState
+                }.collect {}
         }
     }
 
     private fun resetExerciseStatistics() {
-        _getExercisePRState.value = ExercisePRState()
-        _getExercise1RepMaxState.value = ExercisePRState()
-        _getExerciseTotalRepsState.value = TotalRepsPerformedState()
-        _getExerciseTotalSetsState.value = TotalSetsPerformedState()
-        _getExerciseTotalWeightState.value = TotalWeightLiftedState()
+        viewModelScope.launch(dispatcher) {
+            _state.value = ExerciseStatisticsState(isLoading = true)
+            delay(Constants.fakeDelay)
 
-        Logger.getLogger().i("Stats state reset!")
+            _getExercisePRState.value = ExercisePRState()
+            _getExercise1RepMaxState.value = ExercisePRState()
+            _getExerciseTotalRepsState.value = TotalRepsPerformedState()
+            _getExerciseTotalSetsState.value = TotalSetsPerformedState()
+            _getExerciseTotalWeightState.value = TotalWeightLiftedState()
+
+            _state.value = ExerciseStatisticsState(
+                getExercisePRState = _getExercisePRState.value,
+                getExercise1RepMaxState = _getExercise1RepMaxState.value,
+                getExerciseTotalRepsPerformedState = _getExerciseTotalRepsState.value,
+                getExerciseTotalSetsPerformedState = _getExerciseTotalSetsState.value,
+                getExerciseTotalWeightLiftedState = _getExerciseTotalWeightState.value
+            )
+        }
     }
 
     private fun observeSelectedExercise() {
         viewModelScope.launch {
             selectedExercise.collect { exercise ->
                 if (exercise != ExerciseDto()) {
-                    Logger.getLogger()
-                        .i("Selected exercise: $exercise, Get exercise statistics called!")
+                    Logger.getLogger().i("Selected exercise: $exercise, Get exercise statistics called!")
                     getExerciseStatistics()
                 } else {
-                    Logger.getLogger()
-                        .i("Selected exercise: $exercise, Reset exercise statistics called!")
+                    Logger.getLogger().i("Selected exercise: $exercise, Reset exercise statistics called!")
                     resetExerciseStatistics()
                 }
             }
@@ -198,7 +220,10 @@ class ExerciseStatisticsViewModel @Inject constructor(
                     getExercise1RepMaxState = values[1] as ExercisePRState,
                     getExerciseTotalRepsPerformedState = values[2] as TotalRepsPerformedState,
                     getExerciseTotalSetsPerformedState = values[3] as TotalSetsPerformedState,
-                    getExerciseTotalWeightLiftedState = values[4] as TotalWeightLiftedState
+                    getExerciseTotalWeightLiftedState = values[4] as TotalWeightLiftedState,
+                    isLoading = values.any { it.isLoading } || exerciseState.value.isLoading,
+                    isError = values.any { it.isError },
+                    error = values.first { it.error != null }?.error ?: KareError.GENERIC
                 )
 
                 _state.value = exerciseStats
@@ -211,7 +236,7 @@ class ExerciseStatisticsViewModel @Inject constructor(
     }
 
     private fun getExerciseStatistics() {
-        if(selectedExercise.value == ExerciseDto()) return
+        if (selectedExercise.value == ExerciseDto()) return
         getExercisePR(exerciseId = selectedExercise.value.exerciseId)
         getExercise1RepMax(exerciseId = selectedExercise.value.exerciseId)
         getExerciseTotalRepsPerformed(exerciseId = selectedExercise.value.exerciseId)
@@ -223,7 +248,6 @@ class ExerciseStatisticsViewModel @Inject constructor(
         getExercises()
         observeExerciseStatisticsState()
         observeSelectedExercise()
-//        getExerciseStatistics()
     }
 
     //Exercise stats
@@ -291,5 +315,10 @@ class ExerciseStatisticsViewModel @Inject constructor(
         if (_getExerciseTotalWeightState.value.isError) {
             _getExerciseTotalWeightState.value = TotalWeightLiftedState()
         }
+    }
+
+    override fun onScreenChange() {
+        _selectedExercise.value = ExerciseDto() //Goes in observe...
+//        resetExerciseStatistics()
     }
 }
