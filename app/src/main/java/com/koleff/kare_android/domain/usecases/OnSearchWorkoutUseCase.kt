@@ -1,9 +1,11 @@
 package com.koleff.kare_android.domain.usecases
 
+import com.google.firebase.crashlytics.internal.Logger
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
 import com.koleff.kare_android.ui.state.WorkoutListState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 
 class OnSearchWorkoutUseCase() {
@@ -15,25 +17,30 @@ class OnSearchWorkoutUseCase() {
                     val isSearching = event.isSearching
 
                     if (!isSearching) {
-                        invoke(
-                            OnSearchWorkoutEvent.OnSearchTextChange(
-                                searchText = "",
-                                workouts = event.workouts
+                        emitAll(
+                            invoke(
+                                OnSearchWorkoutEvent.OnSearchTextChange(
+                                    searchText = "",
+                                    workouts = event.workouts
+                                )
                             )
                         )
                     }
                 }
 
                 is OnSearchWorkoutEvent.OnSearchTextChange -> {
+                    val workouts = if (event.searchText.isEmpty()) {
+                        emptyList()
+                    } else event.workouts.filter {
+
+                        //Custom search filter...
+                        it.name.contains(event.searchText, ignoreCase = true)
+                    }
 
                     //Search filter
                     emit(
                         WorkoutListState(
-                            workoutList = event.workouts.filter {
-
-                                //Custom search filter...
-                                it.name.contains(event.searchText, ignoreCase = true)
-                            },
+                            workoutList = workouts,
                             isSuccessful = true
                         )
                     )

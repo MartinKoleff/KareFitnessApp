@@ -1,12 +1,9 @@
 package com.koleff.kare_android.domain.usecases
 
-import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
-import com.koleff.kare_android.ui.state.ExerciseState
 import com.koleff.kare_android.ui.state.ExerciseListState
-import com.koleff.kare_android.ui.state.WorkoutListState
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
 
 class OnSearchExerciseUseCase() {
@@ -18,10 +15,12 @@ class OnSearchExerciseUseCase() {
                     val isSearching = event.isSearching
 
                     if (!isSearching) {
-                        invoke(
-                            OnSearchExerciseEvent.OnSearchTextChange(
-                                searchText = "",
-                                exercises = event.exercises,
+                        emitAll(
+                            invoke(
+                                OnSearchExerciseEvent.OnSearchTextChange(
+                                    searchText = "",
+                                    exercises = event.exercises,
+                                )
                             )
                         )
                     }

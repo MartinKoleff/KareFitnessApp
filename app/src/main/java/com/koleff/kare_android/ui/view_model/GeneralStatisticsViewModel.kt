@@ -1,39 +1,25 @@
 package com.koleff.kare_android.ui.view_model
 
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.crashlytics.internal.Logger
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.NavigationController
-import com.koleff.kare_android.common.preferences.Preferences
-import com.koleff.kare_android.data.model.dto.ExerciseDto
-import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.domain.usecases.ExerciseUseCases
-import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.domain.usecases.statistics.StatisticsUseCases
-import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.event.OnSearchWorkoutEvent
-import com.koleff.kare_android.ui.state.ExerciseListState
-import com.koleff.kare_android.ui.state.ExercisePRState
 import com.koleff.kare_android.ui.state.ExerciseState
-import com.koleff.kare_android.ui.state.ExerciseStatisticsState
 import com.koleff.kare_android.ui.state.GeneralStatisticsState
 import com.koleff.kare_android.ui.state.MuscleGroupState
-import com.koleff.kare_android.ui.state.SearchState
-import com.koleff.kare_android.ui.state.StatisticsState
 import com.koleff.kare_android.ui.state.StrongestMuscleGroupState
-import com.koleff.kare_android.ui.state.TotalRepsPerformedState
-import com.koleff.kare_android.ui.state.TotalSetsPerformedState
 import com.koleff.kare_android.ui.state.TotalTimesCompletedState
 import com.koleff.kare_android.ui.state.TotalWeightLiftedState
-import com.koleff.kare_android.ui.state.WorkoutListState
 import com.koleff.kare_android.ui.state.WorkoutState
-import com.koleff.kare_android.ui.state.WorkoutStatisticsState
 import com.koleff.kare_android.ui.state.WorkoutStreakState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -118,8 +104,10 @@ class GeneralStatisticsViewModel @Inject constructor(
                     getStrongestMuscleGroupState = values[7] as StrongestMuscleGroupState
                 )
 
+                Logger.getLogger().i("[GeneralStatisticsViewModel] General statistics state changed: $generalStats")
+
                 _state.value = generalStats
-            }
+            }.stateIn(viewModelScope, SharingStarted.Eagerly, GeneralStatisticsState())
         }
     }
 

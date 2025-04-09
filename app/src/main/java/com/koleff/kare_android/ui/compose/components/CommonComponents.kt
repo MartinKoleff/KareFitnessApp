@@ -630,12 +630,11 @@ fun SearchBar(
 
                     keyboardController?.hide()
                     focusManager.clearFocus()
+                } else {
+                    onSearch(it) //Trigger search
                 }
 
                 onSearchTextChange(it) // Update external state
-
-                // Trigger search
-                onSearch(it)
             },
             label = { Text(text = hint.ifEmpty { "Search" }, style = textStyle) },
             leadingIcon = {
