@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.firebase.crashlytics.internal.Logger
 import com.koleff.kare_android.common.manager.data.StatisticsManager
 import com.koleff.kare_android.data.model.dto.StatisticScreenType
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -44,6 +45,8 @@ fun StatisticsScreen(
     val generalStatisticsState by generalStatisticsViewModel.state.collectAsState()
     val workoutStatisticsState by workoutStatisticsViewModel.state.collectAsState()
     val exerciseStatisticsState by exerciseStatisticsViewModel.state.collectAsState()
+    val selectedExercise by exerciseStatisticsViewModel.selectedExercise.collectAsState()
+    val selectedWorkout by workoutStatisticsViewModel.selectedWorkout.collectAsState()
 
     var selectedScreenState by remember { mutableStateOf(StatisticScreenType.GENERAL) }
     val onScreenChange: (Int) -> Unit = { selectedScreenId ->
@@ -86,9 +89,11 @@ fun StatisticsScreen(
         }
     }
 
+    LaunchedEffect(generalStatisticsState) {
+        Logger.getLogger().i("General statistics state changed: $generalStatisticsState")
+    }
+
     var searchText by remember { mutableStateOf("") }
-    val selectedWorkout by remember { mutableStateOf(WorkoutDto()) }
-    val selectedExercise by remember { mutableStateOf(ExerciseDto()) }
 
     MainScreenScaffold(
         "Statistics",
@@ -108,71 +113,97 @@ fun StatisticsScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                    //Segment buttons
-                    StatisticsSegmentButton(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 12.dp),
-                        selectedOptionIndex = 0, //Statistics screen
-                        isDisabled = showLoadingDialog,
-                        onScreenChange = {
-                            onScreenChange(it)
-                        }
-                    )
+                StatisticsSegmentButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 12.dp, end = 12.dp, top = 8.dp),
+                    selectedOptionIndex = 0,
+                    isDisabled = showLoadingDialog,
+                    onScreenChange = {
+                        onScreenChange(it)
+                    }
+                )
 
+                LazyColumn {
                     if (selectedScreenState == StatisticScreenType.WORKOUT) {
-                        SearchBar(
-                            searchText = searchText,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            onSearch = { text ->
-                                workoutStatisticsViewModel.onTextChange(text)
-                            },
-                            onSearchTextChange = {
-                                searchText = it
-                            },
-                            onToggleSearch = {
-                                workoutStatisticsViewModel.onToggleSearch()
-                            })
-
-                        if (selectedWorkout != WorkoutDto()) {
-                            WorkoutBannerV2(workout = selectedWorkout, onClick = {})
+                        item {
+                            SearchBar(
+                                searchText = searchText,
+                                hint = "Search for workout",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                onSearch = { text ->
+                                    workoutStatisticsViewModel.onTextChange(text)
+                                },
+                                onSearchTextChange = {
+                                    searchText = it
+                                },
+                                onToggleSearch = {
+                                    workoutStatisticsViewModel.onToggleSearch()
+                                }
+                            )
                         }
-                    } else if (selectedScreenState == StatisticScreenType.EXERCISE) {
-                        SearchBar(
-                            searchText = searchText,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            onSearch = { text ->
-                                exerciseStatisticsViewModel.onTextChange(text)
-                            },
-                            onSearchTextChange = {
-                                searchText = it
-                            },
-                            onToggleSearch = {
-                                exerciseStatisticsViewModel.onToggleSearch()
-                            })
 
-                        if (selectedExercise != ExerciseDto()) {
-                            ExerciseBannerV2(
-                                exercise = selectedExercise,
+                        item {
+                            WorkoutBannerV2(
+                                workout = selectedWorkout,
                                 showDifficulty = false,
+                                showMachineType = false,
+                                showPlayerIcon = false,
+                                showTimeAndDateInfo = false,
+                                isEnabled = false,
                                 onClick = {})
                         }
                     }
 
-                    StatisticsGrid(
-                        statistics = selectedStatistics
-                    )
+                    if (selectedScreenState == StatisticScreenType.EXERCISE) {
+                        item {
+                            SearchBar(
+                                searchText = searchText,
+                                hint = "Search for exercise",
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                onSearch = { text ->
+                                    exerciseStatisticsViewModel.onTextChange(text)
+                                },
+                                onSearchTextChange = {
+                                    searchText = it
+                                },
+                                onToggleSearch = {
+                                    exerciseStatisticsViewModel.onToggleSearch()
+                                }
+                            )
+                        }
 
-                    if (selectedScreenState == StatisticScreenType.WORKOUT) {
-                        WorkoutCalendarCard(workoutDates = emptyList())
-                    } else if (selectedScreenState == StatisticScreenType.EXERCISE) {
-                        //Graph
+                        item {
+                            ExerciseBannerV2(
+                                exercise = selectedExercise,
+                                showDifficulty = false,
+                                showPlayerIcon = false,
+                                showMachineType = false,
+                                isEnabled = false,
+                                onClick = {}
+                            )
+                        }
+                    }
+
+                    item {
+                        StatisticsGrid(
+                            statistics = selectedStatistics
+                        )
+                    }
+
+                    item {
+                        if (selectedScreenState == StatisticScreenType.WORKOUT) {
+                            WorkoutCalendarCard(workoutDates = emptyList())
+                        } else if (selectedScreenState == StatisticScreenType.EXERCISE) {
+                            // TODO: Add exercise statistics graph here
+                        }
                     }
                 }
             }
         }
+    }
 }
