@@ -48,6 +48,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                 val result = DoWorkoutWrapper(
                     DoWorkoutResponse(
                         data = DoWorkoutData(
+                            isSetupCompleted = true,
                             currentExercise = firstExercise,
                             currentSetNumber = firstSetNumber,
                             nextExercise = nextExercise,
@@ -167,6 +168,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                     currentExercise == ExerciseDto()
                             || (currentSetNumber == -1 && nextSetNumber == -1)
                 val updatedData = this.copy(
+                    isSetupCompleted = isSetupCompleted,
                     currentExercise = currentExercise,
                     currentSetNumber = currentSetNumber,
                     nextExercise = nextExercise,
@@ -255,6 +257,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                     (newNextExercise == ExerciseDto() && nextSetNumber == -1)
                             && (currentSetNumber == newCurrentExercise.sets.size || currentSetNumber == -1)
                 val updatedData = this.copy(
+                    isSetupCompleted = isSetupCompleted,
                     currentExercise = newCurrentExercise,
                     currentSetNumber = currentSetNumber,
                     nextExercise = newNextExercise,

@@ -151,6 +151,10 @@ dependencies {
     implementation "androidx.compose.material3:material3:$compose_material3_version"
     implementation "androidx.compose.material:material:$compose_material_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_material_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+
+    //Coil for Compose
+    implementation "io.coil-kt:coil-compose:2.3.0"
 
     //Pull to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:$google_accompanist_version"
@@ -198,6 +202,7 @@ dependencies {
 
     //YouTube player
     implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:$youtube_video_player_version"
+    implementation "com.pierfrancescosoffritti.androidyoutubeplayer:custom-ui:$youtube_video_player_version"
 
     //GMS
     implementation "com.google.firebase:firebase-analytics:$firebase_analytics_version"
@@ -240,8 +245,8 @@ dependencies {
     androidTestImplementation(project(":shared-test"))
 
     //JUnit platform
-    testImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
-    androidTestImplementation ("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
+    testImplementation("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
+    androidTestImplementation("org.junit.platform:junit-platform-suite-api:$junit_jupiter_platform_version")
 
     //Mockk - Mocking
     androidTestImplementation "io.mockk:mockk-android:$mockk_version"
