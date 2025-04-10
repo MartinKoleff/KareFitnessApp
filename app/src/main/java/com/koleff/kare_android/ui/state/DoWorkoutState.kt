@@ -1,6 +1,6 @@
 package com.koleff.kare_android.ui.state
 
-import com.koleff.kare_android.data.model.dto.ExerciseDto
+import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
@@ -16,11 +16,12 @@ data class DoWorkoutState(
 
 data class DoWorkoutData(
     val isSetupCompleted: Boolean = false,
-    val currentExercise: ExerciseDto = ExerciseDto(),
-    val nextExercise: ExerciseDto = ExerciseDto(),
+    val currentExercise: ExerciseData = ExerciseData(),
+    val nextExercise: ExerciseData = ExerciseData(),
     val currentSetNumber: Int = -1,
     val nextSetNumber: Int = -1,
     val workout: WorkoutDetailsDto = WorkoutDetailsDto(),
+    val exercises: List<ExerciseData> = emptyList(),
     var defaultTotalSets: Int = 4,
     val defaultExerciseTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 1, seconds = 0),
     val countdownTime: ExerciseTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10),
@@ -30,30 +31,30 @@ data class DoWorkoutData(
     var isRestCountdown: Boolean = false
 ) {
     val currentSet: ExerciseSetDto
-        get() = currentExercise.sets.getOrNull(currentSetNumber - 1)
+        get() = currentExercise.exerciseDto.sets.getOrNull(currentSetNumber - 1)
             ?: ExerciseSetDto(
                 number = -1,
-                workoutId = currentExercise.workoutId,
-                exerciseId = currentExercise.exerciseId,
+                workoutId = currentExercise.exerciseDto.workoutId,
+                exerciseId = currentExercise.exerciseDto.exerciseId,
                 reps = -1,
                 weight = -1f
             )
 
     val nextSet: ExerciseSetDto
-        get() = if (currentSetNumber == currentExercise.sets.size && nextSetNumber <= currentSetNumber)
-            nextExercise.sets.getOrNull(nextSetNumber - 1) ?: defaultSet
+        get() = if (currentSetNumber == currentExercise.exerciseDto.sets.size && nextSetNumber <= currentSetNumber)
+            nextExercise.exerciseDto.sets.getOrNull(nextSetNumber - 1) ?: defaultSet
         else
-            currentExercise.sets.getOrNull(nextSetNumber - 1) ?: defaultSet
+            currentExercise.exerciseDto.sets.getOrNull(nextSetNumber - 1) ?: defaultSet
 
     val isNextExercise: Boolean //Used for UI only...
-        get() = currentSetNumber == currentExercise.sets.size
+        get() = currentSetNumber == currentExercise.exerciseDto.sets.size
 
-    val totalSets: Int = if(isNextExercise) nextExercise.sets.size else currentExercise.sets.size
+    val totalSets: Int = if(isNextExercise) nextExercise.exerciseDto.sets.size else currentExercise.exerciseDto.sets.size
 
     private val defaultSet =  ExerciseSetDto(
         number = -1,
-        workoutId = currentExercise.workoutId,
-        exerciseId = currentExercise.exerciseId,
+        workoutId = currentExercise.exerciseDto.workoutId,
+        exerciseId = currentExercise.exerciseDto.exerciseId,
         reps = -1,
         weight = -1f
     )

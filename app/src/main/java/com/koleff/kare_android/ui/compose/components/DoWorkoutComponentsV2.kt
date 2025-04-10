@@ -430,7 +430,7 @@ fun NextExerciseInfoScreen(
                     onClick = {
                         isPause = !isPause
 
-                        if(isPause) onPause() else onResume()
+                        if (isPause) onPause() else onResume()
                     }, isPause = isPause
                 )
 
@@ -925,8 +925,8 @@ fun ExerciseDataSheetRow(
                     //Calls launched effect...
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                        ),
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -1384,7 +1384,9 @@ fun DoWorkoutFooterPreview() {
 @Composable
 fun YoutubeVerticalVideoPlayer(
     lifecycleOwner: LifecycleOwner,
-    onLoadingCompleted: () -> Unit) {
+    videoUrl: String,
+    onLoadingCompleted: () -> Unit
+) {
     val iFramePlayerOptions = IFramePlayerOptions.Builder()
         .controls(0)
         .fullscreen(0)
@@ -1427,7 +1429,7 @@ fun YoutubeVerticalVideoPlayer(
                             defaultPlayerUiController.showVideoTitle(false)
                             setCustomPlayerUi(defaultPlayerUiController.rootView)
 
-                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle,"sO9DMkyZYGM", 0f)
+                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle, videoUrl, 0f)
                         }
 
                         override fun onStateChange(
@@ -1443,7 +1445,7 @@ fun YoutubeVerticalVideoPlayer(
 
                         override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
                             Log.d("YoutubeVerticalVideoPlayer", "onCurrentSecond: $second")
-                            if(second >= currentVideoDuration - 1f){ //Cuts 1 second repeat without END state
+                            if (second >= currentVideoDuration - 1f) { //Cuts 1 second repeat without END state
                                 youTubePlayer.seekTo(0f)
                             }
 
@@ -1470,7 +1472,8 @@ fun YoutubeVerticalVideoPlayer(
 @Composable
 private fun YoutubeVerticalVideoPlayerPreview() {
     val lifecycleOwner = LocalLifecycleOwner.current
-    YoutubeVerticalVideoPlayer(lifecycleOwner = lifecycleOwner){
+    val videoUrl = ""
+    YoutubeVerticalVideoPlayer(lifecycleOwner = lifecycleOwner, videoUrl = videoUrl) {
     }
 }
 

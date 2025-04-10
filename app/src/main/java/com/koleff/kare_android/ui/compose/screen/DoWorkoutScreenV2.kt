@@ -171,7 +171,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
 
     //Above all screens
     ExerciseDataSheetModal2(
-        exercise = state.doWorkoutData.currentExercise,
+        exercise = state.doWorkoutData.currentExercise.exerciseDto,
         currentSetNumber = state.doWorkoutData.currentSetNumber,
         defaultTotalSets = state.doWorkoutData.defaultTotalSets,
         isNextExercise = state.doWorkoutData.isNextExercise,
@@ -181,7 +181,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
     ) { exerciseDataSheetPaddingValues ->
         DoWorkoutScaffold(
             modifier = screenModifier,
-            screenTitle = state.doWorkoutData.currentExercise.name,
+            screenTitle = state.doWorkoutData.currentExercise.exerciseDto.name,
             onExitWorkoutAction = {
 
                 //Disable exit workout button when NextExerciseCountdownScreen is visible
@@ -199,7 +199,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
         ) {
 
             //Background video player
-            YoutubeVerticalVideoPlayer(LocalLifecycleOwner.current) {
+            YoutubeVerticalVideoPlayer(lifecycleOwner = LocalLifecycleOwner.current, videoUrl = state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl) {
                 if(state.doWorkoutData.isSetupCompleted) return@YoutubeVerticalVideoPlayer //Setup completed
 
                 Log.d("DoWorkoutScreen", "Background video player loaded.")
@@ -231,7 +231,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
             )
 
             NextExerciseInfoScreen(
-                nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise else state.doWorkoutData.currentExercise,
+                nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise.exerciseDto else state.doWorkoutData.currentExercise.exerciseDto,
                 set = state.doWorkoutData.nextSetNumber,
                 totalSets = state.doWorkoutData.totalSets,
                 weight = state.doWorkoutData.nextSet.weight,
