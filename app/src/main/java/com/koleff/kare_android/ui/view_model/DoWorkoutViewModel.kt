@@ -10,6 +10,7 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
+import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
@@ -95,7 +96,7 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
-     fun setup(onSetupCompleted: () -> Unit) {
+    fun setup(onSetupCompleted: () -> Unit) {
         viewModelScope.launch(dispatcher) {
 
             //Fetch workout
@@ -129,7 +130,7 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
-    private fun startTimerLogger(){
+    private fun startTimerLogger() {
         viewModelScope.launch(Dispatchers.Default) {
             while (isLogging) {
                 Log.d("DoWorkoutViewModel", "----------------Timers------------------")
@@ -215,7 +216,9 @@ class DoWorkoutViewModel @Inject constructor(
         Log.d("DoWorkoutViewModel", "Select next exercise requested.")
 
         //Workout completed
-        if (_state.value.doWorkoutData.isWorkoutCompleted || _state.value.doWorkoutData.nextExercise == ExerciseDto()) { //No next exercise...
+        if (_state.value.doWorkoutData.isWorkoutCompleted ||
+            _state.value.doWorkoutData.nextExercise == ExerciseData()
+        ) { //No next exercise...
             val updatedData = _state.value.doWorkoutData.copy(isWorkoutCompleted = true)
             _state.value = _state.value.copy(doWorkoutData = updatedData)
             hideNextExerciseCountdownScreen()

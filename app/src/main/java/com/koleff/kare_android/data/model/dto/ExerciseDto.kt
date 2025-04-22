@@ -1,6 +1,7 @@
 package com.koleff.kare_android.data.model.dto
 
 import android.os.Parcelable
+import com.koleff.kare_android.data.ExerciseExtended
 import com.koleff.kare_android.data.KareEntity
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.squareup.moshi.Json
@@ -22,7 +23,7 @@ data class ExerciseDto(
     val snapshot: String = "",
     @field:Json(name = "sets")
     val sets: List<ExerciseSetDto> = emptyList()
-): Parcelable, KareEntity<Exercise> {
+): Parcelable, KareEntity<Exercise>, ExerciseExtended {
     override fun toEntity(): Exercise {
         return Exercise(
             exerciseId = exerciseId,
@@ -31,6 +32,18 @@ data class ExerciseDto(
             muscleGroup = muscleGroup,
             machineType = machineType,
             snapshot = snapshot
+        )
+    }
+
+    override fun toExerciseDetails(): ExerciseDetailsDto {
+        return ExerciseDetailsDto(
+            id = exerciseId,
+            workoutId = workoutId,
+            name = name,
+            muscleGroup = muscleGroup,
+            machineType = machineType,
+            videoUrl = "",
+            description = ""
         )
     }
 }

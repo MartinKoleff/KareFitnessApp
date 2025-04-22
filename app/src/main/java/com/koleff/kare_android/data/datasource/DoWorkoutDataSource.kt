@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface DoWorkoutDataSource {
 
-    suspend fun initialSetup(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<DoWorkoutWrapper>>
+    suspend fun initialSetup(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<DoWorkoutWrapper>>
 
     suspend fun skipNextSet(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>>
 
