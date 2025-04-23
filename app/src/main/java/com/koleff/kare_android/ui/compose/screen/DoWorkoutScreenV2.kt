@@ -198,13 +198,13 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
             }
         ) {
 
-            //Background video player
-            YoutubeVerticalVideoPlayer(lifecycleOwner = LocalLifecycleOwner.current, videoUrl = state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl) {
-                if(state.doWorkoutData.isSetupCompleted) return@YoutubeVerticalVideoPlayer //Setup completed
-
-                Log.d("DoWorkoutScreen", "Background video player loaded.")
-                doWorkoutViewModel.setup {
-                    Log.d("DoWorkoutScreen", "Setup completed.")
+            if(state.doWorkoutData.isSetupCompleted) {
+                YoutubeVerticalVideoPlayer(
+                    lifecycleOwner = LocalLifecycleOwner.current,
+                    videoUrl = state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl
+                ) {
+                    Log.d("DoWorkoutScreen", "Background video player loaded.")
+                    doWorkoutViewModel.onSetupCompleted()
                 }
             }
 

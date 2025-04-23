@@ -11,7 +11,6 @@ import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.ExerciseData
-import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
 import com.koleff.kare_android.domain.usecases.DoWorkoutPerformanceMetricsUseCases
@@ -94,9 +93,11 @@ class DoWorkoutViewModel @Inject constructor(
             workoutTimer = TimerUtil(defaultExerciseTime.toSeconds())
             countdownTimer = TimerUtil(countdownTime.toSeconds())
         }
+
+        setup()
     }
 
-    fun setup(onSetupCompleted: () -> Unit) {
+    private fun setup() {
         viewModelScope.launch(dispatcher) {
 
             //Fetch workout
@@ -109,16 +110,6 @@ class DoWorkoutViewModel @Inject constructor(
                     doWorkoutUseCases.doWorkoutInitialSetupUseCase.invoke(selectedWorkoutDetails)
                         .collect { setupResult ->
                             _state.value = setupResult
-
-                            //Start workout timer
-                            if (setupResult.isSuccessful) {
-
-                                //Create do workout performance metrics
-                                createDoWorkoutPerformanceMetrics()
-
-                                startWorkoutTimer(isInitialCall = true)
-                                onSetupCompleted()
-                            }
                         }
                 } else if (result.isError) {
                     _state.value = DoWorkoutState(
@@ -128,6 +119,15 @@ class DoWorkoutViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun onSetupCompleted(){
+
+        //Create do workout performance metrics
+        createDoWorkoutPerformanceMetrics()
+
+        startWorkoutTimer(isInitialCall = true)
+        onSetupCompleted()
     }
 
     private fun startTimerLogger() {
