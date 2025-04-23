@@ -121,13 +121,12 @@ class DoWorkoutViewModel @Inject constructor(
         }
     }
 
-    fun onSetupCompleted(){
+    fun onSetupCompleted() {
 
         //Create do workout performance metrics
         createDoWorkoutPerformanceMetrics()
 
         startWorkoutTimer(isInitialCall = true)
-        onSetupCompleted()
     }
 
     private fun startTimerLogger() {
