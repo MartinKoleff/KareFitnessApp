@@ -99,6 +99,12 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
 
         showWorkoutCompletedDialog = state.doWorkoutData.isWorkoutCompleted
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
+
+        Log.d("DoWorkoutScreen", "Current exercise: ${state.doWorkoutData.currentExercise}")
+        Log.d(
+            "DoWorkoutScreen",
+            "Current video url: ${state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl}"
+        )
     }
 
     var showPlayerOverlay by remember { mutableStateOf(false) }
@@ -154,13 +160,20 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                 .alpha(0.15f)
         }
     } else {
+        Modifier.fillMaxSize()
+    }
+
+    val pauseModifier = if (showNextExerciseCountdown) {
+        Modifier.fillMaxSize()
+    } else {
         Modifier
             .fillMaxSize()
             .clickable {
-                if (!showNextExerciseCountdown) {
+                if (!showNextExerciseCountdown && doWorkoutViewModel.state.value.doWorkoutData.isSetupCompleted) {
                     doWorkoutViewModel
                         .onScreenClick()
                         .also {
+                            Log.d("DoWorkoutScreen", "Screen clicked.")
                             isPaused = !isPaused
 
                             doWorkoutViewModel.showPlayerOverlay()
@@ -196,10 +209,12 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                     doWorkoutViewModel.skipNextExercise()
                 }
             }
-        ) {
-
-            if(state.doWorkoutData.isSetupCompleted) {
+        ) { scaffoldPadding ->
+            if (state.doWorkoutData.isSetupCompleted) {
                 YoutubeVerticalVideoPlayer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(scaffoldPadding),
                     lifecycleOwner = LocalLifecycleOwner.current,
                     videoUrl = state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl
                 ) {
@@ -221,6 +236,9 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                     currentSet = state.doWorkoutData.currentSet
                 )
             }
+
+            //Pause/Resume click listener
+            Box(pauseModifier.padding(scaffoldPadding))
         }
 
         //Next exercise countdown screen overlay

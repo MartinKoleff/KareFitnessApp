@@ -1383,10 +1383,13 @@ fun DoWorkoutFooterPreview() {
 //Vertical video player
 @Composable
 fun YoutubeVerticalVideoPlayer(
+    modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner,
     videoUrl: String,
     onLoadingCompleted: () -> Unit
 ) {
+    var isVideoInitialLoadingCompleted by remember { mutableStateOf(false) }
+
     val iFramePlayerOptions = IFramePlayerOptions.Builder()
         .controls(0)
         .fullscreen(0)
@@ -1398,22 +1401,32 @@ fun YoutubeVerticalVideoPlayer(
 //            .list("P92RE0NV-5c")
         .build()
 
+    var youTubePlayerRef by remember { mutableStateOf<YouTubePlayer?>(null) }
+    LaunchedEffect(videoUrl) {
+        Log.d("YoutubeVerticalVideoPlayer", "On new video url")
+
+        youTubePlayerRef?.loadVideo(videoUrl, 0f)
+    }
 
     AndroidView(
-        modifier = Modifier
-            .fillMaxSize()
-            .alpha(0.65f),
+        modifier = modifier
+            .alpha(0.65f)
+            .padding(bottom = 60.dp), //Video title padding
         factory = { context ->
             YouTubePlayerView(context = context).apply {
                 lifecycleOwner.lifecycle.addObserver(this)
+
                 enableAutomaticInitialization = false
 
                 val youtubePlayerView = this
                 var currentVideoDuration = 0.0f
+
                 initialize(
                     object : AbstractYouTubePlayerListener() {
                         override fun onReady(youTubePlayer: YouTubePlayer) {
                             Log.d("YoutubeVerticalVideoPlayer", "onReady")
+                            youTubePlayerRef = youTubePlayer // Keep reference
+
                             matchParent()
 
                             val defaultPlayerUiController =
@@ -1423,13 +1436,13 @@ fun YoutubeVerticalVideoPlayer(
                             defaultPlayerUiController.showUi(false)
                             defaultPlayerUiController.showSeekBar(false)
                             defaultPlayerUiController.showFullscreenButton(false)
-                            defaultPlayerUiController.showVideoTitle(false)
                             defaultPlayerUiController.showCurrentTime(false)
                             defaultPlayerUiController.showYouTubeButton(false)
                             defaultPlayerUiController.showVideoTitle(false)
                             setCustomPlayerUi(defaultPlayerUiController.rootView)
 
-                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle, videoUrl, 0f)
+//                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle, videoUrl, 0f)
+                            youTubePlayer.loadVideo(videoUrl, 0f)
                         }
 
                         override fun onStateChange(
@@ -1437,8 +1450,12 @@ fun YoutubeVerticalVideoPlayer(
                             state: PlayerConstants.PlayerState
                         ) {
                             Log.d("YoutubeVerticalVideoPlayer", "onStateChange: $state")
-                            if (state == PlayerConstants.PlayerState.PLAYING) {
+                            if (state == PlayerConstants.PlayerState.PLAYING && !isVideoInitialLoadingCompleted) {
                                 onLoadingCompleted()
+
+                                Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
+                                isVideoInitialLoadingCompleted = true
+                                Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
                             }
                             super.onStateChange(youTubePlayer, state)
                         }
@@ -1472,8 +1489,12 @@ fun YoutubeVerticalVideoPlayer(
 @Composable
 private fun YoutubeVerticalVideoPlayerPreview() {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val videoUrl = ""
-    YoutubeVerticalVideoPlayer(lifecycleOwner = lifecycleOwner, videoUrl = videoUrl) {
+    val videoUrl = "_FkbD0FhgVE"
+    val isVideoInitialLoadingCompleted = true
+    YoutubeVerticalVideoPlayer(
+        lifecycleOwner = lifecycleOwner,
+        videoUrl = videoUrl
+    ) {
     }
 }
 
