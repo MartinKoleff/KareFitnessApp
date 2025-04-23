@@ -9,11 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.DateUtils
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.WorkoutBannerV2
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.MainScreenScaffold
@@ -38,8 +37,6 @@ import com.koleff.kare_android.ui.compose.dialogs.DatePickerTarget
 import com.koleff.kare_android.ui.compose.dialogs.DateRangeDialog
 import com.koleff.kare_android.ui.view_model.WorkoutHistoryViewModel
 import java.time.LocalDate
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -79,6 +76,10 @@ fun WorkoutHistoryScreen(
                 color = subtitleTextColor
             )
 
+            val workoutsDatesMap =
+                DateUtils.groupPerformanceMetricsByDate(workoutHistoryState.doWorkoutPerformanceMetricsList)
+
+
             //Dialogs
             var showDateDialog by remember {
                 mutableStateOf(false)
@@ -89,8 +90,6 @@ fun WorkoutHistoryScreen(
 
             var fromDate by remember { mutableStateOf<LocalDate?>(null) }
             var toDate by remember { mutableStateOf<LocalDate?>(null) }
-
-            val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
 
             //Filter dialog
             if (showDateDialog) {
@@ -170,38 +169,29 @@ fun WorkoutHistoryScreen(
                     }
                 }
 
-                items(workoutHistoryState.doWorkoutPerformanceMetricsList.size) { index ->
-                    val performanceMetrics = workoutHistoryState.doWorkoutPerformanceMetricsList[index]
-                    val workoutDate =
-                        performanceMetrics.date
-                    val currentWorkout = performanceMetrics.workout
-                    val localDate: LocalDate = workoutDate.toInstant()
-                        .atZone(ZoneId.systemDefault())
-                        .toLocalDate()
+                workoutsDatesMap
+                    .toSortedMap(comparator = DateUtils.dateComparator)
+                    .forEach { (date, performanceMetrics) ->
+                        item {
+                            Text(
+                                modifier = Modifier.padding(titlePadding),
+                                text = date, //Already formatted
+                                style = titleTextStyle,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
 
-                    //Date
-                    Text(
-                        modifier = Modifier.padding(
-                            titlePadding
-                        ),
-                        text = localDate.format(dateFormatter),
-                        style = titleTextStyle,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    HorizontalDivider()
-
-                    //Workout banner
-                    WorkoutBannerV2(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .padding(vertical = 8.dp),
-                        workout = currentWorkout,
-                    ) { workout ->
-                        //TODO: on workout click -> show doWorkoutExerciseSets with stats data... -> new screen...
+                        items(performanceMetrics.size) { performanceMetricsId ->
+                            val currentPerformanceMetrics = performanceMetrics[performanceMetricsId]
+                            WorkoutBannerV2(
+                                modifier = Modifier.padding(bottom = 6.dp),
+                                workout = currentPerformanceMetrics.workout,
+                            ) { workout ->
+                                //TODO: on workout click -> show doWorkoutExerciseSets with stats data... -> new screen...
+                            }
+                        }
                     }
-                }
             }
         }
     }
