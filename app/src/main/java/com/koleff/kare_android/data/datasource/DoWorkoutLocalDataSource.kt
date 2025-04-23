@@ -229,6 +229,7 @@ class DoWorkoutLocalDataSource(
             }
         }
 
+    //TODO: make it be on the same exercise last set and then 1st exercise of the next exercise
     override suspend fun skipNextExercise(currentDoWorkoutData: DoWorkoutData) =
         flow {
             with(currentDoWorkoutData) {
@@ -241,15 +242,16 @@ class DoWorkoutLocalDataSource(
                     emit(ResultWrapper.ApiError(KareError.INVALID_WORKOUT))
                 }
 
-                val newCurrentExerciseData = nextExercise
-                val nextExerciseIndex = this.exercises.indexOf(nextExercise)
-                val newNextExerciseData = if (nextExerciseIndex == -1) {
+                val newCurrentExerciseData = currentExercise
+                val newCurrentSet = newCurrentExerciseData.exerciseDto.sets.lastOrNull()
+                val newNextExerciseIndex = this.exercises.indexOf(nextExercise)
+                val newNextExerciseData = if (newNextExerciseIndex == -1) {
                     ExerciseData()
                 } else {
-                    this.exercises.getOrNull(nextExerciseIndex + 1) ?: ExerciseData()
+                    this.exercises.getOrNull(newNextExerciseIndex) ?: ExerciseData()
                 }
 
-                val currentSetNumber = newCurrentExerciseData.exerciseDto.sets.firstOrNull()?.number
+                val currentSetNumber = newCurrentSet?.number
                     ?: -1 //TODO: add error handling...
 
                 val nextSetNumber = calculateNextSetNumber(
