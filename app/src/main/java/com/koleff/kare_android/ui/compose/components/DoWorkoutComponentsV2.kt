@@ -81,9 +81,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -101,6 +103,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFram
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
@@ -1451,11 +1454,14 @@ fun YoutubeVerticalVideoPlayer(
                         ) {
                             Log.d("YoutubeVerticalVideoPlayer", "onStateChange: $state")
                             if (state == PlayerConstants.PlayerState.PLAYING && !isVideoInitialLoadingCompleted) {
-                                onLoadingCompleted()
+                                lifecycleOwner.lifecycleScope.launch {
+                                    delay(Constants.fakeDelay)
+                                    onLoadingCompleted()
 
-                                Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
-                                isVideoInitialLoadingCompleted = true
-                                Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
+                                    Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
+                                    isVideoInitialLoadingCompleted = true
+                                    Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
+                                }
                             }
                             super.onStateChange(youTubePlayer, state)
                         }

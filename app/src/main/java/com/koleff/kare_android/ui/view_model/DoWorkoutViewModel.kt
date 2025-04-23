@@ -109,7 +109,7 @@ class DoWorkoutViewModel @Inject constructor(
                     //Initial setup...
                     doWorkoutUseCases.doWorkoutInitialSetupUseCase.invoke(selectedWorkoutDetails)
                         .collect { setupResult ->
-                            _state.value = setupResult
+                            _state.value = setupResult.copy(isLoading = true)
                         }
                 } else if (result.isError) {
                     _state.value = DoWorkoutState(
@@ -122,6 +122,7 @@ class DoWorkoutViewModel @Inject constructor(
     }
 
     fun onSetupCompleted() {
+        _state.value = _state.value.copy(isLoading = false)
 
         //Create do workout performance metrics
         createDoWorkoutPerformanceMetrics()
