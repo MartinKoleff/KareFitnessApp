@@ -20,7 +20,8 @@ object ExerciseGenerator {
     //Used for testing
     private const val description =
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
-    private const val videoUrl = "dQw4w9WgXcQ" //https://www.youtube.com/watch?v=
+    private const val videoUrl = "_FkbD0FhgVE" //https://www.youtube.com/watch?v=
+    private const val videoUrl2 = "8GEKQJcKTO8" //https://www.youtube.com/watch?v=
 
 
     //List of all muscle groups with exercises ranges setup in getMuscleGroupRange()
@@ -332,80 +333,80 @@ object ExerciseGenerator {
                 51,
                 workoutId = customWorkoutId,
                 "Squat",
-                MuscleGroup.LEGS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 52,
                 workoutId = customWorkoutId,
                 "Bulgarian split squad",
-                MuscleGroup.LEGS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 53,
                 workoutId = customWorkoutId,
                 "Smith machine squad",
-                MuscleGroup.LEGS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 54,
                 workoutId = customWorkoutId,
                 "Leg extension",
-                MuscleGroup.LEGS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 55,
                 workoutId = customWorkoutId,
                 "Kettlebell walking lunges",
-                MuscleGroup.LEGS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 56,
                 workoutId = customWorkoutId,
                 "Leg press",
-                MuscleGroup.LEGS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 57,
                 workoutId = customWorkoutId,
                 "Prone leg curl",
-                MuscleGroup.LEGS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 58,
                 workoutId = customWorkoutId,
                 "Seated calf raises",
-                MuscleGroup.LEGS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 59,
                 workoutId = customWorkoutId,
                 "Standing calf raises",
-                MuscleGroup.LEGS,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.CALISTHENICS,
                 ""
             ),
             Exercise(
                 60,
                 workoutId = customWorkoutId,
                 "Barbell standing calf raises",
-                MuscleGroup.LEGS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.LEGS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
         )
@@ -512,80 +513,80 @@ object ExerciseGenerator {
                 41,
                 workoutId = customWorkoutId,
                 "Barbell upright row",
-                MuscleGroup.SHOULDERS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 42,
                 workoutId = customWorkoutId,
                 "Dumbbell front raises",
-                MuscleGroup.SHOULDERS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 43,
                 workoutId = customWorkoutId,
                 "Dumbbell lateral raises",
-                MuscleGroup.SHOULDERS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 44,
                 workoutId = customWorkoutId,
                 "Seated dumbbell shoulder press",
-                MuscleGroup.SHOULDERS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 45,
                 workoutId = customWorkoutId,
                 "Barbell shoulder press",
-                MuscleGroup.SHOULDERS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 46,
                 workoutId = customWorkoutId,
                 "Face pull",
-                MuscleGroup.SHOULDERS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 47,
                 workoutId = customWorkoutId,
                 "Front plate raise",
-                MuscleGroup.SHOULDERS,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.CALISTHENICS,
                 ""
             ),
             Exercise(
                 48,
                 workoutId = customWorkoutId,
                 "One arm lateral raises at the low pulley cable",
-                MuscleGroup.SHOULDERS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 49,
                 workoutId = customWorkoutId,
                 "Reverse pec deck",
-                MuscleGroup.SHOULDERS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 50,
                 workoutId = customWorkoutId,
                 "Dumbbell behind the back press", //TODO: video...
-                MuscleGroup.SHOULDERS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.SHOULDERS,
+                machineType = MachineType.DUMBBELL,
                 ""
             )
         )
@@ -598,81 +599,81 @@ object ExerciseGenerator {
                 workoutId = customWorkoutId,
                 "Standing dumbbell biceps curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 33,
                 workoutId = customWorkoutId,
                 "Sitting dumbbell biceps curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 34,
                 workoutId = customWorkoutId,
                 "Barbell biceps curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 35,
                 workoutId = customWorkoutId,
                 "Dumbbell concentrated curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 36,
                 workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 37,
                 workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 38,
                 workoutId = customWorkoutId,
                 "One arm dumbbell preacher curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 39,
                 workoutId = customWorkoutId,
                 "Barbell preacher curl",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 40,
                 workoutId = customWorkoutId,
                 "Reverse grip biceps curl at the low pulley cable",
                 description = description,
-                MuscleGroup.BICEPS,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             )
         )
     }
@@ -683,72 +684,72 @@ object ExerciseGenerator {
                 32,
                 workoutId = customWorkoutId,
                 "Standing dumbbell biceps curl",
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 33,
                 workoutId = customWorkoutId,
                 "Sitting dumbbell biceps curl",
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 34,
                 workoutId = customWorkoutId,
                 "Barbell biceps curl",
-                MuscleGroup.BICEPS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 35,
                 workoutId = customWorkoutId,
                 "Dumbbell concentrated curl",
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 36,
                 workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 37,
                 workoutId = customWorkoutId,
                 "Dumbbell hammer curl",
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 38,
                 workoutId = customWorkoutId,
                 "One arm dumbbell preacher curl",
-                MuscleGroup.BICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 39,
                 workoutId = customWorkoutId,
                 "Barbell preacher curl",
-                MuscleGroup.BICEPS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 40,
                 workoutId = customWorkoutId,
                 "Reverse grip biceps curl at the low pulley cable",
-                MuscleGroup.BICEPS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.BICEPS,
+                machineType = MachineType.MACHINE,
                 ""
             )
         )
@@ -761,90 +762,90 @@ object ExerciseGenerator {
                 workoutId = customWorkoutId,
                 "Triceps cable pushdown",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 23,
                 workoutId = customWorkoutId,
                 "Dumbbell triceps kickback",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 24,
                 workoutId = customWorkoutId,
                 "Skull crushers",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 25,
                 workoutId = customWorkoutId,
                 "Dips",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.CALISTHENICS,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.CALISTHENICS,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 26,
                 workoutId = customWorkoutId,
                 "Machine triceps dips",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 27,
                 workoutId = customWorkoutId,
                 "Dumbbell triceps extension",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 28,
                 workoutId = customWorkoutId,
                 "Cable rope triceps pushdown",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 29,
                 workoutId = customWorkoutId,
                 "Bench dip",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.CALISTHENICS,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.CALISTHENICS,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 30,
                 workoutId = customWorkoutId,
                 "Barbell standing french press",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 31,
                 workoutId = customWorkoutId,
                 "Triceps cable rope extension",
                 description = description,
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             )
         )
     }
@@ -855,80 +856,80 @@ object ExerciseGenerator {
                 22,
                 workoutId = customWorkoutId,
                 "Triceps cable pushdown",
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 23,
                 workoutId = customWorkoutId,
                 "Dumbbell triceps kickback",
-                MuscleGroup.TRICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 24,
                 workoutId = customWorkoutId,
                 "Skull crushers",
-                MuscleGroup.TRICEPS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 25,
                 workoutId = customWorkoutId,
                 "Dips",
-                MuscleGroup.TRICEPS,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.CALISTHENICS,
                 ""
             ),
             Exercise(
                 26,
                 workoutId = customWorkoutId,
                 "Machine triceps dips",
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 27,
                 workoutId = customWorkoutId,
                 "Dumbbell triceps extension",
-                MuscleGroup.TRICEPS,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 28,
                 workoutId = customWorkoutId,
                 "Cable rope triceps pushdown",
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 29,
                 workoutId = customWorkoutId,
                 "Bench dip", //TODO: video...
-                MuscleGroup.TRICEPS,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.CALISTHENICS,
                 ""
             ),
             Exercise(
                 30,
                 workoutId = customWorkoutId,
                 "Barbell standing french press", //TODO: video...
-                MuscleGroup.TRICEPS,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 31,
                 workoutId = customWorkoutId,
                 "Triceps cable rope extension",
-                MuscleGroup.TRICEPS,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.TRICEPS,
+                machineType = MachineType.MACHINE,
                 ""
             )
         )
@@ -941,99 +942,99 @@ object ExerciseGenerator {
                 workoutId = customWorkoutId,
                 "Seated cable rows",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 12,
                 workoutId = customWorkoutId,
                 "Lat pulldown (Wide grip)",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 13,
                 workoutId = customWorkoutId,
                 "Pull ups",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.CALISTHENICS,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.CALISTHENICS,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 14,
                 workoutId = customWorkoutId,
                 "Bent over barbell row",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 15,
                 workoutId = customWorkoutId,
                 "Deadlift",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 16,
                 workoutId = customWorkoutId,
                 "Bent over dumbbell row",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 17,
                 workoutId = customWorkoutId,
                 "Standing lat pulldown",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 18,
                 workoutId = customWorkoutId,
                 "T-bar row", //Mechkata
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 19,
                 workoutId = customWorkoutId,
                 "Dumbbell Shrugs",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 20,
                 workoutId = customWorkoutId,
                 "Behind the neck lat pulldown",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 21,
                 workoutId = customWorkoutId,
                 "Romanian deadlift",
                 description = description,
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             )
         )
     }
@@ -1044,88 +1045,88 @@ object ExerciseGenerator {
                 11,
                 workoutId = customWorkoutId,
                 "Seated cable rows",
-                MuscleGroup.BACK,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 12,
                 workoutId = customWorkoutId,
                 "Lat pulldown (Wide grip)",
-                MuscleGroup.BACK,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 13,
                 workoutId = customWorkoutId,
                 "Pull ups",
-                MuscleGroup.BACK,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.CALISTHENICS,
                 ""
             ),
             Exercise(
                 14,
                 workoutId = customWorkoutId,
                 "Bent over barbell row",
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 15,
                 workoutId = customWorkoutId,
                 "Deadlift", //TODO: video...
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 16,
                 workoutId = customWorkoutId,
                 "Bent over dumbbell row",
-                MuscleGroup.BACK,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 17,
                 workoutId = customWorkoutId,
                 "Standing lat pulldown",
-                MuscleGroup.BACK,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 18,
                 workoutId = customWorkoutId,
                 "T-bar row", //Mechkata
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 19,
                 workoutId = customWorkoutId,
                 "Dumbbell Shrugs",
-                MuscleGroup.BACK,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 20,
                 workoutId = customWorkoutId,
                 "Behind the neck lat pulldown", //TODO: video...
-                MuscleGroup.BACK,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 21,
                 workoutId = customWorkoutId,
                 "Romanian deadlift", //TODO: video...
-                MuscleGroup.BACK,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.BACK,
+                machineType = MachineType.BARBELL,
                 ""
             )
         )
@@ -1138,90 +1139,90 @@ object ExerciseGenerator {
                 workoutId = customWorkoutId,
                 "Flat barbell bench press",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 2,
                 workoutId = customWorkoutId,
                 "Incline barbell bench press",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl2
             ),
             ExerciseDetails(
                 3,
                 workoutId = customWorkoutId,
-                "Incline barbell bench press",
+                "Decline barbell bench press",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.BARBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 4,
                 workoutId = customWorkoutId,
                 "Incline dumbbell bench press",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl2
             ),
             ExerciseDetails(
                 5,
                 workoutId = customWorkoutId,
                 "Flat dumbbell bench press",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.DUMBBELL,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.DUMBBELL,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 6,
                 workoutId = customWorkoutId,
                 "Pec deck fly",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 7,
                 workoutId = customWorkoutId,
                 "Cable chest fly",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 8,
                 workoutId = customWorkoutId,
                 "Hammer strength",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.MACHINE,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.MACHINE,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 9,
                 workoutId = customWorkoutId,
                 "Dips",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.CALISTHENICS,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.CALISTHENICS,
+                videoUrl = videoUrl
             ),
             ExerciseDetails(
                 10,
                 workoutId = customWorkoutId,
                 "Push ups",
                 description = description,
-                MuscleGroup.CHEST,
-                MachineType.CALISTHENICS,
-                ""
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.CALISTHENICS,
+                videoUrl = videoUrl
             )
         )
     }
@@ -1232,80 +1233,80 @@ object ExerciseGenerator {
                 1,
                 workoutId = customWorkoutId,
                 "Flat barbell bench press",
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 2,
                 workoutId = customWorkoutId,
                 "Incline barbell bench press",
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 3,
                 workoutId = customWorkoutId,
-                "Incline barbell bench press",
-                MuscleGroup.CHEST,
-                MachineType.BARBELL,
+                "Decline barbell bench press",
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.BARBELL,
                 ""
             ),
             Exercise(
                 4,
                 workoutId = customWorkoutId,
                 "Incline dumbbell bench press",
-                MuscleGroup.CHEST,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 5,
                 workoutId = customWorkoutId,
                 "Flat dumbbell bench press",
-                MuscleGroup.CHEST,
-                MachineType.DUMBBELL,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.DUMBBELL,
                 ""
             ),
             Exercise(
                 6,
                 workoutId = customWorkoutId,
                 "Pec deck fly",
-                MuscleGroup.CHEST,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 7,
                 workoutId = customWorkoutId,
                 "Cable chest fly",
-                MuscleGroup.CHEST,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 8,
                 workoutId = customWorkoutId,
                 "Hammer strength",
-                MuscleGroup.CHEST,
-                MachineType.MACHINE,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.MACHINE,
                 ""
             ),
             Exercise(
                 9,
                 workoutId = customWorkoutId,
                 "Dips",
-                MuscleGroup.CHEST,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.CALISTHENICS,
                 ""
             ),
             Exercise(
                 10,
                 workoutId = customWorkoutId,
                 "Push ups", //TODO: video...
-                MuscleGroup.CHEST,
-                MachineType.CALISTHENICS,
+                muscleGroup = MuscleGroup.CHEST,
+                machineType = MachineType.CALISTHENICS,
                 ""
             )
         )
