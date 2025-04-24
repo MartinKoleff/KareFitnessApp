@@ -7,12 +7,13 @@ import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
+import com.koleff.kare_android.data.model.dto.Gender
 import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.data.model.dto.OnboardingDataDto
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import java.util.Date
 import java.util.UUID
 import kotlin.random.Random
 
@@ -341,6 +342,16 @@ object MockupDataGeneratorV2 {
         return Tokens(
             accessToken = "access_token",
             refreshToken = "refresh_token"
+        )
+    }
+
+    fun generateOnboardingData(): OnboardingDataDto {
+        return OnboardingDataDto(
+            id = -1,
+            gender = Gender.values().random(),
+            age = Random.nextInt(14, 100),
+            height = Random.nextInt(140, 220),
+            weight = Random.nextInt(35, 200)
         )
     }
 

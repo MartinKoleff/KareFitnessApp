@@ -3,7 +3,9 @@ package com.koleff.kare_android.ui.compose.screen
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -17,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.koleff.kare_android.data.model.response.base_response.KareError
@@ -24,6 +27,8 @@ import com.koleff.kare_android.ui.compose.components.DoWorkoutFooter
 import com.koleff.kare_android.ui.compose.components.ExerciseDataSheetModal2
 import com.koleff.kare_android.ui.compose.components.LoadingWheel
 import com.koleff.kare_android.ui.compose.components.NextExerciseInfoScreen
+import com.koleff.kare_android.ui.compose.components.PauseScreenOverlay
+import com.koleff.kare_android.ui.compose.components.YoutubeVerticalVideoPlayer
 import com.koleff.kare_android.ui.compose.components.navigation_components.scaffolds.DoWorkoutScaffold
 import com.koleff.kare_android.ui.compose.dialogs.ErrorDialog
 import com.koleff.kare_android.ui.compose.dialogs.ExitWorkoutDialog
@@ -36,6 +41,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
     val state by doWorkoutViewModel.state.collectAsState()
     val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
     val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
+    val playerState by doWorkoutViewModel.playerState.collectAsState()
 
     var workoutTimerInitialState by remember {
         mutableStateOf(workoutTimerState)
@@ -95,6 +101,14 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
     }
 
+    var showPlayerOverlay by remember { mutableStateOf(false) }
+    var isPaused by remember { mutableStateOf(false) }
+
+    LaunchedEffect(playerState) {
+        showPlayerOverlay = playerState.isLoading
+    }
+
+
     //Error dialog
     if (showErrorDialog) {
         error?.let {
@@ -114,7 +128,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
         )
     }
 
-    if(showExitWorkoutDialog){
+    if (showExitWorkoutDialog) {
         ExitWorkoutDialog(
             workoutName = state.doWorkoutData.workout.name,
             onClick = {
@@ -139,77 +153,104 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                 .fillMaxSize()
                 .alpha(0.15f)
         }
-    } else Modifier.fillMaxSize()
-
-    //Loading screen
-    if (showLoadingDialog) {
-        LoadingWheel()
     } else {
+        Modifier
+            .fillMaxSize()
+            .clickable {
+                if (!showNextExerciseCountdown) {
+                    doWorkoutViewModel
+                        .onScreenClick()
+                        .also {
+                            isPaused = !isPaused
 
-        //Above all screens
-        ExerciseDataSheetModal2(
-            exercise = state.doWorkoutData.currentExercise,
-            currentSetNumber = state.doWorkoutData.currentSetNumber,
-            defaultTotalSets = state.doWorkoutData.defaultTotalSets,
-            isNextExercise = state.doWorkoutData.isNextExercise,
-            onSaveExerciseData = { exerciseData ->
-                doWorkoutViewModel.addDoWorkoutExerciseSet(exerciseData)
-            }
-        ) { exerciseDataSheetPaddingValues ->
-            DoWorkoutScaffold(
-                modifier = screenModifier,
-                screenTitle = state.doWorkoutData.currentExercise.name,
-                onExitWorkoutAction = {
-
-                    //Disable exit workout button when NextExerciseCountdownScreen is visible
-                    if (!state.doWorkoutData.isBetweenExerciseCountdown) {
-                        showExitWorkoutDialog = true
-                    }
-                },
-                onNextExerciseAction = {
-
-                    //Disable skip next exercise button when NextExerciseCountdownScreen is visible
-                    if (!state.doWorkoutData.isBetweenExerciseCountdown) {
-                        doWorkoutViewModel.skipNextExercise()
-                    }
+                            doWorkoutViewModel.showPlayerOverlay()
+                        } //Pause/Resume click listener
                 }
+            }
+    }
+
+    //Above all screens
+    ExerciseDataSheetModal2(
+        exercise = state.doWorkoutData.currentExercise,
+        currentSetNumber = state.doWorkoutData.currentSetNumber,
+        defaultTotalSets = state.doWorkoutData.defaultTotalSets,
+        isNextExercise = state.doWorkoutData.isNextExercise,
+        onSaveExerciseData = { exerciseData ->
+            doWorkoutViewModel.addDoWorkoutExerciseSet(exerciseData)
+        }
+    ) { exerciseDataSheetPaddingValues ->
+        DoWorkoutScaffold(
+            modifier = screenModifier,
+            screenTitle = state.doWorkoutData.currentExercise.name,
+            onExitWorkoutAction = {
+
+                //Disable exit workout button when NextExerciseCountdownScreen is visible
+                if (!state.doWorkoutData.isBetweenExerciseCountdown) {
+                    showExitWorkoutDialog = true
+                }
+            },
+            onNextExerciseAction = {
+
+                //Disable skip next exercise button when NextExerciseCountdownScreen is visible
+                if (!state.doWorkoutData.isBetweenExerciseCountdown) {
+                    doWorkoutViewModel.skipNextExercise()
+                }
+            }
+        ) {
+
+            //Background video player
+            YoutubeVerticalVideoPlayer(LocalLifecycleOwner.current) {
+                if(state.doWorkoutData.isSetupCompleted) return@YoutubeVerticalVideoPlayer //Setup completed
+
+                Log.d("DoWorkoutScreen", "Background video player loaded.")
+                doWorkoutViewModel.setup {
+                    Log.d("DoWorkoutScreen", "Setup completed.")
+                }
+            }
+
+            //Exercise Timer, weight and reps
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(exerciseDataSheetPaddingValues),
+                contentAlignment = Alignment.BottomCenter
             ) {
-
-                //Exercise Timer, weight and reps
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(exerciseDataSheetPaddingValues),
-                    contentAlignment = Alignment.BottomCenter
-                ) {
-                    DoWorkoutFooter(
-                        totalTime = workoutTimerInitialState.time,
-                        timeLeft = workoutTimerState.time,
-                        currentSet = state.doWorkoutData.currentSet
-                    )
-                }
-            }
-
-            //Next exercise countdown screen overlay
-            if (showNextExerciseCountdown) {
-                Log.d(
-                    "DoWorkoutScreen",
-                    "Workout timer = ${workoutTimerState.time}. Countdown timer: ${countdownTimerState.time}"
-                )
-
-                NextExerciseInfoScreen(
-                    nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise else state.doWorkoutData.currentExercise,
-                    set = state.doWorkoutData.nextSetNumber,
-                    totalSets = state.doWorkoutData.totalSets,
-                    weight = state.doWorkoutData.nextSet.weight,
-                    reps = state.doWorkoutData.nextSet.reps,
-                    countdownTime = countdownTimerState.time,
-                    onSkipSet = {
-                        doWorkoutViewModel.skipNextSet()
-                    },
-                    onPause = {}, //TODO: merge with dev and add pause logic...
+                DoWorkoutFooter(
+                    totalTime = workoutTimerInitialState.time,
+                    timeLeft = workoutTimerState.time,
+                    currentSet = state.doWorkoutData.currentSet
                 )
             }
         }
+
+        //Next exercise countdown screen overlay
+        if (showNextExerciseCountdown) {
+            Log.d(
+                "DoWorkoutScreen",
+                "Workout timer = ${workoutTimerState.time}. Countdown timer: ${countdownTimerState.time}"
+            )
+
+            NextExerciseInfoScreen(
+                nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise else state.doWorkoutData.currentExercise,
+                set = state.doWorkoutData.nextSetNumber,
+                totalSets = state.doWorkoutData.totalSets,
+                weight = state.doWorkoutData.nextSet.weight,
+                reps = state.doWorkoutData.nextSet.reps,
+                countdownTime = countdownTimerState.time,
+                onSkipSet = {
+                    doWorkoutViewModel.skipNextSet()
+                },
+                onPause = { doWorkoutViewModel.pauseTimer(false) },
+                onResume = { doWorkoutViewModel.resumeCountdownTimer() },
+            )
+        } else if (showPlayerOverlay) {
+            PauseScreenOverlay(isPaused)
+        }
+    }
+
+
+    //Loading screen
+    if (showLoadingDialog) {
+        LoadingWheel(innerPadding = PaddingValues(0.dp), hideScreen = true)
     }
 }

@@ -15,6 +15,7 @@ data class DoWorkoutState(
 ) : BaseState(isSuccessful, isLoading, isError, error)
 
 data class DoWorkoutData(
+    val isSetupCompleted: Boolean = false,
     val currentExercise: ExerciseDto = ExerciseDto(),
     val nextExercise: ExerciseDto = ExerciseDto(),
     val currentSetNumber: Int = -1,

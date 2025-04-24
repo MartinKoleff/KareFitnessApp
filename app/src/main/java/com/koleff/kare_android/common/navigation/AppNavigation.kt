@@ -27,6 +27,7 @@ import com.koleff.kare_android.ui.compose.screen.SearchWorkoutsScreenV2
 import com.koleff.kare_android.ui.compose.screen.SettingsScreen
 import com.koleff.kare_android.ui.compose.screen.StatisticsScreen
 import com.koleff.kare_android.ui.compose.screen.WelcomeScreen
+import com.koleff.kare_android.ui.compose.screen.WorkoutHistoryScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutDetailsScreenV3
 import com.koleff.kare_android.ui.compose.screen.WorkoutHistoryScreen
 import com.koleff.kare_android.ui.compose.screen.WorkoutsScreenV2
