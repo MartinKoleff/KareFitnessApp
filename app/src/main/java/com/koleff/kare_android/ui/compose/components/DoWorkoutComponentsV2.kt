@@ -100,6 +100,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.cos
@@ -196,19 +197,19 @@ private fun CurrentWeightInfoPreview() {
 
 
 @Composable
-fun PagerIndicator(currentPage: Int, totalPages: Int) {
+fun WorkoutProgressPagerIndicator(currentPage: Int, totalPages: Int) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.padding(top = 20.dp)
     ) {
         repeat(totalPages) {
-            Indicator(isSelected = it + 1 <= currentPage)
+            WorkoutProgressIndicator(isSelected = it + 1 <= currentPage)
         }
     }
 }
 
 @Composable
-fun Indicator(isSelected: Boolean, color: Color = MaterialTheme.colorScheme.primary) {
+fun WorkoutProgressIndicator(isSelected: Boolean, color: Color = MaterialTheme.colorScheme.primary) {
     val width = animateDpAsState(targetValue = if (isSelected) 40.dp else 10.dp)
 
     Box(
@@ -225,7 +226,7 @@ fun Indicator(isSelected: Boolean, color: Color = MaterialTheme.colorScheme.prim
 
 @ExperimentalPagerApi
 @Composable
-fun rememberPagerState(
+fun rememberWorkoutProgressPagerState(
     @androidx.annotation.IntRange(from = 0) pageCount: Int,
     @androidx.annotation.IntRange(from = 1) initialPage: Int = 1,
     @FloatRange(from = 0.0, to = 1.0) initialPageOffset: Float = 0f,
@@ -241,14 +242,14 @@ fun rememberPagerState(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, DelicateCoroutinesApi::class)
 @Preview
 @Composable
 private fun NextExercisePagerIndicatorPreview() {
-    val pagerState = rememberPagerState(pageCount = 4, initialPage = 1)
+    val pagerState = rememberWorkoutProgressPagerState(pageCount = 4, initialPage = 1)
 
     Column {
-        PagerIndicator(currentPage = pagerState.currentPage, totalPages = pagerState.pageCount)
+        WorkoutProgressPagerIndicator(currentPage = pagerState.currentPage, totalPages = pagerState.pageCount)
 
         Row {
             Button(onClick = {
@@ -324,13 +325,13 @@ private fun SkipButtonPreview() {
 
 @Preview
 @Composable
-private fun PagerIndicatorWithButtonsPreview() {
+private fun WorkoutProgressPagerIndicatorWithButtonsPreview() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         PauseButton(onClick = {}, isPause = Random.nextBoolean())
-        PagerIndicator(currentPage = 0, totalPages = 4)
+        WorkoutProgressPagerIndicator(currentPage = 0, totalPages = 4)
         SkipButton(onClick = {})
     }
 }
@@ -435,7 +436,7 @@ fun NextExerciseInfoScreen(
                 )
 
                 Log.d("NextExerciseInfoScreen", "Current set: $set | Total sets: $totalSets")
-                PagerIndicator(currentPage = set, totalPages = totalSets)
+                WorkoutProgressPagerIndicator(currentPage = set, totalPages = totalSets)
                 SkipButton(onClick = {
                     isPause = false
 
