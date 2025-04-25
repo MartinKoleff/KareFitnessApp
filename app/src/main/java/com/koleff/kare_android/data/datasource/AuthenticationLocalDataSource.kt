@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
+import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.auth.Credentials
 import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.data.model.dto.Tokens

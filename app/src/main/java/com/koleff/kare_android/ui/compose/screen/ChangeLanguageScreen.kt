@@ -132,7 +132,6 @@ fun ChangeLanguageScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(8.dp),
-                        searchText = searchText,
                         onSearch = { text ->
                             languageViewModel.onTextChange(text)
                         },
@@ -141,9 +140,6 @@ fun ChangeLanguageScreen(
                         },
                         onToggleSearch = {
                             languageViewModel.onToggleSearch()
-                        },
-                        onSearchTextChange = {
-                            searchText = it
                         })
                 }
 
