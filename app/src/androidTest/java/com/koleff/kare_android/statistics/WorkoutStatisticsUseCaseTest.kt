@@ -93,6 +93,7 @@ import com.koleff.kare_android.domain.usecases.statistics.StatisticsUseCases
 import com.koleff.kare_android.domain.usecases.statistics.WorkoutStatisticsUseCases
 import com.koleff.kare_android.utils.Repeat
 import com.koleff.kare_android.utils.TestLogger
+import io.mockk.InternalPlatformDsl.toArray
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Before
@@ -571,6 +572,10 @@ class WorkoutStatisticsUseCaseTest {
         assertTrue { getWorkoutTotalTimesCompletedState4[1].totalTimesCompleted == 0 }
     }
 
+
+
+    //TODO: refactor per workout ONLY!
+
     @Test
     @Repeat(50)
     fun testGetWorkoutTotalRepsPerformedUseCase() = runTest {
@@ -600,58 +605,60 @@ class WorkoutStatisticsUseCaseTest {
             "Get do workout performance metrics 3 for workout 1: ${getDoWorkoutPerformanceMetrics3[1].doWorkoutPerformanceMetrics}"
         )
 
-        val repsSum = performanceMetrics3.doWorkoutExerciseSets.sumOf { it.reps } +
-                performanceMetrics1.doWorkoutExerciseSets
-                    .filter { it.exerciseId == selectedExercise.exerciseId }.sumOf { it.reps }
+        val repsSum = doWorkoutPerformanceMetricsUseCases.getAllDoWorkoutPerformanceMetricsUseCase().toList()[1]
+            .doWorkoutPerformanceMetricsList
+            .filter { it.workout.workoutId == workout1.workoutId }
+            .flatMap { it.doWorkoutExerciseSets }
+            .sumOf { it.reps }
         logger.i(
             TAG,
-            "Total reps for exercise with id ${selectedExercise.exerciseId}: $repsSum"
+            "Total reps for workout 1: $repsSum"
         )
-        val getExerciseTotalRepsState =
+        val getWorkoutTotalRepsState =
             statisticsUseCases.workoutStatisticsUseCases.getWorkoutTotalRepsPerformedUseCase(
-                workout1.workoutId, selectedExercise.exerciseId
+                workout1.workoutId
             ).toList()
 
         logger.i(
             TAG,
-            "Get exercise with id ${selectedExercise.exerciseId} total reps for workout 1-> isLoading state raised."
+            "Get workout 1 total reps -> isLoading state raised."
         )
-        assertTrue { getExerciseTotalRepsState[0].isLoading }
+        assertTrue { getWorkoutTotalRepsState[0].isLoading }
 
         logger.i(
             TAG,
-            "Get exercise with id ${selectedExercise.exerciseId} total reps for workout 1-> isSuccessful state raised."
+            "Get workout 1 total reps -> isSuccessful state raised."
         )
-        assertTrue { getExerciseTotalRepsState[1].isSuccessful }
+        assertTrue { getWorkoutTotalRepsState[1].isSuccessful }
 
-        logger.i(TAG, "Get exercise total reps -> data: ${getExerciseTotalRepsState[1]}")
+        logger.i(TAG, "Get workout 1 total reps -> data: ${getWorkoutTotalRepsState[1]}")
         logger.i(TAG, "Assert statistics total reps is the same as the calculated one.")
-        assertTrue { getExerciseTotalRepsState[1].totalReps == repsSum }
+        assertTrue { getWorkoutTotalRepsState[1].totalReps == repsSum }
 
         //Test with invalid exercise
-        val getExerciseTotalRepsState2 =
+        val getWorkoutTotalRepsState2 =
             statisticsUseCases.workoutStatisticsUseCases.getWorkoutTotalRepsPerformedUseCase(
-                -1, -1
+                -1,
             ).toList()
 
         logger.i(
             TAG,
-            "Get invalid workout and invalid exercise total reps -> isLoading state raised."
+            "Get invalid workout total reps -> isLoading state raised."
         )
-        assertTrue { getExerciseTotalRepsState2[0].isLoading }
+        assertTrue { getWorkoutTotalRepsState2[0].isLoading }
 
         logger.i(
             TAG,
-            "Get invalid workout and invalid exercise total reps -> isSuccessful state raised."
+            "Get invalid workout total reps -> isSuccessful state raised."
         )
-        assertTrue { getExerciseTotalRepsState2[1].isSuccessful }
+        assertTrue { getWorkoutTotalRepsState2[1].isSuccessful }
 
         logger.i(
             TAG,
-            "Get invalid workout and invalid exercise total reps -> data: ${getExerciseTotalRepsState2[1]}"
+            "Get invalid workout total reps -> data: ${getWorkoutTotalRepsState2[1]}"
         )
         logger.i(TAG, "Assert statistics total reps 2 is invalid.")
-        assertTrue { getExerciseTotalRepsState2[1].totalReps == 0 }
+        assertTrue { getWorkoutTotalRepsState2[1].totalReps == 0 }
     }
 
 
@@ -684,58 +691,59 @@ class WorkoutStatisticsUseCaseTest {
             "Get do workout performance metrics 3 for workout 1: ${getDoWorkoutPerformanceMetrics3[1].doWorkoutPerformanceMetrics}"
         )
 
-        val setsSum = performanceMetrics3.doWorkoutExerciseSets.size +
-                performanceMetrics1.doWorkoutExerciseSets
-                    .filter { it.exerciseId == selectedExercise.exerciseId }.size
+        val setsSum = doWorkoutPerformanceMetricsUseCases.getAllDoWorkoutPerformanceMetricsUseCase().toList()[1]
+            .doWorkoutPerformanceMetricsList
+            .filter { it.workout.workoutId == workout1.workoutId }
+            .flatMap { it.doWorkoutExerciseSets }.size
         logger.i(
             TAG,
-            "Total sets for exercise with id ${selectedExercise.exerciseId}: $setsSum"
+            "Total sets for workout 1: $setsSum"
         )
-        val getExerciseTotalSetsState =
+        val getWorkoutTotalSetsState =
             statisticsUseCases.workoutStatisticsUseCases.getWorkoutTotalSetsPerformedUseCase(
-                workout1.workoutId, selectedExercise.exerciseId
+                workout1.workoutId
             ).toList()
 
         logger.i(
             TAG,
-            "Get exercise with id ${selectedExercise.exerciseId} total sets for workout 1-> isLoading state raised."
+            "Get total sets for workout 1-> isLoading state raised."
         )
-        assertTrue { getExerciseTotalSetsState[0].isLoading }
+        assertTrue { getWorkoutTotalSetsState[0].isLoading }
 
         logger.i(
             TAG,
-            "Get exercise with id ${selectedExercise.exerciseId} total sets for workout 1-> isSuccessful state raised."
+            "Get total sets for workout 1-> isSuccessful state raised."
         )
-        assertTrue { getExerciseTotalSetsState[1].isSuccessful }
+        assertTrue { getWorkoutTotalSetsState[1].isSuccessful }
 
-        logger.i(TAG, "Get exercise total sets -> data: ${getExerciseTotalSetsState[1]}")
+        logger.i(TAG, "Get workout 1 total sets -> data: ${getWorkoutTotalSetsState[1]}")
         logger.i(TAG, "Assert statistics total sets is the same as the calculated one.")
-        assertTrue { getExerciseTotalSetsState[1].totalSets == setsSum }
+        assertTrue { getWorkoutTotalSetsState[1].totalSets == setsSum }
 
         //Test with invalid exercise
-        val getExerciseTotalSetsState2 =
+        val getWorkoutTotalSetsState2 =
             statisticsUseCases.workoutStatisticsUseCases.getWorkoutTotalSetsPerformedUseCase(
-                -1, -1
+                -1
             ).toList()
 
         logger.i(
             TAG,
-            "Get invalid workout and invalid exercise total sets -> isLoading state raised."
+            "Get invalid workout total sets -> isLoading state raised."
         )
-        assertTrue { getExerciseTotalSetsState2[0].isLoading }
+        assertTrue { getWorkoutTotalSetsState2[0].isLoading }
 
         logger.i(
             TAG,
-            "Get invalid workout and invalid exercise total sets -> isSuccessful state raised."
+            "Get invalid workout total sets -> isSuccessful state raised."
         )
-        assertTrue { getExerciseTotalSetsState2[1].isSuccessful }
+        assertTrue { getWorkoutTotalSetsState2[1].isSuccessful }
 
         logger.i(
             TAG,
-            "Get invalid workout and invalid exercise total sets -> data: ${getExerciseTotalSetsState2[1]}"
+            "Get invalid workout total sets -> data: ${getWorkoutTotalSetsState2[1]}"
         )
         logger.i(TAG, "Assert statistics total sets 2 is invalid.")
-        assertTrue { getExerciseTotalSetsState2[1].totalSets == 0 }
+        assertTrue { getWorkoutTotalSetsState2[1].totalSets == 0 }
     }
 
     @Test

@@ -16,7 +16,7 @@ interface WorkoutStatisticsRepository {
 
     suspend fun getDatesOfCompletionForWorkout(workoutId: Int): Flow<ResultWrapper<DatesOfCompletionWrapper>>
 
-    suspend fun getTotalRepsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>>
+    suspend fun getTotalRepsPerformed(workoutId: Int): Flow<ResultWrapper<TotalRepsWrapper>>
 
-    suspend fun getTotalSetsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalSetsWrapper>>
+    suspend fun getTotalSetsPerformed(workoutId: Int): Flow<ResultWrapper<TotalSetsWrapper>>
 }

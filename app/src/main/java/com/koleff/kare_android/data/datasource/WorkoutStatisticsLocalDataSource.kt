@@ -72,18 +72,15 @@ class WorkoutStatisticsLocalDataSource(
             emit(ResultWrapper.Success(result))
         }
 
-    //TODO: add per workout?
-    //Total reps performed for exercise per workout
+    //Total reps performed per workout
     override suspend fun getTotalRepsPerformed(
-        workoutId: Int,
-        exerciseId: Int
+        workoutId: Int
     ): Flow<ResultWrapper<TotalRepsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val repsPerformed = statisticsDao.getTotalRepsPerformedForExercise(
-            workoutId = workoutId,
-            exerciseId = exerciseId
+        val repsPerformed = statisticsDao.getTotalRepsPerformedForWorkout(
+            workoutId = workoutId
         ) ?: 0
         val result = TotalRepsWrapper(
             TotalRepsResponse(
@@ -93,18 +90,15 @@ class WorkoutStatisticsLocalDataSource(
         emit(ResultWrapper.Success(result))
     }
 
-    //TODO: add per workout?
-    //Total sets performed for exercise per workout
+    //Total sets performed per workout
     override suspend fun getTotalSetsPerformed(
-        workoutId: Int,
-        exerciseId: Int
+        workoutId: Int
     ): Flow<ResultWrapper<TotalSetsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val setsPerformed = statisticsDao.getTotalSetsPerformedForExercise(
-            workoutId = workoutId,
-            exerciseId = exerciseId
+        val setsPerformed = statisticsDao.getTotalSetsPerformedForWorkout(
+            workoutId = workoutId
         ) ?: 0
         val result = TotalSetsWrapper(
             TotalSetsResponse(

@@ -17,12 +17,10 @@ interface WorkoutStatisticsDataSource {
     suspend fun getDatesOfCompletionForWorkout(workoutId: Int): Flow<ResultWrapper<DatesOfCompletionWrapper>>
 
     suspend fun getTotalRepsPerformed(
-        workoutId: Int,
-        exerciseId: Int
+        workoutId: Int
     ): Flow<ResultWrapper<TotalRepsWrapper>>
 
     suspend fun getTotalSetsPerformed(
-        workoutId: Int,
-        exerciseId: Int
+        workoutId: Int
     ): Flow<ResultWrapper<TotalSetsWrapper>>
 }

@@ -243,8 +243,8 @@ class WorkoutStatisticsViewModel @Inject constructor(
         getWorkoutTotalWeightLifted(workoutId = selectedWorkout.value.workoutId)
         getDatesOfCompletion(workoutId = selectedWorkout.value.workoutId)
 
-//        getWorkoutTotalRepsPerformed(workoutId = selectedWorkout.workoutId)
-//        getWorkoutTotalSetsPerformed(workoutId = selectedWorkout.workoutId)
+        getWorkoutTotalRepsPerformed(workoutId = selectedWorkout.value.workoutId)
+        getWorkoutTotalSetsPerformed(workoutId = selectedWorkout.value.workoutId)
     }
 
     init {
@@ -264,22 +264,20 @@ class WorkoutStatisticsViewModel @Inject constructor(
         }
     }
 
-    fun getWorkoutTotalRepsPerformed(workoutId: Int, exerciseId: Int) {
+    fun getWorkoutTotalRepsPerformed(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
             statisticsUseCases.workoutStatisticsUseCases.getWorkoutTotalRepsPerformedUseCase(
                 workoutId,
-                exerciseId
             ).collect { getWorkoutTotalRepsState ->
                 _getWorkoutTotalRepsState.value = getWorkoutTotalRepsState
             }
         }
     }
 
-    fun getWorkoutTotalSetsPerformed(workoutId: Int, exerciseId: Int) {
+    fun getWorkoutTotalSetsPerformed(workoutId: Int) {
         viewModelScope.launch(dispatcher) {
             statisticsUseCases.workoutStatisticsUseCases.getWorkoutTotalSetsPerformedUseCase(
                 workoutId,
-                exerciseId
             ).collect { getWorkoutTotalSetsState ->
                 _getWorkoutTotalSetsState.value = getWorkoutTotalSetsState
             }

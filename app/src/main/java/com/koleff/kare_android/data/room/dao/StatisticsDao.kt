@@ -40,11 +40,11 @@ interface StatisticsDao {
     @Query("SELECT weight, date FROM do_workout_exercise_set WHERE exerciseId = :exerciseId ORDER BY date ASC")
     suspend fun getWeightProgression(exerciseId: Int): List<WeightProgression>?
 
-    @Query("SELECT SUM(reps) FROM do_workout_exercise_set WHERE exerciseId = :exerciseId AND workoutId = :workoutId")
-    suspend fun getTotalRepsPerformedForExercise(exerciseId: Int, workoutId: Int): Int? //Not working...
+    @Query("SELECT SUM(reps) FROM do_workout_exercise_set WHERE workoutId = :workoutId")
+    suspend fun getTotalRepsPerformedForWorkout(workoutId: Int): Int? //Not working...
 
-    @Query("SELECT COUNT(*) FROM do_workout_exercise_set WHERE exerciseId = :exerciseId AND workoutId = :workoutId")
-    suspend fun getTotalSetsPerformedForExercise(exerciseId: Int, workoutId: Int): Int?
+    @Query("SELECT COUNT(*) FROM do_workout_exercise_set WHERE workoutId = :workoutId")
+    suspend fun getTotalSetsPerformedForWorkout(workoutId: Int): Int?
 
     @Query("SELECT SUM(reps * weight) FROM do_workout_exercise_set WHERE workoutId = :workoutId")
     suspend fun getTotalWeightLiftedForWorkout(workoutId: Int): Float?
