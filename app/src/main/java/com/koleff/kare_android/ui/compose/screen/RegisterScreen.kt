@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.compose.screen
 import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -132,107 +133,114 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
             } //innerPadding = PaddingValues(top = 72.dp)
         }
 
-        //Screen
-        LazyColumn(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .pointerInput(Unit) {
-
-                    //Hide keyboard on tap outside text field boxes
-                    detectTapGestures(
-                        onTap = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                        }
-                    )
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
         ) {
-            item {
-                AuthorizationTitleAndSubtitle(
-                    title = "Sign up",
-                    subtitle = "Create your account"
-                )
+            AuthorizationTitleAndSubtitle(
+                modifier = Modifier.weight(2f),
+                title = "Sign up",
+                subtitle = "Create your account"
+            )
 
-                //User text box
-                CustomTextField(
-                    label = "Username",
-                    iconResourceId = R.drawable.ic_user_3,
-                    focusRequester = usernameFocusRequester,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            passwordFocusRequester.requestFocus()
-                        }
-                    )
-                ) {
-                    username = it
-                }
+            //Screen
+            LazyColumn(
+                modifier = Modifier
+                    .weight(5f)
+                    .pointerInput(Unit) {
 
-                //Password text box
-                PasswordTextField(
-                    label = "Password",
-                    focusRequester = passwordFocusRequester,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Next
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onNext = {
-                            emailFocusRequester.requestFocus()
-                        }
-                    )
-                ) {
-                    password = it
-                }
+                        //Hide keyboard on tap outside text field boxes
+                        detectTapGestures(
+                            onTap = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
+                        )
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                item {
 
-                //Email text box
-                CustomTextField(
-                    label = "Email",
-                    iconResourceId = R.drawable.ic_email,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                        }
-                    )
-                ) {
-                    email = it
-                }
-
-                AuthenticationButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            PaddingValues(
-                                start = 32.dp,
-                                end = 32.dp,
-                                top = 12.dp,
-                                bottom = 8.dp
-                            )
+                    //User text box
+                    CustomTextField(
+                        label = "Username",
+                        iconResourceId = R.drawable.ic_user_3,
+                        focusRequester = usernameFocusRequester,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
                         ),
-                    text = "Sign up",
-                    onAction = onSignUp,
-                    credentials =
-                    Credentials(
-                        username = username,
-                        password = password,
-                        email = email
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                passwordFocusRequester.requestFocus()
+                            }
+                        )
+                    ) {
+                        username = it
+                    }
+
+                    //Password text box
+                    PasswordTextField(
+                        label = "Password",
+                        focusRequester = passwordFocusRequester,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                emailFocusRequester.requestFocus()
+                            }
+                        )
+                    ) {
+                        password = it
+                    }
+
+                    //Email text box
+                    CustomTextField(
+                        label = "Email",
+                        iconResourceId = R.drawable.ic_email,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
+                        )
+                    ) {
+                        email = it
+                    }
+
+                    AuthenticationButton(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                PaddingValues(
+                                    start = 32.dp,
+                                    end = 32.dp,
+                                    top = 12.dp,
+                                    bottom = 8.dp
+                                )
+                            ),
+                        text = "Sign up",
+                        onAction = onSignUp,
+                        credentials =
+                        Credentials(
+                            username = username,
+                            password = password,
+                            email = email
+                        )
                     )
-                )
 
-                SignInFooter(onGoogleSign = onGoogleSign)
-                Spacer(modifier = Modifier.size(8.dp))
+                    SignInFooter(onGoogleSign = onGoogleSign)
+                    Spacer(modifier = Modifier.size(8.dp))
 
-                //Footer
-                SignInHypertext {
-                    registerViewModel.navigateToLogin()
+                    //Footer
+                    SignInHypertext {
+                        registerViewModel.navigateToLogin()
+                    }
                 }
             }
         }
