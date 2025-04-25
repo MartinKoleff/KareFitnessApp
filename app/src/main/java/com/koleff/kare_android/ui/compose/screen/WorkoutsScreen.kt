@@ -67,7 +67,7 @@ fun WorkoutsScreen(
         onNavigateToWorkouts = { workoutListViewModel.onNavigateToWorkouts() },
         onNavigateBackAction = { workoutListViewModel.onNavigateBack() },
         onNavigateToSettings = { workoutListViewModel.onNavigateToSettings() },
-        onWorkoutHistoryAction = { workoutListViewModel.navigateToWorkoutHistory() }
+        onWorkoutHistoryAction = { workoutListViewModel.onNavigateToWorkoutHistory() }
     ) { innerPadding ->
 
         //Pull to refresh
