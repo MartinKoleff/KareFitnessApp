@@ -67,6 +67,7 @@ fun EditWorkoutDialog(
         onDismiss()
         onConfirm(text)
     }
+
     AlertDialog(
         title = {
             Box(

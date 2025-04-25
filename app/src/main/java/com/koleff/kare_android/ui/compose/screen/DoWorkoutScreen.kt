@@ -6,8 +6,7 @@
 //import androidx.compose.foundation.BorderStroke
 //import androidx.compose.foundation.Canvas
 //import androidx.compose.foundation.Image
-//import androidx.compose.foundation.background
-//import androidx.compose.foundation.border
+//import androidx.compose.foundation.clickable
 //import androidx.compose.foundation.layout.Arrangement
 //import androidx.compose.foundation.layout.Box
 //import androidx.compose.foundation.layout.Column
@@ -21,10 +20,7 @@
 //import androidx.compose.foundation.layout.fillMaxWidth
 //import androidx.compose.foundation.layout.height
 //import androidx.compose.foundation.layout.padding
-//import androidx.compose.foundation.layout.width
-//import androidx.compose.foundation.shape.RoundedCornerShape
-//import androidx.compose.material3.BottomSheetScaffold
-//import androidx.compose.material3.ExperimentalMaterial3Api
+//import androidx.compose.foundation.layout.size
 //import androidx.compose.material3.MaterialTheme
 //import androidx.compose.material3.ModalBottomSheet
 //import androidx.compose.material3.Text
@@ -59,7 +55,7 @@
 //import androidx.compose.ui.unit.sp
 //import androidx.hilt.navigation.compose.hiltViewModel
 //import com.koleff.kare_android.R
-//import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
+//import com.koleff.kare_android.common.MockupDataGeneratorV2
 //import com.koleff.kare_android.common.timer.TimerUtil
 //import com.koleff.kare_android.data.model.dto.ExerciseDto
 //import com.koleff.kare_android.data.model.dto.ExerciseProgressDto
@@ -78,7 +74,9 @@
 //import com.koleff.kare_android.ui.compose.dialogs.WorkoutCompletedDialog
 //import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 //import com.koleff.kare_android.ui.view_model.DoWorkoutViewModel
-//import kotlin.random.Random
+//
+////TODO: show paused icon on pause timer...
+////TODO: show resume icon on resume timer... with 3 seconds countdown?
 //
 //@RequiresApi(Build.VERSION_CODES.O)
 //@Composable
@@ -86,6 +84,7 @@
 //    val state by doWorkoutViewModel.state.collectAsState()
 //    val workoutTimerState by doWorkoutViewModel.workoutTimerState.collectAsState()
 //    val countdownTimerState by doWorkoutViewModel.countdownTimerState.collectAsState()
+//    val playerState by doWorkoutViewModel.playerState.collectAsState()
 //
 //    var workoutTimerInitialState by remember {
 //        mutableStateOf(workoutTimerState)
@@ -145,6 +144,14 @@
 //        Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
 //    }
 //
+//
+//    var showPlayerOverlay by remember { mutableStateOf(false) }
+//    var isPaused by remember { mutableStateOf(false) }
+//
+//    LaunchedEffect(playerState) {
+//        showPlayerOverlay = playerState.isLoading
+//    }
+//
 //    //Error dialog
 //    if (showErrorDialog) {
 //        error?.let {
@@ -158,13 +165,12 @@
 //            workoutName = state.doWorkoutData.workout.name,
 //            onClick = {
 //                doWorkoutViewModel.navigateToDashboard()
-//
 //                showWorkoutCompletedDialog = false
 //            }
 //        )
 //    }
 //
-//    if(showExitWorkoutDialog){
+//    if (showExitWorkoutDialog) {
 //        ExitWorkoutDialog(
 //            workoutName = state.doWorkoutData.workout.name,
 //            onClick = {
@@ -189,7 +195,17 @@
 //                .fillMaxSize()
 //                .alpha(0.15f)
 //        }
-//    } else Modifier.fillMaxSize()
+//    } else Modifier
+//        .fillMaxSize()
+//        .clickable {
+//            doWorkoutViewModel
+//                .onScreenClick()
+//                .also {
+//                    isPaused = !isPaused
+//
+//                    doWorkoutViewModel.showPlayerOverlay()
+//                } //Pause/Resume click listener
+//        }
 //
 //    //Loading screen
 //    if (showLoadingDialog) {
@@ -261,6 +277,22 @@
 //                        start = exerciseDataSheetPaddingValues.calculateStartPadding(LayoutDirection.Ltr),
 //                        end = exerciseDataSheetPaddingValues.calculateEndPadding(LayoutDirection.Ltr)
 //                    ) //sheetPeekHeight = 88.dp //exerciseDataSheetPaddingValues
+//                )
+//            }
+//        }
+//
+//        if (showPlayerOverlay) {
+//            Box(
+//                modifier = Modifier.fillMaxSize(),
+//                contentAlignment = Alignment.Center
+//            ) {
+//                Image(
+//                    modifier = Modifier.size(75.dp),
+//                    painter = painterResource(
+//                        if (isPaused) R.drawable.ic_pause else R.drawable.ic_resume
+//                    ),
+//                    contentDescription = "Pause/Resume",
+//                    contentScale = ContentScale.Crop
 //                )
 //            }
 //        }

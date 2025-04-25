@@ -15,7 +15,7 @@ interface OnboardingDao {
     fun getOnboardingDataById(id: Long): OnboardingData?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun saveOnboardingData(onboardingData: OnboardingData)
+    suspend fun saveOnboardingData(onboardingData: OnboardingData): Long
 
     @Update
     suspend fun updateOnboardingData(onboardingData: OnboardingData)

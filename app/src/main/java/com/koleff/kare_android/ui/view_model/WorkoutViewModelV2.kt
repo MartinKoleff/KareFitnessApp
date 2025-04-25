@@ -250,4 +250,8 @@ class WorkoutViewModelV2 @Inject constructor(
     override fun onNavigateBack() {
         super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
+
+    fun onNavigateToWorkoutHistory(){
+        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.WorkoutHistory))
+    }
 }
