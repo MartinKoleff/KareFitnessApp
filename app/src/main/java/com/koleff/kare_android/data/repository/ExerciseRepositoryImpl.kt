@@ -47,6 +47,15 @@ class ExerciseRepositoryImpl @Inject constructor(
         return exerciseDataSource.deleteExerciseSet(exerciseId, workoutId, setId, currentSets)
     }
 
+
+    override suspend fun deleteLatestExerciseSet(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ResultWrapper<ExerciseWrapper>> {
+        return exerciseDataSource.deleteLatestExerciseSet(exerciseId, workoutId, currentSets)
+    }
+
     override suspend fun addNewExerciseSet(
         exerciseId: Int,
         workoutId: Int,

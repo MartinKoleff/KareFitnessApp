@@ -8,12 +8,11 @@ import androidx.room.Query
 import androidx.room.Update
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 
-typealias WorkoutConfigurationId = Long
 
 @Dao
 interface WorkoutConfigurationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertWorkoutConfiguration(configuration: WorkoutConfiguration): WorkoutConfigurationId
+    suspend fun insertWorkoutConfiguration(configuration: WorkoutConfiguration): Long
 
     @Query("SELECT * FROM workout_configuration_table WHERE workoutId = :workoutId")
     suspend fun getWorkoutConfiguration(workoutId: Int): WorkoutConfiguration?

@@ -1,28 +1,22 @@
 package com.koleff.kare_android.domain.usecases
 
-import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.MachineType
-import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
-import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.data.model.dto.MuscleGroup
+import com.koleff.kare_android.ui.event.OnFilterExerciseEvent
 import com.koleff.kare_android.ui.state.ExerciseListState
-import com.koleff.kare_android.ui.state.WorkoutListState
-import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
-import com.koleff.kare_android.domain.wrapper.ResultWrapper
-import com.koleff.kare_android.domain.repository.WorkoutRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 
 class OnFilterExercisesUseCase() {
 
-    suspend operator fun invoke(event: OnFilterExercisesEvent): Flow<ExerciseListState> = flow {
+    operator fun invoke(event: OnFilterExerciseEvent): Flow<ExerciseListState> = flow {
         emit(ExerciseListState(isLoading = true))
         delay(Constants.fakeDelay)
 
         when (event) {
-            is OnFilterExercisesEvent.DumbbellFilter -> {
+            is OnFilterExerciseEvent.DumbbellFilter -> {
                 emit(
                     ExerciseListState(
                         exerciseList = event.exercises.filter {
@@ -34,7 +28,7 @@ class OnFilterExercisesUseCase() {
                 )
             }
 
-            is OnFilterExercisesEvent.BarbellFilter -> {
+            is OnFilterExerciseEvent.BarbellFilter -> {
                 emit(
                     ExerciseListState(
                         exerciseList = event.exercises.filter {
@@ -46,7 +40,7 @@ class OnFilterExercisesUseCase() {
                 )
             }
 
-            is OnFilterExercisesEvent.MachineFilter -> {
+            is OnFilterExerciseEvent.MachineFilter -> {
                 emit(
                     ExerciseListState(
                         exerciseList = event.exercises.filter {
@@ -58,7 +52,7 @@ class OnFilterExercisesUseCase() {
                 )
             }
 
-            is OnFilterExercisesEvent.CalisthenicsFilter -> {
+            is OnFilterExerciseEvent.CalisthenicsFilter -> {
                 emit(
                     ExerciseListState(
                         exerciseList = event.exercises.filter {
@@ -70,10 +64,28 @@ class OnFilterExercisesUseCase() {
                 )
             }
 
-            is OnFilterExercisesEvent.NoFilter -> {
+            is OnFilterExerciseEvent.NoFilter -> {
                 emit(
                     ExerciseListState(
                         exerciseList = event.exercises,
+                        isLoading = false,
+                        isSuccessful = true
+                    )
+                )
+            }
+
+            is OnFilterExerciseEvent.MuscleGroupFilter -> {
+                val filteredExerciseList = if (event.muscleGroup == MuscleGroup.ALL) {
+                    event.exercises
+                } else {
+                    event.exercises.filter {
+                        it.muscleGroup == event.muscleGroup
+                    }
+                }
+
+                emit(
+                    ExerciseListState(
+                        exerciseList = filteredExerciseList,
                         isLoading = false,
                         isSuccessful = true
                     )

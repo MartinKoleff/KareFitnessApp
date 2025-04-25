@@ -155,6 +155,13 @@ class WorkoutRemoteDataSource @Inject constructor(
         )
     }
 
+    override suspend fun addExercise(
+        workoutId: Int,
+        exerciseId: Int
+    ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun addMultipleExercises(
         workoutId: Int,
         exerciseList: List<ExerciseDto>

@@ -27,6 +27,11 @@ interface ExerciseRepository {
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>>
 
+    suspend fun deleteLatestExerciseSet(
+        exerciseId: Int, workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ResultWrapper<ExerciseWrapper>>
+
     suspend fun addNewExerciseSet(
         exerciseId: Int,
         workoutId: Int,

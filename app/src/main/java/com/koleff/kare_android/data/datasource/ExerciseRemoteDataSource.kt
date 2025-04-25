@@ -93,4 +93,12 @@ class ExerciseRemoteDataSource @Inject constructor(
             { ExerciseWrapper(exerciseApi.deleteExerciseSet(body)) }
         )
     }
+
+    override suspend fun deleteLatestExerciseSet(
+        exerciseId: Int,
+        workoutId: Int,
+        currentSets: List<ExerciseSetDto>
+    ): Flow<ResultWrapper<ExerciseWrapper>> {
+        TODO("Not yet implemented")
+    }
 }

@@ -1,8 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.navigation.Destination
@@ -11,14 +9,9 @@ import com.koleff.kare_android.common.navigation.NavigationEvent
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.ui.event.OnFilterExercisesEvent
-import com.koleff.kare_android.ui.event.OnSearchExerciseEvent
-import com.koleff.kare_android.ui.state.ExerciseListState
-import com.koleff.kare_android.ui.state.SearchState
 import com.koleff.kare_android.domain.usecases.ExerciseUseCases
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
+import com.koleff.kare_android.ui.event.OnFilterExerciseEvent
+import com.koleff.kare_android.ui.state.ExerciseListState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,31 +43,31 @@ class ExerciseListViewModel @Inject constructor(
     }
 
 
-    fun onFilterExercisesEvent(machineType: MachineType) {
+    fun OnFilterExerciseEvent(machineType: MachineType) {
         when (machineType) {
             MachineType.DUMBBELL -> {
-                filterExercises(OnFilterExercisesEvent.DumbbellFilter(exercises = originalExerciseList))
+                filterExercises(OnFilterExerciseEvent.DumbbellFilter(exercises = originalExerciseList))
             }
 
             MachineType.BARBELL -> {
-                filterExercises(OnFilterExercisesEvent.BarbellFilter(exercises = originalExerciseList))
+                filterExercises(OnFilterExerciseEvent.BarbellFilter(exercises = originalExerciseList))
             }
 
             MachineType.MACHINE -> {
-                filterExercises(OnFilterExercisesEvent.MachineFilter(exercises = originalExerciseList))
+                filterExercises(OnFilterExerciseEvent.MachineFilter(exercises = originalExerciseList))
             }
 
             MachineType.CALISTHENICS -> {
-                filterExercises(OnFilterExercisesEvent.CalisthenicsFilter(exercises = originalExerciseList))
+                filterExercises(OnFilterExerciseEvent.CalisthenicsFilter(exercises = originalExerciseList))
             }
 
             MachineType.NONE -> {
-                filterExercises(OnFilterExercisesEvent.NoFilter(exercises = originalExerciseList))
+                filterExercises(OnFilterExerciseEvent.NoFilter(exercises = originalExerciseList))
             }
         }
     }
 
-    private fun filterExercises(event: OnFilterExercisesEvent) {
+    private fun filterExercises(event: OnFilterExerciseEvent) {
         viewModelScope.launch(dispatcher) {
             exerciseUseCases.onFilterExercisesUseCase(event).collect { exerciseState ->
                 _state.value = exerciseState
