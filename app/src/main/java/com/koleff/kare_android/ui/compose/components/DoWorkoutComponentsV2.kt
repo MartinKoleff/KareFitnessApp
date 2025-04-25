@@ -351,6 +351,7 @@ private fun RepsSetAndWeightInfoRowPreview() {
 
 @Composable
 fun NextExerciseInfoScreen(
+    modifier: Modifier = Modifier,
     nextExercise: ExerciseDto,
     set: Int,
     reps: Int,
@@ -379,7 +380,7 @@ fun NextExerciseInfoScreen(
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .drawBehind {
                 drawRect(
@@ -424,7 +425,7 @@ fun NextExerciseInfoScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 64.dp),
+                    .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 PauseButton(
@@ -445,7 +446,7 @@ fun NextExerciseInfoScreen(
             }
 
             //Exercise data sheet margin
-            Spacer(modifier = Modifier.height(64.dp))
+            Spacer(modifier = Modifier.height(96.dp))
         }
     }
 }
@@ -467,6 +468,38 @@ fun NextExerciseInfoScreenPreview() {
         isWorkoutComplete = false,
         countdownTime = countdownTime,
     )
+}
+
+@Preview
+@Composable
+fun NextExerciseInfoScreenAndExerciseDataSheetPreview() {
+    val nextExercise = MockupDataGeneratorV2.generateExercise()
+    val countdownTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10)
+
+    val exercise = MockupDataGeneratorV2.generateExercise()
+    val currentSetNumber = 1
+    val defaultTotalSets = 4
+    val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {}
+    ExerciseDataSheetModal2(
+        exercise = exercise,
+        currentSetNumber = currentSetNumber,
+        defaultTotalSets = defaultTotalSets,
+        isNextExercise = false,
+        onSaveExerciseData = onSaveExerciseData
+    ) {
+        NextExerciseInfoScreen(
+            nextExercise = nextExercise,
+            set = 2,
+            reps = 12,
+            weight = 225.0f,
+            totalSets = 4,
+            onPause = {},
+            onResume = {},
+            onSkipSet = {},
+            isWorkoutComplete = false,
+            countdownTime = countdownTime,
+        )
+    }
 }
 
 @Composable
