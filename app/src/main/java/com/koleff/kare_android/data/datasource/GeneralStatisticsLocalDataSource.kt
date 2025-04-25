@@ -1,5 +1,6 @@
 package com.koleff.kare_android.data.datasource
 
+import android.util.Log
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
@@ -48,7 +49,8 @@ class GeneralStatisticsLocalDataSource(
             val workoutsCompleted =
                 doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics().size
 
-            val datesOfCompletion = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics().map { it.performanceMetrics.date }
+            val datesOfCompletion = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics()
+                .map { it.performanceMetrics.date }
 
             val result = TotalTimesCompletedWrapper(
                 TotalTimesCompletedResponse(
@@ -71,7 +73,8 @@ class GeneralStatisticsLocalDataSource(
                 .distinctBy { it.workout.workoutId }
                 .size
 
-            val datesOfCompletion = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics().map { it.performanceMetrics.date }
+            val datesOfCompletion = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics()
+                .map { it.performanceMetrics.date }
 
             val result = TotalTimesCompletedWrapper(
                 TotalTimesCompletedResponse(
@@ -119,15 +122,22 @@ class GeneralStatisticsLocalDataSource(
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val workouts = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics()
+        val performanceMetrics = doWorkoutPerformanceMetricsDao.getAllWorkoutPerformanceMetrics()
             .sortedByDescending { it.performanceMetrics.date }
             .distinctBy { it.workout.workoutId }
-            .map { it.workout }
+
+        performanceMetrics.map { it.performanceMetrics}
+            .forEach{
+                Log.d("GeneralStatisticsLocalDataSource", "date: ${it.date}, performanceMetrics: $it")
+            }
+
+        val workouts = performanceMetrics.map { it.workout }
             .map(Workout::toDto)
 
         val workoutsByRepetition = workouts.groupingBy { it }.eachCount()
         val mostFrequentWorkout = workoutsByRepetition.maxByOrNull { it.value }?.key
 
+        Log.d("GeneralStatisticsLocalDataSource", "workoutsByRepetition: $workoutsByRepetition")
         val result = WorkoutWrapper(
             WorkoutResponse(
                 workout = mostFrequentWorkout ?: WorkoutDto()

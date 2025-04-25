@@ -376,7 +376,7 @@ class GeneralStatisticsUseCaseTest {
                 enableSetIdGeneration = true,
                 workoutId = 2
             )
-        Logger.getLogger().i("Workout 1: $workout2")
+        Logger.getLogger().i("Workout 2: $workout2")
 
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout1).toList()
         workoutUseCases.createCustomWorkoutDetailsUseCase(workout2).toList()
@@ -393,7 +393,7 @@ class GeneralStatisticsUseCaseTest {
             id = workout1.workoutId,
             workout = workout1.toWorkout(),
             exercises = workout1.exercises
-        ).copy(date = Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24))) //Yesterdays date
+        ).copy(date = Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 2))) //Day before yesterdays date
 
         doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
             performanceMetrics1
@@ -426,7 +426,7 @@ class GeneralStatisticsUseCaseTest {
                 id = workout2.workoutId,
                 workout = workout2.toWorkout(),
                 exercises = workout2.exercises
-            )
+            ).copy(date = Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24))) //Yesterday date
         doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
             performanceMetrics2
         ).toList()
@@ -723,7 +723,7 @@ class GeneralStatisticsUseCaseTest {
             id = 3,
             workout = workout1.toWorkout(),
             exercises = workout1.exercises
-        )
+        ).copy(date = Date(System.currentTimeMillis() - (1000 * 60 * 60 * 24 * 1/2))) //Less than 1 day difference
         doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
             performanceMetrics3
         ).toList()
@@ -846,7 +846,7 @@ class GeneralStatisticsUseCaseTest {
             id = 3,
             workout = workout1.toWorkout(),
             exercises = workout1.exercises
-        )
+        ).copy(date = Date())
         doWorkoutPerformanceMetricsUseCases.saveDoWorkoutPerformanceMetricsUseCase(
             performanceMetrics3
         ).toList()
