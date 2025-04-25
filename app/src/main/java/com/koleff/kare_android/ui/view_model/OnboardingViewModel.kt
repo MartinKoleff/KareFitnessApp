@@ -1,5 +1,6 @@
 package com.koleff.kare_android.ui.view_model
 
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.MainDispatcher
 import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.preferences.Preferences
@@ -31,6 +32,10 @@ class OnboardingViewModel @Inject constructor(
     }
 
     fun navigateToFormsScreen() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.OnboardingForm))
+        if(Constants.showOnboardingForm) {
+            super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.OnboardingForm))
+        }else{
+            super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Welcome))
+        }
     }
 }
