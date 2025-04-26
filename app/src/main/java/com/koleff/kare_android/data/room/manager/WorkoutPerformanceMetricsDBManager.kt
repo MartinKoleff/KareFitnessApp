@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.room.manager
 
 import com.google.firebase.crashlytics.internal.Logger
-import com.koleff.kare_android.common.manager.data.WorkoutPerformanceMetricsGenerator
+import com.koleff.kare_android.common.manager.data.PerformanceMetricsGenerator
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
@@ -23,8 +23,7 @@ class WorkoutPerformanceMetricsDBManager @Inject constructor(
         withContext(Dispatchers.IO) {
             if (hasInitializedDB) return@withContext
 
-            val performanceMetricsList =
-                WorkoutPerformanceMetricsGenerator.getAllWorkoutPerformanceMetrics(exerciseSetDao)
+            val performanceMetricsList = PerformanceMetricsGenerator.generatePerformanceMetrics()
 
             //Create Performance Metrics
             performanceMetricsList.forEach { performanceMetrics ->

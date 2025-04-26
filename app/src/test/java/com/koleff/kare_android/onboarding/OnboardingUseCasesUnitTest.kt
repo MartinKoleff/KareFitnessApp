@@ -1,6 +1,6 @@
 package com.koleff.kare_android.onboarding
 
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.OnboardingLocalDataSource
 import com.koleff.kare_android.data.repository.OnboardingRepositoryImpl
 import com.koleff.kare_android.domain.repository.OnboardingRepository
