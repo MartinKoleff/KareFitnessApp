@@ -27,7 +27,7 @@ class ChangeLanguageViewModel @Inject constructor(
     private val languageUseCases: LanguageUseCases,
     private val navigationController: NavigationController,
     @IoDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.IO
-) : BaseViewModel(navigationController), MainScreenNavigation {
+) : BaseViewModel(navigationController) {
 
     private var _getSupportedLanguagesState: MutableStateFlow<SupportedLanguagesState> =
         MutableStateFlow(SupportedLanguagesState())
@@ -123,21 +123,5 @@ class ChangeLanguageViewModel @Inject constructor(
         if (changeLanguageState.value.isError) {
             _changeLanguageState.value = BaseState()
         }
-    }
-
-    override fun onNavigateToDashboard() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-
-    override fun onNavigateToWorkouts() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-
-    override fun onNavigateToSettings() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-
-    override fun onNavigateBack() {
-        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

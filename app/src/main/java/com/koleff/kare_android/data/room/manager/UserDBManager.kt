@@ -1,17 +1,7 @@
 package com.koleff.kare_android.data.room.manager
 
-import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.common.preferences.Preferences
-import com.koleff.kare_android.data.model.dto.MuscleGroup
-import com.koleff.kare_android.data.room.dao.ExerciseDao
-import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
-import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.UserDao
-import com.koleff.kare_android.data.room.entity.Exercise
-import com.koleff.kare_android.data.room.entity.ExerciseSet
 import com.koleff.kare_android.data.room.entity.User
-import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.util.UUID

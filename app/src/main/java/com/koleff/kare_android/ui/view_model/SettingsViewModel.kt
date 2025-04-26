@@ -62,25 +62,17 @@ class SettingsViewModel @Inject constructor(
         )
     }
 
+    fun onNavigateToStatistics() {
+        super.onNavigationEvent(
+            NavigationEvent.ClearBackstackAndNavigateTo(
+                destination = Destination.Statistics
+            )
+        )
+    }
+
     override fun clearError() {
         if (logoutState.value.isError) {
             _logoutState.value = BaseState()
         }
-    }
-
-    override fun onNavigateToDashboard() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-
-    override fun onNavigateToWorkouts() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-
-    override fun onNavigateToSettings() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-
-    override fun onNavigateBack() {
-        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 }

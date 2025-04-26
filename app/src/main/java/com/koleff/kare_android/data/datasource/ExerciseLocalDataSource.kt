@@ -5,7 +5,7 @@
 //import com.koleff.kare_android.data.model.dto.MuscleGroup
 //import com.koleff.kare_android.data.model.response.ExerciseDetailsResponse
 //import com.koleff.kare_android.data.model.response.ExerciseResponse
-//import com.koleff.kare_android.data.model.response.GetExercisesResponse
+//import com.koleff.kare_android.data.model.response.ExerciseListResponse
 //import com.koleff.kare_android.data.model.response.base_response.KareError
 //import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 //import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
@@ -99,7 +99,7 @@
 //            }
 //
 //            val result = ExerciseListWrapper(
-//                GetExercisesResponse(data.map { it.toDto(sets = emptyList()) })
+//                ExerciseListResponse(data.map { it.toDto(sets = emptyList()) })
 //            )
 //
 //            emit(ResultWrapper.Success(result))

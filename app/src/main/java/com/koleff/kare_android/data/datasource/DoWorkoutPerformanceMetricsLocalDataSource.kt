@@ -5,7 +5,6 @@ import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.response.DoWorkoutPerformanceMetricsListResponse
 import com.koleff.kare_android.data.model.response.DoWorkoutPerformanceMetricsResponse
-import com.koleff.kare_android.data.model.response.UserResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
@@ -15,7 +14,6 @@ import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsListWra
 import com.koleff.kare_android.domain.wrapper.DoWorkoutPerformanceMetricsWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
-import com.koleff.kare_android.domain.wrapper.UserWrapper
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -105,7 +103,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
                         workoutId
                     )
 
-                if(data.isEmpty()) throw NoSuchElementException()
+                if (data.isEmpty()) throw NoSuchElementException()
 
                 val result = DoWorkoutPerformanceMetricsListWrapper(
                     DoWorkoutPerformanceMetricsListResponse(
@@ -139,7 +137,7 @@ class DoWorkoutPerformanceMetricsLocalDataSource(
                     end
                 )
 
-            val result = DoWorkoutPerformanceMetricsListWrapper(
+             val result = DoWorkoutPerformanceMetricsListWrapper(
                 DoWorkoutPerformanceMetricsListResponse(
                     data.map { it.toDto() }
                 )

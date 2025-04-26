@@ -1,9 +1,8 @@
 package com.koleff.kare_android.domain.wrapper
 
-import com.koleff.kare_android.data.model.response.DashboardMuscleGroupsResponse
-import com.koleff.kare_android.data.model.response.GetDuplicateExercisesResponse
+import com.koleff.kare_android.data.model.response.DuplicateExercisesResponse
 
-class DuplicateExercisesWrapper(getDuplicateExercisesResponse: GetDuplicateExercisesResponse):
-    ServerResponseData(getDuplicateExercisesResponse) {
-    val containsDuplicates = getDuplicateExercisesResponse.containsDuplicates
+class DuplicateExercisesWrapper(duplicateExercisesResponse: DuplicateExercisesResponse):
+    ServerResponseData(duplicateExercisesResponse) {
+    val containsDuplicates = duplicateExercisesResponse.containsDuplicates
 }

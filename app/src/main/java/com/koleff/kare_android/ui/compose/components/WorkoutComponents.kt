@@ -102,7 +102,6 @@ fun WorkoutSegmentButton(
 }
 
 @Preview
-@PreviewLightDark
 @Composable
 private fun WorkoutSegmentButtonEnabledPreview() {
     WorkoutSegmentButton(
@@ -116,7 +115,6 @@ private fun WorkoutSegmentButtonEnabledPreview() {
 }
 
 @Preview
-@PreviewLightDark
 @Composable
 private fun WorkoutSegmentButtonDisabledPreview() {
     WorkoutSegmentButton(

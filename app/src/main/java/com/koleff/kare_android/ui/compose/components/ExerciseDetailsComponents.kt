@@ -4,12 +4,12 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -32,12 +32,13 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.ui.theme.LocalExtendedColors
@@ -64,7 +65,7 @@ fun DetailsInfo(
     )
 
     val titleTextColor = LocalExtendedColors.current.title
-    val titleTextStyle = MaterialTheme.typography.bodySmall.copy(
+    val titleTextStyle = MaterialTheme.typography.labelSmall.copy(
         color = titleTextColor
     )
     val tintColor = MaterialTheme.colorScheme.primary
@@ -103,7 +104,7 @@ fun DetailsInfo(
         ) {
             Text(
                 modifier = Modifier.padding(
-                    PaddingValues(horizontal = 4.dp)
+                    PaddingValues(horizontal = 2.dp)
                 ),
                 text = title,
                 style = titleTextStyle,
@@ -113,7 +114,7 @@ fun DetailsInfo(
 
             Text(
                 modifier = Modifier.padding(
-                    PaddingValues(horizontal = 4.dp)
+                    PaddingValues(horizontal = 2.dp)
                 ),
                 text = subtitle,
                 style = labelTextStyle,
@@ -157,26 +158,32 @@ private fun EquipmentNeededInfoPreview() {
     EquipmentNeededInfo()
 }
 
-@Preview
 @Composable
-private fun InfoRowPreview() {
-    Row {
+fun ExerciseDetailsInfoRow(modifier: Modifier = Modifier) {
+    Row(modifier = modifier) {
         DifficultyInfo(
             modifier = Modifier
-                .weight(3f)
-                .padding(horizontal = 2.dp)
+                .weight(11f)
+                .padding(horizontal = 1.dp)
         )
         DurationInfo(
             modifier = Modifier
-                .weight(3f)
-                .padding(horizontal = 2.dp)
+                .weight(10f)
+                .padding(horizontal = 1.dp)
         )
         EquipmentNeededInfo(
             modifier = Modifier
-                .weight(3f)
-                .padding(horizontal = 2.dp)
+                .weight(12f)
+                .padding(horizontal = 1.dp)
         )
     }
+}
+
+@Preview(name = "NEXUS_5", device = Devices.NEXUS_5)
+@Preview
+@Composable
+private fun ExerciseDetailsInfoRowPreview() {
+    ExerciseDetailsInfoRow()
 }
 
 @Composable
@@ -320,22 +327,23 @@ private fun MuscleWorkedInfoPreview() {
     )
 }
 
-@Preview
 @Composable
-private fun MusclesWorkedRowPreview() {
-    val exercise = MockupDataGeneratorV2.generateExerciseDetails(muscleGroup = MuscleGroup.ARMS)
+fun MusclesWorkedRow(exercise: ExerciseDetailsDto) {
+    val subtitleTextColor = LocalExtendedColors.current.subtitle
+    val subtitleTextStyle = MaterialTheme.typography.titleMedium.copy(
+        color = subtitleTextColor
+    )
 
     Column {
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 2.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             text = "Muscles worked",
-            style = MaterialTheme.typography.labelMedium.copy(
-                color = LocalExtendedColors.current.title
-            ),
+            style = subtitleTextStyle,
             textAlign = TextAlign.Center,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
+        Spacer(modifier = Modifier.height(12.dp))
 
         Row(horizontalArrangement = Arrangement.SpaceEvenly) {
             MuscleWorkedInfo(
@@ -364,6 +372,15 @@ private fun MusclesWorkedRowPreview() {
             )
         }
     }
+}
+
+@Preview
+@Preview(name = "NEXUS_5", device = Devices.NEXUS_5)
+@Composable
+private fun MusclesWorkedRowPreview() {
+    val exercise = MockupDataGeneratorV2.generateExerciseDetails(muscleGroup = MuscleGroup.ARMS)
+
+    MusclesWorkedRow(exercise)
 }
 
 @Composable
@@ -408,7 +425,7 @@ fun DescriptionBox(
             text = description,
             style = labelTextStyle,
             textAlign = TextAlign.Start,
-            maxLines = 5,
+            maxLines = 15,
             overflow = TextOverflow.Ellipsis
         )
     }

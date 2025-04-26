@@ -8,18 +8,19 @@ import androidx.room.TypeConverters
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.room.Converters
 import com.koleff.kare_android.data.room.ExerciseTimeConverters
-import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.dao.DoWorkoutExerciseSetDao
+import com.koleff.kare_android.data.room.dao.DoWorkoutPerformanceMetricsDao
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.OnboardingDao
+import com.koleff.kare_android.data.room.dao.StatisticsDao
 import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
 import com.koleff.kare_android.data.room.dao.WorkoutDetailsDao
-import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.data.room.entity.DoWorkoutExerciseSet
+import com.koleff.kare_android.data.room.entity.DoWorkoutPerformanceMetrics
 import com.koleff.kare_android.data.room.entity.Exercise
 import com.koleff.kare_android.data.room.entity.ExerciseDetails
 import com.koleff.kare_android.data.room.entity.ExerciseSet
@@ -28,10 +29,6 @@ import com.koleff.kare_android.data.room.entity.User
 import com.koleff.kare_android.data.room.entity.Workout
 import com.koleff.kare_android.data.room.entity.WorkoutConfiguration
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
-import com.koleff.kare_android.data.room.entity.relations.ExerciseDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.ExerciseSetCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsExerciseCrossRef
-import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutCrossRef
 
 @Database(
     entities = [
@@ -46,7 +43,7 @@ import com.koleff.kare_android.data.room.entity.relations.WorkoutDetailsWorkoutC
         WorkoutConfiguration::class,
         OnboardingData::class
     ],
-    version = 22,
+    version = 23,
     exportSchema = false,
 )
 @TypeConverters(Converters::class, ExerciseTimeConverters::class)
@@ -61,6 +58,7 @@ abstract class KareDatabase : RoomDatabase() {
     abstract val doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao
     abstract val workoutConfigurationDao: WorkoutConfigurationDao
     abstract val onboardingDao: OnboardingDao
+    abstract val statisticsDao: StatisticsDao
 
     companion object {
         @Volatile

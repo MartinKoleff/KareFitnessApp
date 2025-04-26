@@ -56,6 +56,10 @@ class ExerciseSetDaoFake(
         deleteSet(exerciseSet)
     }
 
+    override fun getAllSets(): List<ExerciseSet> {
+        return exerciseSetDB
+    }
+
 
     override suspend fun onSetAdded(exerciseSet: ExerciseSet) = insertExerciseSet(exerciseSet)
 

@@ -9,7 +9,7 @@ import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
 import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
-import com.koleff.kare_android.data.model.response.GetDuplicateExercisesResponse
+import com.koleff.kare_android.data.model.response.DuplicateExercisesResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
@@ -135,5 +135,5 @@ interface WorkoutApi {
     @GET("api/v1/workout/findduplicateexercises")
     fun findDuplicateExercises(
         @Body body: FindDuplicateExercisesRequest
-    ): GetDuplicateExercisesResponse
+    ): DuplicateExercisesResponse
 }

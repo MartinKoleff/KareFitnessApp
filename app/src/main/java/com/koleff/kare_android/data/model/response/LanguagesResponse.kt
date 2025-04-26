@@ -4,7 +4,7 @@ import com.koleff.kare_android.data.model.dto.KareLanguage
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.squareup.moshi.Json
 
-data class GetLanguagesResponse (
+data class LanguagesResponse (
     @Json(name = "data")
     val languages: List<KareLanguage>
 ): BaseResponse()

@@ -2,9 +2,9 @@ package com.koleff.kare_android.data.datasource
 
 import android.content.Context
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.LanguageManager
+import com.koleff.kare_android.common.manager.data.LanguageManager
 import com.koleff.kare_android.data.model.dto.KareLanguage
-import com.koleff.kare_android.data.model.response.GetLanguagesResponse
+import com.koleff.kare_android.data.model.response.LanguagesResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.domain.wrapper.KareLanguagesWrapper
@@ -20,7 +20,7 @@ class LanguageLocalDataSource : LanguageDataSource {
         delay(Constants.fakeDelay)
 
         val result = KareLanguagesWrapper(
-            GetLanguagesResponse(
+            LanguagesResponse(
                 LanguageManager.getSupportedLanguages()
             )
         )

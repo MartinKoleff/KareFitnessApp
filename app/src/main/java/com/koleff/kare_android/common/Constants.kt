@@ -15,6 +15,7 @@ object Constants {
     const val useLocalDataSource = true
     const val useMockupDataSource = true
     const val fakeDelay: Long = 500L
+    const val fakeSmallDelay: Long = 150L
 
     const val navigationDelay: Long = 333L
 
@@ -30,6 +31,9 @@ object Constants {
 
     const val isTestingFirebaseCrashlytics = false
     const val CATALOG_EXERCISE_ID = 777
+
+    const val showOnboardingForm = false
+
 
     /**
      * Broadcast intents

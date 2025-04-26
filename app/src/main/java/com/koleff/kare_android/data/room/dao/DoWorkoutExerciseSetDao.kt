@@ -11,6 +11,7 @@ import com.koleff.kare_android.data.room.entity.Exercise
 import java.util.UUID
 
 typealias DoWorkoutExerciseSetId = Int
+
 @Dao
 interface DoWorkoutExerciseSetDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -33,4 +34,10 @@ interface DoWorkoutExerciseSetDao {
 
     @Query("SELECT * FROM do_workout_exercise_set WHERE workoutId = :workoutId")
     suspend fun findSetsByWorkoutId(workoutId: Int): List<DoWorkoutExerciseSet>
+
+    @Query("SELECT * FROM do_workout_exercise_set WHERE exerciseId = :exerciseId")
+    suspend fun findSetsByExerciseId(exerciseId: Int): List<DoWorkoutExerciseSet>
+
+    @Query("SELECT * FROM do_workout_exercise_set")
+    suspend fun getAllSets(): List<DoWorkoutExerciseSet>
 }

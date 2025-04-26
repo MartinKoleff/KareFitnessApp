@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.room.manager
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.ExerciseGenerator
+import com.koleff.kare_android.common.manager.data.ExerciseGenerator
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao

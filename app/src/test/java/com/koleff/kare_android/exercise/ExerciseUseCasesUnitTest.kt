@@ -1,8 +1,8 @@
 package com.koleff.kare_android.exercise
 
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.ExerciseGenerator
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.ExerciseGenerator
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.ExerciseLocalDataSourceV2
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup

@@ -1,6 +1,6 @@
 package com.koleff.kare_android.do_workout
 
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -227,8 +227,8 @@ class DoWorkoutUseCasesUnitTest {
                 deleteExerciseSetUseCase = DeleteExerciseSetUseCase(exerciseRepository),
                 startTimerUseCase = StartTimerUseCase(),
                 resetTimerUseCase = ResetTimerUseCase(),
-                pauseTimerUseCase = PauseTimerUseCase(),
-                resumeTimerUseCase = ResumeTimerUseCase()
+                resumeTimerUseCase = ResumeTimerUseCase(),
+                pauseTimerUseCase = PauseTimerUseCase()
             )
 
             timer = TimerUtilFake()

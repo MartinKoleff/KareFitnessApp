@@ -1,5 +1,6 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.manager.data
 
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
@@ -22,6 +23,7 @@ object ExerciseGenerator {
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc interdum nibh nec pharetra iaculis. Aenean ultricies egestas leo at ultricies. Quisque suscipit, purus ut congue porta, eros eros tincidunt sem, sed commodo magna metus eu nibh. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum quis velit eget eros malesuada luctus. Suspendisse iaculis ullamcorper condimentum. Sed metus augue, dapibus eu venenatis vitae, ornare non turpis. Donec suscipit iaculis dolor, id fermentum mauris interdum in. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas."
     private const val videoUrl = "_FkbD0FhgVE" //https://www.youtube.com/watch?v=
     private const val videoUrl2 = "8GEKQJcKTO8" //https://www.youtube.com/watch?v=
+
 
 
     //List of all muscle groups with exercises ranges setup in getMuscleGroupRange()

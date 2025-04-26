@@ -1,5 +1,8 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.manager.data
 
+import com.koleff.kare_android.common.DateManager
+import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
+import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
@@ -11,7 +14,6 @@ import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.room.entity.OnboardingData
 import java.util.UUID
 import kotlin.random.Random
 
@@ -351,5 +353,69 @@ object MockupDataGeneratorV2 {
             height = Random.nextInt(140, 220),
             weight = Random.nextInt(35, 200)
         )
+    }
+
+    fun generateDoWorkoutPerformanceMetrics(
+        workout: WorkoutDto = WorkoutDto(),
+        id: Int = Random.nextInt(1, 100),
+        excludedWorkoutIds: List<Int> = emptyList(),
+        exercises: List<ExerciseDto> = emptyList()
+    ): DoWorkoutPerformanceMetricsDto {
+        val selectedWorkout = if (workout == WorkoutDto()) {
+            generateWorkout(excludedIds = excludedWorkoutIds)
+        } else {
+            workout
+        }
+        val date = DateManager.getRandomDateInCurrentMonth()
+
+        val exerciseSets = generateDoWorkoutExerciseSets(
+            performanceMetricsId = id,
+            muscleGroup = selectedWorkout.muscleGroup,
+            workoutId = selectedWorkout.workoutId,
+            numberOfExercises = selectedWorkout.totalExercises,
+            exercises = exercises
+        )
+
+        return DoWorkoutPerformanceMetricsDto(
+            id = id, //TODO: Should l be using workoutId as unique identifier?
+            workout = selectedWorkout,
+            date = date,
+            doWorkoutExerciseSets = exerciseSets
+        )
+    }
+
+
+    fun generateDoWorkoutExerciseSets(
+        performanceMetricsId: Int,
+        muscleGroup: MuscleGroup,
+        workoutId: Int,
+        numberOfExercises: Int,
+        exercises: List<ExerciseDto>? = null //Optional list of exercises
+    ): List<DoWorkoutExerciseSetDto> {
+        val selectedExercises = exercises?.shuffled()?.take(numberOfExercises)
+            ?: ExerciseGenerator.loadExercisesWithSets(muscleGroup, isWorkout = true, workoutId)
+                .map { it.toDto() }
+                .shuffled()
+                .take(numberOfExercises)
+        val date = DateManager.getRandomDateInCurrentMonth()
+
+        val doWorkoutExerciseSets = selectedExercises.flatMap { exercise ->
+            exercise.sets.map { exerciseSet ->
+                DoWorkoutExerciseSetDto(
+                    instanceId = UUID.randomUUID(),
+                    workoutPerformanceMetricsId = performanceMetricsId,
+                    workoutId = workoutId,
+                    exerciseId = exercise.exerciseId,
+                    templateSetId = exerciseSet.setId!!,
+                    reps = (6..15).random(),
+                    weight = (15..100).random().toFloat(),
+                    isDone = Random.nextBoolean(),
+                    time = null,
+                    date = date
+                )
+            }
+        }
+
+        return doWorkoutExerciseSets
     }
 }

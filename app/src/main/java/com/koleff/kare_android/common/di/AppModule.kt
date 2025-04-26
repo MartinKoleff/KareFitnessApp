@@ -16,6 +16,7 @@ import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.OnboardingDao
+import com.koleff.kare_android.data.room.dao.StatisticsDao
 import com.koleff.kare_android.data.room.dao.UserDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
@@ -24,6 +25,7 @@ import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManagerV2
+import com.koleff.kare_android.data.room.manager.WorkoutPerformanceMetricsDBManager
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -144,6 +146,12 @@ object AppModule {
         return kareDatabase.onboardingDao
     }
 
+    @Provides
+    @Singleton
+    fun provideStatisticsDao(kareDatabase: KareDatabase): StatisticsDao{
+        return kareDatabase.statisticsDao
+    }
+
 
     /**
      * DB Managers
@@ -191,6 +199,26 @@ object AppModule {
             exerciseSetDao = exerciseSetDao,
             workoutDao = workoutDao,
             workoutDetailsDao = workoutDetailsDao,
+            hasInitializedDB = hasInitializedDB
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutPerformanceMetricsDBManager(
+        preferences: Preferences,
+        doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
+        doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
+        exerciseSetDao: ExerciseSetDao,
+        workoutDao: WorkoutDao
+    ): WorkoutPerformanceMetricsDBManager {
+        val hasInitializedDB = preferences.hasInitializedWorkoutPerformanceMetricsTable()
+
+        return WorkoutPerformanceMetricsDBManager(
+            doWorkoutPerformanceMetricsDao = doWorkoutPerformanceMetricsDao,
+            doWorkoutExerciseSetDao = doWorkoutExerciseSetDao,
+            exerciseSetDao = exerciseSetDao,
+            workoutDao = workoutDao,
             hasInitializedDB = hasInitializedDB
         )
     }

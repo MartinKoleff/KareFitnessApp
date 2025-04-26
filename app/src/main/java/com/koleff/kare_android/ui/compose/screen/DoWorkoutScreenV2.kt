@@ -173,7 +173,6 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                     doWorkoutViewModel
                         .onScreenClick()
                         .also {
-                            Log.d("DoWorkoutScreen", "Screen clicked.")
                             isPaused = !isPaused
 
                             doWorkoutViewModel.showPlayerOverlay()
@@ -249,6 +248,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
             )
 
             NextExerciseInfoScreen(
+                modifier = Modifier.padding(exerciseDataSheetPaddingValues),
                 nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise.exerciseDto else state.doWorkoutData.currentExercise.exerciseDto,
                 set = state.doWorkoutData.nextSetNumber,
                 totalSets = state.doWorkoutData.totalSets,

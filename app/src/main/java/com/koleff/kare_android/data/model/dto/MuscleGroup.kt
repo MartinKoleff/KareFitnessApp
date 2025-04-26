@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.model.dto
 
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.ExerciseGenerator
+import com.koleff.kare_android.common.manager.data.ExerciseGenerator
 
 enum class MuscleGroup(
     val muscleGroupId: Int,
