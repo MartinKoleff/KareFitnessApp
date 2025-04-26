@@ -99,6 +99,12 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
 
         showWorkoutCompletedDialog = state.doWorkoutData.isWorkoutCompleted
         Log.d("DoWorkoutScreen", "Is workout completed: $showWorkoutCompletedDialog")
+
+        Log.d("DoWorkoutScreen", "Current exercise: ${state.doWorkoutData.currentExercise}")
+        Log.d(
+            "DoWorkoutScreen",
+            "Current video url: ${state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl}"
+        )
     }
 
     var showPlayerOverlay by remember { mutableStateOf(false) }
@@ -154,10 +160,16 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                 .alpha(0.15f)
         }
     } else {
+        Modifier.fillMaxSize()
+    }
+
+    val pauseModifier = if (showNextExerciseCountdown) {
+        Modifier.fillMaxSize()
+    } else {
         Modifier
             .fillMaxSize()
             .clickable {
-                if (!showNextExerciseCountdown) {
+                if (!showNextExerciseCountdown && doWorkoutViewModel.state.value.doWorkoutData.isSetupCompleted) {
                     doWorkoutViewModel
                         .onScreenClick()
                         .also {
@@ -171,7 +183,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
 
     //Above all screens
     ExerciseDataSheetModal2(
-        exercise = state.doWorkoutData.currentExercise,
+        exercise = state.doWorkoutData.currentExercise.exerciseDto,
         currentSetNumber = state.doWorkoutData.currentSetNumber,
         defaultTotalSets = state.doWorkoutData.defaultTotalSets,
         isNextExercise = state.doWorkoutData.isNextExercise,
@@ -181,7 +193,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
     ) { exerciseDataSheetPaddingValues ->
         DoWorkoutScaffold(
             modifier = screenModifier,
-            screenTitle = state.doWorkoutData.currentExercise.name,
+            screenTitle = state.doWorkoutData.currentExercise.exerciseDto.name,
             onExitWorkoutAction = {
 
                 //Disable exit workout button when NextExerciseCountdownScreen is visible
@@ -196,15 +208,17 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                     doWorkoutViewModel.skipNextExercise()
                 }
             }
-        ) {
-
-            //Background video player
-            YoutubeVerticalVideoPlayer(LocalLifecycleOwner.current) {
-                if(state.doWorkoutData.isSetupCompleted) return@YoutubeVerticalVideoPlayer //Setup completed
-
-                Log.d("DoWorkoutScreen", "Background video player loaded.")
-                doWorkoutViewModel.setup {
-                    Log.d("DoWorkoutScreen", "Setup completed.")
+        ) { scaffoldPadding ->
+            if (state.doWorkoutData.isSetupCompleted) {
+                YoutubeVerticalVideoPlayer(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(scaffoldPadding),
+                    lifecycleOwner = LocalLifecycleOwner.current,
+                    videoUrl = state.doWorkoutData.currentExercise.exerciseDetailsDto.videoUrl
+                ) {
+                    Log.d("DoWorkoutScreen", "Background video player loaded.")
+                    doWorkoutViewModel.onSetupCompleted()
                 }
             }
 
@@ -221,6 +235,9 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
                     currentSet = state.doWorkoutData.currentSet
                 )
             }
+
+            //Pause/Resume click listener
+            Box(pauseModifier.padding(scaffoldPadding))
         }
 
         //Next exercise countdown screen overlay
@@ -232,7 +249,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
 
             NextExerciseInfoScreen(
                 modifier = Modifier.padding(exerciseDataSheetPaddingValues),
-                nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise else state.doWorkoutData.currentExercise,
+                nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise.exerciseDto else state.doWorkoutData.currentExercise.exerciseDto,
                 set = state.doWorkoutData.nextSetNumber,
                 totalSets = state.doWorkoutData.totalSets,
                 weight = state.doWorkoutData.nextSet.weight,

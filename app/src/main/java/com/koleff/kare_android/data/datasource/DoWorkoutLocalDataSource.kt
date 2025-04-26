@@ -2,46 +2,60 @@ package com.koleff.kare_android.data.datasource
 
 import android.util.Log
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.response.DoWorkoutResponse
 import com.koleff.kare_android.data.model.response.base_response.KareError
+import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.domain.wrapper.DoWorkoutWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.ui.state.DoWorkoutData
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 
-class DoWorkoutLocalDataSource : DoWorkoutDataSource {
+class DoWorkoutLocalDataSource(
+    val exerciseDetailsDao: ExerciseDetailsDao
+) : DoWorkoutDataSource {
 
-    override suspend fun initialSetup(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<DoWorkoutWrapper>> =
+    override suspend fun initialSetup(workoutDetails: WorkoutDetailsDto): Flow<ResultWrapper<DoWorkoutWrapper>> =
         flow {
             Log.d("DoWorkoutLocalDataSource-initialSetup", "Initialization...")
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val firstExercise = calculateNextExercise(
-                currentExercise = null,
-                allExercises = workoutDetailsDto.exercises
-            )
-            val firstSetNumber = if (firstExercise.sets.isNotEmpty()) 1 else -1
-            Log.d("DoWorkoutLocalDataSource-initialSetup", "First exercise: $firstExercise")
+            val exercisesFullData =
+                workoutDetails.exercises.map { exercise -> convertToExerciseData(exercise) }
 
-            val nextExercise = calculateNextExercise(
-                currentExercise = firstExercise,
-                allExercises = workoutDetailsDto.exercises
+            val firstExerciseData = calculateNextExercise(
+                currentExerciseData = null,
+                allExercisesData = exercisesFullData
+            )
+            val firstSetNumber = if (firstExerciseData.exerciseDto.sets.isNotEmpty()) 1 else -1
+            Log.d("DoWorkoutLocalDataSource-initialSetup", "First exercise: $firstExerciseData")
+
+            val nextExerciseData = calculateNextExercise(
+                currentExerciseData = firstExerciseData,
+                allExercisesData = exercisesFullData
             )
             val nextSetNumber = calculateNextSetNumber(
                 currentNextSetNumber = firstSetNumber,
-                currentExercise = firstExercise,
-                nextExercise = nextExercise,
-                allExercises = workoutDetailsDto.exercises
+                currentExerciseData = firstExerciseData,
+                nextExerciseData = nextExerciseData,
+                allExercisesData = exercisesFullData
             )
-            Log.d("DoWorkoutLocalDataSource-initialSetup", "Next exercise: $nextExercise")
+            Log.d("DoWorkoutLocalDataSource-initialSetup", "Next exercise: $nextExerciseData")
 
-            val isInvalidWorkout = firstExercise == ExerciseDto()
+            exercisesFullData.forEach { exerciseData ->
+                Log.d(
+                    "DoWorkoutLocalDataSource-initialSetup",
+                    "Exercises with full data: $exerciseData"
+                )
+            }
+
+            val isInvalidWorkout =
+                firstExerciseData == ExerciseData() || firstExerciseData.exerciseDto == ExerciseDto()
             if (isInvalidWorkout) {
                 emit(ResultWrapper.ApiError(KareError.WORKOUT_HAS_NO_EXERCISES))
             } else {
@@ -49,13 +63,14 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                     DoWorkoutResponse(
                         data = DoWorkoutData(
                             isSetupCompleted = true,
-                            currentExercise = firstExercise,
+                            currentExercise = firstExerciseData,
                             currentSetNumber = firstSetNumber,
-                            nextExercise = nextExercise,
+                            nextExercise = nextExerciseData,
                             nextSetNumber = nextSetNumber,
-                            workout = workoutDetailsDto,
+                            workout = workoutDetails,
+                            exercises = exercisesFullData,
                             isBetweenExerciseCountdown = false,
-                            countdownTime = workoutDetailsDto.configuration.cooldownTime
+                            countdownTime = workoutDetails.configuration.cooldownTime
                         )
                     )
                 )
@@ -63,40 +78,61 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
             }
         }
 
+
+    //Helping functions
+    private fun convertToExerciseData(exercise: ExerciseDto): ExerciseData {
+        Log.d("DoWorkoutLocalDataSource", "Converting exercise: $exercise")
+        val exerciseDetails = exerciseDetailsDao.getExerciseDetailsByExerciseAndWorkoutId(
+            exercise.exerciseId,
+            exercise.workoutId
+        ).toDto()
+
+        return ExerciseData(
+            exercise,
+            exerciseDetails
+        )
+    }
+
     private fun calculateNextExercise(
-        currentExercise: ExerciseDto?,
-        allExercises: List<ExerciseDto>
-    ): ExerciseDto {
+        currentExerciseData: ExerciseData?,
+        allExercisesData: List<ExerciseData>
+    ): ExerciseData {
 
         //No currentExercise -> no nextExercise
-        if (currentExercise == ExerciseDto()) return ExerciseDto()
+        if (currentExerciseData == ExerciseData()
+            || currentExerciseData?.exerciseDto == ExerciseDto()
+        ) return ExerciseData()
 
         //Find the index of the currentExercise, if it's not in the list indexOf returns -1
-        val currentExerciseIndex = currentExercise?.let { allExercises.indexOf(it) } ?: -1
+        val currentExerciseIndex = currentExerciseData?.let { currentExercise ->
+            allExercisesData.indexOf(currentExercise)
+        } ?: -1
 
         //Filter out all exercises before (and including) the currentExercise index
-        val remainingExercises = allExercises.drop(currentExerciseIndex + 1)
+        val remainingExercisesData = allExercisesData.drop(currentExerciseIndex + 1)
 
-        for (exercise in remainingExercises) {
-            if (exercise.sets.isNotEmpty()) return exercise
+        for (exercise in remainingExercisesData) {
+            if (exercise.exerciseDto.sets.isNotEmpty()) return exercise
         }
 
-        return ExerciseDto() //No exercises are left -> end of the workout
+        return ExerciseData() //No exercises are left -> end of the workout
     }
 
     private fun calculateNextSetNumber(
         currentNextSetNumber: Int,
-        currentExercise: ExerciseDto,
-        nextExercise: ExerciseDto,
-        allExercises: List<ExerciseDto>
+        currentExerciseData: ExerciseData,
+        nextExerciseData: ExerciseData,
+        allExercisesData: List<ExerciseData>
     ): Int {
         if (currentNextSetNumber == -1) return -1 //Invalid workout
 
-        if (currentExercise.sets.size >= currentNextSetNumber + 1) return currentNextSetNumber + 1
-        if (nextExercise.sets.isNotEmpty()) return 1
+        if (currentExerciseData.exerciseDto.sets.size >= currentNextSetNumber + 1) return currentNextSetNumber + 1
+        if (nextExerciseData.exerciseDto.sets.isNotEmpty()) return 1
 
-        val remainingExercises = allExercises.dropWhile { it != nextExercise }
-        for (exercise in remainingExercises) {
+        val remainingExercisesData = allExercisesData
+            .dropWhile { it != nextExerciseData }
+            .map { it.exerciseDto }
+        for (exercise in remainingExercisesData) {
             if (exercise.sets.isNotEmpty()) return 1
         }
 
@@ -109,46 +145,47 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
 
                 //Validation
                 if (currentDoWorkoutData == DoWorkoutData()
-                    || currentExercise == ExerciseDto()
+                    || currentExercise.exerciseDto == ExerciseDto()
+                    || currentExercise == ExerciseData()
                 ) {
                     emit(ResultWrapper.ApiError(KareError.INVALID_WORKOUT))
                 }
 
                 var isNextExercise = false
 
-                val currentExercise =
-                    if (currentSetNumber + 1 <= currentExercise.sets.size) {
+                val currentExerciseData =
+                    if (currentSetNumber + 1 <= currentExercise.exerciseDto.sets.size) {
                         currentExercise
                     } //There are sets left
                     else {
                         calculateNextExercise(
-                            currentExercise = this.currentExercise,
-                            allExercises = workout.exercises
+                            currentExerciseData = this.currentExercise,
+                            allExercisesData = currentDoWorkoutData.exercises
                         ).also {
                             isNextExercise = true
                         }
                     }
 
-                val nextExercise = calculateNextExercise(
-                    currentExercise = currentExercise,
-                    allExercises = workout.exercises
+                val nextExerciseData = calculateNextExercise(
+                    currentExerciseData = currentExerciseData,
+                    allExercisesData = currentDoWorkoutData.exercises
                 )
 
                 val currentSetNumber =
-                    if (isNextExercise) currentExercise.sets.firstOrNull()?.number
+                    if (isNextExercise) currentExerciseData.exerciseDto.sets.firstOrNull()?.number
                         ?: -1 //TODO: Add error handling...
                     else nextSetNumber
 
                 val nextSetNumber = calculateNextSetNumber(
                     currentNextSetNumber = currentSetNumber,
-                    currentExercise = currentExercise,
-                    nextExercise = nextExercise,
-                    allExercises = workout.exercises
+                    currentExerciseData = currentExerciseData,
+                    nextExerciseData = nextExerciseData,
+                    allExercisesData = currentDoWorkoutData.exercises
                 )
 
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextSet",
-                    "New current exercise: $currentExercise"
+                    "New current exercise: $currentExerciseData"
                 )
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextSet",
@@ -156,7 +193,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                 )
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextSet",
-                    "Next exercise: $nextExercise"
+                    "Next exercise: $nextExerciseData"
                 )
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextSet",
@@ -165,13 +202,14 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
 
                 //No current exercise or no next set and no current set -> workout is completed
                 val isWorkoutCompleted =
-                    currentExercise == ExerciseDto()
+                    currentExerciseData.exerciseDto == ExerciseDto()
+                            || currentExerciseData == ExerciseData()
                             || (currentSetNumber == -1 && nextSetNumber == -1)
                 val updatedData = this.copy(
                     isSetupCompleted = isSetupCompleted,
-                    currentExercise = currentExercise,
+                    currentExercise = currentExerciseData,
                     currentSetNumber = currentSetNumber,
-                    nextExercise = nextExercise,
+                    nextExercise = nextExerciseData,
                     nextSetNumber = nextSetNumber,
                     isBetweenExerciseCountdown = false,
                     isWorkoutCompleted = isWorkoutCompleted
@@ -191,53 +229,41 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
             }
         }
 
+    //TODO: make it be on the same exercise last set and then 1st exercise of the next exercise
     override suspend fun skipNextExercise(currentDoWorkoutData: DoWorkoutData) =
         flow {
             with(currentDoWorkoutData) {
 
                 //Validation
                 if (currentDoWorkoutData == DoWorkoutData()
-                    || currentExercise == ExerciseDto()
+                    || currentExercise == ExerciseData()
+                    || currentExercise.exerciseDto == ExerciseDto()
                 ) {
                     emit(ResultWrapper.ApiError(KareError.INVALID_WORKOUT))
                 }
 
-                val newCurrentExercise: ExerciseDto
-                val newNextExercise: ExerciseDto
-                val currentSetNumber: Int
-                val nextSetNumber: Int
-                if (currentSet == currentExercise.sets.last()) {
-                    newCurrentExercise = calculateNextExercise(
-                        currentExercise = currentExercise,
-                        allExercises = workout.exercises
-                    )
-
-                    newNextExercise = calculateNextExercise(
-                        currentExercise = newCurrentExercise,
-                        allExercises = workout.exercises
-                    )
-
-                    currentSetNumber =
-                        newCurrentExercise.sets.lastOrNull()?.number
-                            ?: -1 //TODO: Add error handling...
-                    nextSetNumber =
-                        newNextExercise.sets.firstOrNull()?.number
-                            ?: -1 //TODO: Add error handling...
+                val newCurrentExerciseData = currentExercise
+                val newCurrentSet = newCurrentExerciseData.exerciseDto.sets.lastOrNull()
+                val newNextExerciseIndex = this.exercises.indexOf(nextExercise)
+                val newNextExerciseData = if (newNextExerciseIndex == -1) {
+                    ExerciseData()
                 } else {
-
-                    currentSetNumber =
-                        currentExercise.sets.lastOrNull()?.number
-                            ?: -1 //TODO: Add error handling...
-                    nextSetNumber =
-                        nextExercise.sets.firstOrNull()?.number ?: -1 //TODO: Add error handling...
-
-                    newNextExercise = nextExercise
-                    newCurrentExercise = currentExercise
+                    this.exercises.getOrNull(newNextExerciseIndex) ?: ExerciseData()
                 }
+
+                val currentSetNumber = newCurrentSet?.number
+                    ?: -1 //TODO: add error handling...
+
+                val nextSetNumber = calculateNextSetNumber(
+                    currentNextSetNumber = currentSetNumber,
+                    currentExerciseData = newCurrentExerciseData,
+                    nextExerciseData = newNextExerciseData,
+                    allExercisesData = currentDoWorkoutData.exercises
+                )
 
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextExercise",
-                    "New current exercise: $newCurrentExercise"
+                    "New current exercise: $newCurrentExerciseData"
                 )
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextExercise",
@@ -245,7 +271,7 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                 )
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextExercise",
-                    "Next exercise: $newNextExercise"
+                    "Next exercise: $newNextExerciseData"
                 )
                 Log.d(
                     "DoWorkoutLocalDataSource-skipNextExercise",
@@ -254,13 +280,13 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
 
                 //No current exercise or no next set and no current set -> workout is completed
                 val isWorkoutCompleted =
-                    (newNextExercise == ExerciseDto() && nextSetNumber == -1)
-                            && (currentSetNumber == newCurrentExercise.sets.size || currentSetNumber == -1)
+                    ((newNextExerciseData.exerciseDto == ExerciseDto() || newNextExerciseData == ExerciseData()) && nextSetNumber == -1)
+                            && (currentSetNumber == newCurrentExerciseData.exerciseDto.sets.size || currentSetNumber == -1)
                 val updatedData = this.copy(
                     isSetupCompleted = isSetupCompleted,
-                    currentExercise = newCurrentExercise,
+                    currentExercise = newCurrentExerciseData,
                     currentSetNumber = currentSetNumber,
-                    nextExercise = newNextExercise,
+                    nextExercise = newNextExerciseData,
                     nextSetNumber = nextSetNumber,
                     isBetweenExerciseCountdown = false,
                     isWorkoutCompleted = isWorkoutCompleted
@@ -274,52 +300,4 @@ class DoWorkoutLocalDataSource : DoWorkoutDataSource {
                 emit(ResultWrapper.Success(result))
             }
         }
-
-//    override suspend fun startCountdownTimer(): Flow<ResultWrapper<DoWorkoutWrapper>> = flow{
-//
-//        //Reset workout timer and state
-//        workoutTimer.resetTimer().also {
-//            val defaultWorkoutTime = state.value.doWorkoutData.defaultExerciseTime
-//            _workoutTimerState.value =
-//                _countdownTimerState.value.copy(time = defaultWorkoutTime)
-//        }
-//
-//        countdownTimer.startTimer(totalSeconds = countdownTime.toSeconds()) { timeLeft ->
-//            _countdownTimerState.value = _countdownTimerState.value.copy(time = timeLeft)
-//
-//            //Countdown has finished
-//            if (countdownTimerState.value.time == ExerciseTime(0, 0, 0)) {
-//                Log.d("DoWorkoutViewModel", "Countdown finished! Selecting next exercise...")
-//                startWorkoutTimer()
-//            }
-//        }
-//    }
-//
-//    override suspend fun startWorkoutTimer(): Flow<ResultWrapper<DoWorkoutWrapper>> = flow {
-//
-//        //Reset countdown timer and state
-//        countdownTimer.resetTimer().also {
-//            val defaultCountdownTime = countdownTime
-//            _countdownTimerState.value =
-//                _countdownTimerState.value.copy(time = defaultCountdownTime)
-//        }
-//
-//        //Update current and next exercise sets after countdown timer has finished.
-//        if (!isInitialCall) {
-//            updateExerciseSets()
-//        }
-//
-//        workoutTimer.startTimer(totalSeconds = exerciseTime.toSeconds()) { timeLeft ->
-//            _workoutTimerState.value = _workoutTimerState.value.copy(time = timeLeft)
-//
-//            //Workout timer has finished -> select next exercise
-//            if (workoutTimerState.value.time == ExerciseTime(0, 0, 0)) {
-//                Log.d(
-//                    "DoWorkoutViewModel",
-//                    "Exercise timer finished! Starting countdown timer for next exercise."
-//                )
-//                selectNextExercise()
-//            }
-//        }
-//    }
 }

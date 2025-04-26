@@ -81,9 +81,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
+import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -98,10 +100,10 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
@@ -432,7 +434,7 @@ fun NextExerciseInfoScreen(
                     onClick = {
                         isPause = !isPause
 
-                        if(isPause) onPause() else onResume()
+                        if (isPause) onPause() else onResume()
                     }, isPause = isPause
                 )
 
@@ -959,8 +961,8 @@ fun ExerciseDataSheetRow(
                     //Calls launched effect...
                 },
                 keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Done
-                        ),
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(
                     onDone = {
                         keyboardController?.hide()
@@ -1417,8 +1419,13 @@ fun DoWorkoutFooterPreview() {
 //Vertical video player
 @Composable
 fun YoutubeVerticalVideoPlayer(
+    modifier: Modifier = Modifier,
     lifecycleOwner: LifecycleOwner,
-    onLoadingCompleted: () -> Unit) {
+    videoUrl: String,
+    onLoadingCompleted: () -> Unit
+) {
+    var isVideoInitialLoadingCompleted by remember { mutableStateOf(false) }
+
     val iFramePlayerOptions = IFramePlayerOptions.Builder()
         .controls(0)
         .fullscreen(0)
@@ -1430,22 +1437,32 @@ fun YoutubeVerticalVideoPlayer(
 //            .list("P92RE0NV-5c")
         .build()
 
+    var youTubePlayerRef by remember { mutableStateOf<YouTubePlayer?>(null) }
+    LaunchedEffect(videoUrl) {
+        Log.d("YoutubeVerticalVideoPlayer", "On new video url")
+
+        youTubePlayerRef?.loadVideo(videoUrl, 0f)
+    }
 
     AndroidView(
-        modifier = Modifier
-            .fillMaxSize()
-            .alpha(0.65f),
+        modifier = modifier
+            .alpha(0.65f)
+            .padding(bottom = 60.dp), //Video title padding
         factory = { context ->
             YouTubePlayerView(context = context).apply {
                 lifecycleOwner.lifecycle.addObserver(this)
+
                 enableAutomaticInitialization = false
 
                 val youtubePlayerView = this
                 var currentVideoDuration = 0.0f
+
                 initialize(
                     object : AbstractYouTubePlayerListener() {
                         override fun onReady(youTubePlayer: YouTubePlayer) {
                             Log.d("YoutubeVerticalVideoPlayer", "onReady")
+                            youTubePlayerRef = youTubePlayer // Keep reference
+
                             matchParent()
 
                             val defaultPlayerUiController =
@@ -1461,7 +1478,8 @@ fun YoutubeVerticalVideoPlayer(
                             defaultPlayerUiController.showVideoTitle(false)
                             setCustomPlayerUi(defaultPlayerUiController.rootView)
 
-                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle,"sO9DMkyZYGM", 0f)
+//                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle, videoUrl, 0f)
+                            youTubePlayer.loadVideo(videoUrl, 0f)
                         }
 
                         override fun onStateChange(
@@ -1469,15 +1487,22 @@ fun YoutubeVerticalVideoPlayer(
                             state: PlayerConstants.PlayerState
                         ) {
                             Log.d("YoutubeVerticalVideoPlayer", "onStateChange: $state")
-                            if (state == PlayerConstants.PlayerState.PLAYING) {
-                                onLoadingCompleted()
+                            if (state == PlayerConstants.PlayerState.PLAYING && !isVideoInitialLoadingCompleted) {
+                                lifecycleOwner.lifecycleScope.launch {
+                                    delay(Constants.fakeDelay)
+                                    onLoadingCompleted()
+
+                                    Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
+                                    isVideoInitialLoadingCompleted = true
+                                    Log.d("YoutubeVerticalVideoPlayer", "isVideoInitialLoadingCompleted: ${isVideoInitialLoadingCompleted}")
+                                }
                             }
                             super.onStateChange(youTubePlayer, state)
                         }
 
                         override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
                             Log.d("YoutubeVerticalVideoPlayer", "onCurrentSecond: $second")
-                            if(second >= currentVideoDuration - 1f){ //Cuts 1 second repeat without END state
+                            if (second >= currentVideoDuration - 1f) { //Cuts 1 second repeat without END state
                                 youTubePlayer.seekTo(0f)
                             }
 
@@ -1504,7 +1529,12 @@ fun YoutubeVerticalVideoPlayer(
 @Composable
 private fun YoutubeVerticalVideoPlayerPreview() {
     val lifecycleOwner = LocalLifecycleOwner.current
-    YoutubeVerticalVideoPlayer(lifecycleOwner = lifecycleOwner){
+    val videoUrl = "_FkbD0FhgVE"
+    val isVideoInitialLoadingCompleted = true
+    YoutubeVerticalVideoPlayer(
+        lifecycleOwner = lifecycleOwner,
+        videoUrl = videoUrl
+    ) {
     }
 }
 

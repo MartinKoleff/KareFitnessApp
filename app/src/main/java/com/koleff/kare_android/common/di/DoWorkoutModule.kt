@@ -8,6 +8,7 @@ import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
 import com.koleff.kare_android.data.datasource.DoWorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.DoWorkoutApi
 import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
+import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.domain.repository.DoWorkoutRepository
 import com.koleff.kare_android.domain.repository.ExerciseRepository
 import com.koleff.kare_android.domain.usecases.AddNewExerciseSetUseCase
@@ -58,9 +59,10 @@ object DoWorkoutModule {
     @Singleton
     fun provideDoWorkoutDataSource(
         doWorkoutApi: DoWorkoutApi,
+        exerciseDetailsDao: ExerciseDetailsDao,
         apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
     ): DoWorkoutDataSource {
-        return if (Constants.useLocalDataSource) DoWorkoutLocalDataSource()
+        return  if (Constants.useLocalDataSource) DoWorkoutLocalDataSource(exerciseDetailsDao)
         else DoWorkoutRemoteDataSource(
             doWorkoutApi = doWorkoutApi,
             apiAuthorizationCallWrapper = apiAuthorizationCallWrapper

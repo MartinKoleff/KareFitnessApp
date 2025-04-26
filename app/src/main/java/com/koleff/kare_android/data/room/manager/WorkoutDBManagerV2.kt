@@ -1,8 +1,8 @@
 package com.koleff.kare_android.data.room.manager
 
-import com.google.firebase.crashlytics.internal.Logger
-import com.koleff.kare_android.common.manager.data.WorkoutGenerator
+import com.koleff.kare_android.common.WorkoutGeneratorV2
 import com.koleff.kare_android.data.room.dao.ExerciseDao
+import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
 import com.koleff.kare_android.data.room.dao.WorkoutDao
@@ -16,6 +16,7 @@ class WorkoutDBManagerV2 @Inject constructor(
     private val workoutDetailsDao: WorkoutDetailsDao,
     private val workoutConfigurationDao: WorkoutConfigurationDao,
     private val exerciseDao: ExerciseDao,
+    private val exerciseDetailsDao: ExerciseDetailsDao,
     private val exerciseSetDao: ExerciseSetDao,
     private val hasInitializedDB: Boolean
 ) {
@@ -24,45 +25,45 @@ class WorkoutDBManagerV2 @Inject constructor(
         withContext(Dispatchers.IO) {
             if (hasInitializedDB) return@withContext
 
-            val workoutList = WorkoutGenerator.getAllWorkouts()
-            val workoutDetailsWithExercisesList = WorkoutGenerator.getAllWorkoutDetails()
+            val workoutDetailsFullData = WorkoutGeneratorV2.getWorkoutFullData()
 
             //Create Workout
-            workoutDao.insertAllWorkouts(workoutList)
+            workoutDao.insertAllWorkouts(workoutDetailsFullData.map { it.workout.toEntity() })
 
             //Create Workout Details
             workoutDetailsDao.insertAllWorkoutDetails(
-                workoutDetailsWithExercisesList.map {
-                    it.workoutDetails
+                workoutDetailsFullData.map {
+                    it.workoutDetails.toEntity()
                 }
             )
 
             //Create Workout Configuration
-            workoutDetailsWithExercisesList
-                .map { it.toDto() }
+            workoutDetailsFullData
                 .map { it.configuration }
                 .forEach { configuration ->
-                workoutConfigurationDao.insertWorkoutConfiguration(configuration.toEntity())
-            }
+                    workoutConfigurationDao.insertWorkoutConfiguration(configuration.toEntity())
+                }
 
             //Create Exercises
-            for (workoutDetailsWithExercises in workoutDetailsWithExercisesList) {
+            for (workoutDetailsWithExercises in workoutDetailsFullData) {
 
                 //Save all exercises in workout
-                val exercisesWithSets = workoutDetailsWithExercises.safeExercises
-                val exercises = exercisesWithSets.map { it.exercise }
-                exerciseDao.insertAllExercises(exercises) //Only catalog exercises have exercise details
+                val exercises = workoutDetailsWithExercises.exercises
+                val exerciseDetails =
+                    workoutDetailsWithExercises.exerciseDetails
 
-                exercisesWithSets
-                    .map { it.sets }
-                    .forEach { sets ->
-                        exerciseSetDao.insertAllExerciseSets(sets)
-                        Logger.getLogger().i("--------------------------------")
-                        sets.forEach {
-                            Logger.getLogger().i("[WorkoutDBManagerV2] Exercise Set with id ${it.setId} from DB: ${exerciseSetDao.getSetById(it.setId)}")
-                        }
-                        Logger.getLogger().i("--------------------------------")
-                    }
+                exerciseDao.insertAllExercises(
+                    exercises.map { it.toEntity() }
+                )
+                exerciseDetailsDao.insertAllExerciseDetails(
+                    exerciseDetails.map { it.toEntity() }
+                )
+
+                exercises.forEach { exercise ->
+                    exerciseSetDao.insertAllExerciseSets(
+                        exercise.sets.map { set -> set.toEntity() }
+                    )
+                }
             }
 
             //Initialization callback
