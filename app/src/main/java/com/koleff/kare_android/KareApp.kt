@@ -16,10 +16,12 @@ import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManagerV2
 import com.koleff.kare_android.data.room.manager.WorkoutPerformanceMetricsDBManager
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltAndroidApp
