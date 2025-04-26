@@ -1,5 +1,6 @@
 package com.koleff.kare_android.common
 
+import com.koleff.kare_android.common.manager.data.ExerciseGenerator
 import com.koleff.kare_android.data.model.dto.MuscleGroup
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutFullData

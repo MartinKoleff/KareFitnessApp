@@ -86,7 +86,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.MockupDataGeneratorV2
 import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.common.timer.TimerUtil
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -101,7 +100,6 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstan
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
