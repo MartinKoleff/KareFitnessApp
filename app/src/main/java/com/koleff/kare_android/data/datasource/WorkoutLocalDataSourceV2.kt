@@ -6,7 +6,7 @@ import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.data.model.response.GetDuplicateExercisesResponse
+import com.koleff.kare_android.data.model.response.DuplicateExercisesResponse
 import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
 import com.koleff.kare_android.data.model.response.WorkoutConfigurationResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
@@ -879,7 +879,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
         )
 
         val result = DuplicateExercisesWrapper(
-            GetDuplicateExercisesResponse(
+            DuplicateExercisesResponse(
                 containsDuplicates
             )
         )

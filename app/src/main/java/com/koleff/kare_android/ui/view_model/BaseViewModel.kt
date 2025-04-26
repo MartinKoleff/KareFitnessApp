@@ -3,6 +3,7 @@ package com.koleff.kare_android.ui.view_model
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.koleff.kare_android.common.di.MainDispatcher
+import com.koleff.kare_android.common.navigation.Destination
 import com.koleff.kare_android.common.navigation.NavigationController
 import com.koleff.kare_android.common.navigation.NavigationEvent
 import kotlinx.coroutines.CoroutineDispatcher
@@ -12,7 +13,7 @@ import kotlinx.coroutines.launch
 abstract class BaseViewModel(
     private val navigationController: NavigationController,
     @MainDispatcher private val dispatcher: CoroutineDispatcher = Dispatchers.Main
-) : ViewModel() {
+) : ViewModel(), MainScreenNavigation {
 
     fun onNavigationEvent(navigationEvent: NavigationEvent) {
         viewModelScope.launch(dispatcher) {
@@ -39,6 +40,27 @@ abstract class BaseViewModel(
                 }
             }
         }
+    }
+
+    //TODO: restrict just for main screen view models... (new inheritance of BaseViewModel - MainScreenBaseViewModel with just the navigations...)
+    override fun onNavigateToWorkoutHistory(){
+        onNavigationEvent(NavigationEvent.NavigateTo(Destination.WorkoutHistory))
+    }
+
+    override fun onNavigateToDashboard() {
+        onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
+    }
+
+    override fun onNavigateToWorkouts() {
+        onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
+    }
+
+    override fun onNavigateToSettings() {
+        onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
+    }
+
+    override fun onNavigateBack() {
+        onNavigationEvent(NavigationEvent.NavigateBack)
     }
 
     abstract fun clearError()

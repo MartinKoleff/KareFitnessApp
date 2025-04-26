@@ -65,17 +65,6 @@ class WorkoutHistoryViewModel @Inject constructor(
         }
     }
 
-//    fun getWorkout(workoutId: Int) {
-//        viewModelScope.launch(dispatcher) {
-//            workoutUseCases.getWorkoutUseCase(workoutId)
-//                .collect { state ->
-//                    _getWorkoutState.value = state
-//
-//                    Log.d("WorkoutHistoryViewModel", "Workout with workoutId $workoutId fetched successfully!")
-//                }
-//        }
-//    }
-
     override fun clearError() {
         if (_getPerformanceMetricListState.value.isError) {
             _getPerformanceMetricListState.value = WorkoutPerformanceMetricsListState()
@@ -84,22 +73,6 @@ class WorkoutHistoryViewModel @Inject constructor(
 //        if(_getWorkoutState.value.isError){
 //            _getWorkoutState.value = WorkoutState()
 //        }
-    }
-
-    override fun onNavigateToDashboard() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-
-    override fun onNavigateToWorkouts() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-
-    override fun onNavigateToSettings() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-
-    override fun onNavigateBack() {
-        super.onNavigationEvent(NavigationEvent.NavigateBack)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -115,3 +88,15 @@ class WorkoutHistoryViewModel @Inject constructor(
         )
     }
 }
+
+
+//    fun getWorkout(workoutId: Int) {
+//        viewModelScope.launch(dispatcher) {
+//            workoutUseCases.getWorkoutUseCase(workoutId)
+//                .collect { state ->
+//                    _getWorkoutState.value = state
+//
+//                    Log.d("WorkoutHistoryViewModel", "Workout with workoutId $workoutId fetched successfully!")
+//                }
+//        }
+//    }

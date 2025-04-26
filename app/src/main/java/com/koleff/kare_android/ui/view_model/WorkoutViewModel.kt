@@ -435,26 +435,6 @@ class WorkoutViewModel @Inject constructor(
 //            _createWorkoutState.value = WorkoutState()
 //        }
     }
-
-    override fun onNavigateToDashboard() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Dashboard))
-    }
-
-    override fun onNavigateToWorkouts() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Workouts))
-    }
-
-    override fun onNavigateToSettings() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.Settings))
-    }
-
-    override fun onNavigateBack() {
-        super.onNavigationEvent(NavigationEvent.NavigateBack)
-    }
-
-    fun navigateToWorkoutHistory() {
-        super.onNavigationEvent(NavigationEvent.NavigateTo(Destination.WorkoutHistory))
-    }
 }
 
 /**
