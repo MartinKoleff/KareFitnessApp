@@ -31,6 +31,9 @@ object Constants {
     const val isTestingFirebaseCrashlytics = false
     const val CATALOG_EXERCISE_ID = 777
 
+    const val showOnboardingForm = false
+
+
     /**
      * Broadcast intents
      */

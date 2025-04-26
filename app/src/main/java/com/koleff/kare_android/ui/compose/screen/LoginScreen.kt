@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.Composable
@@ -123,103 +124,113 @@ fun LoginScreen(
             LoadingDialog(onDismiss = onDismiss)
         }
 
-        //Screen
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .pointerInput(Unit) {
-
-                    //Hide keyboard on tap outside text field boxes
-                    detectTapGestures(
-                        onTap = {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                        }
-                    )
-                },
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
         ) {
             AuthorizationTitleAndSubtitle(
+                modifier = Modifier
+                    .weight(2f),
                 title = "Sign in",
                 subtitle = "Welcome back"
             )
 
-            //User text box
-            CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3,
-                focusRequester = usernameFocusRequester,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        passwordFocusRequester.requestFocus()
-                    }
-                )
-            ) {
-                username = it
-            }
-
-            //Password text box
-            PasswordTextField(
-                label = "Password",
-                focusRequester = passwordFocusRequester,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                    }
-                ),
-            ) {
-                password = it
-            }
-
-            Row(
+            //Screen
+            LazyColumn(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        PaddingValues(
-                            start = 32.dp,
-                            end = 32.dp,
-                            top = 12.dp,
-                            bottom = 8.dp
+                    .weight(5f)
+                    .pointerInput(Unit) {
+
+                        //Hide keyboard on tap outside text field boxes
+                        detectTapGestures(
+                            onTap = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
                         )
-                    ),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    },
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
             ) {
-                AuthenticationButton(
-                    modifier = Modifier.weight(2f),
-                    text = "Sign in",
-                    onAction = onSignIn,
-                    credentials =
-                    Credentials(
-                        username = username,
-                        password = password
-                    )
-                )
+                item {
 
-                ForgotPasswordFooter(modifier = Modifier.weight(1f)) {
-                    loginViewModel.forgotPassword()
+                    //User text box
+                    CustomTextField(label = "Username", iconResourceId = R.drawable.ic_user_3,
+                        focusRequester = usernameFocusRequester,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = {
+                                passwordFocusRequester.requestFocus()
+                            }
+                        )
+                    ) {
+                        username = it
+                    }
+
+                    //Password text box
+                    PasswordTextField(
+                        label = "Password",
+                        focusRequester = passwordFocusRequester,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            }
+                        ),
+                    ) {
+                        password = it
+                    }
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                PaddingValues(
+                                    start = 32.dp,
+                                    end = 32.dp,
+                                    top = 12.dp,
+                                    bottom = 8.dp
+                                )
+                            ),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AuthenticationButton(
+                            modifier = Modifier.weight(2f),
+                            text = "Sign in",
+                            onAction = onSignIn,
+                            credentials =
+                            Credentials(
+                                username = username,
+                                password = password
+                            )
+                        )
+
+                        ForgotPasswordFooter(modifier = Modifier.weight(1f)) {
+                            loginViewModel.forgotPassword()
+                        }
+                    }
+
+                    SignInFooter(onGoogleSign = onGoogleSign)
+
+                    //Footer
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(vertical = 10.dp),
+                        contentAlignment = Alignment.BottomCenter
+                    ) {
+                        SignUpHypertext {
+                            loginViewModel.navigateToSignUp()
+                        }
+                    }
                 }
-            }
-
-            SignInFooter(onGoogleSign = onGoogleSign)
-        }
-
-        //Footer
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(vertical = 10.dp),
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            SignUpHypertext {
-                loginViewModel.navigateToSignUp()
             }
         }
     }
