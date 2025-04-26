@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewLightDark
 import com.koleff.kare_android.data.model.dto.ExerciseDto
@@ -82,7 +83,7 @@ fun MachineFilterSegmentButton(
     val buttonColor = MaterialTheme.colorScheme.tertiaryContainer
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
-    val labelTextStyle = MaterialTheme.typography.bodySmall.copy(
+    val labelTextStyle = MaterialTheme.typography.labelSmall.copy(
         color = labelColor
     )
 
@@ -91,6 +92,7 @@ fun MachineFilterSegmentButton(
     SingleChoiceSegmentedButtonRow(modifier) {
         options.forEachIndexed { index, label ->
             SegmentedButton(
+                modifier = if(index == 3) Modifier.weight(4f) else Modifier.weight(3f),
                 colors = SegmentedButtonDefaults.colors(  //TODO: checkmark color to be green...
                     activeContainerColor = buttonColor,
                     disabledActiveContainerColor = buttonColor,
@@ -145,7 +147,7 @@ fun MachineFilterSegmentButton(
 }
 
 @Preview
-@PreviewLightDark
+@Preview(name = "NEXUS_5", device = Devices.NEXUS_5)
 @Composable
 private fun MachineFilterSegmentEnabledPreview() {
     MachineFilterSegmentButton(
@@ -159,7 +161,6 @@ private fun MachineFilterSegmentEnabledPreview() {
 }
 
 @Preview
-@PreviewLightDark
 @Composable
 private fun MachineFilterSegmentDisabledPreview() {
     MachineFilterSegmentButton(
@@ -173,7 +174,6 @@ private fun MachineFilterSegmentDisabledPreview() {
 }
 
 @Preview
-@PreviewLightDark
 @Composable
 private fun MachineFilterSegmentEnabled2Preview() {
     MachineFilterSegmentButton(
@@ -187,7 +187,6 @@ private fun MachineFilterSegmentEnabled2Preview() {
 }
 
 @Preview
-@PreviewLightDark
 @Composable
 private fun MachineFilterSegmentDisabled2Preview() {
     MachineFilterSegmentButton(

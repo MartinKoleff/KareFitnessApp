@@ -1,6 +1,8 @@
 package com.koleff.kare_android.ui.compose.components
 
+//import android.graphics.Paint
 import WorkoutConfigurationOption
+import android.graphics.Paint.Style
 import android.os.Build
 import android.util.Log
 import androidx.annotation.FloatRange
@@ -8,8 +10,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,10 +25,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -44,41 +51,36 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ClipOp
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Paint
-//import android.graphics.Paint
-import android.graphics.Paint.Style
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.LifecycleOwner
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
@@ -91,13 +93,20 @@ import com.koleff.kare_android.data.model.dto.ExerciseSetProgressDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.ui.state.ExerciseTimerStyle
 import com.koleff.kare_android.ui.theme.LocalExtendedColors
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.customui.DefaultPlayerUiController
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 //NextExerciseInfoScreen
 
@@ -188,19 +197,19 @@ private fun CurrentWeightInfoPreview() {
 
 
 @Composable
-fun PagerIndicator(currentPage: Int, totalPages: Int) {
+fun WorkoutProgressPagerIndicator(currentPage: Int, totalPages: Int) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.padding(top = 20.dp)
     ) {
         repeat(totalPages) {
-            Indicator(isSelected = it + 1 <= currentPage)
+            WorkoutProgressIndicator(isSelected = it + 1 <= currentPage)
         }
     }
 }
 
 @Composable
-fun Indicator(isSelected: Boolean, color: Color = MaterialTheme.colorScheme.primary) {
+fun WorkoutProgressIndicator(isSelected: Boolean, color: Color = MaterialTheme.colorScheme.primary) {
     val width = animateDpAsState(targetValue = if (isSelected) 40.dp else 10.dp)
 
     Box(
@@ -217,7 +226,7 @@ fun Indicator(isSelected: Boolean, color: Color = MaterialTheme.colorScheme.prim
 
 @ExperimentalPagerApi
 @Composable
-fun rememberPagerState(
+fun rememberWorkoutProgressPagerState(
     @androidx.annotation.IntRange(from = 0) pageCount: Int,
     @androidx.annotation.IntRange(from = 1) initialPage: Int = 1,
     @FloatRange(from = 0.0, to = 1.0) initialPageOffset: Float = 0f,
@@ -233,14 +242,14 @@ fun rememberPagerState(
     )
 }
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, DelicateCoroutinesApi::class)
 @Preview
 @Composable
 private fun NextExercisePagerIndicatorPreview() {
-    val pagerState = rememberPagerState(pageCount = 4, initialPage = 1)
+    val pagerState = rememberWorkoutProgressPagerState(pageCount = 4, initialPage = 1)
 
     Column {
-        PagerIndicator(currentPage = pagerState.currentPage, totalPages = pagerState.pageCount)
+        WorkoutProgressPagerIndicator(currentPage = pagerState.currentPage, totalPages = pagerState.pageCount)
 
         Row {
             Button(onClick = {
@@ -316,13 +325,13 @@ private fun SkipButtonPreview() {
 
 @Preview
 @Composable
-private fun PagerIndicatorWithButtonsPreview() {
+private fun WorkoutProgressPagerIndicatorWithButtonsPreview() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         PauseButton(onClick = {}, isPause = Random.nextBoolean())
-        PagerIndicator(currentPage = 0, totalPages = 4)
+        WorkoutProgressPagerIndicator(currentPage = 0, totalPages = 4)
         SkipButton(onClick = {})
     }
 }
@@ -342,6 +351,7 @@ private fun RepsSetAndWeightInfoRowPreview() {
 
 @Composable
 fun NextExerciseInfoScreen(
+    modifier: Modifier = Modifier,
     nextExercise: ExerciseDto,
     set: Int,
     reps: Int,
@@ -370,7 +380,7 @@ fun NextExerciseInfoScreen(
     )
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .drawBehind {
                 drawRect(
@@ -415,7 +425,7 @@ fun NextExerciseInfoScreen(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp, bottom = 64.dp),
+                    .padding(top = 16.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 PauseButton(
@@ -427,7 +437,7 @@ fun NextExerciseInfoScreen(
                 )
 
                 Log.d("NextExerciseInfoScreen", "Current set: $set | Total sets: $totalSets")
-                PagerIndicator(currentPage = set, totalPages = totalSets)
+                WorkoutProgressPagerIndicator(currentPage = set, totalPages = totalSets)
                 SkipButton(onClick = {
                     isPause = false
 
@@ -436,7 +446,7 @@ fun NextExerciseInfoScreen(
             }
 
             //Exercise data sheet margin
-            Spacer(modifier = Modifier.height(64.dp))
+            Spacer(modifier = Modifier.height(96.dp))
         }
     }
 }
@@ -458,6 +468,38 @@ fun NextExerciseInfoScreenPreview() {
         isWorkoutComplete = false,
         countdownTime = countdownTime,
     )
+}
+
+@Preview
+@Composable
+fun NextExerciseInfoScreenAndExerciseDataSheetPreview() {
+    val nextExercise = MockupDataGeneratorV2.generateExercise()
+    val countdownTime = ExerciseTime(hours = 0, minutes = 0, seconds = 10)
+
+    val exercise = MockupDataGeneratorV2.generateExercise()
+    val currentSetNumber = 1
+    val defaultTotalSets = 4
+    val onSaveExerciseData: (ExerciseProgressDto) -> Unit = {}
+    ExerciseDataSheetModal2(
+        exercise = exercise,
+        currentSetNumber = currentSetNumber,
+        defaultTotalSets = defaultTotalSets,
+        isNextExercise = false,
+        onSaveExerciseData = onSaveExerciseData
+    ) {
+        NextExerciseInfoScreen(
+            nextExercise = nextExercise,
+            set = 2,
+            reps = 12,
+            weight = 225.0f,
+            totalSets = 4,
+            onPause = {},
+            onResume = {},
+            onSkipSet = {},
+            isWorkoutComplete = false,
+            countdownTime = countdownTime,
+        )
+    }
 }
 
 @Composable
@@ -1081,7 +1123,7 @@ fun ExerciseTimerV2(
             val sweepAngle =
                 (timeLeft.toSeconds().toFloat() / totalTime.toSeconds()
                     .toFloat()) * -180f // Calculate fill percentage
-            Log.d("test", "$sweepAngle")
+//            Log.d("Sweep angle", "$sweepAngle")
 
             drawArc(
                 color = exerciseTimerStyle.elapsedLineColor,
@@ -1370,6 +1412,100 @@ fun DoWorkoutFooterPreview() {
         timeLeft = timeLeft,
         currentSet = currentSet
     )
+}
+
+//Vertical video player
+@Composable
+fun YoutubeVerticalVideoPlayer(
+    lifecycleOwner: LifecycleOwner,
+    onLoadingCompleted: () -> Unit) {
+    val iFramePlayerOptions = IFramePlayerOptions.Builder()
+        .controls(0)
+        .fullscreen(0)
+        .ivLoadPolicy(3)
+        .ccLoadPolicy(0)
+        .modestBranding(1)
+        .autoplay(0)
+//            .listType("playlist")
+//            .list("P92RE0NV-5c")
+        .build()
+
+
+    AndroidView(
+        modifier = Modifier
+            .fillMaxSize()
+            .alpha(0.65f),
+        factory = { context ->
+            YouTubePlayerView(context = context).apply {
+                lifecycleOwner.lifecycle.addObserver(this)
+                enableAutomaticInitialization = false
+
+                val youtubePlayerView = this
+                var currentVideoDuration = 0.0f
+                initialize(
+                    object : AbstractYouTubePlayerListener() {
+                        override fun onReady(youTubePlayer: YouTubePlayer) {
+                            Log.d("YoutubeVerticalVideoPlayer", "onReady")
+                            matchParent()
+
+                            val defaultPlayerUiController =
+                                DefaultPlayerUiController(youtubePlayerView, youTubePlayer)
+                            defaultPlayerUiController.showMenuButton(false)
+                            defaultPlayerUiController.showDuration(false)
+                            defaultPlayerUiController.showUi(false)
+                            defaultPlayerUiController.showSeekBar(false)
+                            defaultPlayerUiController.showFullscreenButton(false)
+                            defaultPlayerUiController.showVideoTitle(false)
+                            defaultPlayerUiController.showCurrentTime(false)
+                            defaultPlayerUiController.showYouTubeButton(false)
+                            defaultPlayerUiController.showVideoTitle(false)
+                            setCustomPlayerUi(defaultPlayerUiController.rootView)
+
+                            youTubePlayer.loadOrCueVideo(lifecycleOwner.lifecycle,"sO9DMkyZYGM", 0f)
+                        }
+
+                        override fun onStateChange(
+                            youTubePlayer: YouTubePlayer,
+                            state: PlayerConstants.PlayerState
+                        ) {
+                            Log.d("YoutubeVerticalVideoPlayer", "onStateChange: $state")
+                            if (state == PlayerConstants.PlayerState.PLAYING) {
+                                onLoadingCompleted()
+                            }
+                            super.onStateChange(youTubePlayer, state)
+                        }
+
+                        override fun onCurrentSecond(youTubePlayer: YouTubePlayer, second: Float) {
+                            Log.d("YoutubeVerticalVideoPlayer", "onCurrentSecond: $second")
+                            if(second >= currentVideoDuration - 1f){ //Cuts 1 second repeat without END state
+                                youTubePlayer.seekTo(0f)
+                            }
+
+                            super.onCurrentSecond(youTubePlayer, second)
+                        }
+
+                        override fun onVideoDuration(
+                            youTubePlayer: YouTubePlayer,
+                            duration: Float
+                        ) {
+                            Log.d("YoutubeVerticalVideoPlayer", "onVideoDuration: $duration")
+
+                            currentVideoDuration = duration
+                            super.onVideoDuration(youTubePlayer, duration)
+                        }
+                    },
+                    iFramePlayerOptions
+                )
+            }
+        })
+}
+
+@Preview
+@Composable
+private fun YoutubeVerticalVideoPlayerPreview() {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    YoutubeVerticalVideoPlayer(lifecycleOwner = lifecycleOwner){
+    }
 }
 
 @Composable

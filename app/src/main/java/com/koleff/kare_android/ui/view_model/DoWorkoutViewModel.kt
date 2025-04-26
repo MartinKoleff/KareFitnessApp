@@ -93,26 +93,9 @@ class DoWorkoutViewModel @Inject constructor(
             workoutTimer = TimerUtil(defaultExerciseTime.toSeconds())
             countdownTimer = TimerUtil(countdownTime.toSeconds())
         }
-
-        setup()
-
-        //Log timer states
-        viewModelScope.launch(Dispatchers.Default) {
-            while (isLogging) {
-                Log.d("DoWorkoutViewModel", "----------------Timers------------------")
-                Log.d("DoWorkoutViewModel", "Countdown time: ${countdownTimerState.value.time}")
-                Log.d("DoWorkoutViewModel", "Workout time: ${workoutTimerState.value.time}")
-                Log.d("DoWorkoutViewModel", "Workout timer is running: ${workoutTimer.isRunning()}")
-                Log.d(
-                    "DoWorkoutViewModel",
-                    "Countdown timer is running: ${countdownTimer.isRunning()}"
-                )
-                delay(1000)
-            }
-        }
     }
 
-    private fun setup() {
+     fun setup(onSetupCompleted: () -> Unit) {
         viewModelScope.launch(dispatcher) {
 
             //Fetch workout
@@ -133,6 +116,7 @@ class DoWorkoutViewModel @Inject constructor(
                                 createDoWorkoutPerformanceMetrics()
 
                                 startWorkoutTimer(isInitialCall = true)
+                                onSetupCompleted()
                             }
                         }
                 } else if (result.isError) {
@@ -141,6 +125,22 @@ class DoWorkoutViewModel @Inject constructor(
                         error = result.error
                     )
                 }
+            }
+        }
+    }
+
+    private fun startTimerLogger(){
+        viewModelScope.launch(Dispatchers.Default) {
+            while (isLogging) {
+                Log.d("DoWorkoutViewModel", "----------------Timers------------------")
+                Log.d("DoWorkoutViewModel", "Countdown time: ${countdownTimerState.value.time}")
+                Log.d("DoWorkoutViewModel", "Workout time: ${workoutTimerState.value.time}")
+                Log.d("DoWorkoutViewModel", "Workout timer is running: ${workoutTimer.isRunning()}")
+                Log.d(
+                    "DoWorkoutViewModel",
+                    "Countdown timer is running: ${countdownTimer.isRunning()}"
+                )
+                delay(1000)
             }
         }
     }
