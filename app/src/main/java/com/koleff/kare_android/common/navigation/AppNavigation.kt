@@ -123,6 +123,7 @@ fun AppNavigation(
 
 private fun NavGraphBuilder.addDestinations() {
     addWelcomeGraph()
+    addOnboardingGraph()
     composable(Destination.Dashboard.ROUTE) { backStackEntry ->
         DashboardScreen()
     }
