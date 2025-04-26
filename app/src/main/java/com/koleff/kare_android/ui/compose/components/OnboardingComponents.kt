@@ -46,7 +46,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.koleff.kare_android.R
-import com.koleff.kare_android.common.OnboardingDataGenerator
+import com.koleff.kare_android.common.manager.data.OnboardingDataGenerator
 import com.koleff.kare_android.ui.style.OnboardingDataUI
 import com.koleff.kare_android.ui.theme.LocalExtendedColors
 import com.koleff.kare_android.ui.theme.Poppins

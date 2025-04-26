@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.koleff.kare_android.common.OnboardingDataGenerator
+import com.koleff.kare_android.common.manager.data.OnboardingDataGenerator
 import com.koleff.kare_android.ui.compose.components.OnboardingPager
 import com.koleff.kare_android.ui.compose.components.rememberOnboardingPagerState
 import com.koleff.kare_android.ui.view_model.OnboardingViewModel

@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.manager.data
 
 import androidx.compose.ui.graphics.Color
 import com.koleff.kare_android.R
