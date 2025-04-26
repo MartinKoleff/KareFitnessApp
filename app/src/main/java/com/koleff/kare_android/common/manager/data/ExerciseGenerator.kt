@@ -24,7 +24,11 @@ object ExerciseGenerator {
     private const val videoUrl = "_FkbD0FhgVE" //https://www.youtube.com/watch?v=
     private const val videoUrl2 = "8GEKQJcKTO8" //https://www.youtube.com/watch?v=
 
-
+    private val exerciseListByMuscleGroup: MutableMap<MuscleGroup, List<Exercise>> = mutableMapOf()
+    private val exerciseWithSetsListByMuscleGroup: MutableMap<MuscleGroup, List<ExerciseWithSets>> =
+        mutableMapOf()
+    private val exerciseDetailsListByMuscleGroup: MutableMap<MuscleGroup, List<ExerciseDetails>> =
+        mutableMapOf()
 
     //List of all muscle groups with exercises ranges setup in getMuscleGroupRange()
     val SUPPORTED_MUSCLE_GROUPS = listOf<MuscleGroup>(
@@ -38,21 +42,39 @@ object ExerciseGenerator {
         MuscleGroup.FULL_BODY,
     )
 
-    fun loadExercises(
-        muscleGroup: MuscleGroup,
-        isWorkout: Boolean,
-        workoutId: Int = -1
-    ): List<Exercise> {
-        val customWorkoutId =
-            if (isWorkout) {
-                if (workoutId != -1) {
-                    workoutId
-                } else {
-                    Random.nextInt()
-                }
-            } else {
-                Constants.CATALOG_EXERCISE_ID
-            }
+    fun initializeExercises() {
+        SUPPORTED_MUSCLE_GROUPS.forEach { muscleGroup ->
+            loadExercises(muscleGroup)
+            loadExercisesWithSets(muscleGroup)
+        }
+    }
+
+    fun getAllExercises(): List<ExerciseDto> {
+        if (exerciseWithSetsListByMuscleGroup.entries.isEmpty()) {
+            initializeExercises()
+        }
+
+        return exerciseWithSetsListByMuscleGroup.values.flatten()
+            .map { it.toDto() }
+    }
+
+    fun getAllExerciseDetails(): List<ExerciseDetailsDto> {
+        if (exerciseDetailsListByMuscleGroup.entries.isEmpty()) {
+            initializeExercises()
+        }
+
+        return exerciseDetailsListByMuscleGroup.values.flatten()
+            .map { it.toDto() }
+    }
+
+    fun loadExercises(muscleGroup: MuscleGroup): List<Exercise> {
+        return exerciseListByMuscleGroup.getOrPut(muscleGroup) {
+            generateExercises(muscleGroup)
+        }
+    }
+
+    private fun generateExercises(muscleGroup: MuscleGroup): List<Exercise> {
+        val customWorkoutId = Constants.CATALOG_EXERCISE_ID
 
         return when (muscleGroup) {
             MuscleGroup.CHEST -> getChestExercises(customWorkoutId)
@@ -75,43 +97,40 @@ object ExerciseGenerator {
         }
     }
 
-
     fun loadExercisesWithSets(
         muscleGroup: MuscleGroup,
-        isWorkout: Boolean,
-        workoutId: Int
+        workoutId: Int = Constants.CATALOG_EXERCISE_ID
     ): List<ExerciseWithSets> {
-        val exercises = loadExercises(muscleGroup, isWorkout, workoutId)
-        val exercisesWithSets = exercises.map { exercise ->
-            val sets = loadExerciseSets(
-                exerciseId = exercise.exerciseId,
-                workoutId = exercise.workoutId
-            )
-
-            ExerciseWithSets(
-                exercise = exercise,
-                sets = sets
-            )
+        return exerciseWithSetsListByMuscleGroup.getOrPut(muscleGroup) {
+            generateExerciseWithSets(muscleGroup, workoutId)
         }
-
-        return exercisesWithSets
     }
 
-    fun loadExerciseDetails(
+    private fun generateExerciseWithSets(
         muscleGroup: MuscleGroup,
-        isWorkout: Boolean,
-        workoutId: Int = 1
-    ): List<ExerciseDetails> {
-        val customWorkoutId =
-            if (isWorkout) {
-                if (workoutId != -1) {
-                    workoutId
-                } else {
-                    Random.nextInt()
-                }
-            } else {
-                Constants.CATALOG_EXERCISE_ID
-            }
+        workoutId: Int
+    ): List<ExerciseWithSets> {
+        return loadExercises(muscleGroup).map { exercise ->
+            val updatedExercise = exercise.copy(workoutId = workoutId)
+
+            ExerciseWithSets(
+                exercise = updatedExercise,
+                sets = loadExerciseSets(
+                    exerciseId = updatedExercise.exerciseId,
+                    workoutId = updatedExercise.workoutId
+                )
+            )
+        }
+    }
+
+    fun loadExerciseDetails(muscleGroup: MuscleGroup): List<ExerciseDetails> {
+        return exerciseDetailsListByMuscleGroup.getOrPut(muscleGroup) {
+            generateExerciseDetails(muscleGroup)
+        }
+    }
+
+    private fun generateExerciseDetails(muscleGroup: MuscleGroup): List<ExerciseDetails> {
+        val customWorkoutId = Constants.CATALOG_EXERCISE_ID
 
         return when (muscleGroup) {
             MuscleGroup.CHEST -> getChestExerciseDetails(customWorkoutId)
@@ -122,43 +141,6 @@ object ExerciseGenerator {
             MuscleGroup.LEGS -> getLegsExerciseDetails(customWorkoutId)
             else -> emptyList()
         }
-    }
-
-    fun getAllExercises(isWorkout: Boolean = false): List<ExerciseDto> {
-        val exercisesList = mutableListOf<ExerciseDto>()
-
-        for (muscleGroup in MuscleGroup.entries) {
-            val generatedExercises =
-                loadExercises(muscleGroup, isWorkout)
-                    .map { exercise ->
-                        val exerciseSets = loadExerciseSets(
-                            exerciseId = exercise.exerciseId,
-                            workoutId = exercise.workoutId
-                        )
-
-                        exercise.toDto(exerciseSets)
-                    }
-                    .toList()
-
-            exercisesList.addAll(generatedExercises)
-        }
-
-        return exercisesList
-    }
-
-    fun getAllExerciseDetails(isWorkout: Boolean = false): List<ExerciseDetailsDto> {
-        val exercisesDetailsList = mutableListOf<ExerciseDetailsDto>()
-
-        for (muscleGroup in MuscleGroup.entries) {
-            val generatedExerciseDetails =
-                loadExerciseDetails(muscleGroup, isWorkout)
-                    .map(ExerciseDetails::toDto)
-                    .toList()
-
-            exercisesDetailsList.addAll(generatedExerciseDetails)
-        }
-
-        return exercisesDetailsList
     }
 
     fun getMuscleGroupRange(muscleGroup: MuscleGroup): Pair<Int, Int> {
@@ -194,6 +176,8 @@ object ExerciseGenerator {
             else -> throw NoSuchElementException("Muscle Group $muscleGroup doesn't have exercises")
         }
     }
+
+    //Generate exercise
 
     fun loadExerciseSets(workoutId: Int, exerciseId: Int): List<ExerciseSet> {
         return listOf(
@@ -1312,41 +1296,5 @@ object ExerciseGenerator {
                 ""
             )
         )
-    }
-
-    fun loadAllExerciseDetailsExerciseCrossRefs(): List<ExerciseDetailsExerciseCrossRef> {
-        val crossRefs: MutableList<ExerciseDetailsExerciseCrossRef> = mutableListOf()
-
-        for (i in 1..TOTAL_EXERCISES step 1) {
-            crossRefs.add(
-                ExerciseDetailsExerciseCrossRef(
-                    exerciseId = i,
-                    exerciseDetailsId = i,
-                    workoutId = Constants.CATALOG_EXERCISE_ID
-                )
-            )
-        }
-
-        return crossRefs
-    }
-
-    fun loadExerciseSetsCrossRefs(
-        exercise: Exercise,
-        exerciseSets: List<ExerciseSet>,
-        totalSets: Int = 4
-    ): List<ExerciseSetCrossRef> {
-        val crossRefs: MutableList<ExerciseSetCrossRef> = mutableListOf()
-
-        repeat(totalSets) {
-            crossRefs.add(
-                ExerciseSetCrossRef(
-                    exerciseId = exercise.exerciseId,
-                    workoutId = Constants.CATALOG_EXERCISE_ID,
-                    setId = exerciseSets[it].setId
-                )
-            )
-        }
-
-        return crossRefs
     }
 }

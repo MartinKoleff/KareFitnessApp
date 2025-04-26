@@ -1,6 +1,7 @@
 package com.koleff.kare_android.common.manager.data
 
 import com.koleff.kare_android.common.DateUtils
+import com.koleff.kare_android.common.WorkoutGeneratorV2
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 
 object PerformanceMetricsGenerator {
@@ -8,7 +9,7 @@ object PerformanceMetricsGenerator {
     const val TOTAL_WORKOUTS = 3
 
     fun generatePerformanceMetrics(): List<DoWorkoutPerformanceMetricsDto> {
-        val workouts = WorkoutGenerator.getAllWorkouts()
+        val workouts = WorkoutGeneratorV2.generateWorkouts()
         val workoutList = listOf(
             workouts[0],
             workouts[1],
@@ -16,7 +17,7 @@ object PerformanceMetricsGenerator {
             workouts[2]
         )
 
-        val workoutDetails= WorkoutGenerator.getAllWorkoutDetails()
+        val workoutDetails= WorkoutGeneratorV2.generateWorkoutDetails()
         val workoutDetailsList = listOf(
             workoutDetails[0],
             workoutDetails[1],

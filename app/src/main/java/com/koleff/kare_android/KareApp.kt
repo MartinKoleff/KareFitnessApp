@@ -73,24 +73,9 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
         //Initialize Room DB on app start (only for local testing)
         if (useLocalDataSource) {
-            GlobalScope.launch(Dispatchers.IO) {
-                exerciseDBManager.initializeExerciseTable {
-                    preferences.initializeExerciseTable()
-                }
-
-                workoutDBManager.initializeWorkoutTable {
-                    preferences.initializeWorkoutTable()
-                }
-
-                workoutPerformanceMetricsDBManager.initializeWorkoutPerformanceMetricsTable {
-                    preferences.initializeWorkoutPerformanceMetricsTable()
-                }
-
-                userDBManager.initializeUserTable {
-                    preferences.initializeUserTable()
-                }
+            CoroutineScope(Dispatchers.IO).launch {
+                initializeLocalDatabase()
             }
-
         }
 
         //Register broadcast receivers
@@ -118,5 +103,23 @@ class KareApp : MultiDexApplication(), DefaultLifecycleObserver {
 
         broadcastManager.unregisterReceiver(regenerateTokenBroadcastReceiver)
         broadcastManager.unregisterReceiver(logoutBroadcastReceiver)
+    }
+
+    private suspend fun initializeLocalDatabase() = withContext(Dispatchers.IO) {
+        exerciseDBManager.initializeExerciseTable {
+            preferences.initializeExerciseTable()
+        }
+
+        workoutDBManager.initializeWorkoutTable {
+            preferences.initializeWorkoutTable()
+        }
+
+        workoutPerformanceMetricsDBManager.initializeWorkoutPerformanceMetricsTable {
+            preferences.initializeWorkoutPerformanceMetricsTable()
+        }
+
+        userDBManager.initializeUserTable {
+            preferences.initializeUserTable()
+        }
     }
 }

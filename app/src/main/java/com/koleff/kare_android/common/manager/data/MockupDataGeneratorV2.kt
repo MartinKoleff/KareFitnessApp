@@ -19,9 +19,8 @@ import kotlin.random.Random
 
 object MockupDataGeneratorV2 {
 
-    private val catalogExercises = ExerciseGenerator.getAllExercises(isWorkout = false)
-    private val catalogExerciseDetails =
-        ExerciseGenerator.getAllExerciseDetails(isWorkout = false)
+    private val catalogExercises = ExerciseGenerator.getAllExercises()
+    private val catalogExerciseDetails = ExerciseGenerator.getAllExerciseDetails()
 
     private val workoutNames = listOf(
         "Epic workout",
@@ -393,8 +392,9 @@ object MockupDataGeneratorV2 {
         exercises: List<ExerciseDto>? = null //Optional list of exercises
     ): List<DoWorkoutExerciseSetDto> {
         val selectedExercises = exercises?.shuffled()?.take(numberOfExercises)
-            ?: ExerciseGenerator.loadExercisesWithSets(muscleGroup, isWorkout = true, workoutId)
+            ?: ExerciseGenerator.loadExercisesWithSets(muscleGroup)
                 .map { it.toDto() }
+                .map { it.copy(workoutId = workoutId) }
                 .shuffled()
                 .take(numberOfExercises)
         val date = DateManager.getRandomDateInCurrentMonth()

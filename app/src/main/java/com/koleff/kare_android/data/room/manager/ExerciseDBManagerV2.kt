@@ -30,8 +30,8 @@ class ExerciseDBManagerV2 @Inject constructor(
             generateCatalogWorkout()
 
             MuscleGroup.getSupportedMuscleGroups().forEach { muscleGroup ->
-                val exercisesList = ExerciseGenerator.loadExercises(muscleGroup, false)
-                val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup, false)
+                val exercisesList = ExerciseGenerator.loadExercises(muscleGroup)
+                val exerciseDetailsList = ExerciseGenerator.loadExerciseDetails(muscleGroup)
 
                 exerciseDao.insertAllExercises(exercisesList)
                 exerciseDetailsDao.insertAllExerciseDetails(exerciseDetailsList)
