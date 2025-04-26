@@ -24,11 +24,11 @@ class WorkoutStatisticsRepositoryImpl(private val workoutStatisticsDataSource: W
         return workoutStatisticsDataSource.getDatesOfCompletionForWorkout(workoutId)
     }
 
-    override suspend fun getTotalRepsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>> {
-        return workoutStatisticsDataSource.getTotalRepsPerformed(workoutId, exerciseId)
+    override suspend fun getTotalRepsPerformed(workoutId: Int): Flow<ResultWrapper<TotalRepsWrapper>> {
+        return workoutStatisticsDataSource.getTotalRepsPerformed(workoutId)
     }
 
-    override suspend fun getTotalSetsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalSetsWrapper>> {
-        return workoutStatisticsDataSource.getTotalSetsPerformed(workoutId, exerciseId)
+    override suspend fun getTotalSetsPerformed(workoutId: Int): Flow<ResultWrapper<TotalSetsWrapper>> {
+        return workoutStatisticsDataSource.getTotalSetsPerformed(workoutId)
     }
 }

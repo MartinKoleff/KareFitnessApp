@@ -3,8 +3,8 @@ package com.koleff.kare_android.ui.compose.components
 import android.os.Build
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Info
@@ -136,66 +136,68 @@ fun SettingsList(
     onChangeLanguage: () -> Unit,
     onNavigateToStatistics: () -> Unit
 ) {
-    Column(modifier = modifier) {
-        SettingsListItem(
-            title = "Logout",
-            icon = painterResource(R.drawable.ic_vector_logout),
-            description = "Logout from account",
-            onClick = onLogout
-        )
-        SettingsListItem(
-            title = "Change email",
-            icon = Icons.Default.Email,
-            description = "Change login email"
-        )
-        SettingsListItem(
-            title = "Change password",
-            icon = painterResource(R.drawable.ic_vector_password),
-            description = "Change password"
-        )
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    LazyColumn(modifier = modifier) {
+        item {
             SettingsListItem(
-                title = "Statistics",
-                icon = painterResource(R.drawable.diagram),
-                description = "Statistics",
-                onClick = onNavigateToStatistics
+                title = "Logout",
+                icon = painterResource(R.drawable.ic_vector_logout),
+                description = "Logout from account",
+                onClick = onLogout
+            )
+            SettingsListItem(
+                title = "Change email",
+                icon = Icons.Default.Email,
+                description = "Change login email"
+            )
+            SettingsListItem(
+                title = "Change password",
+                icon = painterResource(R.drawable.ic_vector_password),
+                description = "Change password"
+            )
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                SettingsListItem(
+                    title = "Statistics",
+                    icon = painterResource(R.drawable.diagram),
+                    description = "Statistics",
+                    onClick = onNavigateToStatistics
+                )
+            }
+
+            SettingsListItem(
+                title = "Push notifications",
+                icon = Icons.Default.Notifications,
+                description = "Push notifications settings",
+                hasSwitch = true,
+                isChecked = notificationIsChecked,
+                onCheckedChange = onNotificationSwitchChange
+            )
+            SettingsListItem(
+                title = "Change language",
+                icon = painterResource(R.drawable.ic_vector_language),
+                description = "Change language",
+                onClick = onChangeLanguage
+            )
+            SettingsListItem(
+                title = "Biometric authentication",
+                icon = painterResource(R.drawable.ic_faceid),
+                description = "Biometric authentication",
+                hasSwitch = true,
+                isChecked = biometricsIsChecked,
+                onCheckedChange = onBiometricsSwitchChange
+            )
+
+            SettingsCategory(title = "Privacy policy")
+            SettingsListItem(
+                title = "Privacy policy",
+                icon = Icons.Default.Info,
+                description = "Privacy policy"
+            )
+            SettingsListItem(
+                title = "Support",
+                icon = Icons.Default.MailOutline,
+                description = "Contact us via email"
             )
         }
-
-        SettingsListItem(
-            title = "Push notifications",
-            icon = Icons.Default.Notifications,
-            description = "Push notifications settings",
-            hasSwitch = true,
-            isChecked = notificationIsChecked,
-            onCheckedChange = onNotificationSwitchChange
-        )
-        SettingsListItem(
-            title = "Change language",
-            icon = painterResource(R.drawable.ic_vector_language),
-            description = "Change language",
-            onClick = onChangeLanguage
-        )
-        SettingsListItem(
-            title = "Biometric authentication",
-            icon = painterResource(R.drawable.ic_faceid),
-            description = "Biometric authentication",
-            hasSwitch = true,
-            isChecked = biometricsIsChecked,
-            onCheckedChange = onBiometricsSwitchChange
-        )
-
-        SettingsCategory(title = "Privacy policy")
-        SettingsListItem(
-            title = "Privacy policy",
-            icon = Icons.Default.Info,
-            description = "Privacy policy"
-        )
-        SettingsListItem(
-            title = "Support",
-            icon = Icons.Default.MailOutline,
-            description = "Contact us via email"
-        )
     }
 }
