@@ -18,8 +18,8 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 23
-        versionName "3.7"
+        versionCode 24
+        versionName "3.8"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
