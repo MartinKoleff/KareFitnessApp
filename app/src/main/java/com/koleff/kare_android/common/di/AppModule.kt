@@ -25,6 +25,7 @@ import com.koleff.kare_android.data.room.database.KareDatabase
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
 import com.koleff.kare_android.data.room.manager.UserDBManager
 import com.koleff.kare_android.data.room.manager.WorkoutDBManagerV2
+import com.koleff.kare_android.data.room.manager.WorkoutPerformanceMetricsDBManager
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -196,6 +197,26 @@ object AppModule {
             exerciseSetDao = exerciseSetDao,
             workoutDao = workoutDao,
             workoutDetailsDao = workoutDetailsDao,
+            hasInitializedDB = hasInitializedDB
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutPerformanceMetricsDBManager(
+        preferences: Preferences,
+        doWorkoutPerformanceMetricsDao: DoWorkoutPerformanceMetricsDao,
+        doWorkoutExerciseSetDao: DoWorkoutExerciseSetDao,
+        exerciseSetDao: ExerciseSetDao,
+        workoutDao: WorkoutDao
+    ): WorkoutPerformanceMetricsDBManager {
+        val hasInitializedDB = preferences.hasInitializedWorkoutPerformanceMetricsTable()
+
+        return WorkoutPerformanceMetricsDBManager(
+            doWorkoutPerformanceMetricsDao = doWorkoutPerformanceMetricsDao,
+            doWorkoutExerciseSetDao = doWorkoutExerciseSetDao,
+            exerciseSetDao = exerciseSetDao,
+            workoutDao = workoutDao,
             hasInitializedDB = hasInitializedDB
         )
     }

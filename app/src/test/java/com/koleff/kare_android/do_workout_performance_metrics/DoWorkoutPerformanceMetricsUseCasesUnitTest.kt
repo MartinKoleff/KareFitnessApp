@@ -1,6 +1,6 @@
 package com.koleff.kare_android.do_workout_performance_metrics
 
-import com.koleff.kare_android.common.MockupDataGeneratorV2
+import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsLocalDataSource
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
@@ -10,7 +10,6 @@ import com.koleff.kare_android.data.repository.DoWorkoutPerformanceMetricsReposi
 import com.koleff.kare_android.data.repository.ExerciseRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.manager.ExerciseDBManagerV2
-import com.koleff.kare_android.do_workout.DoWorkoutUseCasesUnitTest
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutExerciseSetDaoFake
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutPerformanceMetricsDaoFake
 import com.koleff.kare_android.do_workout_performance_metrics.data.DoWorkoutPerformanceMetricsMediator
@@ -61,7 +60,6 @@ import com.koleff.kare_android.domain.usecases.UpdateWorkoutDetailsUseCase
 import com.koleff.kare_android.domain.usecases.UpdateWorkoutUseCase
 import com.koleff.kare_android.domain.usecases.WorkoutUseCases
 import com.koleff.kare_android.exercise.ExerciseFakeDataSource
-import com.koleff.kare_android.exercise.ExerciseUseCasesUnitTest
 import com.koleff.kare_android.exercise.data.ExerciseDaoFakeV2
 import com.koleff.kare_android.exercise.data.ExerciseDetailsDaoFake
 import com.koleff.kare_android.exercise.data.ExerciseSetDaoFake
@@ -71,7 +69,6 @@ import com.koleff.kare_android.workout.data.CompositeExerciseSetChangeListener
 import com.koleff.kare_android.workout.data.WorkoutConfigurationDaoFake
 import com.koleff.kare_android.workout.data.WorkoutDaoFakeV2
 import com.koleff.kare_android.workout.data.WorkoutDetailsDaoFakeV2
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.AfterEach

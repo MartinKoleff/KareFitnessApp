@@ -2,6 +2,7 @@ package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.WorkoutStatisticsDataSource
 import com.koleff.kare_android.domain.repository.WorkoutStatisticsRepository
+import com.koleff.kare_android.domain.wrapper.DatesOfCompletionWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper
 import com.koleff.kare_android.domain.wrapper.TotalSetsWrapper
@@ -19,11 +20,15 @@ class WorkoutStatisticsRepositoryImpl(private val workoutStatisticsDataSource: W
        return workoutStatisticsDataSource.getTotalWeightLifted(workoutId)
     }
 
-    override suspend fun getTotalRepsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>> {
-        return workoutStatisticsDataSource.getTotalRepsPerformed(workoutId, exerciseId)
+    override suspend fun getDatesOfCompletionForWorkout(workoutId: Int): Flow<ResultWrapper<DatesOfCompletionWrapper>> {
+        return workoutStatisticsDataSource.getDatesOfCompletionForWorkout(workoutId)
     }
 
-    override suspend fun getTotalSetsPerformed(workoutId: Int, exerciseId: Int): Flow<ResultWrapper<TotalSetsWrapper>> {
-        return workoutStatisticsDataSource.getTotalSetsPerformed(workoutId, exerciseId)
+    override suspend fun getTotalRepsPerformed(workoutId: Int): Flow<ResultWrapper<TotalRepsWrapper>> {
+        return workoutStatisticsDataSource.getTotalRepsPerformed(workoutId)
+    }
+
+    override suspend fun getTotalSetsPerformed(workoutId: Int): Flow<ResultWrapper<TotalSetsWrapper>> {
+        return workoutStatisticsDataSource.getTotalSetsPerformed(workoutId)
     }
 }

@@ -53,7 +53,7 @@
 //import androidx.compose.ui.tooling.preview.PreviewLightDark
 //import androidx.compose.ui.unit.dp
 //import com.koleff.kare_android.R
-//import com.koleff.kare_android.common.MockupDataGeneratorV2
+//import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
 //import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 //import com.koleff.kare_android.ui.state.CircularTimerStyle
 //import kotlin.random.Random

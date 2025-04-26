@@ -1,4 +1,4 @@
-package com.koleff.kare_android.common
+package com.koleff.kare_android.common.manager.data
 
 import android.app.LocaleManager
 import android.content.Context

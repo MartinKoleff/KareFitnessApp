@@ -434,20 +434,14 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)
 
-            val workoutDetailsId =
-                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity()) //Get workout details id
-
             //Create Workout for the WorkoutDetails
             val workoutDto =
-                WorkoutDto().copy(
-                    workoutId = workoutDetailsId.toInt(),
-                    name = workoutDetailsDto.name,
-                    muscleGroup = workoutDetailsDto.muscleGroup,
-                    isFavorite = workoutDetailsDto.isFavorite,
-                    totalExercises = workoutDetailsDto.exercises.size,
-                    snapshot = "snapshot $workoutDetailsId.png"
-                )
+                workoutDetailsDto.toWorkout()
             val workoutId = workoutDao.insertWorkout(workoutDto.toEntity()) //returns 0
+
+            //Create WorkoutDetails after Workout is inserted in DB
+            val workoutDetailsId =
+                workoutDetailsDao.insertWorkoutDetails(workoutDetailsDto.toEntity().copy(workoutDetailsId = workoutId.toInt())) //Get workout details id
 
             //Insert all exercises and sets
             workoutDetailsDto.exercises.forEach { exercise ->

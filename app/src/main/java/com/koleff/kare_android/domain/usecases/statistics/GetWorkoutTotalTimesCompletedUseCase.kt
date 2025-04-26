@@ -25,7 +25,8 @@ class GetWorkoutTotalTimesCompletedUseCase(private val workoutStatisticsReposito
                 is ResultWrapper.Success -> {
                     TotalTimesCompletedState(
                         isSuccessful = true,
-                        totalTimesCompleted = apiResult.data.totalTimesCompleted
+                        totalTimesCompleted = apiResult.data.totalTimesCompleted,
+                        datesOfCompletion = apiResult.data.datesOfCompletion
                     )
                 }
             }

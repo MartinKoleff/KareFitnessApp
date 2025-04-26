@@ -7,7 +7,7 @@ import java.util.UUID
 
 class DoWorkoutExerciseSetDaoFake(
     private val doWorkoutPerformanceMetricsDaoFake: DoWorkoutPerformanceMetricsDaoFake
-): DoWorkoutExerciseSetDao, FakeDao {
+) : DoWorkoutExerciseSetDao, FakeDao {
 
     private val exerciseSetDB = mutableListOf<DoWorkoutExerciseSet>()
 
@@ -59,6 +59,14 @@ class DoWorkoutExerciseSetDaoFake(
 
     override suspend fun findSetsByWorkoutId(workoutId: Int): List<DoWorkoutExerciseSet> {
         return exerciseSetDB.filter { it.workoutId == workoutId }
+    }
+
+    override suspend fun findSetsByExerciseId(exerciseId: Int): List<DoWorkoutExerciseSet> {
+        return exerciseSetDB.filter { it.exerciseId == exerciseId }
+    }
+
+    override suspend fun getAllSets(): List<DoWorkoutExerciseSet> {
+        return exerciseSetDB
     }
 
 

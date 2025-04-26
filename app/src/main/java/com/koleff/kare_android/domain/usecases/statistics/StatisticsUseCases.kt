@@ -8,6 +8,7 @@ data class StatisticsUseCases(
 
 data class ExerciseStatisticsUseCases (
     val getExercisePRUseCase: GetExercisePRUseCase,
+    val getExercise1RepMaxUseCase: GetExercise1RepMaxUseCase,
     val getExerciseTotalRepsPerformedUseCase: GetExerciseTotalRepsPerformedUseCase,
     val getExerciseTotalSetsPerformedUseCase: GetExerciseTotalSetsPerformedUseCase,
     val getExerciseTotalWeightLiftedUseCase: GetExerciseTotalWeightLiftedUseCase
@@ -18,6 +19,7 @@ data class WorkoutStatisticsUseCases(
     val getWorkoutTotalRepsPerformedUseCase: GetWorkoutTotalRepsPerformedUseCase,
     val getWorkoutTotalSetsPerformedUseCase: GetWorkoutTotalSetsPerformedUseCase,
     val getWorkoutTotalWeightLiftedUseCase: GetWorkoutTotalWeightLiftedUseCase,
+    val getDatesOfCompletionUseCase: GetDatesOfCompletionUseCase
 )
 
 data class GeneralStatisticsUseCases(

@@ -18,11 +18,12 @@ android {
         applicationId "com.koleff.kare_android"
         minSdk 24
         targetSdk 34
-        versionCode 20
-        versionName "3.5"
+        versionCode 21
+        versionName "3.51"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
         vectorDrawables {
             useSupportLibrary true
@@ -184,6 +185,10 @@ dependencies {
     //Gson (Json converter)
     implementation "com.google.code.gson:gson:$gson_version"
 
+    //Accompanist
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation "com.google.accompanist:accompanist-pager:0.12.0"
+
     //Jackson
     implementation "com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_version"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
@@ -216,14 +221,9 @@ dependencies {
     implementation "androidx.media3:media3-exoplayer-dash:$media3_version"
     implementation "androidx.media3:media3-ui:$media3_version"
 
-    //JUnit 4
-//    testImplementation "junit:junit:$robolectric_junit_version"
-//    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
-//    testImplementation ("org.junit.platform:junit-platform-runner:$junit_jupiter_platform_version")
-
     //AndroidX Testing
-    androidTestImplementation "androidx.test:core:$test_core_version"
-    androidTestImplementation "androidx.test:core-ktx:$test_core_version"
+    androidTestImplementation "androidx.test:core:$test_core_ktx_version"
+    androidTestImplementation "androidx.test:core-ktx:$test_core_ktx_version"
     androidTestImplementation "androidx.test.ext:junit:$test_junit_ext_version"
     androidTestImplementation "androidx.test.ext:junit-ktx:$test_junit_ext_version"
     androidTestImplementation "androidx.test:runner:$test_runner_version"
@@ -240,6 +240,15 @@ dependencies {
     androidTestImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     androidTestImplementation project(':app')
 
+    //JUnit 4
+//    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_ui_version"
+//    testImplementation ("org.junit.platform:junit-platform-runner:$junit_jupiter_platform_version")
+
+    //JUnit 4 -> Used for instrumental tests and test suite support
+    testImplementation "junit:junit:$junit4_version"
+    testImplementation "androidx.test:core:$test_core_version"
+    testImplementation project(':app')
+
     //Shared mutual test resources
     testImplementation(project(":shared-test"))
     androidTestImplementation(project(":shared-test"))
@@ -253,6 +262,7 @@ dependencies {
     testImplementation "io.mockk:mockk:$mockk_version"
 
     //Espresso - UI tests
+    androidTestImplementation "androidx.test.ext:junit:$test_core_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 
     //Turbine - Flow testing

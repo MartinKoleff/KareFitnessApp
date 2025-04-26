@@ -1,3 +1,5 @@
+import androidx.lifecycle.SavedStateHandle
+
 //package com.koleff.kare_android.ui.view_model
 //
 //import androidx.lifecycle.ViewModel
@@ -27,9 +29,13 @@
 //@HiltViewModel
 //class SearchWorkoutViewModel @Inject constructor(
 //    private val workoutUseCases: WorkoutUseCases,
+//    private val savedStateHandle: SavedStateHandle,
 //    private val navigationController: NavigationController,
 //    @IoDispatcher private val dispatcher: CoroutineDispatcher
 //) : BaseViewModel(navigationController) {
+//
+//    private val workoutId: Int = savedStateHandle.get<String>("workout_id")?.toIntOrNull() ?: -1
+//    private val exerciseId: Int = savedStateHandle.get<String>("exercise_id")?.toIntOrNull() ?: -1
 //
 //    private var _selectedWorkoutState: MutableStateFlow<WorkoutDetailsState> =
 //        MutableStateFlow(WorkoutDetailsState())

@@ -8,10 +8,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class GetWorkoutTotalSetsPerformedUseCase(private val workoutStatisticsRepository: WorkoutStatisticsRepository) {
-    suspend operator fun invoke(workoutId: Int, exerciseId: Int): Flow<TotalSetsPerformedState> =
+    suspend operator fun invoke(workoutId: Int): Flow<TotalSetsPerformedState> =
         workoutStatisticsRepository.getTotalSetsPerformed(
-            workoutId = workoutId,
-            exerciseId = exerciseId
+            workoutId = workoutId
         ).map { apiResult ->
             when (apiResult) {
                 is ResultWrapper.ApiError -> {

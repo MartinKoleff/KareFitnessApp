@@ -198,6 +198,14 @@ class DoWorkoutPerformanceMetricsMediator(
         return exerciseSetDB.filter { it.workoutId == workoutId }
     }
 
+    override suspend fun findSetsByExerciseId(exerciseId: Int): List<DoWorkoutExerciseSet> {
+        return exerciseSetDB.filter { it.exerciseId == exerciseId }
+    }
+
+    override suspend fun getAllSets(): List<DoWorkoutExerciseSet> {
+        return exerciseSetDB
+    }
+
     override suspend fun insertWorkout(workout: Workout): Long {
         return if (workout.workoutId == 0) {
             workoutsDB.add(workout.copy(workoutId = autoIncrementId))

@@ -44,11 +44,11 @@ fun WorkoutsScreenV2(
 ) {
     WorkoutScaffold(
         "Workouts",
+        onWorkoutHistoryAction = { workoutsViewModel.onNavigateToWorkoutHistory() },
         onNavigateToDashboard = { workoutsViewModel.onNavigateToDashboard() },
         onNavigateToWorkouts = { workoutsViewModel.onNavigateToWorkouts() },
         onNavigateBackAction = { workoutsViewModel.onNavigateBack() },
         onNavigateToSettings = { workoutsViewModel.onNavigateToSettings() },
-        onWorkoutHistoryAction = {workoutsViewModel.onNavigateToWorkoutHistory()}
     ) { innerPadding ->
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current

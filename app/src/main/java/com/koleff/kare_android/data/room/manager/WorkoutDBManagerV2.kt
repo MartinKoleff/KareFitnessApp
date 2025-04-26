@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.room.manager
 
-import com.koleff.kare_android.common.MockupDataGeneratorV2
-import com.koleff.kare_android.common.WorkoutGenerator
+import com.google.firebase.crashlytics.internal.Logger
+import com.koleff.kare_android.common.manager.data.WorkoutGenerator
 import com.koleff.kare_android.data.room.dao.ExerciseDao
 import com.koleff.kare_android.data.room.dao.ExerciseSetDao
 import com.koleff.kare_android.data.room.dao.WorkoutConfigurationDao
@@ -57,6 +57,11 @@ class WorkoutDBManagerV2 @Inject constructor(
                     .map { it.sets }
                     .forEach { sets ->
                         exerciseSetDao.insertAllExerciseSets(sets)
+                        Logger.getLogger().i("--------------------------------")
+                        sets.forEach {
+                            Logger.getLogger().i("[WorkoutDBManagerV2] Exercise Set with id ${it.setId} from DB: ${exerciseSetDao.getSetById(it.setId)}")
+                        }
+                        Logger.getLogger().i("--------------------------------")
                     }
             }
 

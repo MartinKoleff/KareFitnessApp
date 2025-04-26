@@ -15,6 +15,7 @@ object Constants {
     const val useLocalDataSource = true
     const val useMockupDataSource = true
     const val fakeDelay: Long = 500L
+    const val fakeSmallDelay: Long = 150L
 
     const val navigationDelay: Long = 333L
 

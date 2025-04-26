@@ -129,6 +129,19 @@ class DefaultPreferences(
             .apply()
     }
 
+    override fun hasInitializedWorkoutPerformanceMetricsTable(): Boolean {
+        val hasInitialized: Boolean =
+            sharedPref.getBoolean(Preferences.HAS_INITIALIZED_WORKOUT_PERFORMANCE_METRICS_TABLE, false)
+
+        return hasInitialized
+    }
+
+    override fun initializeWorkoutPerformanceMetricsTable() {
+        sharedPref.edit()
+            .putBoolean(Preferences.HAS_INITIALIZED_WORKOUT_PERFORMANCE_METRICS_TABLE, true)
+            .apply()
+    }
+
     override fun saveCredentials(credentials: Credentials) {
         val json = gson.toJson(credentials)
 

@@ -153,7 +153,6 @@ sealed interface Destination {
         const val ROUTE = "onboarding"
     }
 
-
     //Onboarding form
     data object OnboardingForm : Destination {
 
@@ -170,5 +169,14 @@ sealed interface Destination {
             get() = "workout_history"
 
         const val ROUTE = "workout_history"
+    }
+
+    //Statistics screen
+    data object Statistics : Destination {
+
+        override val route: String
+            get() = "statistics"
+
+        const val ROUTE = "statistics"
     }
 }

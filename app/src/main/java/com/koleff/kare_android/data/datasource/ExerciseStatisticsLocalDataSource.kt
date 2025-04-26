@@ -34,6 +34,21 @@ class ExerciseStatisticsLocalDataSource(
         emit(ResultWrapper.Success(result))
     }
 
+    //Get exercise 1 rep max
+    override suspend fun get1RepMax(exerciseId: Int): Flow<ResultWrapper<ExercisePRWrapper>> = flow {
+        emit(ResultWrapper.Loading())
+        delay(Constants.fakeDelay)
+
+        val bestPR = statisticsDao.get1RepMax(exerciseId) ?: 0.0f
+        val result = ExercisePRWrapper(
+            ExercisePRResponse(
+                pr = bestPR
+            )
+        )
+
+        emit(ResultWrapper.Success(result))
+    }
+
     //Total reps performed for exercise
     override suspend fun getTotalRepsPerformed(exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>> =
         flow {

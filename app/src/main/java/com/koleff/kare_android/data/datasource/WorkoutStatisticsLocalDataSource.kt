@@ -1,11 +1,14 @@
 package com.koleff.kare_android.data.datasource
 
 import com.koleff.kare_android.common.Constants
+import com.koleff.kare_android.data.model.dto.WorkoutTotalTimesCompleted
+import com.koleff.kare_android.data.model.response.DatesOfCompletionResponse
 import com.koleff.kare_android.data.model.response.TotalRepsResponse
 import com.koleff.kare_android.data.model.response.TotalSetsResponse
 import com.koleff.kare_android.data.model.response.TotalTimesCompletedResponse
 import com.koleff.kare_android.data.model.response.TotalWeightLiftedResponse
 import com.koleff.kare_android.data.room.dao.StatisticsDao
+import com.koleff.kare_android.domain.wrapper.DatesOfCompletionWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper
 import com.koleff.kare_android.domain.wrapper.TotalSetsWrapper
@@ -26,9 +29,14 @@ class WorkoutStatisticsLocalDataSource(
             delay(Constants.fakeDelay)
 
             val timesCompleted = statisticsDao.getTotalWorkoutsCompleted(workoutId) ?: 0
+            val datesOfCompletion =
+                statisticsDao.getDatesOfCompletionForWorkout(workoutId) ?: emptyList()
             val result = TotalTimesCompletedWrapper(
                 TotalTimesCompletedResponse(
-                    totalTimesCompleted = timesCompleted
+                    WorkoutTotalTimesCompleted(
+                        totalTimesCompleted = timesCompleted,
+                        datesOfCompletion = datesOfCompletion
+                    )
                 )
             )
 
@@ -50,17 +58,29 @@ class WorkoutStatisticsLocalDataSource(
             emit(ResultWrapper.Success(result))
         }
 
-    //Total reps performed for exercise per workout
+    override suspend fun getDatesOfCompletionForWorkout(workoutId: Int): Flow<ResultWrapper<DatesOfCompletionWrapper>> =
+        flow {
+            emit(ResultWrapper.Loading())
+            delay(Constants.fakeDelay)
+
+            val datesOfCompletion = statisticsDao.getDatesOfCompletionForWorkout(workoutId) ?: emptyList()
+            val result = DatesOfCompletionWrapper(
+                DatesOfCompletionResponse(
+                    dates = datesOfCompletion
+                )
+            )
+            emit(ResultWrapper.Success(result))
+        }
+
+    //Total reps performed per workout
     override suspend fun getTotalRepsPerformed(
-        workoutId: Int,
-        exerciseId: Int
+        workoutId: Int
     ): Flow<ResultWrapper<TotalRepsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val repsPerformed = statisticsDao.getTotalRepsPerformedForExercise(
-            workoutId = workoutId,
-            exerciseId = exerciseId
+        val repsPerformed = statisticsDao.getTotalRepsPerformedForWorkout(
+            workoutId = workoutId
         ) ?: 0
         val result = TotalRepsWrapper(
             TotalRepsResponse(
@@ -70,17 +90,15 @@ class WorkoutStatisticsLocalDataSource(
         emit(ResultWrapper.Success(result))
     }
 
-    //Total sets performed for exercise per workout
+    //Total sets performed per workout
     override suspend fun getTotalSetsPerformed(
-        workoutId: Int,
-        exerciseId: Int
+        workoutId: Int
     ): Flow<ResultWrapper<TotalSetsWrapper>> = flow {
         emit(ResultWrapper.Loading())
         delay(Constants.fakeDelay)
 
-        val setsPerformed = statisticsDao.getTotalSetsPerformedForExercise(
-            workoutId = workoutId,
-            exerciseId = exerciseId
+        val setsPerformed = statisticsDao.getTotalSetsPerformedForWorkout(
+            workoutId = workoutId
         ) ?: 0
         val result = TotalSetsWrapper(
             TotalSetsResponse(

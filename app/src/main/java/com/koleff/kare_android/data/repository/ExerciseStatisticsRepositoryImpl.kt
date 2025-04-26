@@ -15,6 +15,10 @@ class ExerciseStatisticsRepositoryImpl(private val exerciseStatisticsDataSource:
         return exerciseStatisticsDataSource.getPR(exerciseId)
     }
 
+    override suspend fun get1RepMax(exerciseId: Int): Flow<ResultWrapper<ExercisePRWrapper>> {
+        return exerciseStatisticsDataSource.get1RepMax(exerciseId)
+    }
+
     override suspend fun getTotalRepsPerformed(exerciseId: Int): Flow<ResultWrapper<TotalRepsWrapper>> {
         return exerciseStatisticsDataSource.getTotalRepsPerformed(exerciseId)
     }

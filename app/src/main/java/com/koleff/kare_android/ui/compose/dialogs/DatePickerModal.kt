@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.tooling.preview.Preview
+import com.koleff.kare_android.ui.theme.LocalExtendedColors
 
 /**
  * Used for preview
@@ -106,6 +107,14 @@ fun DateRangeDialog(
     onApplyClick: () -> Unit
 ) {
     val dateFormatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+    val textColor = LocalExtendedColors.current.title
+    val textStyle = MaterialTheme.typography.titleLarge.copy(
+        color = textColor
+    )
+
+    val buttonTextStyle = MaterialTheme.typography.titleSmall.copy(
+        color = textColor
+    )
 
     Dialog(onDismissRequest = onCancelClick) {
         Surface(
@@ -120,7 +129,7 @@ fun DateRangeDialog(
                 modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Text("Select Dates", style = MaterialTheme.typography.titleLarge)
+                Text("Select Dates", style = textStyle)
 
                 DateInputBox(
                     label = "From Date",
@@ -139,10 +148,10 @@ fun DateRangeDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TextButton(onClick = onCancelClick) {
-                        Text("Cancel")
+                        Text("Cancel", style = buttonTextStyle)
                     }
                     TextButton(onClick = onApplyClick) {
-                        Text("Apply")
+                        Text("Apply", style = buttonTextStyle)
                     }
                 }
             }
@@ -152,10 +161,15 @@ fun DateRangeDialog(
 
 @Composable
 fun DateInputBox(label: String, date: String?, onClick: () -> Unit) {
+    val textColor = LocalExtendedColors.current.title
+    val textStyle = MaterialTheme.typography.bodyLarge.copy(
+        color = textColor
+    )
+
     OutlinedTextField(
         value = date ?: "",
         onValueChange = {},
-        label = { Text(label) },
+        label = { Text(label, style = textStyle) },
         readOnly = true,
         enabled = true,
         modifier = Modifier

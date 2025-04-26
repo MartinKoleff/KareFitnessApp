@@ -2,7 +2,7 @@ package com.koleff.kare_android.data.datasource
 
 import android.content.Context
 import com.koleff.kare_android.common.Constants
-import com.koleff.kare_android.common.LanguageManager
+import com.koleff.kare_android.common.manager.data.LanguageManager
 import com.koleff.kare_android.data.model.dto.KareLanguage
 import com.koleff.kare_android.data.model.response.LanguagesResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
