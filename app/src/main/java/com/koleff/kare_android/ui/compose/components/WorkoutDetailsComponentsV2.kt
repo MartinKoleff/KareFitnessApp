@@ -38,7 +38,7 @@ fun WorkoutConfigurationHeader(
     onUnfavoriteWorkout: () -> Unit,
     onAddExercise: () -> Unit,
     onStartWorkout: () -> Unit,
-    showImage: Boolean = true
+    showImage: Boolean = false
 ) {
     val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.titleMedium.copy(

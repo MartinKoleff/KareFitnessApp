@@ -67,7 +67,7 @@ import com.koleff.kare_android.ui.theme.LocalExtendedColors
 import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Local
 
 @Composable
-fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
+fun AuthorizationTitleAndSubtitle(modifier: Modifier = Modifier, title: String, subtitle: String) {
     val titleTextColor = LocalExtendedColors.current.title
     val titleTextStyle = MaterialTheme.typography.displayMedium.copy(
         color = titleTextColor
@@ -96,7 +96,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
 
     //Title
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 4.dp),
         contentAlignment = Alignment.Center
@@ -134,7 +134,7 @@ fun AuthorizationTitleAndSubtitle(title: String, subtitle: String) {
 @Preview
 @Composable
 private fun AuthorizationTitleAndSubtitlePreview() {
-    AuthorizationTitleAndSubtitle("Sign in", "Welcome back")
+    AuthorizationTitleAndSubtitle(title = "Sign in", subtitle = "Welcome back")
 }
 
 @Composable

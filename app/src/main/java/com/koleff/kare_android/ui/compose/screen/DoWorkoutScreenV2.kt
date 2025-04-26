@@ -231,6 +231,7 @@ fun DoWorkoutScreenV2(doWorkoutViewModel: DoWorkoutViewModel = hiltViewModel()) 
             )
 
             NextExerciseInfoScreen(
+                modifier = Modifier.padding(exerciseDataSheetPaddingValues),
                 nextExercise = if (state.doWorkoutData.isNextExercise) state.doWorkoutData.nextExercise else state.doWorkoutData.currentExercise,
                 set = state.doWorkoutData.nextSetNumber,
                 totalSets = state.doWorkoutData.totalSets,
