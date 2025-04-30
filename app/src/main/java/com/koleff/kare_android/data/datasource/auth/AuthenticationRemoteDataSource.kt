@@ -18,8 +18,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-typealias SignInRequest = RegistrationRequest
-
 class AuthenticationRemoteDataSource @Inject constructor(
     private val authenticationApi: AuthenticationApi,
     private val apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
@@ -29,7 +27,7 @@ class AuthenticationRemoteDataSource @Inject constructor(
     override suspend fun login(
         credentials: Credentials
     ): Flow<ResultWrapper<LoginWrapper>> {
-        val body = SignInRequest(credentials)
+        val body = RegistrationRequest(credentials)
 
         return apiCallWrapper.executeApiCall(dispatcher, {
             LoginWrapper(
