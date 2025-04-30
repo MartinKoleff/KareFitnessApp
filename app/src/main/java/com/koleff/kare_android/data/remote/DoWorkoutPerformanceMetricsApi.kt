@@ -1,11 +1,11 @@
 package com.koleff.kare_android.data.remote
 
-import com.koleff.kare_android.data.datasource.FetchPerformanceMetricsByWorkoutIdRequest
 import com.koleff.kare_android.data.model.request.DeletePerformanceMetricsRequest
 import com.koleff.kare_android.data.model.request.FetchPerformanceMetricsByDateAndIdRequest
 import com.koleff.kare_android.data.model.request.FetchPerformanceMetricsByDateAndWorkoutIdRequest
 import com.koleff.kare_android.data.model.request.FetchPerformanceMetricsByDateRequest
 import com.koleff.kare_android.data.model.request.FetchPerformanceMetricsByIdRequest
+import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.SaveDoWorkoutExerciseSetRequest
 import com.koleff.kare_android.data.model.request.SaveDoWorkoutExerciseSetsRequest
 import com.koleff.kare_android.data.model.request.UpdatePerformanceMetricsRequest
@@ -42,7 +42,7 @@ interface DoWorkoutPerformanceMetricsApi {
 
     @POST("api/v1/doworkoutperformancemetrics/getdoworkoutperformancemetricsby")
     suspend fun getDoWorkoutPerformanceMetrics(
-        @Body body: FetchPerformanceMetricsByWorkoutIdRequest
+        @Body body: FetchWorkoutByIdRequest
     ): DoWorkoutPerformanceMetricsListResponse
 
     @POST("api/v1/doworkoutperformancemetrics/savedoworkoutperformancemetrics")

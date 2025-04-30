@@ -23,7 +23,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import java.util.Date
 import javax.inject.Inject
-typealias FetchPerformanceMetricsByWorkoutIdRequest = FetchWorkoutByIdRequest
 
 class DoWorkoutPerformanceMetricsRemoteDataSource @Inject constructor(
     private val doWorkoutPerformanceMetricsApi: DoWorkoutPerformanceMetricsApi,
@@ -62,7 +61,7 @@ class DoWorkoutPerformanceMetricsRemoteDataSource @Inject constructor(
     }
 
     override suspend fun getDoWorkoutPerformanceMetricsByWorkoutId(workoutId: Int): Flow<ResultWrapper<DoWorkoutPerformanceMetricsListWrapper>> {
-        val body = FetchPerformanceMetricsByWorkoutIdRequest(
+        val body = FetchWorkoutByIdRequest(
             workoutId = workoutId,
         )
 

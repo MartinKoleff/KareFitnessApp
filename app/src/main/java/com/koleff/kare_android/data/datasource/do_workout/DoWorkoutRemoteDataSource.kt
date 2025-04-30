@@ -14,8 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-typealias DoWorkoutSetupRequest = UpdateWorkoutDetailsRequest
-
 class DoWorkoutRemoteDataSource @Inject constructor(
     private val doWorkoutApi: DoWorkoutApi,
     private val apiAuthorizationCallWrapper: ApiAuthorizationCallWrapper,
@@ -23,7 +21,7 @@ class DoWorkoutRemoteDataSource @Inject constructor(
 ) : DoWorkoutDataSource {
 
     override suspend fun initialSetup(workoutDetailsDto: WorkoutDetailsDto): Flow<ResultWrapper<DoWorkoutWrapper>> {
-        val body = DoWorkoutSetupRequest(workoutDetailsDto)
+        val body = UpdateWorkoutDetailsRequest(workoutDetailsDto)
 
         return apiAuthorizationCallWrapper.executeApiCall(dispatcher, {
             DoWorkoutWrapper(
@@ -37,12 +35,18 @@ class DoWorkoutRemoteDataSource @Inject constructor(
 
         return apiAuthorizationCallWrapper.executeApiCall(dispatcher, {
             DoWorkoutWrapper(
-                doWorkoutApi.updateExerciseSetsAfterTimer(body)
+                doWorkoutApi.skipNextSet(body)
             )
         })
     }
 
     override suspend fun skipNextExercise(currentDoWorkoutData: DoWorkoutData): Flow<ResultWrapper<DoWorkoutWrapper>> {
-        TODO("Not yet implemented")
+        val body = UpdateExerciseSetsRequest(currentDoWorkoutData)
+
+        return apiAuthorizationCallWrapper.executeApiCall(dispatcher, {
+            DoWorkoutWrapper(
+                doWorkoutApi.skipNextExercise(body)
+            )
+        })
     }
 }
