@@ -7,7 +7,7 @@ import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
 import com.koleff.kare_android.data.model.request.ExerciseAddRequest
-import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
+import com.koleff.kare_android.data.model.request.ExerciseRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
 import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
@@ -26,8 +26,6 @@ import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
-
-typealias FindDuplicateExercisesRequest = MultipleExercisesUpdateRequest
 
 class WorkoutRemoteDataSource @Inject constructor(
     private val workoutApi: WorkoutApi,
@@ -122,7 +120,7 @@ class WorkoutRemoteDataSource @Inject constructor(
         workoutId: Int,
         exerciseId: Int
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        val body = ExerciseDeletionRequest(workoutId, exerciseId)
+        val body = ExerciseRequest(workoutId, exerciseId)
 
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher,
@@ -158,7 +156,12 @@ class WorkoutRemoteDataSource @Inject constructor(
         workoutId: Int,
         exerciseId: Int
     ): Flow<ResultWrapper<WorkoutDetailsWrapper>> {
-        TODO("Not yet implemented")
+        val body = ExerciseRequest(workoutId, exerciseId)
+
+        return apiAuthorizationCallWrapper.executeApiCall(
+            dispatcher,
+            { WorkoutDetailsWrapper(workoutApi.addExercise(body)) }
+        )
     }
 
     override suspend fun addMultipleExercises(
@@ -201,7 +204,7 @@ class WorkoutRemoteDataSource @Inject constructor(
         workoutId: Int,
         exerciseList: List<ExerciseDto>
     ): Flow<ResultWrapper<DuplicateExercisesWrapper>> {
-        val body = FindDuplicateExercisesRequest(workoutId, exerciseList)
+        val body = MultipleExercisesUpdateRequest(workoutId, exerciseList)
 
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher,

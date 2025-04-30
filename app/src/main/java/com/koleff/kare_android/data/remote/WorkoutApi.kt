@@ -1,9 +1,8 @@
 package com.koleff.kare_android.data.remote
 
-import com.koleff.kare_android.data.datasource.FindDuplicateExercisesRequest
 import com.koleff.kare_android.data.model.request.ExerciseAddRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
-import com.koleff.kare_android.data.model.request.ExerciseDeletionRequest
+import com.koleff.kare_android.data.model.request.ExerciseRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
 import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
 import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
@@ -61,7 +60,7 @@ interface WorkoutApi {
 
     @DELETE("api/v1/workout/deleteexercise")
     suspend fun deleteExercise(
-        @Body body: ExerciseDeletionRequest
+        @Body body: ExerciseRequest
     ): WorkoutDetailsResponse
 
     @DELETE("api/v1/workout/deletemultipleexercises")
@@ -72,6 +71,11 @@ interface WorkoutApi {
     @POST("api/v1/workout/addexercise")
     fun addExercise(
         @Body body: ExerciseAddRequest
+    ): WorkoutDetailsResponse
+
+    @POST("api/v1/workout/addexercisebyid")
+    fun addExercise(
+        @Body body: ExerciseRequest
     ): WorkoutDetailsResponse
 
     @POST("api/v1/workout/addmultipleexercises")
@@ -134,6 +138,6 @@ interface WorkoutApi {
 
     @GET("api/v1/workout/findduplicateexercises")
     fun findDuplicateExercises(
-        @Body body: FindDuplicateExercisesRequest
+        @Body body: MultipleExercisesUpdateRequest
     ): DuplicateExercisesResponse
 }
