@@ -3,9 +3,9 @@ package com.koleff.kare_android.common.di
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
-import com.koleff.kare_android.data.datasource.OnboardingDataSource
-import com.koleff.kare_android.data.datasource.OnboardingLocalDataSource
-import com.koleff.kare_android.data.datasource.OnboardingRemoteDataSource
+import com.koleff.kare_android.data.datasource.onboarding.OnboardingDataSource
+import com.koleff.kare_android.data.datasource.onboarding.OnboardingLocalDataSource
+import com.koleff.kare_android.data.datasource.onboarding.OnboardingRemoteDataSource
 import com.koleff.kare_android.data.remote.OnboardingApi
 import com.koleff.kare_android.data.repository.OnboardingRepositoryImpl
 import com.koleff.kare_android.data.room.dao.OnboardingDao

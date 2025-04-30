@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.repository
 
-import com.koleff.kare_android.data.datasource.UserDataSource
+import com.koleff.kare_android.data.datasource.user.UserDataSource
 import com.koleff.kare_android.domain.repository.UserRepository
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.UserWrapper

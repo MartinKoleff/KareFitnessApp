@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.repository
 
-import com.koleff.kare_android.data.datasource.ExerciseStatisticsDataSource
+import com.koleff.kare_android.data.datasource.statistics.exercise.ExerciseStatisticsDataSource
 import com.koleff.kare_android.domain.repository.ExerciseStatisticsRepository
 import com.koleff.kare_android.domain.wrapper.ExercisePRWrapper
 import com.koleff.kare_android.domain.wrapper.TotalRepsWrapper

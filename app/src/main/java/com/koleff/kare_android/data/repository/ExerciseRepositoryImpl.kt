@@ -1,7 +1,6 @@
 package com.koleff.kare_android.data.repository
 
-import com.koleff.kare_android.data.datasource.ExerciseDataSource
-import com.koleff.kare_android.data.model.dto.ExerciseDetailsDto
+import com.koleff.kare_android.data.datasource.exercise.ExerciseDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper

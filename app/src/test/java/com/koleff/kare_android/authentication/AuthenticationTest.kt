@@ -7,10 +7,10 @@ import com.koleff.kare_android.common.auth.CredentialsAuthenticator
 import com.koleff.kare_android.common.auth.CredentialsAuthenticatorImpl
 import com.koleff.kare_android.common.auth.CredentialsValidator
 import com.koleff.kare_android.common.auth.CredentialsValidatorImpl
-import com.koleff.kare_android.data.datasource.AuthenticationDataSource
-import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
-import com.koleff.kare_android.data.datasource.UserDataSource
-import com.koleff.kare_android.data.datasource.UserLocalDataSource
+import com.koleff.kare_android.data.datasource.auth.AuthenticationDataSource
+import com.koleff.kare_android.data.datasource.auth.AuthenticationLocalDataSource
+import com.koleff.kare_android.data.datasource.user.UserDataSource
+import com.koleff.kare_android.data.datasource.user.UserLocalDataSource
 import com.koleff.kare_android.data.model.response.base_response.KareError
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.repository.UserRepositoryImpl

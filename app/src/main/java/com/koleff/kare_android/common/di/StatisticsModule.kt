@@ -1,11 +1,11 @@
 package com.koleff.kare_android.common.di
 
-import com.koleff.kare_android.data.datasource.ExerciseStatisticsDataSource
-import com.koleff.kare_android.data.datasource.ExerciseStatisticsLocalDataSource
-import com.koleff.kare_android.data.datasource.GeneralStatisticsDataSource
-import com.koleff.kare_android.data.datasource.GeneralStatisticsLocalDataSource
-import com.koleff.kare_android.data.datasource.WorkoutStatisticsDataSource
-import com.koleff.kare_android.data.datasource.WorkoutStatisticsLocalDataSource
+import com.koleff.kare_android.data.datasource.statistics.exercise.ExerciseStatisticsDataSource
+import com.koleff.kare_android.data.datasource.statistics.exercise.ExerciseStatisticsLocalDataSource
+import com.koleff.kare_android.data.datasource.statistics.general.GeneralStatisticsDataSource
+import com.koleff.kare_android.data.datasource.statistics.general.GeneralStatisticsLocalDataSource
+import com.koleff.kare_android.data.datasource.statistics.workout.WorkoutStatisticsDataSource
+import com.koleff.kare_android.data.datasource.statistics.workout.WorkoutStatisticsLocalDataSource
 import com.koleff.kare_android.data.repository.ExerciseStatisticsRepositoryImpl
 import com.koleff.kare_android.data.repository.GeneralStatisticsRepositoryImpl
 import com.koleff.kare_android.data.repository.WorkoutStatisticsRepositoryImpl

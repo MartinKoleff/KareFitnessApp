@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.common.auth.Credentials
-import com.koleff.kare_android.data.datasource.AuthenticationDataSource
+import com.koleff.kare_android.data.datasource.auth.AuthenticationDataSource
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
 import com.koleff.kare_android.domain.repository.AuthenticationRepository

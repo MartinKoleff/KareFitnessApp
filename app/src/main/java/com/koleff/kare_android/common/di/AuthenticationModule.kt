@@ -11,9 +11,9 @@ import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.common.preferences.CredentialsDataStore
 import com.koleff.kare_android.common.preferences.CredentialsDataStoreImpl
 import com.koleff.kare_android.common.preferences.Preferences
-import com.koleff.kare_android.data.datasource.AuthenticationDataSource
-import com.koleff.kare_android.data.datasource.AuthenticationLocalDataSource
-import com.koleff.kare_android.data.datasource.AuthenticationRemoteDataSource
+import com.koleff.kare_android.data.datasource.auth.AuthenticationDataSource
+import com.koleff.kare_android.data.datasource.auth.AuthenticationLocalDataSource
+import com.koleff.kare_android.data.datasource.auth.AuthenticationRemoteDataSource
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.data.repository.AuthenticationRepositoryImpl
 import com.koleff.kare_android.data.room.dao.UserDao

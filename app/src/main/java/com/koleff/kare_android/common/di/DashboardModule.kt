@@ -1,7 +1,7 @@
 package com.koleff.kare_android.common.di
 
-import com.koleff.kare_android.data.datasource.DashboardDataSource
-import com.koleff.kare_android.data.datasource.DashboardMockupDataSource
+import com.koleff.kare_android.data.datasource.dashboard.DashboardDataSource
+import com.koleff.kare_android.data.datasource.dashboard.DashboardMockupDataSource
 import com.koleff.kare_android.data.repository.DashboardRepositoryImpl
 import com.koleff.kare_android.domain.repository.DashboardRepository
 import dagger.Module

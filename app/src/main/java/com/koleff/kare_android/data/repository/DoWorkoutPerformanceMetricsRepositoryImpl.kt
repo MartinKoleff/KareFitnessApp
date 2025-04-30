@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.repository
 
-import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsDataSource
+import com.koleff.kare_android.data.datasource.performance_metrics.DoWorkoutPerformanceMetricsDataSource
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.domain.repository.DoWorkoutPerformanceMetricsRepository

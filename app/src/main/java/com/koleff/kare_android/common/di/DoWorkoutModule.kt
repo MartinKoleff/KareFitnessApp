@@ -3,9 +3,9 @@ package com.koleff.kare_android.common.di
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
-import com.koleff.kare_android.data.datasource.DoWorkoutDataSource
-import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
-import com.koleff.kare_android.data.datasource.DoWorkoutRemoteDataSource
+import com.koleff.kare_android.data.datasource.do_workout.DoWorkoutDataSource
+import com.koleff.kare_android.data.datasource.do_workout.DoWorkoutLocalDataSource
+import com.koleff.kare_android.data.datasource.do_workout.DoWorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.DoWorkoutApi
 import com.koleff.kare_android.data.repository.DoWorkoutRepositoryImpl
 import com.koleff.kare_android.data.room.dao.ExerciseDetailsDao

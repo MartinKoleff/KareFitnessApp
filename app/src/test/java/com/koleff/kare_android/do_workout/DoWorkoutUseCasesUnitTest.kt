@@ -1,7 +1,7 @@
 package com.koleff.kare_android.do_workout
 
 import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
-import com.koleff.kare_android.data.datasource.DoWorkoutLocalDataSource
+import com.koleff.kare_android.data.datasource.do_workout.DoWorkoutLocalDataSource
 import com.koleff.kare_android.data.model.dto.ExerciseData
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto

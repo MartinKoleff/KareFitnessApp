@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.repository
 
 import android.content.Context
-import com.koleff.kare_android.data.datasource.LanguageDataSource
+import com.koleff.kare_android.data.datasource.language.LanguageDataSource
 import com.koleff.kare_android.data.model.dto.KareLanguage
 import com.koleff.kare_android.domain.repository.LanguageRepository
 import com.koleff.kare_android.domain.wrapper.KareLanguagesWrapper

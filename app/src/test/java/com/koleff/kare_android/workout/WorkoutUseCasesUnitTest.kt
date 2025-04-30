@@ -2,7 +2,7 @@ package com.koleff.kare_android.workout
 
 import com.koleff.kare_android.common.manager.data.ExerciseGenerator
 import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
-import com.koleff.kare_android.data.datasource.WorkoutLocalDataSourceV2
+import com.koleff.kare_android.data.datasource.workout.WorkoutLocalDataSourceV2
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.response.base_response.KareError

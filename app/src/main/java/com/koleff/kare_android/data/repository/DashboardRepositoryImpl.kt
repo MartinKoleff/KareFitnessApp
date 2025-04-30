@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.repository
 
-import com.koleff.kare_android.data.datasource.DashboardDataSource
+import com.koleff.kare_android.data.datasource.dashboard.DashboardDataSource
 import com.koleff.kare_android.domain.wrapper.DashboardWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.DashboardRepository

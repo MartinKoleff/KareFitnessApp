@@ -1,7 +1,7 @@
 package com.koleff.kare_android.do_workout_performance_metrics
 
 import com.koleff.kare_android.common.manager.data.MockupDataGeneratorV2
-import com.koleff.kare_android.data.datasource.DoWorkoutPerformanceMetricsLocalDataSource
+import com.koleff.kare_android.data.datasource.performance_metrics.DoWorkoutPerformanceMetricsLocalDataSource
 import com.koleff.kare_android.data.model.dto.DoWorkoutExerciseSetDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto

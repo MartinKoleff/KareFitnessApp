@@ -1,7 +1,7 @@
 package com.koleff.kare_android.common.di
 
-import com.koleff.kare_android.data.datasource.LanguageDataSource
-import com.koleff.kare_android.data.datasource.LanguageLocalDataSource
+import com.koleff.kare_android.data.datasource.language.LanguageDataSource
+import com.koleff.kare_android.data.datasource.language.LanguageLocalDataSource
 import com.koleff.kare_android.data.repository.LanguageRepositoryImpl
 import com.koleff.kare_android.domain.repository.LanguageRepository
 import com.koleff.kare_android.domain.usecases.ChangeLanguageUseCase
