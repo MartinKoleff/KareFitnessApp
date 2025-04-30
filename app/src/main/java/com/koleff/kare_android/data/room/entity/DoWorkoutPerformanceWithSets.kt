@@ -2,7 +2,7 @@ package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Embedded
 import androidx.room.Relation
-import com.koleff.kare_android.data.KareDto
+import com.koleff.kare_android.data.extension.KareDto
 import com.koleff.kare_android.data.model.dto.DoWorkoutPerformanceMetricsDto
 
 data class DoWorkoutPerformanceWithSets(

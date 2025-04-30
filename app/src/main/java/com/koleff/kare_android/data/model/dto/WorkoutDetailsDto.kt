@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.model.dto
 
-import com.koleff.kare_android.data.KareEntity
-import com.koleff.kare_android.data.WorkoutDetailsExtended
+import com.koleff.kare_android.data.extension.KareEntity
+import com.koleff.kare_android.data.extension.WorkoutDetailsExtended
 import com.koleff.kare_android.data.room.entity.WorkoutDetails
 import com.squareup.moshi.Json
 

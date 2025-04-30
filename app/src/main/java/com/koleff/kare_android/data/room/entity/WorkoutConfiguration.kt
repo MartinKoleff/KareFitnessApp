@@ -3,8 +3,7 @@ package com.koleff.kare_android.data.room.entity
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.ForeignKey
-import com.koleff.kare_android.data.KareDto
-import com.koleff.kare_android.data.KareEntity
+import com.koleff.kare_android.data.extension.KareDto
 import com.koleff.kare_android.data.model.dto.ExerciseTime
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 
@@ -23,7 +22,7 @@ data class WorkoutConfiguration(
     @PrimaryKey(autoGenerate = false)
     val workoutId: Int,
     var cooldownTime: ExerciseTime
-): KareDto<WorkoutConfigurationDto>{
+): KareDto<WorkoutConfigurationDto> {
 
     override fun toDto(): WorkoutConfigurationDto {
         return WorkoutConfigurationDto(

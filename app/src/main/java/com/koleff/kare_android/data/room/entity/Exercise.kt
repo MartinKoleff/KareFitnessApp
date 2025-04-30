@@ -2,8 +2,7 @@ package com.koleff.kare_android.data.room.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
-import com.koleff.kare_android.data.KareDtoExtended
+import com.koleff.kare_android.data.extension.KareDtoExtended
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.MachineType
 import com.koleff.kare_android.data.model.dto.MuscleGroup
