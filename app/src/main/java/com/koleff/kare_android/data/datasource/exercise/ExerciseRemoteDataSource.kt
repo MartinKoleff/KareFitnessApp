@@ -4,7 +4,7 @@ import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.di.IoDispatcher
 import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
-import com.koleff.kare_android.data.model.request.AddNewExerciseSetRequest
+import com.koleff.kare_android.data.model.request.UpdateExerciseSetRequest
 import com.koleff.kare_android.data.model.request.DeleteExerciseSetRequest
 import com.koleff.kare_android.data.model.request.FetchExerciseRequest
 import com.koleff.kare_android.data.model.request.FetchExercisesByMuscleGroupRequest
@@ -72,7 +72,7 @@ class ExerciseRemoteDataSource @Inject constructor(
         workoutId: Int,
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = AddNewExerciseSetRequest(exerciseId, workoutId, currentSets)
+        val body = UpdateExerciseSetRequest(exerciseId, workoutId, currentSets)
 
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher,
@@ -99,6 +99,11 @@ class ExerciseRemoteDataSource @Inject constructor(
         workoutId: Int,
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> {
-        TODO("Not yet implemented")
+        val body = UpdateExerciseSetRequest(exerciseId, workoutId, currentSets)
+
+        return apiAuthorizationCallWrapper.executeApiCall(
+            dispatcher,
+            { ExerciseWrapper(exerciseApi.deleteLatestExerciseSet(body)) }
+        )
     }
 }
