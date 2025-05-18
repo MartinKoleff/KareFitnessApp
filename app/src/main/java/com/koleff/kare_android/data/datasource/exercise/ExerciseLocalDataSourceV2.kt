@@ -25,7 +25,7 @@ class ExerciseLocalDataSourceV2 @Inject constructor(
     private val exerciseDao: ExerciseDao,
     private val exerciseDetailsDao: ExerciseDetailsDao,
     private val exerciseSetDao: ExerciseSetDao
-) : ExerciseDataSource, ExerciseDataSourceLocal {
+) : ExerciseDataSource, ExerciseDataSourceLocalExt {
     override suspend fun getExercise(
         exerciseId: Int,
         workoutId: Int

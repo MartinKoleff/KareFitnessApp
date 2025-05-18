@@ -6,7 +6,7 @@ import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
-interface ExerciseDataSourceLocal {
+interface ExerciseDataSourceLocalExt {
     suspend fun addNewExerciseSet(
         exerciseId: Int,
         workoutId: Int,

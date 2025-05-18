@@ -1,7 +1,7 @@
 package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.exercise.ExerciseDataSource
-import com.koleff.kare_android.data.datasource.exercise.ExerciseDataSourceLocal
+import com.koleff.kare_android.data.datasource.exercise.ExerciseDataSourceLocalExt
 import com.koleff.kare_android.data.model.dto.ExerciseSetDto
 import com.koleff.kare_android.domain.wrapper.ExerciseDetailsWrapper
 import com.koleff.kare_android.domain.wrapper.ExerciseWrapper
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class ExerciseRepositoryImpl @Inject constructor(
     private val exerciseDataSource: ExerciseDataSource,
-    private val exerciseDataSourceLocal: ExerciseDataSourceLocal
+    private val exerciseDataSourceLocalExt: ExerciseDataSourceLocalExt
 ) : ExerciseRepository {
 
     override suspend fun getExercise(
@@ -45,7 +45,7 @@ class ExerciseRepositoryImpl @Inject constructor(
         setId: UUID,
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> {
-        return exerciseDataSourceLocal.deleteExerciseSet(exerciseId, workoutId, setId, currentSets)
+        return exerciseDataSourceLocalExt.deleteExerciseSet(exerciseId, workoutId, setId, currentSets)
     }
 
 
@@ -54,7 +54,7 @@ class ExerciseRepositoryImpl @Inject constructor(
         workoutId: Int,
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> {
-        return exerciseDataSourceLocal.deleteLatestExerciseSet(exerciseId, workoutId, currentSets)
+        return exerciseDataSourceLocalExt.deleteLatestExerciseSet(exerciseId, workoutId, currentSets)
     }
 
     override suspend fun addNewExerciseSet(
@@ -62,6 +62,6 @@ class ExerciseRepositoryImpl @Inject constructor(
         workoutId: Int,
         currentSets: List<ExerciseSetDto>
     ): Flow<ResultWrapper<ExerciseWrapper>> {
-        return exerciseDataSourceLocal.addNewExerciseSet(exerciseId, workoutId, currentSets)
+        return exerciseDataSourceLocalExt.addNewExerciseSet(exerciseId, workoutId, currentSets)
     }
 }
