@@ -229,7 +229,6 @@ class DoWorkoutLocalDataSource(
             }
         }
 
-    //TODO: make it be on the same exercise last set and then 1st exercise of the next exercise
     override suspend fun skipNextExercise(currentDoWorkoutData: DoWorkoutData) =
         flow {
             with(currentDoWorkoutData) {
