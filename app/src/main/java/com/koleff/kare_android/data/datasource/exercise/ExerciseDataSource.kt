@@ -19,23 +19,4 @@ interface ExerciseDataSource {
         exerciseId: Int,
         workoutId: Int
     ): Flow<ResultWrapper<ExerciseDetailsWrapper>>
-
-    suspend fun addNewExerciseSet(
-        exerciseId: Int,
-        workoutId: Int,
-        currentSets: List<ExerciseSetDto>
-    ): Flow<ResultWrapper<ExerciseWrapper>>
-
-    suspend fun deleteExerciseSet(
-        exerciseId: Int,
-        workoutId: Int,
-        setId: UUID,
-        currentSets: List<ExerciseSetDto>
-    ): Flow<ResultWrapper<ExerciseWrapper>>
-
-    suspend fun deleteLatestExerciseSet(
-        exerciseId: Int,
-        workoutId: Int,
-        currentSets: List<ExerciseSetDto>
-    ): Flow<ResultWrapper<ExerciseWrapper>>
 }

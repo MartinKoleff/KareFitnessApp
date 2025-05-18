@@ -13,30 +13,31 @@ import retrofit2.http.POST
 
 interface ExerciseApi {
 
-    @GET("api/v1/exercise/getcatalogexercises/all/{muscle_group_id}")
+    @GET("api/v1/exercise/getcatalogexercises/all")
     suspend fun getCatalogExercises(
         @Body body: FetchExercisesByMuscleGroupRequest
     ): ExerciseListResponse
 
-    @GET("api/v1/exercise/getcatalogexercise/{exercise_id}")
+    @GET("api/v1/exercise/getcatalogexercise")
     suspend fun getCatalogExercise(
         @Body body: FetchExerciseRequest
     ): ExerciseResponse
 
-    @GET("api/v1/exercise/getexercise/{workout_id}")
+    @GET("api/v1/exercise/getexercise")
     suspend fun getExercise(@Body body: FetchExerciseRequest): ExerciseResponse
 
-    @GET("api/v1/exercise/getexercisedetails/{exercise_id}")
+    @GET("api/v1/exercise/getexercisedetails")
     suspend fun getExerciseDetails(
         @Body body: FetchExerciseRequest
     ): ExerciseDetailsResponse
 
-    @POST("api/v1/exercise/addnewexerciseset") //TODO: update method type...
-    fun addNewExerciseSet(body: UpdateExerciseSetRequest): ExerciseResponse
-
-    @POST("api/v1/exercise/deleteexerciseset") //TODO: update method type...
-    fun deleteExerciseSet(body: DeleteExerciseSetRequest): ExerciseResponse
-
-    @POST("api/v1/exercise/addnewexerciseset") //TODO: update method type...
-    fun deleteLatestExerciseSet(body: UpdateExerciseSetRequest): ExerciseResponse
+    //Local datasource only...
+//    @POST("api/v1/exercise/addnewexerciseset")
+//    fun addNewExerciseSet(body: UpdateExerciseSetRequest): ExerciseResponse
+//
+//    @POST("api/v1/exercise/deleteexerciseset")
+//    fun deleteExerciseSet(body: DeleteExerciseSetRequest): ExerciseResponse
+//
+//    @POST("api/v1/exercise/addnewexerciseset")
+//    fun deleteLatestExerciseSet(body: UpdateExerciseSetRequest): ExerciseResponse
 }

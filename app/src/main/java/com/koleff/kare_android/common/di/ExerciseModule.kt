@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.data.datasource.exercise.ExerciseDataSource
+import com.koleff.kare_android.data.datasource.exercise.ExerciseDataSourceLocal
 import com.koleff.kare_android.data.datasource.exercise.ExerciseLocalDataSourceV2
 import com.koleff.kare_android.data.datasource.exercise.ExerciseRemoteDataSource
 import com.koleff.kare_android.data.remote.ExerciseApi
@@ -76,14 +77,34 @@ object ExerciseModule {
         )
     }
 
+    @Provides
+    @Singleton
+    fun provideExerciseDataSourceLocal(
+        exerciseDao: ExerciseDao,
+        exerciseDetailsDao: ExerciseDetailsDao,
+        exerciseSetDao: ExerciseSetDao,
+    ): ExerciseDataSourceLocal {
+        return ExerciseLocalDataSourceV2(
+            exerciseDao = exerciseDao,
+            exerciseDetailsDao = exerciseDetailsDao,
+            exerciseSetDao = exerciseSetDao
+        )
+    }
+
     /**
      * Repository
      */
 
     @Provides
     @Singleton
-    fun provideExerciseRepository(exerciseDataSource: ExerciseDataSource): ExerciseRepository {
-        return ExerciseRepositoryImpl(exerciseDataSource)
+    fun provideExerciseRepository(
+        exerciseDataSource: ExerciseDataSource,
+        exerciseDataSourceLocal: ExerciseDataSourceLocal
+    ): ExerciseRepository {
+        return ExerciseRepositoryImpl(
+            exerciseDataSource = exerciseDataSource,
+            exerciseDataSourceLocal = exerciseDataSourceLocal
+        )
     }
 
     /**

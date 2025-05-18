@@ -66,44 +66,4 @@ class ExerciseRemoteDataSource @Inject constructor(
             { ExerciseDetailsWrapper(exerciseApi.getExerciseDetails(body)) }
         )
     }
-
-    override suspend fun addNewExerciseSet(
-        exerciseId: Int,
-        workoutId: Int,
-        currentSets: List<ExerciseSetDto>
-    ): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = UpdateExerciseSetRequest(exerciseId, workoutId, currentSets)
-
-        return apiAuthorizationCallWrapper.executeApiCall(
-            dispatcher,
-            { ExerciseWrapper(exerciseApi.addNewExerciseSet(body)) }
-        )
-    }
-
-    override suspend fun deleteExerciseSet(
-        exerciseId: Int,
-        workoutId: Int,
-        setId: UUID,
-        currentSets: List<ExerciseSetDto>
-    ): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = DeleteExerciseSetRequest(exerciseId, workoutId, setId, currentSets)
-
-        return apiAuthorizationCallWrapper.executeApiCall(
-            dispatcher,
-            { ExerciseWrapper(exerciseApi.deleteExerciseSet(body)) }
-        )
-    }
-
-    override suspend fun deleteLatestExerciseSet(
-        exerciseId: Int,
-        workoutId: Int,
-        currentSets: List<ExerciseSetDto>
-    ): Flow<ResultWrapper<ExerciseWrapper>> {
-        val body = UpdateExerciseSetRequest(exerciseId, workoutId, currentSets)
-
-        return apiAuthorizationCallWrapper.executeApiCall(
-            dispatcher,
-            { ExerciseWrapper(exerciseApi.deleteLatestExerciseSet(body)) }
-        )
-    }
 }

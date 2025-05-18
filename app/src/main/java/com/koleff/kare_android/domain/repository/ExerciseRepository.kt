@@ -10,12 +10,11 @@ import kotlinx.coroutines.flow.Flow
 import java.util.UUID
 
 interface ExerciseRepository {
-
-    suspend fun getExercise(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>>
+    suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
 
     suspend fun getCatalogExercise(exerciseId: Int): Flow<ResultWrapper<ExerciseWrapper>>
 
-    suspend fun getCatalogExercises(muscleGroupId: Int): Flow<ResultWrapper<ExerciseListWrapper>>
+    suspend fun getExercise(exerciseId: Int, workoutId: Int): Flow<ResultWrapper<ExerciseWrapper>>
 
     suspend fun getExerciseDetails(
         exerciseId: Int,
