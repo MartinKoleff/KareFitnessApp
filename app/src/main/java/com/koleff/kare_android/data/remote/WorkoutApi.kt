@@ -1,20 +1,18 @@
 package com.koleff.kare_android.data.remote
 
 import com.koleff.kare_android.data.model.request.ExerciseAddRequest
-import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.ExerciseRequest
+import com.koleff.kare_android.data.model.request.FetchWorkoutByIdRequest
 import com.koleff.kare_android.data.model.request.FetchWorkoutConfigurationRequest
-import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
 import com.koleff.kare_android.data.model.request.MultipleExercisesDeletionRequest
+import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
-import com.koleff.kare_android.data.model.response.DuplicateExercisesResponse
+import com.koleff.kare_android.data.model.response.WorkoutConfigurationResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsListResponse
-import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.WorkoutDetailsResponse
 import com.koleff.kare_android.data.model.response.WorkoutResponse
-import com.koleff.kare_android.data.model.response.SelectedWorkoutResponse
-import com.koleff.kare_android.data.model.response.WorkoutConfigurationResponse
+import com.koleff.kare_android.data.model.response.WorkoutsListResponse
 import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -135,9 +133,4 @@ interface WorkoutApi {
     fun deleteWorkoutConfiguration(
         @Body body: FetchWorkoutByIdRequest
     ): BaseResponse
-
-    @GET("api/v1/workout/findduplicateexercises")
-    fun findDuplicateExercises(
-        @Body body: MultipleExercisesUpdateRequest
-    ): DuplicateExercisesResponse
 }

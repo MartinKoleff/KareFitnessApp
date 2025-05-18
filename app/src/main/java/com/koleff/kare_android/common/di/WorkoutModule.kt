@@ -4,6 +4,7 @@ import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterF
 import com.koleff.kare_android.common.Constants
 import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.data.datasource.workout.WorkoutDataSource
+import com.koleff.kare_android.data.datasource.workout.WorkoutDataSourceLocalExt
 import com.koleff.kare_android.data.datasource.workout.WorkoutLocalDataSourceV2
 import com.koleff.kare_android.data.datasource.workout.WorkoutRemoteDataSource
 import com.koleff.kare_android.data.remote.WorkoutApi
@@ -94,12 +95,29 @@ object WorkoutModule {
             workoutDetailsDao = workoutDetailsDao,
             exerciseSetDao = exerciseSetDao,
             workoutConfigurationDao = workoutConfigurationDao
-
         )
         else WorkoutRemoteDataSource(
             workoutApi = workoutApi,
             apiAuthorizationCallWrapper = apiAuthorizationCallWrapper,
             dispatcher = dispatcher
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideWorkoutDataSourceLocalExt(
+        workoutDao: WorkoutDao,
+        exerciseDao: ExerciseDao,
+        workoutDetailsDao: WorkoutDetailsDao,
+        exerciseSetDao: ExerciseSetDao,
+        workoutConfigurationDao: WorkoutConfigurationDao
+    ): WorkoutDataSourceLocalExt {
+        return WorkoutLocalDataSourceV2(
+            workoutDao = workoutDao,
+            exerciseDao = exerciseDao,
+            workoutDetailsDao = workoutDetailsDao,
+            exerciseSetDao = exerciseSetDao,
+            workoutConfigurationDao = workoutConfigurationDao
         )
     }
 
@@ -109,8 +127,11 @@ object WorkoutModule {
 
     @Provides
     @Singleton
-    fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource): WorkoutRepository {
-        return WorkoutRepositoryImpl(workoutDataSource)
+    fun provideWorkoutRepository(workoutDataSource: WorkoutDataSource, workoutDataSourceLocalExt: WorkoutDataSourceLocalExt): WorkoutRepository {
+        return WorkoutRepositoryImpl(
+            workoutDataSource = workoutDataSource,
+            workoutDataSourceLocalExt = workoutDataSourceLocalExt
+        )
     }
 
     /**

@@ -1,25 +1,26 @@
 package com.koleff.kare_android.data.repository
 
 import com.koleff.kare_android.data.datasource.workout.WorkoutDataSource
+import com.koleff.kare_android.data.datasource.workout.WorkoutDataSourceLocalExt
 import com.koleff.kare_android.data.model.dto.ExerciseDto
 import com.koleff.kare_android.data.model.dto.WorkoutConfigurationDto
 import com.koleff.kare_android.data.model.dto.WorkoutDetailsDto
 import com.koleff.kare_android.data.model.dto.WorkoutDto
-import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
-import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
-import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
-import com.koleff.kare_android.domain.wrapper.ServerResponseData
-import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.repository.WorkoutRepository
 import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
-import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
-import com.koleff.kare_android.domain.wrapper.SelectedWorkoutWrapper
+import com.koleff.kare_android.domain.wrapper.ResultWrapper
+import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsListWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutDetailsWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutListWrapper
+import com.koleff.kare_android.domain.wrapper.WorkoutWrapper
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class WorkoutRepositoryImpl @Inject constructor(
-    private val workoutDataSource: WorkoutDataSource
+    private val workoutDataSource: WorkoutDataSource,
+    private val workoutDataSourceLocalExt: WorkoutDataSourceLocalExt
 ) : WorkoutRepository {
     override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> {
         return workoutDataSource.favoriteWorkout(workoutId)
@@ -106,7 +107,7 @@ class WorkoutRepositoryImpl @Inject constructor(
         workoutId: Int,
         exerciseList: List<ExerciseDto>
     ): Flow<ResultWrapper<DuplicateExercisesWrapper>> {
-        return workoutDataSource.findDuplicateExercises(workoutId, exerciseList)
+        return workoutDataSourceLocalExt.findDuplicateExercises(workoutId, exerciseList)
     }
 
     override suspend fun updateWorkoutDetails(workout: WorkoutDetailsDto): Flow<ResultWrapper<ServerResponseData>> {

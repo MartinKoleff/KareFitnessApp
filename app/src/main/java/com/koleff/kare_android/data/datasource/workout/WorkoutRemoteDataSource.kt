@@ -15,7 +15,6 @@ import com.koleff.kare_android.data.model.request.MultipleExercisesUpdateRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutDetailsRequest
 import com.koleff.kare_android.data.model.request.UpdateWorkoutRequest
 import com.koleff.kare_android.data.remote.WorkoutApi
-import com.koleff.kare_android.domain.wrapper.DuplicateExercisesWrapper
 import com.koleff.kare_android.domain.wrapper.ResultWrapper
 import com.koleff.kare_android.domain.wrapper.ServerResponseData
 import com.koleff.kare_android.domain.wrapper.WorkoutConfigurationWrapper
@@ -197,18 +196,6 @@ class WorkoutRemoteDataSource @Inject constructor(
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher,
             { WorkoutDetailsWrapper(workoutApi.submitMultipleExercises(body)) }
-        )
-    }
-
-    override suspend fun findDuplicateExercises(
-        workoutId: Int,
-        exerciseList: List<ExerciseDto>
-    ): Flow<ResultWrapper<DuplicateExercisesWrapper>> {
-        val body = MultipleExercisesUpdateRequest(workoutId, exerciseList)
-
-        return apiAuthorizationCallWrapper.executeApiCall(
-            dispatcher,
-            { DuplicateExercisesWrapper(workoutApi.findDuplicateExercises(body)) }
         )
     }
 

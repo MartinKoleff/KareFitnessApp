@@ -42,7 +42,7 @@ class WorkoutLocalDataSourceV2 @Inject constructor(
     private val workoutDetailsDao: WorkoutDetailsDao,
     private val exerciseSetDao: ExerciseSetDao,
     private val workoutConfigurationDao: WorkoutConfigurationDao
-) : WorkoutDataSource {
+) : WorkoutDataSource, WorkoutDataSourceLocalExt {
     override suspend fun favoriteWorkout(workoutId: Int): Flow<ResultWrapper<ServerResponseData>> =
         flow {
             emit(ResultWrapper.Loading())
