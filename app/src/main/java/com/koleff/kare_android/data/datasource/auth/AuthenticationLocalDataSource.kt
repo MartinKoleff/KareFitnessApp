@@ -94,7 +94,7 @@ class AuthenticationLocalDataSource(
             emit(ResultWrapper.Success(result))
         }
 
-    override suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> =
+    override suspend fun refreshToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> =
         flow {
             emit(ResultWrapper.Loading())
             delay(Constants.fakeDelay)

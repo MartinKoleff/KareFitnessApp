@@ -6,7 +6,7 @@ import com.koleff.kare_android.common.network.ApiAuthorizationCallWrapper
 import com.koleff.kare_android.common.network.ApiCallWrapper
 import com.koleff.kare_android.data.model.dto.Tokens
 import com.koleff.kare_android.data.model.dto.UserDto
-import com.koleff.kare_android.data.model.request.RegenerateTokenRequest
+import com.koleff.kare_android.data.model.request.RefreshTokensRequest
 import com.koleff.kare_android.data.model.request.RegistrationRequest
 import com.koleff.kare_android.data.remote.AuthenticationApi
 import com.koleff.kare_android.domain.wrapper.LoginWrapper
@@ -54,12 +54,12 @@ class AuthenticationRemoteDataSource @Inject constructor(
         )
     }
 
-    override suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> {
-        val body = RegenerateTokenRequest(tokens)
+    override suspend fun refreshToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>> {
+        val body = RefreshTokensRequest(tokens)
 
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher,
-            { TokenWrapper(authenticationApi.regenerateToken(body)) }
+            { TokenWrapper(authenticationApi.regenerateToken(body.tokens.refreshToken)) }
         )
     }
 }

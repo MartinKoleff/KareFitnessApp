@@ -1,6 +1,6 @@
 package com.koleff.kare_android.data.remote
 
-import com.koleff.kare_android.data.model.request.RegenerateTokenRequest
+import com.koleff.kare_android.data.model.request.RefreshTokensRequest
 import com.koleff.kare_android.data.model.request.RegistrationRequest
 import com.koleff.kare_android.data.model.response.LoginResponse
 import com.koleff.kare_android.data.model.response.TokenResponse
@@ -8,9 +8,9 @@ import com.koleff.kare_android.data.model.response.base_response.BaseResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface AuthenticationApi {
-
     @POST("api/v1/auth/login")
     suspend fun login(
         @Body body: RegistrationRequest
@@ -28,7 +28,7 @@ interface AuthenticationApi {
 
     @GET("api/v1/auth/regeneratetoken")
     suspend fun regenerateToken(
-        @Body body: RegenerateTokenRequest
+        @Query("refreshToken") refreshToken: String
     ): TokenResponse
 
     @POST("api/v1/auth/changepassword")

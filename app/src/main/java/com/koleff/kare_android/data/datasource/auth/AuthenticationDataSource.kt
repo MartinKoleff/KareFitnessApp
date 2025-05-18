@@ -17,5 +17,5 @@ interface AuthenticationDataSource {
 
     suspend fun logout(user: UserDto): Flow<ResultWrapper<ServerResponseData>>
 
-    suspend fun regenerateToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>>
+    suspend fun refreshToken(tokens: Tokens): Flow<ResultWrapper<TokenWrapper>>
 }
