@@ -40,7 +40,7 @@ interface DoWorkoutPerformanceMetricsApi {
         @Body body: FetchPerformanceMetricsByDateRequest
     ): DoWorkoutPerformanceMetricsListResponse
 
-    @POST("api/v1/doworkoutperformancemetrics/getdoworkoutperformancemetricsby")
+    @POST("api/v1/doworkoutperformancemetrics/getdoworkoutperformancemetrics")
     suspend fun getDoWorkoutPerformanceMetrics(
         @Body body: FetchWorkoutByIdRequest
     ): DoWorkoutPerformanceMetricsListResponse

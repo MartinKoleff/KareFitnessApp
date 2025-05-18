@@ -30,14 +30,4 @@ interface ExerciseApi {
     suspend fun getExerciseDetails(
         @Body body: FetchExerciseRequest
     ): ExerciseDetailsResponse
-
-    //Local datasource only...
-//    @POST("api/v1/exercise/addnewexerciseset")
-//    fun addNewExerciseSet(body: UpdateExerciseSetRequest): ExerciseResponse
-//
-//    @POST("api/v1/exercise/deleteexerciseset")
-//    fun deleteExerciseSet(body: DeleteExerciseSetRequest): ExerciseResponse
-//
-//    @POST("api/v1/exercise/addnewexerciseset")
-//    fun deleteLatestExerciseSet(body: UpdateExerciseSetRequest): ExerciseResponse
 }

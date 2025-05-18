@@ -104,7 +104,7 @@ class GeneralStatisticsRemoteDataSource @Inject constructor(
     }
 
     override suspend fun getMuscleGroupTotalWeightLifted(selectedMuscleGroup: MuscleGroup): Flow<ResultWrapper<StrongestMuscleGroupWrapper>> {
-      val body = FetchExercisesByMuscleGroupRequest(selectedMuscleGroup.muscleGroupId)
+        val body = FetchExercisesByMuscleGroupRequest(selectedMuscleGroup.muscleGroupId)
 
         return apiAuthorizationCallWrapper.executeApiCall(
             dispatcher, {
