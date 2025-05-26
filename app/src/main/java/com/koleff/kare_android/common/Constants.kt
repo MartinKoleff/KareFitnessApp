@@ -5,7 +5,7 @@ object Constants {
     const val SCHEME = "https"
     const val PORT = 8080
 
-    const val BASE_URL = "karebackend-production.up.railway.app"
+    const val BASE_URL = "mkoleff.com"
     const val BASE_URL_FULL = "$SCHEME://$BASE_URL/"
 
     const val BASE_LOCAL_URL = "localhost"

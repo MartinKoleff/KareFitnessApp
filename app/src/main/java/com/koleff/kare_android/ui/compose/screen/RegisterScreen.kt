@@ -200,6 +200,7 @@ fun RegisterScreen(registerViewModel: RegisterViewModel = hiltViewModel()) {
                     CustomTextField(
                         label = "Email",
                         iconResourceId = R.drawable.ic_email,
+                        focusRequester = emailFocusRequester,
                         keyboardOptions = KeyboardOptions.Default.copy(
                             imeAction = ImeAction.Done
                         ),
